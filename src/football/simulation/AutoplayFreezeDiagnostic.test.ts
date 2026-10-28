@@ -11,7 +11,7 @@ import { InputIntent } from "../controls/InputIntent";
 import { ballSpeed } from "../ball/StuckBall";
 import { selectClosingPlayers } from "../ai/DefensiveAI";
 import type { Player } from "../players/Player";
-import { buildLabFixture } from "./MatchSimulationLab";
+import { buildLabFixture, withSeededMathRandom } from "./MatchSimulationLab";
 
 function installCanvasStub(): void {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -245,6 +245,9 @@ export async function runAutoplayFreezeDiagnostic(opts: {
   let worstFreeze: FreezeSample | null = null;
 
   const playingStates = new Set<string>([FootballState.PLAYING, FootballState.AUTOPLAY, FootballState.KICK_OFF]);
+  /** Require sustained idle (restart release is ≤1s) — not a single 1 Hz sample. */
+  const SUSTAINED_FREEZE_SAMPLES = 3;
+  let consecutiveFreeze = 0;
 
   try {
     while (simT < durationSimSec) {
@@ -284,9 +287,14 @@ export async function runAutoplayFreezeDiagnostic(opts: {
         playingStates.has(sample.state) && loose && ballMoving && massFreeze && nearestStuck;
 
       if (isFreeze) {
-        freezeHits += 1;
-        if (!firstFreeze) firstFreeze = sample;
-        if (!worstFreeze || sample.frozenOutfield > worstFreeze.frozenOutfield) worstFreeze = sample;
+        consecutiveFreeze += 1;
+        if (consecutiveFreeze >= SUSTAINED_FREEZE_SAMPLES) {
+          freezeHits += 1;
+          if (!firstFreeze) firstFreeze = sample;
+          if (!worstFreeze || sample.frozenOutfield > worstFreeze.frozenOutfield) worstFreeze = sample;
+        }
+      } else {
+        consecutiveFreeze = 0;
       }
       nextLog += 1;
     }
@@ -315,10 +323,15 @@ describe("autoplay freeze diagnostic", () => {
     "keeps players chasing through previously freezing seeds",
     async () => {
       // Seeds 42 and 2026 previously froze (~18/20 idle) after kick-off / pass flight.
+      // Seed Math.random so Match internals are reproducible; require sustained freeze (not restart release).
       const seeds = [42, 2026, 7];
       const reports: DiagnosticReport[] = [];
       for (const seed of seeds) {
-        reports.push(await runAutoplayFreezeDiagnostic({ seed, durationSimSec: 90, verbose: false }));
+        reports.push(
+          await withSeededMathRandom(seed, () =>
+            runAutoplayFreezeDiagnostic({ seed, durationSimSec: 90, verbose: false }),
+          ),
+        );
       }
       console.log("\n=== AUTOPLAY FREEZE DIAGNOSTIC SUMMARY ===");
       for (const r of reports) {
@@ -327,7 +340,7 @@ describe("autoplay freeze diagnostic", () => {
         );
       }
       for (const r of reports) {
-        expect(r.freezeHits, `seed ${r.seed} should not mass-freeze`).toBe(0);
+        expect(r.freezeHits, `seed ${r.seed} should not sustain a mass-freeze`).toBe(0);
       }
     },
     180_000,

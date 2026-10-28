@@ -135,12 +135,18 @@ describe("real-world official match catalog", () => {
     expect(official.awayScore).toBe(1);
   });
 
-  it("lists tonight's Stevenage v Plymouth as the official League One fixture", () => {
+  it("lists Stevenage v Plymouth as the official League One calendar fixture", () => {
+    // Played/unplayed follows the live overlay — assert identity + kick-off, not a frozen "tonight" flag.
     const official = resolveOfficialMatch(REAL_STEVENAGE_PLYMOUTH_SMOKE);
-    expect(official.played).toBe(false);
+    expect(official.date).toBe("2026-10-20");
     expect(official.time).toBe("19:45");
     expect(official.homeTeamId).toBe("stevenage_current");
     expect(official.awayTeamId).toBe("plymouth_argyle_current");
+    expect(official.competition).toBe("League One");
+    if (official.played) {
+      expect(typeof official.homeScore).toBe("number");
+      expect(typeof official.awayScore).toBe("number");
+    }
   });
 
   it("exposes a full Argyle season calendar from official data", () => {

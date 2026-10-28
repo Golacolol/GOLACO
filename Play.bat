@@ -2,7 +2,7 @@
 cd /d "%~dp0"
 where node >nul 2>nul
 if errorlevel 1 (
-  echo Node.js is required to start Argyle Football.
+  echo Node.js is required to start GOLACO.
   echo Install it from https://nodejs.org and try again.
   pause
   exit /b 1

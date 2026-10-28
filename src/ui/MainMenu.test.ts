@@ -144,7 +144,7 @@ describe("MainMenu LEAGUE mode button", () => {
     const club = hero.querySelector(".club-wrap");
     const teamSelect = hero.querySelector(".team-select-fixture");
     const gameplay = [...hero.querySelectorAll(".menu-fixture")].find((el) => el.querySelector(".meta")?.textContent === "Gameplay");
-    expect(title?.textContent).toBe("SD FOOTBALL");
+    expect(title?.textContent).toBe("GOLAÇO");
     expect(title!.compareDocumentPosition(club!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(club!.compareDocumentPosition(teamSelect!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(teamSelect!.compareDocumentPosition(gameplay!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

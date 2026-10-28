@@ -51,9 +51,9 @@ if (!already) {
   });
   await waitFor(URL);
   openBrowser(URL);
-  console.log(`Argyle Football → ${URL}`);
+  console.log(`GOLAÇO → ${URL}`);
   await new Promise((resolve) => child.on("exit", resolve));
 } else {
   openBrowser(URL);
-  console.log(`Argyle Football → ${URL}`);
+  console.log(`GOLAÇO → ${URL}`);
 }

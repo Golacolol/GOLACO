@@ -1,6 +1,6 @@
-# SD Football (Argyle Football)
+# GOLAÇO
 
-Browser-based Three.js football match themed around Plymouth Argyle and Home Park. Teams, players, memberships, fixtures, venues and advertising are data-driven.
+Browser-based Three.js football game. Play at [golaco.lol](https://golaco.lol).
 
 Player names and ratings are gameplay data, not official licensed likenesses or ratings.
 
@@ -29,13 +29,16 @@ The build uses relative asset paths (`base: "./"`) and inlines JS/CSS so it work
 
 > Keep the whole `dist/` folder together (`index.html` plus `assets/`, `images/`, `audio/`, `data/`).
 
-## GitHub Pages / static hosting
+## GitHub Pages
 
-```bash
-npm run build
-```
+Production deploys from `main` via GitHub Actions (`.github/workflows/pages.yml`):
 
-Deploy the contents of `dist/` (project site or root). Relative URLs work for both `https://user.github.io/repo/` and custom domains.
+1. `npm ci`
+2. `npm test`
+3. `npm run build`
+4. Publish `dist/` to GitHub Pages
+
+Custom domain: **golaco.lol** (`public/CNAME` → copied into `dist/` on build).
 
 ## Test
 
@@ -84,13 +87,18 @@ JSON in `public/data/`:
 - `teamMemberships.json` — multi-team memberships and optional rating overrides
 - `lineups.json` — starting XIs
 - `fixtures.json` — next fixture
-- `stadiums.json` — Home Park LED screen + Central Park traditional board
+- `stadiums.json` — venues including Home Park
 - `advertising.json` — replaceable perimeter boards
 - `stories.json` — future campaign outline only
 
 Optional image pack under `public/assets/` (portraits, crests, kits). See `src/data/AssetPack.ts`.
 
 Edits in the in-game editors save to `localStorage`.
+
+## Repository
+
+- GitHub: [Golacolol/GOLACO](https://github.com/Golacolol/GOLACO)
+- Domain: [golaco.lol](https://golaco.lol)
 
 ## License
 
