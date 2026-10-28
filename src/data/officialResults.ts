@@ -553,8 +553,7 @@ function upcomingListed(): OfficialMatch[] {
     upcoming(L1, "2026-10-03", T.ley, T.ply),
     upcoming(L1, "2026-10-10", T.ply, T.wim, "12:30"),
     upcoming(L1, "2026-10-17", T.ply, T.hud),
-    upcoming(L1, "2026-10-20", T.ste, T.ply, "19:45"),
-    upcoming(L1, "2026-10-24", T.cam, T.ply),
+    // 20 Oct / 24 Oct are overlay-owned played results (Stevenage 3–0, Cambridge 2–3).
     upcoming(L1, "2026-10-31", T.ply, T.rea, "12:30"),
     upcoming(L1, "2026-11-14", T.shw, T.ply),
     upcoming(L1, "2026-11-21", T.ply, T.pet),

@@ -251,7 +251,7 @@ async function fetchResultPages(table) {
   for (let begin = 0; begin <= 300; begin += 15) {
     const url = `https://www.thefishy.net/football-results.php?table=${table}&season=24&begin=${begin}`;
     const res = await fetch(url, {
-      headers: { "User-Agent": "argyle-football-results-refresh/1.0" },
+      headers: { "User-Agent": "golaco-results-refresh/1.0" },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
     const html = await res.text();
@@ -305,7 +305,7 @@ async function fetchFixturePages(table) {
   for (let start = 0; start <= 600; start += 15) {
     const url = `https://www.thefishy.net/football-fixtures.php?table=${table}&season=24&start=${start}`;
     const res = await fetch(url, {
-      headers: { "User-Agent": "argyle-football-results-refresh/1.0" },
+      headers: { "User-Agent": "golaco-results-refresh/1.0" },
     });
     if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
     const html = await res.text();
@@ -358,7 +358,7 @@ async function fetchFootballJsonFallback(byName) {
     process.stdout.write(`  openfootball ${path}… `);
     try {
       const res = await fetch(url, {
-        headers: { "User-Agent": "argyle-football-results-refresh/1.0" },
+        headers: { "User-Agent": "golaco-results-refresh/1.0" },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
@@ -426,7 +426,25 @@ async function main() {
   for (const match of season.filter((m) => fbRefs.has(m))) upsertMatch(byKey, match);
   for (const match of season.filter((m) => !fbRefs.has(m))) upsertMatch(byKey, match);
 
-  const matches = [...byKey.values()].sort(
+  // Drop same-day double-bookings (Fishy sometimes lists rearranged + original cards).
+  // Prefer played rows, then earlier kick-off.
+  const byTeamDate = new Map();
+  const sortedCandidates = [...byKey.values()].sort(
+    (a, b) =>
+      a.date.localeCompare(b.date) ||
+      Number(b.played) - Number(a.played) ||
+      String(a.time ?? "").localeCompare(String(b.time ?? "")),
+  );
+  const matches = [];
+  for (const match of sortedCandidates) {
+    const home = `${match.date}|${match.homeTeamId}|${match.competition}`;
+    const away = `${match.date}|${match.awayTeamId}|${match.competition}`;
+    if (byTeamDate.has(home) || byTeamDate.has(away)) continue;
+    byTeamDate.set(home, match);
+    byTeamDate.set(away, match);
+    matches.push(match);
+  }
+  matches.sort(
     (a, b) => a.date.localeCompare(b.date) || String(a.time ?? "").localeCompare(String(b.time ?? "")),
   );
   const playedDates = matches.filter((m) => m.played).map((m) => m.date).sort();
