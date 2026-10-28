@@ -1,0 +1,100 @@
+import { describe, expect, it } from "vitest";
+import type { TeamRecord } from "../data/schema";
+import {
+  buildMenuTeamOptions,
+  clubBaseName,
+  erasForClub,
+  findTeamOption,
+  formatEraRoll,
+  secondaryDialLabel,
+  teamsInGroup,
+  uniqueClubsInGroup,
+} from "./menuTeamSelect";
+
+function team(partial: Partial<TeamRecord> & Pick<TeamRecord, "id" | "name">): TeamRecord {
+  return {
+    abbreviation: "X",
+    shortName: partial.name,
+    defaultStadiumId: "ground",
+    primaryColor: "#000",
+    secondaryColor: "#fff",
+    defaultKit: { primary: "#000", secondary: "#fff", socks: "#000" },
+    teamType: "CURRENT_TEAM",
+    ...partial,
+  } as TeamRecord;
+}
+
+describe("menuTeamSelect", () => {
+  it("strips era suffixes from classic display names", () => {
+    expect(clubBaseName("Real Madrid — 2002/03 Galácticos")).toBe("Real Madrid");
+    expect(clubBaseName("Chelsea — 2004/05 Mourinho")).toBe("Chelsea");
+  });
+
+  it("formats season rolls as short dates, never nicknames", () => {
+    expect(formatEraRoll("2004/05")).toBe("04-05");
+    expect(formatEraRoll("1991/92")).toBe("91-92");
+    expect(formatEraRoll("2000")).toBe("00");
+    expect(formatEraRoll("2021-22")).toBe("21-22");
+    expect(formatEraRoll("Chelsea — 2004/05 Mourinho")).toBe("04-05");
+  });
+
+  it("lists club-only Classic dial labels with date eras; keeps full TeamRecord names elsewhere", () => {
+    const options = buildMenuTeamOptions([
+      team({ id: "arsenal_current", name: "Arsenal", league: "PREMIER_LEAGUE", teamType: "CURRENT_TEAM" }),
+      team({
+        id: "classic_chelsea_2004_05",
+        name: "Chelsea — 2004/05 Mourinho",
+        teamType: "HISTORIC_TEAM",
+        historicSeason: "2004/05",
+      }),
+      team({
+        id: "classic_chelsea_2011_12",
+        name: "Chelsea — 2011/12",
+        teamType: "HISTORIC_TEAM",
+        historicSeason: "2011/12",
+      }),
+      team({
+        id: "classic_realmadrid_2002_03",
+        name: "Real Madrid — 2002/03 Galácticos",
+        teamType: "HISTORIC_TEAM",
+        historicSeason: "2002/03",
+      }),
+      team({
+        id: "argyle_fans_xi",
+        name: "Plymouth Argyle Fans XI",
+        teamType: "FANS_TEAM",
+        fanTeam: true,
+      }),
+    ]);
+
+    expect(findTeamOption(options, "arsenal_current")).toMatchObject({
+      label: "Arsenal",
+      group: "PREMIER_LEAGUE",
+    });
+
+    const classic = teamsInGroup(options, "CLASSIC");
+    expect(classic.map((o) => o.label)).toEqual([
+      "Chelsea",
+      "Chelsea",
+      "Plymouth Argyle Fans XI",
+      "Real Madrid",
+    ]);
+    expect(classic.map((o) => o.eraLabel)).toEqual(["04-05", "11-12", "—", "02-03"]);
+    expect(classic.every((o) => !o.eraLabel.includes("Mourinho"))).toBe(true);
+    expect(classic.every((o) => !o.label.includes("Mourinho"))).toBe(true);
+
+    const chelseaEras = erasForClub(options, "chelsea");
+    expect(chelseaEras.map((o) => o.eraLabel)).toEqual(["04-05", "11-12"]);
+    expect(chelseaEras.map((o) => o.id)).toEqual([
+      "classic_chelsea_2004_05",
+      "classic_chelsea_2011_12",
+    ]);
+
+    const clubs = uniqueClubsInGroup(options, "CLASSIC");
+    expect(clubs.map((o) => o.label)).toEqual(["Chelsea", "Plymouth Argyle Fans XI", "Real Madrid"]);
+    expect(clubs.find((o) => o.clubKey === "chelsea")?.id).toBe("classic_chelsea_2004_05");
+
+    expect(secondaryDialLabel(classic[0]!)).toBe("Classic Teams");
+    expect(secondaryDialLabel(options[0]!)).toBe("Premier League");
+  });
+});

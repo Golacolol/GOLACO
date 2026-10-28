@@ -1,0 +1,17 @@
+[
+  {
+    "id": "fixture_next",
+    "homeTeamId": "plymouth_argyle_current",
+    "awayTeamId": "barnsley_current",
+    "venueId": "home_park",
+    "competition": "League Fixture",
+    "date": "2026-09-06",
+    "time": "15:00",
+    "durationSeconds": 600,
+    "homeLineupId": "argyle_current_xi",
+    "awayLineupId": "barnsley_current_xi",
+    "gameplayModeDefault": "REAL",
+    "timeOfDay": "EVENING",
+    "weather": "MILD"
+  }
+]

@@ -1,0 +1,16 @@
+node_modules
+dist
+.DS_Store
+*.local
+.vite
+__pycache__
+*.pyc
+*.pyo
+.Python
+scripts/__pycache__/
+scripts/squad-refresh-report.json
+
+# Local authoring / Cursor prompt dumps (not runtime)
+Argyle_Football_ThreeJS_Cursor_Master_Prompt_v0.2.txt
+Argyle_Football_ThreeJS_Cursor_Update_Prompt_v0.3.txt
+*.cursor-prompt.txt

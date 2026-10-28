@@ -1,0 +1,23 @@
+{
+  "players": {},
+  "crests": {
+    "classic_england_1996": "/assets/crests/classic_england_1996.png",
+    "classic_england_2002": "/assets/crests/classic_england_2002.png",
+    "classic_england": "/assets/crests/classic_england.png",
+    "classic_france_2000": "/assets/crests/classic_france_2000.png",
+    "classic_france": "/assets/crests/classic_france.png",
+    "classic_spain_2010": "/assets/crests/classic_spain_2010.png",
+    "classic_spain": "/assets/crests/classic_spain.png",
+    "classic_brazil_1994": "/assets/crests/classic_brazil_1994.png",
+    "classic_brazil_2002": "/assets/crests/classic_brazil_2002.png",
+    "classic_brazil": "/assets/crests/classic_brazil.png",
+    "classic_argentina_1986": "/assets/crests/classic_argentina_1986.png",
+    "classic_argentina": "/assets/crests/classic_argentina.png",
+    "classic_juventus_1995_96": "/assets/crests/classic_juventus_1995_96.png",
+    "classic_juventus_1997_98": "/assets/crests/classic_juventus_1997_98.png",
+    "classic_juventus_1982_83": "/assets/crests/classic_juventus_1982_83.png",
+    "classic_juventus_2016_17": "/assets/crests/classic_juventus_2016_17.png",
+    "classic_juventus": "/assets/crests/classic_juventus.png"
+  },
+  "fallbackPortraits": []
+}

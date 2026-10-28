@@ -1,0 +1,10 @@
+[
+  { "board": 1, "image": "/assets/advertising/ad01.png", "label": "GREEN ARMY", "color": "#007A3D", "textColor": "#FFFFFF" },
+  { "board": 2, "image": "/assets/advertising/ad02.png", "label": "HOME PARK", "color": "#0B3D2E", "textColor": "#FFFFFF" },
+  { "board": 3, "image": "/assets/advertising/ad03.png", "label": "PLYMOUTH", "color": "#111111", "textColor": "#FFFFFF" },
+  { "board": 4, "image": "/assets/advertising/ad04.png", "label": "PILGRIMS", "color": "#C5A572", "textColor": "#111111" },
+  { "board": 5, "image": "/assets/advertising/ad05.png", "label": "MAYFLOWER", "color": "#FFFFFF", "textColor": "#007A3D" },
+  { "board": 6, "image": "/assets/advertising/ad06.png", "label": "DEVONPORT", "color": "#163A2A", "textColor": "#F4F7F2" },
+  { "board": 7, "image": "/assets/advertising/ad07.png", "label": "ARGYLE", "color": "#007A3D", "textColor": "#FFFFFF" },
+  { "board": 8, "image": "/assets/advertising/ad08.png", "label": "JANNERS", "color": "#222222", "textColor": "#C5A572" }
+]

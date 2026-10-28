@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SD Football</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=Archivo+Black&family=Audiowide&family=Bangers&family=Barlow+Condensed:wght@600;700&family=Bebas+Neue&family=Black+Ops+One&family=Bungee&family=Cabin:wght@600;700&family=Chakra+Petch:wght@600;700&family=Cinzel:wght@700&family=Cinzel+Decorative:wght@700&family=Comfortaa:wght@600;700&family=Creepster&family=Exo+2:wght@600;700&family=Fascinate+Inline&family=Faster+One&family=Fredoka:wght@600;700&family=IBM+Plex+Sans:wght@600;700&family=Inter:wght@600;700&family=Josefin+Sans:wght@600;700&family=Kanit:wght@600;700&family=League+Gothic&family=Libre+Baskerville:wght@700&family=Lobster&family=MedievalSharp&family=Merriweather:wght@700&family=Metal+Mania&family=Monoton&family=Montserrat:wght@600;700&family=Nunito:wght@700&family=Orbitron:wght@700&family=Oswald:wght@500;700&family=Pacifico&family=Permanent+Marker&family=Pirata+One&family=Playfair+Display:wght@700&family=Poppins:wght@600;700&family=Press+Start+2P&family=Quantico:wght@700&family=Rajdhani:wght@600;700&family=Righteous&family=Roboto:wght@500;700&family=Roboto+Condensed:wght@600;700&family=Russo+One&family=Saira+Condensed:wght@600;700&family=Silkscreen&family=Source+Sans+3:wght@600;700&family=Space+Grotesk:wght@600;700&family=Special+Elite&family=Squada+One&family=Staatliches&family=Syncopate:wght@700&family=Teko:wght@600;700&family=Ubuntu:wght@500;700&family=UnifrakturMaguntia&family=VT323&display=swap" rel="stylesheet" />
+    <style>
+      #file-boot { position: absolute; inset: 0; display: grid; place-items: center; background: linear-gradient(180deg, rgba(4,17,10,.45), rgba(4,17,10,.88)); color: #f4f7f2; font-family: "Helvetica Neue", "Segoe UI", sans-serif; z-index: 20; }
+      #file-boot[hidden] { display: none !important; }
+      .file-boot-card { background: rgba(7,20,13,.9); border: 1px solid rgba(197,165,114,.35); padding: 28px 32px; border-radius: 10px; text-align: left; max-width: 460px; }
+      .file-boot-card .eyebrow { color: #c5a572; letter-spacing: .32em; font-size: 12px; text-align: center; }
+      .file-boot-card h1 { margin: 8px 0 12px; letter-spacing: .12em; color: #e4c56a; line-height: 1.08; text-align: center; }
+      .file-boot-card p { opacity: .85; line-height: 1.5; margin: 0 0 10px; }
+      .file-boot-card code { background: rgba(255,255,255,.08); padding: 1px 6px; border-radius: 4px; font-size: 0.92em; }
+      .file-boot-card a { display: inline-block; margin-top: 8px; margin-right: 10px; padding: 10px 16px; border: 1px solid #c5a572; color: #f4f7f2; text-decoration: none; letter-spacing: .08em; }
+    </style>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div id="file-boot" hidden>
+      <div class="file-boot-card">
+        <div class="eyebrow">PLYMOUTH ARGYLE</div>
+        <h1>SD FOOTBALL</h1>
+        <p id="boot-status">This is the <b>dev</b> entry. Opening it as a file cannot load TypeScript modules.</p>
+        <p><b>Play offline (no server):</b> run <code>npm run build</code>, then open <code>dist/index.html</code>.</p>
+        <p><b>Develop:</b> run <code>npm run dev</code> (or double-click Play.command / Play.bat).</p>
+        <a href="./dist/index.html">Open dist/index.html</a>
+        <a href="Play.command">Start Dev Server</a>
+      </div>
+    </div>
+    <div id="app">
+      <canvas id="game-canvas"></canvas>
+      <div id="ui-root"></div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+    <script>
+      (function () {
+        if (location.protocol !== "file:") return;
+        // Built dist/index.html has inlined modules — do not hijack it.
+        if (!document.querySelector('script[src*="main.ts"]')) return;
+        var boot = document.getElementById("file-boot");
+        var app = document.getElementById("app");
+        if (boot) boot.hidden = false;
+        if (app) app.hidden = true;
+        var status = document.getElementById("boot-status");
+        var urls = ["http://127.0.0.1:5173/", "http://127.0.0.1:4173/"];
+        var attempts = 0;
+        function probe(url) {
+          return fetch(url, { mode: "no-cors", cache: "no-store" }).then(function () {
+            location.replace(url);
+          });
+        }
+        function loop() {
+          if (attempts > 8) {
+            if (status) {
+              status.textContent =
+                "No local server found. Build with npm run build, then open dist/index.html — or start the dev server.";
+            }
+            return;
+          }
+          var i = attempts % urls.length;
+          attempts += 1;
+          probe(urls[i]).catch(function () {
+            setTimeout(loop, 500);
+          });
+        }
+        loop();
+      })();
+    </script>
+  </body>
+</html>

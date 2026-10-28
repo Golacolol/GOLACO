@@ -1,0 +1,12 @@
+[
+  {
+    "storyId": "argyle_campaign_01",
+    "homeTeam": "plymouth_argyle_current",
+    "chapters": [
+      { "type": "football", "opponent": "barnsley_current" },
+      { "type": "world", "location": "home_park_approach" },
+      { "type": "arcade", "levels": ["level_01", "level_02", "level_03", "level_04", "level_05"] },
+      { "type": "football", "opponent": "barnsley_current" }
+    ]
+  }
+]

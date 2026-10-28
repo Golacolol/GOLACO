@@ -1,0 +1,148 @@
+# Player portrait attributions
+
+Downloaded from Wikimedia Commons / Wikipedia.
+Only Public Domain / CC0 / CC BY(+SA) images (no NC). Only football-context matches.
+
+- **Matthew Sorinola** (`player_arg_sorinola`): File:Matthew Sorinola.jpg — CC BY 4.0 — GSJools — https://creativecommons.org/licenses/by/4.0
+- **Julio Pleguezuelo** (`player_arg_pleguezuelo`): File:Julio Pleguezuelo 2015.jpg — CC BY 2.0 — joshjdss — https://creativecommons.org/licenses/by/2.0
+- **Joe Edwards** (`player_arg_edwards`): File:Joe Edwards footballer May 2014.jpg — CC BY-SA 3.0 — User:TheWelshKopite — https://creativecommons.org/licenses/by-sa/3.0
+- **Harvey White** (`player_arg_white`): File:Harvey White 03102026 (2).jpg — CC0 — Timmy96 — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+- **Bradley Ibrahim** (`player_arg_ibrahim`): File:Bradley Ibrahim 03102026 (2).jpg — CC0 — Timmy96 — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+- **Ronan Curtis** (`player_arg_curtis`): File:Alex Gilbert and Ronan Curtis 03102026 (1).jpg — CC0 — Timmy96 — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+- **Conor Hazard** (`player_arg_hazard`): File:Conor Hazard 12092026 (2).jpg — CC0 — Timmy96 — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+- **Bali Mumba** (`player_arg_mumba`): File:Mumba, Bali (cropped).jpg — CC BY-SA 4.0 — Skippo10 — https://creativecommons.org/licenses/by-sa/4.0
+- **Lorent Tolaj** (`player_arg_tolaj`): File:Lorent Tolaj.jpg — CC0 — EchetusXe — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+- **Jamie Paterson** (`player_arg_paterson`): File:Jamie Paterson.jpg — CC0 — Nottingham Forest F.C. — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+- **Sebastiano Rossi** (`classic_milan_9394_rossi`): File:Sebastiano Rossi.jpg — CC BY-SA 3.0 — Vecchiaguardia at Italian Wikipedia — http://creativecommons.org/licenses/by-sa/3.0/
+- **Mauro Tassotti** (`classic_milan_9394_tassotti`): File:Mauro Tassotti (cropped).jpg — CC BY-SA 2.0 — goatling — https://creativecommons.org/licenses/by-sa/2.0
+- **Franco Baresi** (`classic_milan_9394_baresi`): File:Franco baresi panini card 1979.jpg — Public domain — Unknown authorUnknown author
+- **Alessandro Costacurta** (`classic_milan_9394_costacurta`): File:Billy Costacurta AC Milan Glorie 2011.jpg — CC BY-SA 3.0 — F1fans — https://creativecommons.org/licenses/by-sa/3.0
+- **Paolo Maldini** (`classic_milan_9394_maldini`): File:Paolo Maldini AC Milan Technical director 2018.jpg — CC BY 3.0 — GOAL TV — https://creativecommons.org/licenses/by/3.0
+- **Demetrio Albertini** (`classic_milan_9394_albertini`): File:Demetrio Albertini in 2016.jpg — CC BY-SA 4.0 — Biser Todorov — https://creativecommons.org/licenses/by-sa/4.0
+- **Marcel Desailly** (`classic_milan_9394_desailly`): File:25th Laureus World Sports Awards - Red Carpet - Marcel Desailly - 240422 192752-3 (cropped).jpg — CC BY-SA 4.0 — Barcex — https://creativecommons.org/licenses/by-sa/4.0
+- **Roberto Donadoni** (`classic_milan_9394_donadoni`): File:Roberto Donadoni - SSC Neapel (2) (cropped).jpg — CC BY-SA 3.0 — Steindy (talk) 13:14, 26 July 2009 (UTC) — https://creativecommons.org/licenses/by-sa/3.0
+- **Zvonimir Boban** (`classic_milan_9394_boban`): File:Zvonimir Boban in 2018.jpg — CC BY 4.0 — Russian Presidential Press and Information Office — https://creativecommons.org/licenses/by/4.0
+- **Dejan Savićević** (`classic_milan_9394_savicevic`): File:Dejan Savićević.jpg — CC BY-SA 3.0 — Christophe95 — https://creativecommons.org/licenses/by-sa/3.0
+- **Daniele Massaro** (`classic_milan_9394_massaro`): File:Daniele Massaro.JPG — CC BY-SA 3.0 — User:Mbx — https://creativecommons.org/licenses/by-sa/3.0
+- **Christian Panucci** (`classic_milan_9394_panucci`): File:Panuccochristian.jpg — CC BY-SA 4.0 — Andrea Papaccio — https://creativecommons.org/licenses/by-sa/4.0
+- **Giuseppe Favalli** (`classic_lazio_1992_93_giuseppe_favalli`): File:Favalli (cropped).jpg — CC BY-SA 3.0 — Roberto Vicario — https://creativecommons.org/licenses/by-sa/3.0
+- **Diego Fuser** (`classic_lazio_1992_93_diego_fuser`): File:KL-2018 (15ropped).jpg — CC BY-SA 3.0 — Антон Зайцев — https://creativecommons.org/licenses/by-sa/3.0
+- **Aron Winter** (`classic_lazio_1992_93_aron_winter`): File:Aron Winter 2013.jpg — CC BY-SA 2.0 — Wim Hollemans — https://creativecommons.org/licenses/by-sa/2.0
+- **Paul Gascoigne** (`classic_lazio_1992_93_paul_gascoigne`): File:Paul Gascoigne 2021.png — CC BY 3.0 — James English — https://creativecommons.org/licenses/by/3.0
+- **Karl-Heinz Riedle** (`classic_lazio_1992_93_karl_heinz_riedle`): File:Karl-Heinz Riedle, 2012.jpg — CC BY-SA 3.0 de — Udo Grimberg — https://creativecommons.org/licenses/by-sa/3.0/de/deed.en
+- **Valerio Fiori** (`classic_lazio_1992_93_valerio_fiori`): File:Valerio Fiori, August 2012 (2).jpg — CC BY-SA 2.0 — Valerio_Fiori,_August_2012_with_children.jpg: goatling
+derivative work: Simo82 — https://creativecommons.org/licenses/by-sa/2.0
+- **Pierluigi Casiraghi** (`classic_lazio_1992_93_pierluigi_casiraghi`): File:Pierluigi Casiraghi Chelsea Legends 1 Inter Forever 4 (27457034627) (cropped).jpg — CC BY-SA 2.0 — @cfcunofficial (Chelsea Debs) London from London, UK — https://creativecommons.org/licenses/by-sa/2.0
+- **Thomas Doll** (`classic_lazio_1992_93_thomas_doll`): File:Tomas Doll – Tag der Legenden 2016 01.jpg — CC BY-SA 3.0 — Frank Schwichtenberg — https://creativecommons.org/licenses/by-sa/3.0
+- **Giuseppe Pancaro** (`classic_lazio_1992_93_giuseppe_pancaro`): File:Giuseppe Pancaro, 2005.jpg — CC BY-SA 3.0 — Soprano71 — https://creativecommons.org/licenses/by-sa/3.0
+- **Gianluca Pagliuca** (`classic_inter_1993_94_gianluca_pagliuca`): File:Gianluca Pagliuca.jpg — Public domain — The original uploader was Catenaccio at Italian Wikipedia.
+- **Giuseppe Bergomi** (`classic_inter_1993_94_giuseppe_bergomi`): File:Giuseppe Bergomi.jpg — CC BY-SA 3.0 — Christophe95 — https://creativecommons.org/licenses/by-sa/3.0
+- **Massimo Paganin** (`classic_inter_1993_94_massimo_paganin`): File:Massimo Paganin 2007byFigiu.jpg — CC BY-SA 3.0 — Figiu — https://creativecommons.org/licenses/by-sa/3.0
+- **Dennis Bergkamp** (`classic_inter_1993_94_dennis_bergkamp`): File:Dennis Bergkamp 2014 (cropped).jpg — CC BY 2.0 — Kieran Clarke — https://creativecommons.org/licenses/by/2.0
+- **Wim Jonk** (`classic_inter_1993_94_wim_jonk`): File:Wim jonk.jpg — CC BY-SA 4.0 — Poudejans — https://creativecommons.org/licenses/by-sa/4.0
+- **Igor Shalimov** (`classic_inter_1993_94_igor_shalimov`): File:Spartak-krasnodar-20 (cropped3).jpg — CC BY-SA 3.0 — Дмитрий Голубович — https://creativecommons.org/licenses/by-sa/3.0
+- **Darko Pancev** (`classic_inter_1993_94_darko_pancev`): File:Дарко Панчев 2020.png — CC BY 3.0 — Институт за комуникациски студии — https://creativecommons.org/licenses/by/3.0
+- **Massimo Paganin** (`classic_inter_1993_94_massimo_paganin_b1`): File:Massimo Paganin 2007byFigiu.jpg — CC BY-SA 3.0 — Figiu — https://creativecommons.org/licenses/by-sa/3.0
+- **Amedeo Carboni** (`classic_roma_1992_93_amedeo_carboni`): File:AmedeoCarboni.jpg — CC BY-SA 3.0 — Pepito — http://creativecommons.org/licenses/by-sa/3.0/
+- **Antonio Tempestilli** (`classic_roma_1992_93_antonio_tempestilli`): File:Antonio Tempestilli.JPG — CC BY-SA 3.0 — Darkcloud2222 — https://creativecommons.org/licenses/by-sa/3.0
+- **Giuseppe Giannini** (`classic_roma_1992_93_giuseppe_giannini`): File:Giuseppe Giannini 1983.jpg — Public domain — Indeciso42 at the Italian Wikipedia project.
+- **Siniša Mihajlović** (`classic_roma_1992_93_sini_a_mihajlovi`): File:Siniša Mihajlović.JPG — CC BY-SA 3.0 — Roberto Vicario — https://creativecommons.org/licenses/by-sa/3.0
+- **Rudi Voller** (`classic_roma_1992_93_rudi_voller`): File:Rudi Völler Bühne (cropped).jpg — CC BY-SA 3.0 — 9EkieraM1 — https://creativecommons.org/licenses/by-sa/3.0
+- **Claudio Caniggia** (`classic_roma_1992_93_claudio_caniggia`): File:Caniggia sonriente 1988.jpg — Public domain — Héctor Maffuche (credited)
+- **Abel Balbo** (`classic_roma_1992_93_abel_balbo`): File:Abel Balbo - AS Roma (recorte).jpg — Public domain — Unknown authorUnknown author
+- **Fausto Silva** (`classic_roma_1992_93_fausto_silva`): File:Faustosilva.jpg — CC BY 2.0 — Sérgio (Savaman) Savarese — https://creativecommons.org/licenses/by/2.0
+- **Daniele Massaro** (`classic_roma_1992_93_daniele_massaro`): File:Daniele Massaro.JPG — CC BY-SA 3.0 — User:Mbx — https://creativecommons.org/licenses/by-sa/3.0
+- **Marco Delvecchio** (`classic_roma_1992_93_marco_delvecchio`): File:Marco Delvecchio - Ned-AllStars (2015).jpg — CC BY-SA 3.0 — Дмитрий Садовников — https://creativecommons.org/licenses/by-sa/3.0
+- **Giuseppe Giannini** (`classic_roma_1992_93_giuseppe_giannini_b1`): File:Giuseppe Giannini 1983.jpg — Public domain — Indeciso42 at the Italian Wikipedia project.
+- **Luca Marchegiani** (`classic_lazio_9900_marchegiani`): File:Luca Marchegiani, 2003.jpg — Public domain — Michyfog
+- **Alessandro Nesta** (`classic_lazio_9900_nesta`): File:Alessandro Nesta as Miami FC Manager.jpg — CC BY-SA 4.0 — Joerudi — https://creativecommons.org/licenses/by-sa/4.0
+- **Siniša Mihajlović** (`classic_lazio_9900_mihajlovic`): File:Siniša Mihajlović.JPG — CC BY-SA 3.0 — Roberto Vicario — https://creativecommons.org/licenses/by-sa/3.0
+- **Giuseppe Pancaro** (`classic_lazio_9900_pancaro`): File:Giuseppe Pancaro, 2005.jpg — CC BY-SA 3.0 — Soprano71 — https://creativecommons.org/licenses/by-sa/3.0
+- **Sérgio Conceição** (`classic_lazio_9900_conceicao`): File:Sérgio Conceição, Taça de Portugal 2023 (Agência Lusa) (cropped).png — CC BY 3.0 — Agência Lusa — https://creativecommons.org/licenses/by/3.0
+- **Diego Simeone** (`classic_lazio_9900_simeone`): File:25th Laureus World Sports Awards - Red Carpet - Diego Simeone - 240422 192621-2 (cropped).jpg — CC BY-SA 4.0 — Barcex — https://creativecommons.org/licenses/by-sa/4.0
+- **Juan Sebastián Verón** (`classic_lazio_9900_veron`): File:Juan Sebastian Veron 2017.jpg — CC BY-SA 2.0 — Agencia de Noticias ANDES — https://creativecommons.org/licenses/by-sa/2.0
+- **Pavel Nedvěd** (`classic_lazio_9900_nedved`): File:Pavel Nedvěd.jpg — CC BY-SA 2.0 — Pavel Lebeda — https://creativecommons.org/licenses/by-sa/2.0
+- **Marcelo Salas** (`classic_lazio_9900_salas`): File:Marcelo Salas 2015.jpg — CC BY-SA 2.0 — Ministerio Secretaría General de Gobierno — https://creativecommons.org/licenses/by-sa/2.0
+- **Simone Inzaghi** (`classic_lazio_9900_sinzaghi`): File:FC Salzburg gegen Inter Mailand (UEFA Championsleague 2023-11-08) 48.jpg — CC BY-SA 4.0 — Werner100359 — https://creativecommons.org/licenses/by-sa/4.0
+- **Marco Ballotta** (`classic_lazio_9900_ballotta`): File:KL-2018 15 (cropped).jpg — CC BY-SA 3.0 — Антон Зайцев — https://creativecommons.org/licenses/by-sa/3.0
+- **Emanuele Concetti** (`classic_lazio_9900_concetti`): File:Emanuele-concetti.jpg — CC BY-SA 4.0 — Viames Marino — https://creativecommons.org/licenses/by-sa/4.0
+- **Fernando Couto** (`classic_lazio_9900_couto`): File:FCouto.JPG — CC BY-SA 1.0 — Dmitry Parshin — https://creativecommons.org/licenses/by-sa/1.0
+- **Giuseppe Favalli** (`classic_lazio_9900_favalli`): File:Favalli (cropped).jpg — CC BY-SA 3.0 — Roberto Vicario — https://creativecommons.org/licenses/by-sa/3.0
+- **Matías Almeyda** (`classic_lazio_9900_almeyda`): File:América vs Guadalajara 7.jpg — CC BY-SA 2.0 — Los ruidos del deporte — https://creativecommons.org/licenses/by-sa/2.0
+- **Dejan Stanković** (`classic_lazio_9900_stankovic`): File:Dejan Stanković in 2025.jpg — CC BY-SA 3.0 — Вячеслав Евдокимов — https://creativecommons.org/licenses/by-sa/3.0
+- **Roberto Mancini** (`classic_lazio_9900_mancini`): File:Roberto Mancini Saudi Arabia-South Korea match 2023 AFC Asian Cup.jpg — CC BY 4.0 — M.Sadegh Nikgostar — https://creativecommons.org/licenses/by/4.0
+- **Fabrizio Ravanelli** (`classic_lazio_9900_ravanelli`): File:Fabrizio Ravanelli maggio 2012.jpg — CC BY-SA 3.0 — Bart ryker — https://creativecommons.org/licenses/by-sa/3.0
+- **Attilio Lombardo** (`classic_lazio_9900_lombardo`): File:Attilio Lombardo.JPG — CC BY-SA 3.0 — Ultraslansi — https://creativecommons.org/licenses/by-sa/3.0
+- **Gianluca Pagliuca** (`classic_sampdoria_1990_91_gianluca_pagliuca`): File:Gianluca Pagliuca.jpg — Public domain — The original uploader was Catenaccio at Italian Wikipedia.
+- **Pietro Vierchowod** (`classic_sampdoria_1990_91_pietro_vierchowod`): File:2013 friendly match, Persepolis Legends v AC Milan Glorie (68) - Pietro Vierchowod (cropped).jpg — CC BY 4.0 — Original:  Mohammadreza Abbasi
+Derivative work:  Danyele — https://creativecommons.org/licenses/by/4.0
+- **Marco Lanna** (`classic_sampdoria_1990_91_marco_lanna`): File:Lanna Marco 2023.jpg — CC BY-SA 4.0 — Paolo Bubici — https://creativecommons.org/licenses/by-sa/4.0
+- **Attilio Lombardo** (`classic_sampdoria_1990_91_attilio_lombardo`): File:Attilio Lombardo.JPG — CC BY-SA 3.0 — Ultraslansi — https://creativecommons.org/licenses/by-sa/3.0
+- **Srecko Katanec** (`classic_sampdoria_1990_91_srecko_katanec`): File:Srečko Katanec 2015 (cropped).jpg — CC BY-SA 3.0 — Дмитрий Журавель — https://creativecommons.org/licenses/by-sa/3.0
+- **Gianluca Vialli** (`classic_sampdoria_1990_91_gianluca_vialli`): File:Gianluca Vialli.jpg — CC BY 2.0 — RISE — https://creativecommons.org/licenses/by/2.0
+- **Roberto Mancini** (`classic_sampdoria_1990_91_roberto_mancini`): File:Roberto Mancini Saudi Arabia-South Korea match 2023 AFC Asian Cup.jpg — CC BY 4.0 — M.Sadegh Nikgostar — https://creativecommons.org/licenses/by/4.0
+- **Toninho Cerezo** (`classic_sampdoria_1990_91_toninho_cerezo`): File:Toninho cerezo in 1982.jpg — Public domain — Unknown authorUnknown author
+- **Giuseppe Dossena** (`classic_sampdoria_1990_91_giuseppe_dossena`): File:Giuseppe Dossena 2014.png — CC BY-SA 4.0 — Mariano Rocco — https://creativecommons.org/licenses/by-sa/4.0
+- **Amedeo Carboni** (`classic_sampdoria_1990_91_amedeo_carboni`): File:AmedeoCarboni.jpg — CC BY-SA 3.0 — Pepito — http://creativecommons.org/licenses/by-sa/3.0/
+- **Giovanni Invernizzi** (`classic_sampdoria_1990_91_giovanni_invernizzi`): File:1970–71 Inter Milan - 11th Scudetto - Giovanni Invernizzi.jpg — Public domain — Unknown authorUnknown author
+- **Michele Padovano** (`classic_sampdoria_1990_91_michele_padovano`): File:Michele Padovano.jpg — CC BY-SA 3.0 — Iaconianni family — https://creativecommons.org/licenses/by-sa/3.0
+- **Angelo Peruzzi** (`classic_juve_9596_peruzzi`): File:Angelo Peruzzi (2019).jpg — CC BY-SA 4.0 — Vincenzo.togni — https://creativecommons.org/licenses/by-sa/4.0
+- **Ciro Ferrara** (`classic_juve_9596_ferrara`): File:Ciro Ferrara.jpg — CC BY-SA 3.0 — Palombo90 — https://creativecommons.org/licenses/by-sa/3.0
+- **Moreno Torricelli** (`classic_juve_9596_torricelli`): File:Moreno Torricelli.JPG — CC BY-SA 3.0 — Mbx — https://creativecommons.org/licenses/by-sa/3.0
+- **Didier Deschamps** (`classic_juve_9596_deschamps`): File:Didier Deschamps France v Senegal 16 June 2026-294.jpg — CC BY-SA 4.0 — Bryan Berlin — https://creativecommons.org/licenses/by-sa/4.0
+- **Massimo Carrera** (`classic_juve_9596_carrera`): File:Zenspb-SM (1).jpg — CC BY-SA 3.0 — Кирилл Венедиктов — https://creativecommons.org/licenses/by-sa/3.0
+- **Pietro Vierchowod** (`classic_juve_9596_vierchowod`): File:2013 friendly match, Persepolis Legends v AC Milan Glorie (68) - Pietro Vierchowod (cropped).jpg — CC BY 4.0 — Original:  Mohammadreza Abbasi
+Derivative work:  Danyele — https://creativecommons.org/licenses/by/4.0
+- **Angelo Di Livio** (`classic_juve_9596_dilivio`): File:KL 2018 (3).jpg — CC BY-SA 3.0 — Антон Зайцев — https://creativecommons.org/licenses/by-sa/3.0
+- **Antonio Conte** (`classic_juve_9596_conte`): File:20150616 Antonio Conte.jpg — CC BY-SA 3.0 — Clément Bucco-Lechat — https://creativecommons.org/licenses/by-sa/3.0
+- **Gianluca Vialli** (`classic_juve_9596_vialli`): File:Gianluca Vialli.jpg — CC BY 2.0 — RISE — https://creativecommons.org/licenses/by/2.0
+- **Alessandro Del Piero** (`classic_juve_9596_delpiero`): File:25th Laureus World Sports Awards - Alessandro Del Piero - 240421 155220 (cropped) (cropped).jpg — CC BY-SA 4.0 — Barcex — https://creativecommons.org/licenses/by-sa/4.0
+- **Giancarlo Marocchi** (`classic_juve_9596_marocchi`): File:Giancarlo marocchi.jpg — Public domain — The original uploader was Manuel M at Italian Wikipedia.
+- **Michelangelo Rampulla** (`classic_juve_9596_rampulla`): File:Michelangelo Rampulla - Varese Calcio 1982-83.jpg — Public domain — Unknown authorUnknown author
+- **Gianluca Pessotto** (`classic_juve_9596_pessotto`): File:Gianluca Pessotto.jpg — Public domain — Amoruso at English Wikipedia
+- **Michele Padovano** (`classic_juve_9596_padovano`): File:Michele Padovano.jpg — CC BY-SA 3.0 — Iaconianni family — https://creativecommons.org/licenses/by-sa/3.0
+- **Alessio Tacchinardi** (`classic_juve_9596_tacchinardi`): File:Alessio Tacchinardi.jpg — CC BY-SA 3.0 — Tacchinardi — https://creativecommons.org/licenses/by-sa/3.0
+- **Vladimir Jugović** (`classic_juve_9596_jugovic`): File:Jugovic 2019.jpg — CC BY-SA 4.0 — Gagibgd — https://creativecommons.org/licenses/by-sa/4.0
+- **Fabrizio Ravanelli** (`classic_juve_9596_ravanelli`): File:Fabrizio Ravanelli maggio 2012.jpg — CC BY-SA 3.0 — Bart ryker — https://creativecommons.org/licenses/by-sa/3.0
+- **Paulo Sousa** (`classic_juve_9596_sousa`): File:Football against poverty 2014 - Paulo Sousa (cropped) - 2.jpg — CC BY-SA 3.0 — Original:  Ludovic Péron / Derivative work:  Danyele — https://creativecommons.org/licenses/by-sa/3.0
+- **Marco Ballotta** (`classic_parma_1992_93_marco_ballotta`): File:KL-2018 15 (cropped).jpg — CC BY-SA 3.0 — Антон Зайцев — https://creativecommons.org/licenses/by-sa/3.0
+- **Antonio Benarrivo** (`classic_parma_1992_93_antonio_benarrivo`): File:Antonio Benarrivo.jpg — Public domain — The original uploader was Catenaccio at Italian Wikipedia.
+- **Gabriele Pin** (`classic_parma_1992_93_gabriele_pin`): File:Gabriele Pin.JPG — CC BY-SA 4.0 — Ultraslansi — https://creativecommons.org/licenses/by-sa/4.0
+- **Tomas Brolin** (`classic_parma_1992_93_tomas_brolin`): File:Tomas Brolin.jpg — CC BY-SA 3.0 — Frankie Fouganthin — https://creativecommons.org/licenses/by-sa/3.0
+- **Faustino Asprilla** (`classic_parma_1992_93_faustino_asprilla`): File:Tino Asprilla en 2019 02.jpg — CC BY 3.0 — TELURO PRODUCCIONES — https://creativecommons.org/licenses/by/3.0
+- **Fausto Rossi** (`classic_parma_1992_93_fausto_rossi`): File:Fausto Rossi (cropped 2).JPG — CC BY-SA 4.0 — Roi González Villa (Vivaelcelta) — https://creativecommons.org/licenses/by-sa/4.0
+- **Daniele Massaro** (`classic_parma_1992_93_daniele_massaro`): File:Daniele Massaro.JPG — CC BY-SA 3.0 — User:Mbx — https://creativecommons.org/licenses/by-sa/3.0
+- **Roberto Mussi** (`classic_parma_1992_93_roberto_mussi`): File:Roberto Mussi - Ned-AllStars (2015).jpg — CC BY-SA 3.0 — Дмитрий Садовников — https://creativecommons.org/licenses/by-sa/3.0
+- **Ciro Ferrara** (`classic_napoli_1989_90_ciro_ferrara`): File:Ciro Ferrara.jpg — CC BY-SA 3.0 — Palombo90 — https://creativecommons.org/licenses/by-sa/3.0
+- **Marco Baroni** (`classic_napoli_1989_90_marco_baroni`): File:Marco Baroni 2015.jpg — CC BY 3.0 — TVSEI — https://creativecommons.org/licenses/by/3.0
+- **Antonio Corradini** (`classic_napoli_1989_90_antonio_corradini`): File:Pudicizia, Cappella Sansevero.jpg — CC BY-SA 2.0 — David Sivyer — https://creativecommons.org/licenses/by-sa/2.0
+- **Fernando De Napoli** (`classic_napoli_1989_90_fernando_de_napoli`): File:Borghi vs de napoli.jpg — Public domain — Unknown authorUnknown author
+- **Diego Maradona** (`classic_napoli_1989_90_diego_maradona`): File:Argentina celebrando copa (cropped).jpg — Public domain — Unknown authorUnknown author
+- **Andrea Silenzi** (`classic_napoli_1989_90_andrea_silenzi`): File:Andrea Silenzi.jpg — Public domain — The original uploader was Thebot at Ukrainian Wikipedia.
+- **Massimo Oddo** (`classic_napoli_1989_90_massimo_oddo`): File:Oddo Perugia (cropped).jpg — CC BY-SA 4.0 — Mech867 — https://creativecommons.org/licenses/by-sa/4.0
+- **Terry Butcher** (`classic_ipswich_1980_81_terry_butcher`): File:TerryButcherMay2010.jpg — CC BY-SA 3.0 — W. L. Tarbert — https://creativecommons.org/licenses/by-sa/3.0
+- **Mick Mills** (`classic_ipswich_1980_81_mick_mills`): File:Mick Mills.jpg — CC BY 2.0 — Nick from Chelmsford, Essex — https://creativecommons.org/licenses/by/2.0
+- **Frans Thijssen** (`classic_ipswich_1980_81_frans_thijssen`): File:Frans Thijssen (1979).jpeg — CC BY-SA 3.0 nl — Rob Bogaerts for Anefo — https://creativecommons.org/licenses/by-sa/3.0/nl/deed.en
+- **Arnold Muhren** (`classic_ipswich_1980_81_arnold_muhren`): File:Arnold Mühren.jpg — CC0 — Bert Verhoeff for Anefo 
+
+, Den Haag, Rijksfotoarchief: Fotocollectie Algemeen Nederlands Fotopersbureau (ANEFO), 1945-1989 - negatiefstroken zwart/wit, nummer toegang 2.24.01.05, bestanddeelnummer 925-7444 — http://creativecommons.org/publicdomain/zero/1.0/deed.en
+- **John Wark** (`classic_ipswich_1980_81_john_wark`): File:John Wark.jpg — CC BY-SA 3.0 — Steinar Holen — http://creativecommons.org/licenses/by-sa/3.0/
+- **Paul Mariner** (`classic_ipswich_1980_81_paul_mariner`): File:Paul Mariner 2010 (cropped).jpg — CC BY-SA 2.0 — David Saunders — https://creativecommons.org/licenses/by-sa/2.0
+- **Kevin Beattie** (`classic_ipswich_1980_81_kevin_beattie`): File:Kevin Beattie.jpg — Public domain — Tony Grunberg
+- **Paul Mariner** (`classic_ipswich_1980_81_paul_mariner_b1`): File:Paul Mariner 2010 (cropped).jpg — CC BY-SA 2.0 — David Saunders — https://creativecommons.org/licenses/by-sa/2.0
+- **John Wark** (`classic_ipswich_1980_81_john_wark_b1`): File:John Wark.jpg — CC BY-SA 3.0 — Steinar Holen — http://creativecommons.org/licenses/by-sa/3.0/
+- **Mick Mills** (`classic_ipswich_1980_81_mick_mills_b1`): File:Mick Mills.jpg — CC BY 2.0 — Nick from Chelmsford, Essex — https://creativecommons.org/licenses/by/2.0
+- **Giovanni Galli** (`classic_milan_1988_89_giovanni_galli`): File:Giovanni galli.JPG — CC BY-SA 3.0 — Roberto Vicario — https://creativecommons.org/licenses/by-sa/3.0
+- **Mauro Tassotti** (`classic_milan_1988_89_mauro_tassotti`): File:Mauro Tassotti (cropped).jpg — CC BY-SA 2.0 — goatling — https://creativecommons.org/licenses/by-sa/2.0
+- **Franco Baresi** (`classic_milan_1988_89_franco_baresi`): File:Franco baresi panini card 1979.jpg — Public domain — Unknown authorUnknown author
+- **Alessandro Costacurta** (`classic_milan_1988_89_alessandro_costacurta`): File:Billy Costacurta AC Milan Glorie 2011.jpg — CC BY-SA 3.0 — F1fans — https://creativecommons.org/licenses/by-sa/3.0
+- **Paolo Maldini** (`classic_milan_1988_89_paolo_maldini`): File:Paolo Maldini AC Milan Technical director 2018.jpg — CC BY 3.0 — GOAL TV — https://creativecommons.org/licenses/by/3.0
+- **Roberto Donadoni** (`classic_milan_1988_89_roberto_donadoni`): File:Roberto Donadoni - SSC Neapel (2) (cropped).jpg — CC BY-SA 3.0 — Steindy (talk) 13:14, 26 July 2009 (UTC) — https://creativecommons.org/licenses/by-sa/3.0
+- **Carlo Ancelotti** (`classic_milan_1988_89_carlo_ancelotti`): File:Carlo Ancelotti Brazil V Morocco 13 June 2026-47.jpg — CC BY-SA 4.0 — Bryan Berlin — https://creativecommons.org/licenses/by-sa/4.0
+- **Frank Rijkaard** (`classic_milan_1988_89_frank_rijkaard`): File:FrankRijkaard2.jpg — CC BY-SA 3.0 — http://creativecommons.org/licenses/by-sa/3.0/
+- **Ruud Gullit** (`classic_milan_1988_89_ruud_gullit`): File:25th Laureus World Sports Awards - Ruud Gullit - 240422 131911 (cropped).jpg — CC BY-SA 4.0 — Barcex — https://creativecommons.org/licenses/by-sa/4.0
+- **Marco van Basten** (`classic_milan_1988_89_marco_van_basten`): File:Marco van Basten (2) (cropped).jpg — CC BY 2.5 — Paul Blank — https://creativecommons.org/licenses/by/2.5
+- **Filippo Galli** (`classic_milan_1988_89_filippo_galli`): File:Filippo Galli.jpg — CC BY-SA 3.0 — Christophe95 — https://creativecommons.org/licenses/by-sa/3.0
+- **Pietro Paolo Virdis** (`classic_milan_1988_89_pietro_paolo_virdis`): File:Cagliari Calcio 1975-1976 Pietro Paolo Virdis.jpg — Public domain — Unknown authorUnknown author
+- **Daniele Massaro** (`classic_milan_1988_89_daniele_massaro`): File:Daniele Massaro.JPG — CC BY-SA 3.0 — User:Mbx — https://creativecommons.org/licenses/by-sa/3.0
+- **Christian Lantignotti** (`classic_milan_1988_89_christian_lantignotti`): File:2013 friendly match, Persepolis Legends v AC Milan Glorie - Christian Lantignotti.jpg — CC BY 4.0 — Mohammadreza Abbasi — https://creativecommons.org/licenses/by/4.0

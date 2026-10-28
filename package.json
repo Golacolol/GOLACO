@@ -1,0 +1,36 @@
+{
+  "name": "argyle-football",
+  "private": true,
+  "version": "0.5.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "play": "node scripts/play.mjs",
+    "build": "tsc --noEmit && vite build && node scripts/inline-dist.mjs",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "data:leagues": "node scripts/generate-english-leagues.mjs",
+    "data:results": "node scripts/refresh-league-results.mjs",
+    "data:bios": "node scripts/enrich-player-bios.mjs",
+    "assets:crests": "node scripts/import-crests.mjs",
+    "assets:kits": "node scripts/import-kits.mjs",
+    "assets:portraits": "node scripts/import-player-portraits.mjs",
+    "data:squads": "node scripts/refresh-current-squads.mjs && node scripts/generate-english-leagues.mjs && node scripts/enrich-player-bios.mjs",
+    "assets:classic-crests": "node scripts/refresh-classic-crests.mjs"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.170.0",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vitest": "^2.1.8"
+  },
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "esbuild@0.21.5": true
+  }
+}

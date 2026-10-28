@@ -1,0 +1,17 @@
+export const AppState = {
+  BOOT: "BOOT",
+  MAIN_MENU: "MAIN_MENU",
+  MATCH_SETUP: "MATCH_SETUP",
+  CHARACTER_SELECT: "CHARACTER_SELECT",
+  PRE_MATCH: "PRE_MATCH",
+  MATCH: "MATCH",
+  PAUSED: "PAUSED",
+  TEAM_EDITOR: "TEAM_EDITOR",
+  PLAYER_DATABASE: "PLAYER_DATABASE",
+  FIXTURE_EDITOR: "FIXTURE_EDITOR",
+  LEAGUE: "LEAGUE",
+  SETTINGS: "SETTINGS",
+  ATTRACT: "ATTRACT",
+} as const;
+
+export type AppState = (typeof AppState)[keyof typeof AppState];

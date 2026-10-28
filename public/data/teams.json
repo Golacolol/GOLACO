@@ -1,0 +1,2312 @@
+[
+  {
+    "id": "plymouth_argyle_current",
+    "name": "Plymouth Argyle",
+    "abbreviation": "ARG",
+    "teamType": "CURRENT_TEAM",
+    "city": "Plymouth",
+    "primaryColor": "#007A3D",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#007A3D",
+      "shorts": "#FFFFFF",
+      "socks": "#007A3D",
+      "trim": "#000000",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "home_park",
+    "defaultFormation": "4-4-2-W",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#007A3D",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "barnsley_current",
+    "name": "Barnsley",
+    "abbreviation": "BAR",
+    "teamType": "CURRENT_TEAM",
+    "city": "Barnsley",
+    "primaryColor": "#E31C23",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#E31C23",
+      "shorts": "#FFFFFF",
+      "socks": "#E31C23",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#2E8B57",
+      "shorts": "#111111",
+      "socks": "#2E8B57",
+      "trim": "#111111",
+      "numberColor": "#FFFFFF"
+    },
+    "defaultStadiumId": "home_park",
+    "defaultFormation": "4-4-2",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#E31C23",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "argyle_fans_xi",
+    "name": "Plymouth Argyle Fans XI",
+    "abbreviation": "FAN",
+    "teamType": "FANS_TEAM",
+    "city": "Plymouth",
+    "primaryColor": "#0B3D2E",
+    "secondaryColor": "#C5A572",
+    "defaultKit": {
+      "shirt": "#0B3D2E",
+      "shorts": "#C5A572",
+      "socks": "#0B3D2E",
+      "trim": "#C5A572",
+      "numberColor": "#C5A572"
+    },
+    "goalkeeperKit": {
+      "shirt": "#C5A572",
+      "shorts": "#0B3D2E",
+      "socks": "#C5A572",
+      "trim": "#0B3D2E",
+      "numberColor": "#0B3D2E"
+    },
+    "defaultStadiumId": "central_park_pitch",
+    "defaultFormation": "4-4-2-W",
+    "fanTeam": true,
+    "awayKit": {
+      "shirt": "#C5A572",
+      "shorts": "#111111",
+      "socks": "#C5A572",
+      "trim": "#0B3D2E",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "argyle_historic_sample",
+    "name": "Plymouth Argyle 101",
+    "abbreviation": "101",
+    "teamType": "HISTORIC_TEAM",
+    "city": "Plymouth",
+    "primaryColor": "#116B3A",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#116B3A",
+      "shorts": "#000000",
+      "socks": "#116B3A",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#FF8C00",
+      "shorts": "#000000",
+      "socks": "#FF8C00",
+      "trim": "#000000",
+      "numberColor": "#000000"
+    },
+    "defaultStadiumId": "home_park",
+    "defaultFormation": "4-4-2",
+    "historicSeason": "2021-22",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#000000",
+      "socks": "#FFFFFF",
+      "trim": "#116B3A",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "arsenal_current",
+    "name": "Arsenal",
+    "abbreviation": "ARS",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#EF0107",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#EF0107",
+      "shorts": "#FFFFFF",
+      "socks": "#EF0107",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "emirates_stadium",
+    "defaultFormation": "4-3-3",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#EF0107",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "aston_villa_current",
+    "name": "Aston Villa",
+    "abbreviation": "AVL",
+    "teamType": "CURRENT_TEAM",
+    "city": "Birmingham",
+    "primaryColor": "#670E36",
+    "secondaryColor": "#95BFE5",
+    "defaultKit": {
+      "shirt": "#670E36",
+      "shorts": "#670E36",
+      "socks": "#670E36",
+      "trim": "#95BFE5",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "villa_park",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#95BFE5",
+      "shorts": "#670E36",
+      "socks": "#95BFE5",
+      "trim": "#670E36",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "bournemouth_current",
+    "name": "AFC Bournemouth",
+    "abbreviation": "BOU",
+    "teamType": "CURRENT_TEAM",
+    "city": "Bournemouth",
+    "primaryColor": "#DA291C",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#DA291C",
+      "shorts": "#000000",
+      "socks": "#DA291C",
+      "trim": "#000000",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "vitality_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#DA291C",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "brentford_current",
+    "name": "Brentford",
+    "abbreviation": "BRE",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#E30613",
+    "secondaryColor": "#FFB81C",
+    "defaultKit": {
+      "shirt": "#E30613",
+      "shorts": "#FFB81C",
+      "socks": "#E30613",
+      "trim": "#FFB81C",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "gtech_community_stadium",
+    "defaultFormation": "4-3-3",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFB81C",
+      "shorts": "#111111",
+      "socks": "#FFB81C",
+      "trim": "#E30613",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "brighton_current",
+    "name": "Brighton & Hove Albion",
+    "abbreviation": "BHA",
+    "teamType": "CURRENT_TEAM",
+    "city": "Brighton",
+    "primaryColor": "#0057B8",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0057B8",
+      "shorts": "#FFFFFF",
+      "socks": "#0057B8",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "amex_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#0057B8",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "chelsea_current",
+    "name": "Chelsea",
+    "abbreviation": "CHE",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#034694",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#034694",
+      "shorts": "#FFFFFF",
+      "socks": "#034694",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "stamford_bridge",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#034694",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "coventry_city_current",
+    "name": "Coventry City",
+    "abbreviation": "COV",
+    "teamType": "CURRENT_TEAM",
+    "city": "Coventry",
+    "primaryColor": "#77B6E6",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#77B6E6",
+      "shorts": "#FFFFFF",
+      "socks": "#77B6E6",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "coventry_building_society_arena",
+    "defaultFormation": "3-4-2-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#77B6E6",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "crystal_palace_current",
+    "name": "Crystal Palace",
+    "abbreviation": "CRY",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#1B458F",
+    "secondaryColor": "#C4122E",
+    "defaultKit": {
+      "shirt": "#1B458F",
+      "shorts": "#C4122E",
+      "socks": "#1B458F",
+      "trim": "#C4122E",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "selhurst_park",
+    "defaultFormation": "3-4-2-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#C4122E",
+      "shorts": "#ffffff",
+      "socks": "#C4122E",
+      "trim": "#1B458F",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "everton_current",
+    "name": "Everton",
+    "abbreviation": "EVE",
+    "teamType": "CURRENT_TEAM",
+    "city": "Liverpool",
+    "primaryColor": "#003399",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#003399",
+      "shorts": "#FFFFFF",
+      "socks": "#003399",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "hill_dickinson_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#003399",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "fulham_current",
+    "name": "Fulham",
+    "abbreviation": "FUL",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#000000",
+      "socks": "#FFFFFF",
+      "trim": "#CC0000",
+      "numberColor": "#000000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "craven_cottage",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "hull_city_current",
+    "name": "Hull City",
+    "abbreviation": "HUL",
+    "teamType": "CURRENT_TEAM",
+    "city": "Hull",
+    "primaryColor": "#F5A3C7",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#F5A3C7",
+      "shorts": "#000000",
+      "socks": "#F5A3C7",
+      "trim": "#000000",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "mkm_stadium",
+    "defaultFormation": "4-3-3",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#F5A3C7",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "ipswich_town_current",
+    "name": "Ipswich Town",
+    "abbreviation": "IPS",
+    "teamType": "CURRENT_TEAM",
+    "city": "Ipswich",
+    "primaryColor": "#0000FF",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0000FF",
+      "shorts": "#FFFFFF",
+      "socks": "#0000FF",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "portman_road",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#0000FF",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "leeds_united_current",
+    "name": "Leeds United",
+    "abbreviation": "LEE",
+    "teamType": "CURRENT_TEAM",
+    "city": "Leeds",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#1D428A",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#1D428A",
+      "socks": "#FFFFFF",
+      "trim": "#1D428A",
+      "numberColor": "#1D428A"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "elland_road",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#1D428A",
+      "shorts": "#ffffff",
+      "socks": "#1D428A",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "liverpool_current",
+    "name": "Liverpool",
+    "abbreviation": "LIV",
+    "teamType": "CURRENT_TEAM",
+    "city": "Liverpool",
+    "primaryColor": "#C8102E",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#C8102E",
+      "shorts": "#FFFFFF",
+      "socks": "#C8102E",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "anfield",
+    "defaultFormation": "4-3-3",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#C8102E",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "manchester_city_current",
+    "name": "Manchester City",
+    "abbreviation": "MCI",
+    "teamType": "CURRENT_TEAM",
+    "city": "Manchester",
+    "primaryColor": "#6CABDD",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#6CABDD",
+      "shorts": "#FFFFFF",
+      "socks": "#6CABDD",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "etihad_stadium",
+    "defaultFormation": "4-3-3",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#6CABDD",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "manchester_united_current",
+    "name": "Manchester United",
+    "abbreviation": "MUN",
+    "teamType": "CURRENT_TEAM",
+    "city": "Manchester",
+    "primaryColor": "#DA291C",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#DA291C",
+      "shorts": "#000000",
+      "socks": "#DA291C",
+      "trim": "#000000",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "old_trafford",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#DA291C",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "newcastle_united_current",
+    "name": "Newcastle United",
+    "abbreviation": "NEW",
+    "teamType": "CURRENT_TEAM",
+    "city": "Newcastle",
+    "primaryColor": "#000000",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#000000",
+      "shorts": "#000000",
+      "socks": "#000000",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "st_james_park",
+    "defaultFormation": "4-3-3",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#000000",
+      "socks": "#FFFFFF",
+      "trim": "#000000",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "nottingham_forest_current",
+    "name": "Nottingham Forest",
+    "abbreviation": "NFO",
+    "teamType": "CURRENT_TEAM",
+    "city": "Nottingham",
+    "primaryColor": "#DD0000",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#DD0000",
+      "shorts": "#FFFFFF",
+      "socks": "#DD0000",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "city_ground",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#DD0000",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "sunderland_current",
+    "name": "Sunderland",
+    "abbreviation": "SUN",
+    "teamType": "CURRENT_TEAM",
+    "city": "Sunderland",
+    "primaryColor": "#EB172B",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#EB172B",
+      "shorts": "#FFFFFF",
+      "socks": "#EB172B",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "stadium_of_light",
+    "defaultFormation": "4-2-3-1",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#EB172B",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "tottenham_hotspur_current",
+    "name": "Tottenham Hotspur",
+    "abbreviation": "TOT",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#132257",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#132257",
+      "socks": "#FFFFFF",
+      "trim": "#132257",
+      "numberColor": "#132257"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "tottenham_hotspur_stadium",
+    "defaultFormation": "4-3-3",
+    "league": "PREMIER_LEAGUE",
+    "awayKit": {
+      "shirt": "#132257",
+      "shorts": "#ffffff",
+      "socks": "#132257",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "birmingham_city_current",
+    "name": "Birmingham City",
+    "abbreviation": "BIR",
+    "teamType": "CURRENT_TEAM",
+    "city": "Birmingham",
+    "primaryColor": "#0033A0",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0033A0",
+      "shorts": "#FFFFFF",
+      "socks": "#0033A0",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "st_andrews",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#0033A0",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "blackburn_rovers_current",
+    "name": "Blackburn Rovers",
+    "abbreviation": "BLB",
+    "teamType": "CURRENT_TEAM",
+    "city": "Blackburn",
+    "primaryColor": "#009EE0",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#009EE0",
+      "shorts": "#FFFFFF",
+      "socks": "#009EE0",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "ewood_park",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#009EE0",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "bolton_wanderers_current",
+    "name": "Bolton Wanderers",
+    "abbreviation": "BOL",
+    "teamType": "CURRENT_TEAM",
+    "city": "Bolton",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#2B4E9B",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#2B4E9B",
+      "socks": "#FFFFFF",
+      "trim": "#2B4E9B",
+      "numberColor": "#2B4E9B"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "toughsheet_community_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#2B4E9B",
+      "shorts": "#ffffff",
+      "socks": "#2B4E9B",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "bristol_city_current",
+    "name": "Bristol City",
+    "abbreviation": "BRC",
+    "teamType": "CURRENT_TEAM",
+    "city": "Bristol",
+    "primaryColor": "#E21A23",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#E21A23",
+      "shorts": "#FFFFFF",
+      "socks": "#E21A23",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "ashton_gate",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#E21A23",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "burnley_current",
+    "name": "Burnley",
+    "abbreviation": "BUR",
+    "teamType": "CURRENT_TEAM",
+    "city": "Burnley",
+    "primaryColor": "#6C1D45",
+    "secondaryColor": "#99D6EA",
+    "defaultKit": {
+      "shirt": "#6C1D45",
+      "shorts": "#99D6EA",
+      "socks": "#6C1D45",
+      "trim": "#99D6EA",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "turf_moor",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#99D6EA",
+      "shorts": "#111111",
+      "socks": "#99D6EA",
+      "trim": "#6C1D45",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "cardiff_city_current",
+    "name": "Cardiff City",
+    "abbreviation": "CAR",
+    "teamType": "CURRENT_TEAM",
+    "city": "Cardiff",
+    "primaryColor": "#0070B5",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0070B5",
+      "shorts": "#FFFFFF",
+      "socks": "#0070B5",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "cardiff_city_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#0070B5",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "charlton_athletic_current",
+    "name": "Charlton Athletic",
+    "abbreviation": "CHA",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#D4021D",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#D4021D",
+      "shorts": "#FFFFFF",
+      "socks": "#D4021D",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "the_valley",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#D4021D",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "derby_county_current",
+    "name": "Derby County",
+    "abbreviation": "DER",
+    "teamType": "CURRENT_TEAM",
+    "city": "Derby",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#000000",
+      "socks": "#FFFFFF",
+      "trim": "#000000",
+      "numberColor": "#000000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "pride_park",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "lincoln_city_current",
+    "name": "Lincoln City",
+    "abbreviation": "LIN",
+    "teamType": "CURRENT_TEAM",
+    "city": "Lincoln",
+    "primaryColor": "#E30613",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#E30613",
+      "shorts": "#FFFFFF",
+      "socks": "#E30613",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "sincil_bank",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#E30613",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "middlesbrough_current",
+    "name": "Middlesbrough",
+    "abbreviation": "MID",
+    "teamType": "CURRENT_TEAM",
+    "city": "Middlesbrough",
+    "primaryColor": "#E11B22",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#E11B22",
+      "shorts": "#FFFFFF",
+      "socks": "#E11B22",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "riverside_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#E11B22",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "millwall_current",
+    "name": "Millwall",
+    "abbreviation": "MIL",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#003087",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#003087",
+      "shorts": "#FFFFFF",
+      "socks": "#003087",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "the_den",
+    "defaultFormation": "4-4-2",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#003087",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "norwich_city_current",
+    "name": "Norwich City",
+    "abbreviation": "NOR",
+    "teamType": "CURRENT_TEAM",
+    "city": "Norwich",
+    "primaryColor": "#FFF200",
+    "secondaryColor": "#00A650",
+    "defaultKit": {
+      "shirt": "#FFF200",
+      "shorts": "#00A650",
+      "socks": "#FFF200",
+      "trim": "#00A650",
+      "numberColor": "#00A650"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "carrow_road",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#00A650",
+      "shorts": "#ffffff",
+      "socks": "#00A650",
+      "trim": "#FFF200",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "portsmouth_current",
+    "name": "Portsmouth",
+    "abbreviation": "POR",
+    "teamType": "CURRENT_TEAM",
+    "city": "Portsmouth",
+    "primaryColor": "#001489",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#001489",
+      "shorts": "#FFFFFF",
+      "socks": "#001489",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "fratton_park",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#001489",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "preston_north_end_current",
+    "name": "Preston North End",
+    "abbreviation": "PNE",
+    "teamType": "CURRENT_TEAM",
+    "city": "Preston",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#241F20",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#241F20",
+      "socks": "#FFFFFF",
+      "trim": "#241F20",
+      "numberColor": "#241F20"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "deepdale",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#241F20",
+      "shorts": "#ffffff",
+      "socks": "#241F20",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "queens_park_rangers_current",
+    "name": "Queens Park Rangers",
+    "abbreviation": "QPR",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#1D5BA4",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#1D5BA4",
+      "shorts": "#FFFFFF",
+      "socks": "#1D5BA4",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "loftus_road",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#1D5BA4",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "sheffield_united_current",
+    "name": "Sheffield United",
+    "abbreviation": "SHU",
+    "teamType": "CURRENT_TEAM",
+    "city": "Sheffield",
+    "primaryColor": "#EE2737",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#EE2737",
+      "shorts": "#FFFFFF",
+      "socks": "#EE2737",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "bramall_lane",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#EE2737",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "stoke_city_current",
+    "name": "Stoke City",
+    "abbreviation": "STK",
+    "teamType": "CURRENT_TEAM",
+    "city": "Stoke",
+    "primaryColor": "#E03A3E",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#E03A3E",
+      "shorts": "#FFFFFF",
+      "socks": "#E03A3E",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "bet365_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#E03A3E",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "swansea_city_current",
+    "name": "Swansea City",
+    "abbreviation": "SWA",
+    "teamType": "CURRENT_TEAM",
+    "city": "Swansea",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#000000",
+      "socks": "#FFFFFF",
+      "trim": "#000000",
+      "numberColor": "#000000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "swansea_com_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "watford_current",
+    "name": "Watford",
+    "abbreviation": "WAT",
+    "teamType": "CURRENT_TEAM",
+    "city": "Watford",
+    "primaryColor": "#FBEE23",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FBEE23",
+      "shorts": "#000000",
+      "socks": "#FBEE23",
+      "trim": "#000000",
+      "numberColor": "#000000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "vicarage_road",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#FBEE23",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "west_bromwich_albion_current",
+    "name": "West Bromwich Albion",
+    "abbreviation": "WBA",
+    "teamType": "CURRENT_TEAM",
+    "city": "West Bromwich",
+    "primaryColor": "#002F6C",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#002F6C",
+      "shorts": "#FFFFFF",
+      "socks": "#002F6C",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "the_hawthorns",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#002F6C",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "west_ham_united_current",
+    "name": "West Ham United",
+    "abbreviation": "WHU",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#7A263A",
+    "secondaryColor": "#1BB1E7",
+    "defaultKit": {
+      "shirt": "#7A263A",
+      "shorts": "#1BB1E7",
+      "socks": "#7A263A",
+      "trim": "#1BB1E7",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "london_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#1BB1E7",
+      "shorts": "#ffffff",
+      "socks": "#1BB1E7",
+      "trim": "#7A263A",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "wolverhampton_wanderers_current",
+    "name": "Wolverhampton Wanderers",
+    "abbreviation": "WOL",
+    "teamType": "CURRENT_TEAM",
+    "city": "Wolverhampton",
+    "primaryColor": "#FDB913",
+    "secondaryColor": "#111111",
+    "defaultKit": {
+      "shirt": "#FDB913",
+      "shorts": "#111111",
+      "socks": "#FDB913",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "molineux",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#111111",
+      "shorts": "#ffffff",
+      "socks": "#111111",
+      "trim": "#FDB913",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "wrexham_current",
+    "name": "Wrexham",
+    "abbreviation": "WRX",
+    "teamType": "CURRENT_TEAM",
+    "city": "Wrexham",
+    "primaryColor": "#FF0000",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#FF0000",
+      "shorts": "#FFFFFF",
+      "socks": "#FF0000",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "racecourse_ground",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#FF0000",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "southampton_current",
+    "name": "Southampton",
+    "abbreviation": "SOU",
+    "teamType": "CURRENT_TEAM",
+    "city": "Southampton",
+    "primaryColor": "#D71920",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#D71920",
+      "shorts": "#FFFFFF",
+      "socks": "#D71920",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "st_marys",
+    "defaultFormation": "4-2-3-1",
+    "league": "CHAMPIONSHIP",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#D71920",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "afc_wimbledon_current",
+    "name": "AFC Wimbledon",
+    "abbreviation": "WIM",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#0033A0",
+    "secondaryColor": "#FFD100",
+    "defaultKit": {
+      "shirt": "#0033A0",
+      "shorts": "#FFD100",
+      "socks": "#0033A0",
+      "trim": "#FFD100",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "plough_lane",
+    "defaultFormation": "4-4-2",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFD100",
+      "shorts": "#111111",
+      "socks": "#FFD100",
+      "trim": "#0033A0",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "blackpool_current",
+    "name": "Blackpool",
+    "abbreviation": "BPL",
+    "teamType": "CURRENT_TEAM",
+    "city": "Blackpool",
+    "primaryColor": "#F68712",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#F68712",
+      "shorts": "#FFFFFF",
+      "socks": "#F68712",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "bloomfield_road",
+    "defaultFormation": "4-4-2",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#F68712",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "bradford_city_current",
+    "name": "Bradford City",
+    "abbreviation": "BRA",
+    "teamType": "CURRENT_TEAM",
+    "city": "Bradford",
+    "primaryColor": "#C8102E",
+    "secondaryColor": "#F5A100",
+    "defaultKit": {
+      "shirt": "#C8102E",
+      "shorts": "#F5A100",
+      "socks": "#C8102E",
+      "trim": "#F5A100",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "valley_parade",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#F5A100",
+      "shorts": "#111111",
+      "socks": "#F5A100",
+      "trim": "#C8102E",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "bromley_current",
+    "name": "Bromley",
+    "abbreviation": "BRM",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#C8102E",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#C8102E",
+      "socks": "#FFFFFF",
+      "trim": "#C8102E",
+      "numberColor": "#C8102E"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "hayes_lane",
+    "defaultFormation": "4-4-2",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#C8102E",
+      "shorts": "#ffffff",
+      "socks": "#C8102E",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "burton_albion_current",
+    "name": "Burton Albion",
+    "abbreviation": "BRT",
+    "teamType": "CURRENT_TEAM",
+    "city": "Burton",
+    "primaryColor": "#FFD200",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FFD200",
+      "shorts": "#000000",
+      "socks": "#FFD200",
+      "trim": "#000000",
+      "numberColor": "#000000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "prow_pilsner_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#FFD200",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "cambridge_united_current",
+    "name": "Cambridge United",
+    "abbreviation": "CAM",
+    "teamType": "CURRENT_TEAM",
+    "city": "Cambridge",
+    "primaryColor": "#FFB81C",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FFB81C",
+      "shorts": "#000000",
+      "socks": "#FFB81C",
+      "trim": "#000000",
+      "numberColor": "#000000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "abbey_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#FFB81C",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "doncaster_rovers_current",
+    "name": "Doncaster Rovers",
+    "abbreviation": "DON",
+    "teamType": "CURRENT_TEAM",
+    "city": "Doncaster",
+    "primaryColor": "#ED1B2F",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#ED1B2F",
+      "shorts": "#FFFFFF",
+      "socks": "#ED1B2F",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "ecopower_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#ED1B2F",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "huddersfield_town_current",
+    "name": "Huddersfield Town",
+    "abbreviation": "HUD",
+    "teamType": "CURRENT_TEAM",
+    "city": "Huddersfield",
+    "primaryColor": "#0B63A8",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0B63A8",
+      "shorts": "#FFFFFF",
+      "socks": "#0B63A8",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "kirklees_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#0B63A8",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "leicester_city_current",
+    "name": "Leicester City",
+    "abbreviation": "LEI",
+    "teamType": "CURRENT_TEAM",
+    "city": "Leicester",
+    "primaryColor": "#003090",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#003090",
+      "shorts": "#FFFFFF",
+      "socks": "#003090",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "king_power_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#003090",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "leyton_orient_current",
+    "name": "Leyton Orient",
+    "abbreviation": "LEY",
+    "teamType": "CURRENT_TEAM",
+    "city": "London",
+    "primaryColor": "#ED1C24",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#ED1C24",
+      "shorts": "#FFFFFF",
+      "socks": "#ED1C24",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "brisbane_road",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#ED1C24",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "luton_town_current",
+    "name": "Luton Town",
+    "abbreviation": "LUT",
+    "teamType": "CURRENT_TEAM",
+    "city": "Luton",
+    "primaryColor": "#F78F1E",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#F78F1E",
+      "shorts": "#FFFFFF",
+      "socks": "#F78F1E",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "kenilworth_road",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#F78F1E",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "mansfield_town_current",
+    "name": "Mansfield Town",
+    "abbreviation": "MAN",
+    "teamType": "CURRENT_TEAM",
+    "city": "Mansfield",
+    "primaryColor": "#FFD100",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FFD100",
+      "shorts": "#000000",
+      "socks": "#FFD100",
+      "trim": "#000000",
+      "numberColor": "#000000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "field_mill",
+    "defaultFormation": "4-4-2",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#FFD100",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "mk_dons_current",
+    "name": "Milton Keynes Dons",
+    "abbreviation": "MKD",
+    "teamType": "CURRENT_TEAM",
+    "city": "Milton Keynes",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#E21A23",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#E21A23",
+      "socks": "#FFFFFF",
+      "trim": "#E21A23",
+      "numberColor": "#E21A23"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "stadium_mk",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#E21A23",
+      "shorts": "#ffffff",
+      "socks": "#E21A23",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "notts_county_current",
+    "name": "Notts County",
+    "abbreviation": "NCO",
+    "teamType": "CURRENT_TEAM",
+    "city": "Nottingham",
+    "primaryColor": "#000000",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#000000",
+      "shorts": "#000000",
+      "socks": "#000000",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "meadow_lane",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#000000",
+      "socks": "#FFFFFF",
+      "trim": "#000000",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "oxford_united_current",
+    "name": "Oxford United",
+    "abbreviation": "OXF",
+    "teamType": "CURRENT_TEAM",
+    "city": "Oxford",
+    "primaryColor": "#FFD100",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FFD100",
+      "shorts": "#000000",
+      "socks": "#FFD100",
+      "trim": "#000000",
+      "numberColor": "#000000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "kassam_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#000000",
+      "shorts": "#ffffff",
+      "socks": "#000000",
+      "trim": "#FFD100",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "peterborough_united_current",
+    "name": "Peterborough United",
+    "abbreviation": "PET",
+    "teamType": "CURRENT_TEAM",
+    "city": "Peterborough",
+    "primaryColor": "#004FA3",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#004FA3",
+      "shorts": "#FFFFFF",
+      "socks": "#004FA3",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "london_road",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#004FA3",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "reading_current",
+    "name": "Reading",
+    "abbreviation": "REA",
+    "teamType": "CURRENT_TEAM",
+    "city": "Reading",
+    "primaryColor": "#004C97",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#004C97",
+      "shorts": "#FFFFFF",
+      "socks": "#004C97",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "madejski_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#004C97",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "sheffield_wednesday_current",
+    "name": "Sheffield Wednesday",
+    "abbreviation": "SHW",
+    "teamType": "CURRENT_TEAM",
+    "city": "Sheffield",
+    "primaryColor": "#007A3D",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#007A3D",
+      "shorts": "#FFFFFF",
+      "socks": "#007A3D",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "hillsborough",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#007A3D",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "stevenage_current",
+    "name": "Stevenage",
+    "abbreviation": "STE",
+    "teamType": "CURRENT_TEAM",
+    "city": "Stevenage",
+    "primaryColor": "#E30613",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#E30613",
+      "shorts": "#FFFFFF",
+      "socks": "#E30613",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "broadhall_way",
+    "defaultFormation": "4-4-2",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#E30613",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "stockport_county_current",
+    "name": "Stockport County",
+    "abbreviation": "STO",
+    "teamType": "CURRENT_TEAM",
+    "city": "Stockport",
+    "primaryColor": "#004B87",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#004B87",
+      "shorts": "#FFFFFF",
+      "socks": "#004B87",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "edgeley_park",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#111111",
+      "socks": "#FFFFFF",
+      "trim": "#004B87",
+      "numberColor": "#111111"
+    }
+  },
+  {
+    "id": "wigan_athletic_current",
+    "name": "Wigan Athletic",
+    "abbreviation": "WIG",
+    "teamType": "CURRENT_TEAM",
+    "city": "Wigan",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#0033A0",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#0033A0",
+      "socks": "#FFFFFF",
+      "trim": "#0033A0",
+      "numberColor": "#0033A0"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "dw_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#0033A0",
+      "shorts": "#ffffff",
+      "socks": "#0033A0",
+      "trim": "#FFFFFF",
+      "numberColor": "#ffffff"
+    }
+  },
+  {
+    "id": "wycombe_wanderers_current",
+    "name": "Wycombe Wanderers",
+    "abbreviation": "WYC",
+    "teamType": "CURRENT_TEAM",
+    "city": "High Wycombe",
+    "primaryColor": "#7AC143",
+    "secondaryColor": "#002B5C",
+    "defaultKit": {
+      "shirt": "#7AC143",
+      "shorts": "#002B5C",
+      "socks": "#7AC143",
+      "trim": "#002B5C",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "adams_park",
+    "defaultFormation": "4-2-3-1",
+    "league": "LEAGUE_ONE",
+    "awayKit": {
+      "shirt": "#002B5C",
+      "shorts": "#ffffff",
+      "socks": "#002B5C",
+      "trim": "#7AC143",
+      "numberColor": "#ffffff"
+    }
+  }
+]

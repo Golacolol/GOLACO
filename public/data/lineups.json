@@ -1,0 +1,3572 @@
+[
+  {
+    "id": "argyle_current_xi",
+    "teamId": "plymouth_argyle_current",
+    "formation": "4-4-2-W",
+    "starters": [
+      {
+        "playerId": "player_arg_cooper",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_arg_sorinola",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_arg_pleguezuelo",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_arg_mitchell",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_arg_edwards",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_arg_watts",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_arg_white",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_arg_ibrahim",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_arg_curtis",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_arg_people",
+        "slot": "LST"
+      },
+      {
+        "playerId": "player_arg_evans",
+        "slot": "RST"
+      }
+    ]
+  },
+  {
+    "id": "barnsley_xi",
+    "teamId": "barnsley_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_barnsley_rogan_ravenhill_25",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_barnsley_arley_kay_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_barnsley_sam_gale_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_barnsley_connor_o_riordan_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_barnsley_tyrese_noslin_11",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_barnsley_cameron_mcgeehan_8",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_barnsley_jonathan_bland_30",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_barnsley_luca_connell_48",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_barnsley_vimal_yoganathan_45",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_barnsley_reyes_cleary_19",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_barnsley_makenzie_kirk_9",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "argyle_fans_xi_lineup",
+    "teamId": "argyle_fans_xi",
+    "formation": "4-4-2-W",
+    "starters": [
+      {
+        "playerId": "player_fan_cd_pafc",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_fan_argyletweet",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_fan_v_doo",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_fan_t_bones",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_fan_a_tweets",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_fan_l_days",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_fan_c_pilgrim",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_fan_a_life",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_fan_s_argotweets",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_fan_s_down",
+        "slot": "LST"
+      },
+      {
+        "playerId": "player_fan_p_face",
+        "slot": "RST"
+      }
+    ]
+  },
+  {
+    "id": "argyle_historic_xi",
+    "teamId": "argyle_historic_sample",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_101_m_cooper",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_101_j_edwards",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_101_d_scarr",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_101_gilesphey",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_101_b_mumba",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_101_m_whittaker",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_101_a_randell",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_101_f_azaz",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_101_c_wright",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_101_r_hardie",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_101_n_ennis",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "arsenal_xi",
+    "teamId": "arsenal_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_arsenal_david_raya_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_arsenal_william_saliba_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_arsenal_cristhian_mosquera_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_arsenal_ben_white_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_arsenal_piero_hincapie_5",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_arsenal_martin_degaard_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_arsenal_eberechi_eze_10",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_arsenal_mikel_merino_23",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_arsenal_bukayo_saka_7",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_arsenal_christos_tzolis_17",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_arsenal_viktor_gyokeres_14",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "aston_villa_xi",
+    "teamId": "aston_villa_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_aston_villa_zion_suzuki_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_aston_villa_matty_cash_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_aston_villa_tyrone_mings_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_aston_villa_pau_torres_14",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_aston_villa_aaron_wan_bissaka_29",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_aston_villa_john_mcginn_7",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_aston_villa_ross_barkley_6",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_aston_villa_george_hemmings_53",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_aston_villa_johan_manzambi_44",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_aston_villa_tammy_abraham_18",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_aston_villa_ibrahim_mbaye_19",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "bournemouth_xi",
+    "teamId": "bournemouth_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_bournemouth_or_e_petrovic_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_bournemouth_adrien_truffert_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_bournemouth_julio_soler_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_bournemouth_bafode_diakite_18",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_bournemouth_juanlu_sanchez_24",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_bournemouth_marcus_tavernier_16",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_bournemouth_tyler_adams_12",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_bournemouth_justin_kluivert_19",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_bournemouth_ryan_christie_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_bournemouth_ben_gannon_doak_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_bournemouth_daniel_jebbison_29",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "brentford_xi",
+    "teamId": "brentford_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_brentford_caoimhin_kelleher_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_brentford_aaron_hickey_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_brentford_rico_henry_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_brentford_sepp_van_den_berg_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_brentford_kristoffer_ajer_20",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_brentford_yehor_yarmolyuk_6",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_brentford_mathias_jensen_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_brentford_josh_dasilva_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_brentford_kevin_schade_7",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_brentford_dango_ouattara_11",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_brentford_igor_thiago_9",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "brighton_xi",
+    "teamId": "brighton_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_brighton_bart_verbruggen_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_brighton_olivier_boscagli_21",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_brighton_ferdi_kad_oglu_24",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_brighton_maxim_de_cuyper_29",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_brighton_luka_vuskovic_44",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_brighton_pascal_gro_13",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_brighton_yasin_ayari_26",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_brighton_charalampos_kostoulas_19",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_brighton_malick_yalcouye_35",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_brighton_chema_andres_14",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_brighton_georginio_rutter_10",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "chelsea_xi",
+    "teamId": "chelsea_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_chelsea_emiliano_martinez_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_chelsea_marco_palestra_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_chelsea_wesley_fofana_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_chelsea_maxence_lacroix_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_chelsea_levi_colwill_6",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_chelsea_valentin_barco_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_chelsea_cole_palmer_10",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_chelsea_pedro_neto_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_chelsea_joao_pedro_9",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_chelsea_jamie_gittens_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_chelsea_jordan_henderson_14",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "coventry_xi",
+    "teamId": "coventry_city_current",
+    "formation": "3-4-2-1",
+    "starters": [
+      {
+        "playerId": "player_coventry_oliver_dovin_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_coventry_ethan_pinnock_2",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_coventry_jay_dasilva_3",
+        "slot": "CB"
+      },
+      {
+        "playerId": "player_coventry_bobby_thomas_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_coventry_stephen_mfuni_12",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_coventry_jack_rudoni_5",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_coventry_matt_grimes_6",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_coventry_liam_kitching_15",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_coventry_josh_eccles_28",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_coventry_victor_torp_29",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_coventry_tatsuhiro_sakamoto_7",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "crystal_palace_xi",
+    "teamId": "crystal_palace_current",
+    "formation": "3-4-2-1",
+    "starters": [
+      {
+        "playerId": "player_crystal_palace_dean_henderson_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_crystal_palace_tyrick_mitchell_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_crystal_palace_anan_khalaili_25",
+        "slot": "CB"
+      },
+      {
+        "playerId": "player_crystal_palace_jaydee_canvot_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_crystal_palace_takehiro_tomiyasu_17",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_crystal_palace_daichi_kamada_18",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_crystal_palace_adam_wharton_20",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_crystal_palace_axel_disasi_5",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_crystal_palace_will_hughes_19",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_crystal_palace_j_rgen_strand_larsen_22",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_crystal_palace_walter_benitez_44",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "everton_xi",
+    "teamId": "everton_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_everton_jordan_pickford_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_everton_ainsley_maitland_niles_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_everton_jarrad_branthwaite_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_everton_james_tarkowski_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_everton_vitaliy_mykolenko_16",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_everton_kiernan_dewsbury_hall_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_everton_merlin_rohl_34",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_everton_tyrique_george_19",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_everton_brennan_johnson_22",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_everton_jack_grealish_10",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_everton_hayden_hackney_30",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "fulham_xi",
+    "teamId": "fulham_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_fulham_bernd_leno_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_fulham_calvin_bassey_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_fulham_timothy_castagne_21",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_fulham_david_affengruber_22",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_fulham_antonee_robinson_33",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_fulham_sander_berge_16",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_fulham_shea_charles_19",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_fulham_oscar_bobb_14",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_fulham_alex_iwobi_17",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_fulham_emile_smith_rowe_32",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_fulham_tom_cairney_10",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "hull_xi",
+    "teamId": "hull_city_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_hull_konstantinos_tzolakis_19",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_hull_lewie_coyle_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_hull_ryan_giles_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_hull_semi_ajayi_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_hull_nobel_mendy_32",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_hull_regan_slater_27",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_hull_matt_crooks_25",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_hull_hidemasa_morita_5",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_hull_oli_mcburnie_9",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_hull_elliot_stroud_21",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_hull_mohamed_belloumi_10",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "ipswich_xi",
+    "teamId": "ipswich_town_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_ipswich_alex_palmer_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_ipswich_darnell_furlong_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_ipswich_leif_davis_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_ipswich_cedric_kipre_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_ipswich_issa_diop_6",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_ipswich_azor_matusiwa_5",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_ipswich_florentino_luis_12",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_ipswich_abdul_fatawu_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_ipswich_sindre_walle_egeli_8",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_ipswich_zian_flemming_9",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_ipswich_julio_enciso_10",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "leeds_xi",
+    "teamId": "leeds_united_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_leeds_james_trafford_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_leeds_jayden_bogle_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_leeds_gabriel_gudmundsson_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_leeds_tarik_muharemovic_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_leeds_joe_rodon_6",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_leeds_ethan_ampadu_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_leeds_daniel_james_7",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_leeds_sean_longstaff_8",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_leeds_dominic_calvert_lewin_9",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_leeds_harry_wilson_10",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_leeds_brenden_aaronson_11",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "liverpool_xi",
+    "teamId": "liverpool_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_liverpool_alisson_becker_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_liverpool_virgil_van_dijk_4",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_liverpool_jeremy_jacquet_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_liverpool_milos_kerkez_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_liverpool_ronald_araujo_33",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_liverpool_florian_wirtz_7",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_liverpool_dominik_szoboszlai_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_liverpool_alexis_mac_allister_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_liverpool_alexander_isak_9",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_liverpool_bradley_barcola_29",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_liverpool_cody_gakpo_18",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "man_city_xi",
+    "teamId": "manchester_city_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_man_city_gianluigi_donnarumma_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_man_city_ruben_dias_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_man_city_marc_guehi_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_man_city_rayan_ait_nouri_21",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_man_city_vitor_reis_22",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_man_city_elliot_anderson_5",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_man_city_mateo_kovacic_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_man_city_rayan_cherki_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_man_city_iliman_ndiaye_7",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_man_city_jeremy_doku_11",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_man_city_erling_haaland_9",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "man_utd_xi",
+    "teamId": "manchester_united_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_man_utd_senne_lammens_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_man_utd_diogo_dalot_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_man_utd_noussair_mazraoui_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_man_utd_matthijs_de_ligt_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_man_utd_harry_maguire_5",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_man_utd_mason_mount_7",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_man_utd_bruno_fernandes_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_man_utd_marcus_rashford_9",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_man_utd_matheus_cunha_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_man_utd_joshua_zirkzee_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_man_utd_amad_diallo_16",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "newcastle_xi",
+    "teamId": "newcastle_united_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_newcastle_lukas_hornicek_21",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_newcastle_tino_livramento_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_newcastle_sven_botman_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_newcastle_malick_thiaw_12",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_newcastle_amar_dedic_37",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_newcastle_lewis_miley_67",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_newcastle_joe_willock_28",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_newcastle_jacob_murphy_23",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_newcastle_yoane_wissa_9",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_newcastle_matias_fernandez_pardo_20",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_newcastle_harvey_barnes_11",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "forest_xi",
+    "teamId": "nottingham_forest_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_forest_john_victor_12",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_forest_ousmane_diomande_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_forest_neco_williams_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_forest_morato_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_forest_murillo_5",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_forest_ibrahim_sangare_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_forest_nicolas_dominguez_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_forest_callum_hudson_odoi_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_forest_chris_wood_9",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_forest_morgan_gibbs_white_10",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_forest_igor_jesus_11",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "sunderland_xi",
+    "teamId": "sunderland_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_sunderland_robin_roefs_22",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_sunderland_kevin_danso_4",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_sunderland_thomas_meunier_12",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_sunderland_reinildo_mandava_17",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_sunderland_nordi_mukiele_20",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_sunderland_noah_sadiki_27",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_sunderland_enzo_le_fee_28",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_sunderland_granit_xhaka_34",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_sunderland_nilson_angulo_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_sunderland_brian_brobbey_9",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_sunderland_wilson_isidor_18",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "spurs_xi",
+    "teamId": "tottenham_hotspur_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_spurs_guglielmo_vicario_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_spurs_andy_robertson_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_spurs_tosin_adarabioyo_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_spurs_marcos_senesi_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_spurs_jan_paul_van_hecke_6",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_spurs_xavi_simons_7",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_spurs_conor_gallagher_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_spurs_james_maddison_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_spurs_richarlison_9",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_spurs_savio_17",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_spurs_mathys_tel_11",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "birmingham_xi",
+    "teamId": "birmingham_city_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_birmingham_james_beadle_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_birmingham_ethan_laird_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_birmingham_lee_buchanan_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_birmingham_christoph_klarer_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_birmingham_phil_neumann_5",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_birmingham_carlos_vicente_7",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_birmingham_paik_seung_ho_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_birmingham_august_priske_9",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_birmingham_demarai_gray_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_birmingham_scott_wright_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_birmingham_marc_leonard_12",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "blackburn_xi",
+    "teamId": "blackburn_rovers_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_blackburn_aynsley_pears_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_blackburn_ryan_alebiosu_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_blackburn_yuri_ribeiro_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_blackburn_tom_atcheson_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_blackburn_hayden_carter_17",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_blackburn_todd_cantwell_10",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_blackburn_ryoya_morishita_25",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_blackburn_dapo_afolayan_21",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_blackburn_kristi_montgomery_31",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_blackburn_sam_morsy_8",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_blackburn_andri_gu_johnsen_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "bolton_xi",
+    "teamId": "bolton_wanderers_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_bolton_gavin_bazunu_31",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_bolton_akin_famewo_14",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_bolton_eoin_toal_18",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_bolton_gaizka_larrazabal_22",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_bolton_max_conway_25",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_bolton_josh_sheehan_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_bolton_ethan_erhahon_21",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_bolton_sam_dalby_10",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_bolton_thierry_gale_11",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_bolton_samuel_iling_junior_16",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_bolton_kyliane_dong_7",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "bristol_city_xi",
+    "teamId": "bristol_city_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_bristol_city_sam_tickle_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_bristol_city_lisav_eissat_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_bristol_city_rob_dickie_16",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_bristol_city_rob_atkinson_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_bristol_city_cameron_pring_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_bristol_city_adam_randell_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_bristol_city_jason_knight_12",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_bristol_city_jed_wallace_17",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_bristol_city_scott_twine_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_bristol_city_yu_hirakawa_7",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_bristol_city_lorent_tolaj_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "burnley_xi",
+    "teamId": "burnley_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_burnley_max_wei_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_burnley_kyle_walker_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_burnley_max_alleyne_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_burnley_bashir_humphreys_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_burnley_connor_roberts_14",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_burnley_reo_hatate_5",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_burnley_ugo_raghouber_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_burnley_jacob_bruun_larsen_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_burnley_jamie_vardy_9",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_burnley_marcus_edwards_10",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_burnley_zeki_amdouni_11",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "cardiff_xi",
+    "teamId": "cardiff_city_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_cardiff_nathan_trott_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_cardiff_joel_bagan_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_cardiff_gabriel_osho_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_cardiff_krystian_bielik_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_cardiff_perry_ng_38",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_cardiff_jack_moylan_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_cardiff_ollie_tanner_11",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_cardiff_chris_willock_16",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_cardiff_joel_colwill_27",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_cardiff_cian_ashford_45",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_cardiff_yousef_salech_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "charlton_xi",
+    "teamId": "charlton_athletic_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_charlton_thomas_kaminski_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_charlton_kayne_ramsay_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_charlton_josh_edwards_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_charlton_reece_burke_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_charlton_lloyd_jones_5",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_charlton_conor_coventry_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_charlton_harvey_knibbs_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_charlton_tyreece_campbell_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_charlton_karlan_grant_9",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_charlton_miles_leaburn_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_charlton_sonny_carey_14",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "derby_xi",
+    "teamId": "derby_county_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_derby_sortname_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_derby_sortname_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_derby_sortname_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_derby_sortname_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_derby_sortname_18",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_derby_sortname_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_derby_sortname_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_derby_sortname_9",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_derby_sortname_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_derby_sortname_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_derby_sortname_13",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "lincoln_xi",
+    "teamId": "lincoln_city_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_lincoln_george_wickens_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_lincoln_tendayi_darikwa_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_lincoln_adam_reach_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_lincoln_andrei_coubis_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_lincoln_adam_jackson_5",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_lincoln_reeco_hackett_fairchild_7",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_lincoln_tom_bayliss_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_lincoln_freddie_draper_34",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_lincoln_mikkel_ladefoged_11",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_lincoln_rob_street_17",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_lincoln_ben_house_18",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "middlesbrough_xi",
+    "teamId": "middlesbrough_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_middlesbrough_radek_vitek_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_middlesbrough_callum_brittain_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_middlesbrough_luke_ayling_12",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_middlesbrough_adilson_malanda_29",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_middlesbrough_neto_borges_30",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_middlesbrough_aidan_morris_10",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_middlesbrough_sebastian_berhalter_6",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_middlesbrough_will_lankshear_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_middlesbrough_riley_mcgree_8",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_middlesbrough_kyle_joseph_22",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_middlesbrough_amario_cozier_duberry_11",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "millwall_xi",
+    "teamId": "millwall_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_millwall_max_crocombe_15",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_millwall_jordi_osei_tutu_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_millwall_zak_sturge_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_millwall_tristan_crama_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_millwall_elkan_baggott_12",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_millwall_jenson_metcalfe_14",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_millwall_derek_mazou_sacko_49",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_millwall_casper_de_norre_24",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_millwall_luke_cundle_25",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_millwall_camiel_neghli_10",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_millwall_lyndon_dykes_13",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "norwich_xi",
+    "teamId": "norwich_city_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_norwich_vladan_kovacevic_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_norwich_jack_stacey_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_norwich_jakov_medic_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_norwich_harry_darling_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_norwich_lucien_mahovo_12",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_norwich_pelle_mattsson_7",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_norwich_liam_gibbs_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_norwich_matej_jurasek_10",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_norwich_andre_brooks_11",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_norwich_jacob_wright_16",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_norwich_ante_crnac_17",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "portsmouth_xi",
+    "teamId": "portsmouth_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_portsmouth_nicolas_schmid_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_portsmouth_conor_shaughnessy_6",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_portsmouth_zak_swanson_22",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_portsmouth_terry_devlin_24",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_portsmouth_ebou_adams_38",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_portsmouth_marlon_pack_7",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_portsmouth_iyad_mohamed_37",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_portsmouth_adrian_segecic_10",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_portsmouth_ryan_kavuma_mcqueen_25",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_portsmouth_colby_bishop_9",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_portsmouth_tyrese_shade_17",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "preston_xi",
+    "teamId": "preston_north_end_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_preston_daniel_iversen_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_preston_andrija_vukcevic_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_preston_liam_lindsay_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_preston_jordan_storey_14",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_preston_odeluga_offiah_24",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_preston_alfie_devine_7",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_preston_leo_leroy_27",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_preston_callum_lang_10",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_preston_delano_burgzorg_37",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_preston_jusef_erabi_9",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_preston_johnny_kenny_38",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "qpr_xi",
+    "teamId": "queens_park_rangers_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_qpr_pierce_charles_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_qpr_kealey_adamson_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_qpr_jake_clarke_salter_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_qpr_dennis_cirkin_19",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_qpr_amadou_mbengue_27",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_qpr_harvey_vale_20",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_qpr_glen_kamara_18",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_qpr_kwame_poku_17",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_qpr_nicolas_madsen_24",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_qpr_rumarn_burrell_16",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_qpr_alfie_lloyd_15",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "sheffield_utd_xi",
+    "teamId": "sheffield_united_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_sheffield_utd_michael_cooper_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_sheffield_utd_sam_mccallum_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_sheffield_utd_japhet_tanganga_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_sheffield_utd_liam_kitching_15",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_sheffield_utd_mark_mcguinness_25",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_sheffield_utd_sydie_peck_42",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_sheffield_utd_hamza_choudhury_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_sheffield_utd_patrick_bamford_45",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_sheffield_utd_ben_brereton_diaz_22",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_sheffield_utd_romelle_donovan_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_sheffield_utd_joe_rothwell_7",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "stoke_xi",
+    "teamId": "stoke_city_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_stoke_viktor_johansson_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_stoke_ben_johnson_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_stoke_aaron_cresswell_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_stoke_luke_graham_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_stoke_ben_wilmot_16",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_stoke_ben_pearson_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_stoke_svante_ingelsson_6",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_stoke_jack_mcglynn_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_stoke_ethan_galbraith_8",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_stoke_robert_bozenik_9",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_stoke_bae_jun_ho_10",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "swansea_xi",
+    "teamId": "swansea_city_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_swansea_lawrence_vigouroux_22",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_swansea_ben_cabango_5",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_swansea_josh_tymon_14",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_swansea_stephen_welsh_23",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_swansea_filip_lissah_26",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_swansea_marko_stamenic_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_swansea_jay_fulton_4",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_swansea_moussa_yeo_49",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_swansea_elijah_just_8",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_swansea_joseph_opoku_30",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_swansea_adam_idah_33",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "watford_xi",
+    "teamId": "watford_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_watford_federico_ravaglia_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_watford_kevin_keben_4",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_watford_mattie_pollock_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_watford_omar_haktab_traore_23",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_watford_jordan_zemura_33",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_watford_hector_kyprianou_5",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_watford_amin_nabizada_21",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_watford_iker_bravo_17",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_watford_othmane_maamma_7",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_watford_edo_kayembe_39",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_watford_luca_kjerrumgaard_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "west_brom_xi",
+    "teamId": "west_bromwich_albion_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_west_brom_max_o_leary_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_west_brom_chris_mepham_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_west_brom_nat_phillips_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_west_brom_callum_styles_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_west_brom_nolan_galves_25",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_west_brom_isaac_price_21",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_west_brom_ousmane_diakite_17",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_west_brom_jimmy_jay_morgan_11",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_west_brom_jayson_molumby_8",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_west_brom_harry_whitwell_29",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_west_brom_aune_heggeb_19",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "west_ham_xi",
+    "teamId": "west_ham_united_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_west_ham_mads_hermansen_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_west_ham_kyle_walker_peters_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_west_ham_el_hadji_malick_diouf_12",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_west_ham_joel_veltman_34",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_west_ham_airidas_golambeckis_58",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_west_ham_mohamadou_kante_17",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_west_ham_tomas_soucek_28",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_west_ham_manor_solomon_10",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_west_ham_taty_castellanos_11",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_west_ham_divine_mukasa_14",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_west_ham_joel_piroe_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "wolves_xi",
+    "teamId": "wolverhampton_wanderers_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_wolves_jose_sa_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_wolves_kieran_trippier_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_wolves_david_m_ller_wolfe_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_wolves_rodrigo_gomes_21",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_wolves_nasser_djiga_34",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_wolves_marshall_munetsi_5",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_wolves_fer_lopez_28",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_wolves_mateus_mane_36",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_wolves_jackson_tchatchoua_38",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_wolves_raul_jimenez_9",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_wolves_jean_ricner_bellegarde_27",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "wrexham_xi",
+    "teamId": "wrexham_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_wrexham_anthony_patterson_22",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_wrexham_callum_doyle_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_wrexham_jacques_ekomie_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_wrexham_dominic_hyam_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_wrexham_zak_vyner_26",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_wrexham_benjamin_whiteman_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_wrexham_callum_o_hare_17",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_wrexham_kieffer_moore_19",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_wrexham_oliver_rathbone_20",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_wrexham_matty_james_37",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_wrexham_josh_windass_10",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "southampton_xi",
+    "teamId": "southampton_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_southampton_daniel_peretz_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_southampton_mads_roerslev_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_southampton_ryan_manning_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_southampton_zach_abbott_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_southampton_keven_schlotterbeck_13",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_southampton_james_ward_prowse_30",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_southampton_flynn_downes_4",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_southampton_samuel_edozie_23",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_southampton_finn_azaz_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_southampton_leo_scienza_7",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_southampton_tom_fellows_18",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "wimbledon_xi",
+    "teamId": "afc_wimbledon_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_wimbledon_nathan_bishop_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_wimbledon_steven_sessegnon_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_wimbledon_steve_seddon_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_wimbledon_andy_yiadom_17",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_wimbledon_isaac_ogundere_33",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_wimbledon_myles_hippolyte_21",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_wimbledon_ollie_harrison_5",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_wimbledon_callum_maycock_8",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_wimbledon_alistair_smith_12",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_wimbledon_jayden_stockley_9",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_wimbledon_aron_sasu_29",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "blackpool_xi",
+    "teamId": "blackpool_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_blackpool_bailey_peacock_farrell_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_blackpool_zac_ashworth_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_blackpool_oliver_casey_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_blackpool_hayden_coulson_15",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_blackpool_finley_munroe_26",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_blackpool_karoy_anderson_17",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_blackpool_albie_morgan_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_blackpool_george_honeyman_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_blackpool_leighton_clarkson_7",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_blackpool_josh_bowler_11",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_blackpool_dion_charles_19",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "bradford_xi",
+    "teamId": "bradford_city_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_bradford_cameron_dawson_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_bradford_reece_welch_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_bradford_macaulay_gillesphey_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_bradford_aden_baldwin_15",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_bradford_george_pratt_16",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_bradford_bobby_pointon_23",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_bradford_antoni_sarcevic_10",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_bradford_jake_beesley_9",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_bradford_adam_phillips_8",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_bradford_stephen_humphrys_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_bradford_tyreik_wright_17",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "bromley_xi",
+    "teamId": "bromley_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_bromley_shamal_george_30",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_bromley_chanse_headman_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_bromley_omar_sowunmi_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_bromley_jacob_mendy_17",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_bromley_kamarl_grant_21",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_bromley_kamil_conteh_22",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_bromley_will_hondermarck_16",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_bromley_jj_mckiernan_28",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_bromley_george_saville_6",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_bromley_mitch_pinnock_11",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_bromley_marcus_ifill_12",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "burton_xi",
+    "teamId": "burton_albion_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_burton_corey_addai_34",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_burton_jack_armer_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_burton_toby_sibbick_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_burton_curtis_tilt_16",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_burton_finn_delap_26",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_burton_kegs_chauke_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_burton_will_collar_14",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_burton_caylan_vickers_18",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_burton_raphael_borges_rodrigues_17",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_burton_sulyman_krubally_41",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_burton_kain_adom_29",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "cambridge_xi",
+    "teamId": "cambridge_united_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_cambridge_jake_eastwood_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_cambridge_callum_perry_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_cambridge_cathal_heffernan_15",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_cambridge_zak_bradshaw_22",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_cambridge_mamadou_jobe_23",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_cambridge_dominic_ball_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_cambridge_pelly_ruddock_mpanzu_17",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_cambridge_isaac_heath_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_cambridge_gassan_ahadme_14",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_cambridge_owen_moxon_8",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_cambridge_sullay_kaikai_11",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "doncaster_xi",
+    "teamId": "doncaster_rovers_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_doncaster_tommy_simkin_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_doncaster_jay_mcgrath_6",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_doncaster_neill_byrne_12",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_doncaster_bayley_mccann_25",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_doncaster_sean_grehan_27",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_doncaster_owen_bailey_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_doncaster_robbie_gotts_22",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_doncaster_alfie_may_10",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_doncaster_brandon_hanlan_9",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_doncaster_isaac_hutchinson_21",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_doncaster_leon_ayinde_11",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "huddersfield_xi",
+    "teamId": "huddersfield_town_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_huddersfield_matty_young_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_huddersfield_ilias_bronkhorst_22",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_huddersfield_radinio_balker_12",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_huddersfield_ibane_bowat_15",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_huddersfield_bali_mumba_19",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_huddersfield_ryan_ledson_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_huddersfield_archie_collins_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_huddersfield_derensili_sanches_fernandes_30",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_huddersfield_marcus_harness_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_huddersfield_ashley_fletcher_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_huddersfield_joe_taylor_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "leicester_xi",
+    "teamId": "leicester_city_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_leicester_alex_mccarthy_29",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_leicester_jayden_joseph_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_leicester_caleb_okoli_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_leicester_harry_souttar_15",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_leicester_olabade_aluko_32",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_leicester_sammy_braybrooke_36",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_leicester_will_alves_37",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_leicester_liam_cullen_11",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_leicester_bobby_de_cordova_reid_14",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_leicester_wes_burns_7",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_leicester_emil_riis_17",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "leyton_orient_xi",
+    "teamId": "leyton_orient_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_leyton_orient_noah_phillips_13",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_leyton_orient_fin_stevens_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_leyton_orient_joseph_olowu_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_leyton_orient_will_forrester_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_leyton_orient_phil_chinedu_34",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_leyton_orient_idris_el_mizouni_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_leyton_orient_isaac_hayden_14",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_leyton_orient_jaze_kabia_9",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_leyton_orient_yusuf_akhamrich_22",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_leyton_orient_tony_springett_27",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_leyton_orient_charlie_wellens_25",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "luton_xi",
+    "teamId": "luton_town_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_luton_james_shea_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_luton_hakeem_odoffin_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_luton_harry_fox_22",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_luton_benny_benagr_31",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_luton_harrison_ashby_33",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_luton_kasey_palmer_45",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_luton_jamie_donley_10",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_luton_nahki_wells_21",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_luton_callum_marshall_9",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_luton_emilio_lawrence_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_luton_gideon_kodua_30",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "mansfield_xi",
+    "teamId": "mansfield_town_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_mansfield_liam_roberts_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_mansfield_stephen_mclaughlin_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_mansfield_elliott_hewitt_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_mansfield_frazer_blake_tracy_20",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_mansfield_deji_oshilaja_23",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_mansfield_louis_reed_25",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_mansfield_nathan_moriah_welsh_22",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_mansfield_regan_hendry_24",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_mansfield_george_maris_10",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_mansfield_rhys_oates_18",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_mansfield_lucas_akins_7",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "mk_dons_xi",
+    "teamId": "mk_dons_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_mk_dons_craig_macgillivray_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_mk_dons_gethin_jones_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_mk_dons_cohen_bramall_15",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_mk_dons_ryan_barnett_19",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_mk_dons_marvin_ekpiteta_21",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_mk_dons_ben_wiles_26",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_mk_dons_alex_gilbey_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_mk_dons_callum_paterson_13",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_mk_dons_samuel_silvera_17",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_mk_dons_ibrahim_fullah_22",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_mk_dons_jay_matete_28",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "notts_county_xi",
+    "teamId": "notts_county_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_notts_county_james_belshaw_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_notts_county_jacob_bedeau_4",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_notts_county_lucas_ness_12",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_notts_county_nick_tsaroulla_25",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_notts_county_ishe_samuels_smith_26",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_notts_county_ollie_cooper_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_notts_county_darius_lipsiuc_14",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_notts_county_rory_finneran_27",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_notts_county_luka_smyth_19",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_notts_county_hindolo_mustapha_42",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_notts_county_max_sanders_6",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "oxford_xi",
+    "teamId": "oxford_united_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_oxford_simon_eastwood_13",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_oxford_ciaron_brown_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_oxford_micha_helik_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_oxford_brodie_spencer_15",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_oxford_peter_kioso_30",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_oxford_cameron_brannagan_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_oxford_kai_andrews_4",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_oxford_siriki_dembele_23",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_oxford_mo_missanga_57",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_oxford_tyler_goodrham_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_oxford_louie_sibley_32",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "peterborough_xi",
+    "teamId": "peterborough_united_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_peterborough_alex_bass_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_peterborough_carl_johnston_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_peterborough_josh_feeney_12",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_peterborough_harley_mills_14",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_peterborough_david_okagbue_26",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_peterborough_brandon_khela_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_peterborough_harry_ashfield_45",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_peterborough_bolu_shofowoke_19",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_peterborough_owura_edwards_11",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_peterborough_danny_ormerod_27",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_peterborough_chris_conn_clarke_20",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "reading_xi",
+    "teamId": "reading_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_reading_joel_castro_pereira_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_reading_udoka_godwin_malife_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_reading_haydon_roberts_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_reading_paudie_o_connor_15",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_reading_benn_ward_16",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_reading_lewis_wing_10",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_reading_andy_rinomhota_4",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_reading_kyreece_lisbie_19",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_reading_paddy_lane_32",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_reading_jack_marriott_7",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_reading_josh_stokes_28",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "sheffield_wed_xi",
+    "teamId": "sheffield_wednesday_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_sheffield_wed_joe_lumley_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_sheffield_wed_liam_palmer_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_sheffield_wed_max_lowe_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_sheffield_wed_yan_valery_7",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_sheffield_wed_gabriel_otegbayo_22",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_sheffield_wed_callum_slattery_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_sheffield_wed_barry_bannan_10",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_sheffield_wed_jamal_lowe_9",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_sheffield_wed_louie_barry_11",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_sheffield_wed_davis_keillor_dunn_50",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_sheffield_wed_harry_gray_24",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "stevenage_xi",
+    "teamId": "stevenage_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_stevenage_tommy_setford_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_stevenage_luther_james_wildin_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_stevenage_carl_piergianni_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_stevenage_lewis_freestone_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_stevenage_terence_vancooten_15",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_stevenage_louis_thompson_23",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_stevenage_phoenix_patterson_44",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_stevenage_jordan_houghton_4",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_stevenage_terry_taylor_7",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_stevenage_josh_magennis_9",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_stevenage_olly_sanderson_18",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "stockport_xi",
+    "teamId": "stockport_county_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_stockport_oliver_whatmuff_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_stockport_ethan_pye_5",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_stockport_eoghan_o_connell_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_stockport_kyron_gordon_24",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_stockport_mamadou_jobe_25",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_stockport_lewis_bate_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_stockport_oliver_norwood_10",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_stockport_kyle_wootton_19",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_stockport_ryan_glover_15",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_stockport_ben_osborn_23",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_stockport_jason_adigun_20",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "wigan_xi",
+    "teamId": "wigan_athletic_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_wigan_joe_whitworth_41",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_wigan_jeremiah_chilokoa_mullen_4",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_wigan_finley_burns_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_wigan_jon_mellish_22",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_wigan_james_carragher_23",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_wigan_jensen_weir_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_wigan_fraser_murray_7",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_wigan_sonny_perkins_9",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_wigan_reggie_walsh_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_wigan_dara_costelloe_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_wigan_akeel_higgins_17",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "wycombe_xi",
+    "teamId": "wycombe_wanderers_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_wycombe_conor_hazard_23",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_wycombe_jack_grimmer_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_wycombe_daniel_harvie_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_wycombe_steve_cook_27",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_wycombe_anders_hagelskj_r_45",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_wycombe_fred_onyedinma_44",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_wycombe_josh_scowen_4",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_wycombe_caolan_boyd_munce_8",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_wycombe_cauley_woodrow_12",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_wycombe_aaron_morley_5",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_wycombe_jayden_wareham_15",
+        "slot": "ST"
+      }
+    ]
+  }
+]
