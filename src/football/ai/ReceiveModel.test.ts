@@ -80,8 +80,9 @@ describe("ReceiveModel", () => {
     const ball = new Ball();
     ball.vx = 20;
     ball.vz = 0;
-    expect(receiveLeadSeconds(ball)).toBeLessThanOrEqual(0.38);
+    expect(receiveLeadSeconds(ball)).toBeLessThanOrEqual(0.55);
+    expect(receiveLeadSeconds(ball)).toBeGreaterThan(0.3);
     ball.vx = 2;
-    expect(receiveLeadSeconds(ball)).toBeGreaterThanOrEqual(0.14);
+    expect(receiveLeadSeconds(ball)).toBeGreaterThanOrEqual(0.18);
   });
 });

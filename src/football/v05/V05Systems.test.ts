@@ -324,7 +324,7 @@ describe("attacking decisions", () => {
     expect(a.role).not.toBe(b.role);
   });
 
-  it("keeps a partner striker onside and near the ball carrier", () => {
+  it("keeps a partner striker onside while allowing a legal channel ahead", () => {
     const carrier = make("c", 20, 0, "home", {}, "RST");
     const partner = make("st2", 40, 4, "home", {}, "LST");
     partner.anchorX = 38;
@@ -332,10 +332,17 @@ describe("attacking decisions", () => {
     const d1 = make("d1", 32, -2, "away", {}, "LCB");
     const d2 = make("d2", 31, 3, "away", {}, "RCB");
     const gk = make("gk", 48, 0, "away", {}, "GK");
-    const spot = supportTarget(partner, 20, 0, carrier, [carrier, partner], [d1, d2, gk]);
-    expect(spot.x).toBeLessThanOrEqual(30.0);
-    expect(spot.x).toBeLessThanOrEqual(carrier.x + 5.5);
-    expect(spot.role === "CHECK_TO_BALL" || spot.role === "SUPPORT_SIDE").toBe(true);
+    const spot = supportTarget(partner, 20, 0, carrier, [carrier, partner], [d1, d2, gk], "attack");
+    // Must stay onside of the defensive line (~31).
+    expect(spot.x).toBeLessThanOrEqual(30.5);
+    expect(spot.x).toBeGreaterThan(carrier.x);
+    expect(
+      spot.role === "FORWARD_RUN" ||
+        spot.role === "PENALTY_AREA_RUN" ||
+        spot.role === "EDGE_OF_BOX" ||
+        spot.role === "SUPPORT_SIDE" ||
+        spot.role === "CHECK_TO_BALL",
+    ).toBe(true);
   });
 
   it("remaps 4-4-2-W full-backs onto 4-3-3 full-backs", () => {

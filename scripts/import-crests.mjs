@@ -128,8 +128,8 @@ const FD_BY_CLUB = {
   monaco: 516,
   porto: 503,
   ajax: 678,
-  celtic: 674,
-  rangers: 675,
+  // celtic / rangers: do NOT use football-data.org here — IDs 674/675 are PSV/Feyenoord.
+  // Prefer GitHub football-logos + SportsDB (SEARCH_BY_CLUB) instead.
 };
 
 /** National teams: football-data SVG area codes (rasterized via magick when present). */

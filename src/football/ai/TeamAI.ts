@@ -15,7 +15,7 @@ import {
   pressTrapTarget,
   selectClosingPlayers,
 } from "./DefensiveAI";
-import { designatePursuers, mustChaseLoose, roleShapeTarget } from "./MatchBrain";
+import { designatePursuers, mustChaseLoose, roleShapeTarget, teamMatchPhase } from "./MatchBrain";
 import { bestSupportSpot } from "./SupportSpotCalculator";
 import type { Ball } from "../ball/Ball";
 import { movePlayer } from "../players/PlayerMovement";
@@ -27,6 +27,10 @@ import { HALF_LENGTH } from "../constants";
 
 export interface TeamAIResult {
   pressingId: string | null;
+  /** Loose-ball primary pursuer (full press). */
+  primaryPursuerId: string | null;
+  /** Loose-ball support (contain only). */
+  supportPursuerId: string | null;
 }
 
 export function updateTeamAI(
@@ -95,8 +99,12 @@ export function updateTeamAI(
     }
     if (!closers.length) closers = pursuers;
   }
+  // Pursuit roles: primary full-presses; support contains only (no swarm).
+  if (closers.length > 2) closers = closers.slice(0, 2);
+  const primaryPursuer = closers[0] ?? null;
+  const supportPursuer = closers[1] ?? null;
   const closerIds = new Set(closers.map((p) => p.id));
-  const presser = closers[0] ?? null;
+  const presser = primaryPursuer;
   const carrier = players.find((p) => p.hasBall && p.side === side) ?? null;
   const markedIds = new Set<string>();
   const coveringCbs = us.filter((p) => p.slot.includes("CB") && !closerIds.has(p.id) && !p.celebrating);
@@ -113,6 +121,9 @@ export function updateTeamAI(
     grip: extras?.grip,
   };
   const aggressive = !!extras?.aggressivePress && forced.length > 0;
+  const attackPhase = teamMatchPhase(side, ball, possessingSide, attackSign, {
+    transitionAge: extras?.possessionChangeAge ?? 99,
+  });
 
   for (const p of us) {
     if (skipIds.has(p.id) || p.celebrating || p.sentOff || p.sliding || p.slideRecoverTimer > 0) continue;
@@ -205,30 +216,45 @@ export function updateTeamAI(
         const loose = possessingSide == null;
         const ballDist = p.distTo(ball.x, ball.z);
         const trap = Math.abs(ball.z) > 14;
-        // Loose / counter-press / aggressive: hunt. Else contain or close down.
-        target =
-          aggressive || counterPress || loose || ballDist > 4
-            ? trap && !loose
+        const isPrimary = primaryPursuer?.id === p.id;
+        const isSupport = supportPursuer?.id === p.id;
+        // Loose: primary hunts; support contains / cuts the lane. Owned ball: prior behaviour.
+        if (loose && isSupport && !aggressive) {
+          target = containTarget(p, ball.x, ball.z, goalX);
+        } else if (aggressive || counterPress || (loose && isPrimary) || (!loose && ballDist > 4)) {
+          target =
+            trap && !loose
               ? pressTrapTarget(p, ball.x, ball.z, goalX)
-              : pressTarget(p, ball.x, ball.z, goalX)
-            : aw > 0.58 && !aggressive
-              ? containTarget(p, ball.x, ball.z, goalX)
-              : closeDownTarget(p, ball.x, ball.z, goalX);
+              : pressTarget(p, ball.x, ball.z, goalX);
+        } else if (aw > 0.58 && !aggressive) {
+          target = containTarget(p, ball.x, ball.z, goalX);
+        } else {
+          target = closeDownTarget(p, ball.x, ball.z, goalX);
+        }
         let dx = target.x - p.x;
         let dz = target.z - p.z;
-        // If the waypoint is underfoot but the ball is still away, chase the ball.
-        if (Math.hypot(dx, dz) < 0.35 && ballDist > 1.15) {
+        // If the waypoint is underfoot but the ball is still away, chase the ball (primary only on loose).
+        if (Math.hypot(dx, dz) < 0.35 && ballDist > 1.15 && (!loose || isPrimary)) {
           dx = ball.x - p.x;
           dz = ball.z - p.z;
         }
         const dist = Math.hypot(dx, dz);
         const sprint =
-          loose || counterPress
+          (loose && isPrimary) || counterPress
             ? ballDist > 1.4
-            : dist > (aggressive ? 1.4 : 3.1 - aw * 1.5);
+            : loose && isSupport
+              ? false
+              : dist > (aggressive ? 1.4 : 3.1 - aw * 1.5);
         p.desiredX = target.x;
         p.desiredZ = target.z;
-        const huntMul = counterPress ? 1.05 + aw * 0.2 * pressAggro : aggressive || loose ? 1.05 + aw * 0.2 : 0.76 + aw * 0.42;
+        const huntMul =
+          counterPress
+            ? 1.05 + aw * 0.2 * pressAggro
+            : aggressive || (loose && isPrimary)
+              ? 1.05 + aw * 0.2
+              : loose && isSupport
+                ? 0.7 + aw * 0.25
+                : 0.76 + aw * 0.42;
         movePlayer(p, dt, dx, dz, sprint, !loose && !aggressive && !counterPress && dist < 4.2, {
           hasBall: p.hasBall,
           pressure: 0,
@@ -243,6 +269,7 @@ export function updateTeamAI(
         closerIds,
         markedIds,
         lineX: cbLineX,
+        looseBall,
       });
       const shape = roleShapeTarget(p, ball, possessingSide);
       // Cover + role block (Gameplay Football / GRF position model).
@@ -267,10 +294,17 @@ export function updateTeamAI(
         target = pitchClamp(p.x + dir * Math.min(8, room), p.z, 2.2);
       }
     } else {
-      const support = attackingSupport(p, ball.x, ball.z, p.hasBall, carrier, us, them);
+      const support = attackingSupport(p, ball.x, ball.z, p.hasBall, carrier, us, them, attackPhase);
       const shape = roleShapeTarget(p, ball, possessingSide);
-      // Role channels dominate for wide/FB; support runs dominate for AM/CF.
-      const shapeW = shape.role === "W" || shape.role === "WM" || shape.role === "FB" ? 0.48 : shape.role === "CF" || shape.role === "AM" ? 0.28 : 0.38;
+      // Role channels dominate for wide/FB; SupportAI owns CF/AM depth (avoid CF shape nudging past the line).
+      const shapeW =
+        shape.role === "W" || shape.role === "WM" || shape.role === "FB"
+          ? 0.48
+          : shape.role === "CF"
+            ? 0.1
+            : shape.role === "AM"
+              ? 0.18
+              : 0.38;
       target = {
         x: support.x * (1 - shapeW) + shape.x * shapeW,
         z: support.z * (1 - shapeW) + shape.z * shapeW,
@@ -301,8 +335,8 @@ export function updateTeamAI(
           pressure: 0,
           ...moveEx,
         });
-      } else if (mustChaseLoose(p, ball, possessingSide)) {
-        // Never plant while a loose ball is in engage range — chase it.
+      } else if (mustChaseLoose(p, ball, possessingSide, primaryPursuer?.id ?? null)) {
+        // Only the primary pursuer refuses to plant on a loose ball.
         const bx = ball.x - p.x;
         const bz = ball.z - p.z;
         movePlayer(p, dt, bx, bz, p.distTo(ball.x, ball.z) > 2.2, false, {
@@ -330,6 +364,10 @@ export function updateTeamAI(
         (progressive && dist > 11));
     movePlayer(p, dt, dx, dz, wantSprint, false, { hasBall: p.hasBall, pressure: 0, ...moveEx });
   }
-  return { pressingId: presser?.id ?? null };
+  return {
+    pressingId: presser?.id ?? null,
+    primaryPursuerId: looseBall ? primaryPursuer?.id ?? null : null,
+    supportPursuerId: looseBall ? supportPursuer?.id ?? null : null,
+  };
 }
 

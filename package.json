@@ -2,7 +2,7 @@
   "name": "golaco",
   "private": true,
   "version": "0.5.0",
-  "description": "GOLAÇO — football game at golaco.lol",
+  "description": "GOLAÇO SOCCER — football game at golaco.lol",
   "type": "module",
   "scripts": {
     "dev": "vite",

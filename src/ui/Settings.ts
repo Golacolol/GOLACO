@@ -156,7 +156,7 @@ export class SettingsMenu {
       <div class="editor-card settings-card options-card">
         <div class="settings-header">
           <div>
-            <p class="settings-eyebrow">GOLAÇO</p>
+            <p class="settings-eyebrow">GOLAÇO SOCCER</p>
             <h2>Options</h2>
           </div>
           <button type="button" class="settings-reset" data-act="reset">Reset all options</button>

@@ -101,6 +101,10 @@ const CLUB_SEARCH = [
   { query: "Boca Juniors", ids: ["classic_boca_2000", "classic_boca"] },
   { query: "River Plate", ids: ["classic_river_1986", "classic_river"] },
   { query: "Flamengo", ids: ["classic_flamengo_1981", "classic_flamengo"] },
+  // Do not use football-data.org 674/675 — those resolve to PSV / Feyenoord.
+  { query: "Celtic", ids: ["classic_celtic_1997_98", "classic_celtic_1966_67", "classic_celtic"] },
+  { query: "Rangers", ids: ["classic_rangers_1992_93", "classic_rangers"] },
+  { query: "AS Roma", ids: ["classic_roma_2000_01", "classic_roma_1992_93", "classic_roma"] },
 ];
 
 async function download(url) {

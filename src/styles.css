@@ -468,8 +468,8 @@ html.club-name-glow-off .club-line {
   width: 100%;
   font-family: var(--title-font, "Righteous", Impact, sans-serif);
   font-weight: 400;
-  /* Scale to the hero column so "GOLAÇO" stays one full line (no ellipsis). */
-  font-size: clamp(26px, min(12.2cqi, 11.4vw), 72px);
+  /* Scale to the hero column so "GOLAÇO SOCCER" stays one full line (no ellipsis). */
+  font-size: clamp(22px, min(9.6cqi, 9.2vw), 58px);
   letter-spacing: 0.015em;
   line-height: 0.94;
   max-width: 100%;

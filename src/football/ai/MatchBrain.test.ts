@@ -133,7 +133,8 @@ describe("MatchBrain position model", () => {
     const near = make("a", 4, 0, "RCM", "away");
     const far = make("b", -20, 10, "LCB", "away");
     expect(designatePursuers([near, far], ball, 2)[0]?.id).toBe("a");
-    expect(mustChaseLoose(near, ball, null)).toBe(true);
+    expect(mustChaseLoose(near, ball, null, "a")).toBe(true);
+    expect(mustChaseLoose(far, ball, null, "a")).toBe(false);
     const start = near.x;
     for (let i = 0; i < 20; i++) {
       ball.x += 0.3;

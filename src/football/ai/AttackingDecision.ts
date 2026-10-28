@@ -271,14 +271,27 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   let throughBallScore = throughT
     ? Math.max(
         0,
-        (0.08 + vision * 0.28 + passing * 0.06 + Math.min(12, (throughT.x - carrier.x) * carrier.attackSign) * 0.018) *
-          (0.75 + urgency * 0.28),
+        (0.14 + vision * 0.32 + passing * 0.08 + Math.min(14, (throughT.x - carrier.x) * carrier.attackSign) * 0.022) *
+          (0.82 + urgency * 0.28),
       )
     : 0;
-  if (throughT && isWideAttacker(throughT) && (throughT.x - carrier.x) * carrier.attackSign > 5) {
-    throughBallScore += wantBuildup ? 0.06 : 0.18 + vision * 0.08;
+  if (throughT) {
+    let thruSpace = 40;
+    for (const op of opponents) {
+      if (op.isGK) continue;
+      thruSpace = Math.min(thruSpace, throughT.distTo(op.x, op.z));
+    }
+    const thruLane = passingLaneQuality(carrier, throughT.x, throughT.z, opponents);
+    const thruAhead = (throughT.x - carrier.x) * carrier.attackSign;
+    // Onside runner with space ahead beats endless recirculation.
+    if (thruAhead > 4 && thruSpace > 4.5 && thruLane >= 0.5) {
+      throughBallScore += 0.22 + vision * 0.12 + Math.min(0.18, (thruSpace - 4) * 0.04);
+    }
   }
-  if (throughT && Math.abs(throughT.z) > 18) throughBallScore *= 0.45;
+  if (throughT && isWideAttacker(throughT) && (throughT.x - carrier.x) * carrier.attackSign > 5) {
+    throughBallScore += wantBuildup ? 0.1 : 0.2 + vision * 0.08;
+  }
+  if (throughT && Math.abs(throughT.z) > 18) throughBallScore *= 0.55;
   let longPassScore = longT
     ? (pressure > 0.62 || (Math.abs(carrier.z) > 18 && progress < 0.3)
         ? 0.08 + stat01(carrier.attrs.longPassing) * 0.14 + vision * 0.06
@@ -375,26 +388,27 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
 
   if (building || wantBuildup) {
     holdScore *= 0.7;
-    passScore += 0.62 + passing * 0.22 + lane * 0.28;
+    passScore += 0.42 + passing * 0.18 + lane * 0.22;
     runScore *= closeSupport ? 0.95 : 0.52;
-    throughBallScore *= 0.55;
-    longPassScore *= 0.08;
+    // Soften through in build — don't crush progressive runners with space.
+    throughBallScore *= throughT && throughBallScore > 0.35 ? 0.92 : 0.78;
+    longPassScore *= pressure > 0.55 ? 0.35 : 0.12;
     // Don't suppress finishing when the chance is already there.
     if (clearChance.quality < 0.4) {
       shotScore *= 0.35;
       longShotScore *= 0.25;
     }
     if (progress < 0.5 && clearChance.quality < 0.4) {
-      passScore += 0.48;
+      passScore += 0.28;
       runScore *= 0.62;
       holdScore += 0.12;
       longPassScore *= 0.15;
       shotScore *= 0.2;
     } else if (progress < 0.5) {
-      passScore += 0.18;
+      passScore += 0.12;
     }
     if (recycleTarget && pressure < 0.48 && possessionTime > 0.7 && !closeSupport) {
-      passScore += 0.28;
+      passScore += 0.18;
     }
     if (shortT && lane > 0.55 && Math.abs(shortT.z - carrier.z) > 8 && progress < 0.62) {
       const ahead = (shortT.x - carrier.x) * carrier.attackSign;
@@ -402,14 +416,14 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
       // Progressive switch OK; flat cross-field dump is not build-up.
       if (width > 14 && ahead < 5) passScore *= 0.42;
       else if (width > 18 && ahead < 8) passScore *= 0.55;
-      else passScore += ahead > 3 ? 0.32 : width < 12 ? 0.2 : 0.08;
+      else passScore += ahead > 3 ? 0.22 : width < 12 ? 0.14 : 0.05;
     }
     if (shortT && carrier.distTo(shortT.x, shortT.z) < 16 && lane > 0.45 && Math.abs(shortT.z - carrier.z) < 12) {
-      passScore += 0.42;
+      passScore += 0.22;
     }
   } else if (progress < 0.62 && pressure < 0.42 && clearChance.quality < 0.4) {
     holdScore += 0.12;
-    passScore += 0.18;
+    passScore += 0.14;
     runScore *= 0.85;
     shotScore *= 0.7;
   }
@@ -492,11 +506,16 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     // Only reward long diagonals that clearly advance; never flat switches.
     longPassScoreAdj += ahead > 10 ? 0.06 : ahead > 6 ? -0.12 : -0.45;
   }
-  // Short circulation must dominate decisions unless a through/cross/shot is clearly on.
+  // Short circulation still preferred, but not stacked enough to bury through balls.
   if (shortT && lane > 0.42) {
-    passScore += 0.18 + (wantBuildup ? 0.16 : 0);
+    passScore += 0.08 + (wantBuildup ? 0.05 : 0);
   }
-  longPassScoreAdj *= wantBuildup ? 0.55 : 0.78;
+  // When a through runner is on, pull short down so THROUGH can compete.
+  if (throughT && throughBallScore > 0.28) {
+    passScore *= 0.88;
+    throughBallScore += 0.12;
+  }
+  longPassScoreAdj *= wantBuildup ? (pressure > 0.5 ? 0.7 : 0.55) : 0.85;
 
   // Final floor: clear chances must outrank recycle/pass after all modifiers.
   if (clearChance.quality > 0.4) {

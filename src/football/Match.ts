@@ -995,6 +995,28 @@ export class Match {
         turnLooseMul: this.tuning.turnLooseMultiplier,
       });
       if (touch === "loose") this.makeLoose(this.possessing);
+    } else if (
+      this.possessing &&
+      this.possessing.firstTouchTimer > 0 &&
+      this.possessing.ballControlLockout <= 0 &&
+      !this.possessing.isGK
+    ) {
+      // Soft magnet during first-touch settle so the ball sticks under the foot.
+      const soft = stepDribble(this.ball, this.possessing, {
+        pressure: this.pressure,
+        dt,
+        magnetMul: this.tuning.dribbleMagnetMultiplier * 0.72,
+        turnLooseMul: this.tuning.turnLooseMultiplier * 0.55,
+      });
+      if (soft === "loose") {
+        // Don't spill immediately on first touch — keep ownership unless ball flees.
+        if (this.possessing.distTo(this.ball.x, this.ball.z) > 2.4) {
+          this.makeLoose(this.possessing);
+        } else {
+          this.ball.vx *= 0.55;
+          this.ball.vz *= 0.55;
+        }
+      }
     } else {
       stepBall(this.ball, dt, this.tuning.ballFrictionMultiplier, this.env.windZ);
       clampBallSoft(this.ball);
@@ -1664,6 +1686,28 @@ export class Match {
     this.aiAct = 0;
     let action = decision.action;
     let passTarget = decision.passTarget;
+    // Progressive nudge: after recirculating, prefer a through when a legal runner exists.
+    if (
+      (action === "PASS" || action === "HOLD" || action === "RUN") &&
+      this.possessionTime > 2.0 &&
+      decision.scores.throughBallScore >= 0.18 &&
+      decision.scores.throughBallScore + 0.08 >= decision.scores.passScore * 0.72
+    ) {
+      const thru = choosePassTarget(
+        passer,
+        this.teamOf(passer).players,
+        this.opponentsOf(passer),
+        this.ball,
+        goalX - passer.x,
+        0,
+        "through",
+        { forbidIds: this.passForbidIds(passer), style: building ? "buildup" : "attack" },
+      );
+      if (thru && (thru.x - passer.x) * attackDir > 4) {
+        action = "THROUGH";
+        passTarget = thru;
+      }
+    }
     // Thin safety gates only — scoring (incl. clear chances) lives in decideAttack.
     const passLike = action === "PASS" || action === "THROUGH" || action === "LONG_PASS" || action === "CROSS";
     const forbid = this.passForbidIds(passer);
@@ -2019,10 +2063,19 @@ export class Match {
     });
     result.angleError *= this.tuning.passErrorMultiplier;
     result.powerError *= this.tuning.passErrorMultiplier;
-    let destX = target ? target.x + target.vx * 0.35 : passer.x + dir.x * distance;
-    let destZ = target ? target.z + target.vz * 0.35 : passer.z + dir.z * distance;
+    // Aim into the receiver's run (desired / velocity), not static feet + oversized empty lead.
+    let destX = target
+      ? target.x +
+        (target.desiredX !== 0 ? (target.desiredX - target.x) * 0.35 : target.vx * 0.45) +
+        target.vx * 0.25
+      : passer.x + dir.x * distance;
+    let destZ = target
+      ? target.z +
+        (target.desiredZ !== 0 ? (target.desiredZ - target.z) * 0.35 : target.vz * 0.45) +
+        target.vz * 0.25
+      : passer.z + dir.z * distance;
     if ((delivery === "through" || delivery === "chip") && target) {
-      const space = throughBallAim(passer, target);
+      const space = throughBallAim(passer, target, this.opponentsOf(passer));
       destX = space.x;
       destZ = space.z;
     }

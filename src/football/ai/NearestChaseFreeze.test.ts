@@ -72,13 +72,17 @@ describe("nearest player chase freeze", () => {
     ball.ownerId = null;
     const nearer = make("cb", 2.5, 0.4, "RCB", "away");
     const cover = make("cb2", -6, 8, "LCB", "away");
+    const idle = make("st", -18, -10, "RST", "away");
     const start = nearer.x;
+    const idleStart = idle.x;
     for (let i = 0; i < 18; i++) {
-      updateTeamAI([nearer, cover], "away", ball, null, 0.05, new Set());
+      updateTeamAI([nearer, cover, idle], "away", ball, null, 0.05, new Set());
     }
     expect(nearer.x).toBeGreaterThan(start + 0.35);
     expect(Math.hypot(nearer.vx, nearer.vz)).toBeGreaterThan(0.8);
     expect(nearer.distTo(ball.x, ball.z)).toBeLessThan(nearer.distTo(start, 0.4));
+    // Non-pursuers hold shape — mass idle is OK (no swarm).
+    expect(Math.abs(idle.x - idleStart)).toBeLessThan(4);
   });
 
   it("soft-carries the ball holder instead of freezing on a nearby run target", () => {

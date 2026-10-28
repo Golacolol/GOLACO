@@ -125,6 +125,8 @@ export interface CoverOpts {
   markedIds?: Set<string>;
   /** Shared defensive line X for centre-backs. */
   lineX?: number | null;
+  /** Loose ball: soften ball-magnet so the block does not collapse onto the ball. */
+  looseBall?: boolean;
 }
 
 export function coverTarget(
@@ -137,7 +139,14 @@ export function coverTarget(
   const aw = awareness01(player);
   const d = Math.hypot(ballX - player.x, ballZ - player.z);
   const engage = closeDownRange(player);
-  const compact = d < engage ? 0.28 + aw * 0.42 : 0.12 + aw * 0.14;
+  const loose = !!opts?.looseBall;
+  const compact = loose
+    ? d < engage
+      ? 0.1 + aw * 0.12
+      : 0.05 + aw * 0.06
+    : d < engage
+      ? 0.28 + aw * 0.42
+      : 0.12 + aw * 0.14;
   let x = player.anchorX + (ballX - player.anchorX) * compact;
   let z = player.anchorZ + (ballZ - player.anchorZ) * (0.12 + aw * 0.14);
   const ownGoal = player.ownGoalX();

@@ -107,24 +107,44 @@ export function settleFirstTouch(ball: Ball, opts: FirstTouchSettleOpts): FirstT
   const zone = opts.zone ?? classifyContactZone(ball, opts.aerial);
   const errorMul = opts.errorMul ?? 1;
   const zoneScatter =
-    zone === "air" ? 1.55 : zone === "body" ? 1.22 : 0.92;
+    zone === "air" ? 1.55 : zone === "body" ? 1.18 : 0.72;
   const scatterMag =
-    ((1 - control) * 0.85 * zoneScatter + opts.pressure * 0.55 + (1 - opts.energy) * 0.25) * errorMul;
+    ((1 - control) * 0.72 * zoneScatter + opts.pressure * 0.48 + (1 - opts.energy) * 0.22) * errorMul;
   const scatterX = (rng() - 0.5) * scatterMag;
   const scatterZ = (rng() - 0.5) * scatterMag;
-  // Strong players pin the ball; weak first touches leave more flight.
-  const settle = clamp(0.18 + control * 0.52 + strength * 0.14 - (zone === "air" ? 0.08 : 0), 0.12, 0.82);
+  // Foot / short collects nearly pin the ball; aerial/body keep meaningful scatter.
+  const settle =
+    zone === "foot"
+      ? clamp(0.9 + control * 0.08 + strength * 0.02 - opts.pressure * 0.08, 0.88, 0.98)
+      : zone === "body"
+        ? clamp(0.55 + control * 0.28 + strength * 0.1 - opts.pressure * 0.1, 0.45, 0.88)
+        : clamp(0.22 + control * 0.48 + strength * 0.12 - 0.08, 0.16, 0.78);
   const firstTouchTimer =
-    0.1 + (1 - control) * 0.22 + (zone === "air" ? 0.12 : zone === "body" ? 0.06 : 0);
+    zone === "foot"
+      ? 0.06 + (1 - control) * 0.12
+      : 0.1 + (1 - control) * 0.22 + (zone === "air" ? 0.12 : 0.06);
+  // Routine ground receives stick; lose mainly under real pressure / aerial mess.
   const lost =
-    scatterMag > 1.1 && opts.pressure > 0.45 && rng() < clamp(0.35 + opts.pressure * 0.4 - control * 0.35, 0.08, 0.72);
+    zone === "air"
+      ? scatterMag > 1.0 && opts.pressure > 0.38 && rng() < clamp(0.32 + opts.pressure * 0.4 - control * 0.32, 0.08, 0.7)
+      : scatterMag > 1.25 &&
+        opts.pressure > 0.58 &&
+        rng() < clamp(0.18 + opts.pressure * 0.28 - control * 0.4, 0.02, 0.42);
 
   ball.x += scatterX;
   ball.z += scatterZ;
   ball.vx *= 1 - settle;
   ball.vz *= 1 - settle;
-  ball.vy = Math.min(ball.vy * (1 - settle), zone === "air" ? 0.85 : 0.35);
-  if (zone !== "air" || settle > 0.4) {
+  ball.vy = Math.min(ball.vy * (1 - settle), zone === "air" ? 0.85 : zone === "foot" ? 0.12 : 0.28);
+  if (zone === "foot") {
+    // Successful foot settle → near-zero residual ground velocity.
+    if (!lost && settle >= 0.9) {
+      ball.vx *= 0.15;
+      ball.vz *= 0.15;
+      ball.vy = Math.min(ball.vy, 0.08);
+    }
+    ball.y = Math.min(ball.y, BALL_RADIUS);
+  } else if (zone !== "air" || settle > 0.4) {
     ball.y = Math.min(ball.y, lerp(BALL_RADIUS + 0.55, BALL_RADIUS, control));
   } else {
     ball.y = Math.min(ball.y, 0.95 + (1 - control) * 0.35);

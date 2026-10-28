@@ -1,4 +1,4 @@
-# GOLAÇO
+# GOLAÇO SOCCER
 
 Browser-based Three.js football game. Play at [golaco.lol](https://golaco.lol).
 

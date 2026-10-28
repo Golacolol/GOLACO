@@ -215,13 +215,14 @@ export function roleShapeTarget(
   let z = player.anchorZ;
 
   if (phase === "loose") {
-    const pull = clamp(profile.defendBallPull + 0.2, 0.28, 0.62);
+    // Non-pursuers hold shape — soft ball pull only (primary pursuer is assigned separately).
+    const pull = clamp(profile.defendBallPull * 0.35, 0.06, 0.15);
     x = player.anchorX * (1 - pull) + ball.x * pull;
-    z = player.anchorZ * (0.55 + profile.lineDiscipline * 0.2) + ball.z * (0.45 - profile.lineDiscipline * 0.15);
-    // CBs / DM keep a screen between ball and goal; wingers can crash the pocket.
+    z = player.anchorZ * (0.72 + profile.lineDiscipline * 0.15) + ball.z * (0.28 - profile.lineDiscipline * 0.1);
+    // CBs / DM keep a screen between ball and goal; do not crash the pocket.
     if (profile.role === "CB" || profile.role === "DM") {
       const goal = player.ownGoalX();
-      x = x * 0.55 + (goal + attack * 14) * 0.2 + ball.x * 0.25;
+      x = x * 0.65 + (goal + attack * 14) * 0.25 + ball.x * 0.1;
     }
   } else if (phase === "defend") {
     const pull = profile.defendBallPull * (0.75 + awareness * 0.45);
@@ -283,6 +284,11 @@ export function roleShapeTarget(
   if (profile.channelZ >= 12 && Math.abs(player.anchorZ) > 6) {
     z = clamp(z, sideSign * 5, sideSign * (HALF_WIDTH - 2.8));
   }
+  // CF depth is owned by SupportAI — don't push shape past a soft lead of the ball.
+  if (profile.role === "CF" && (phase === "build" || phase === "attack" || phase === "transition" || phase === "chance")) {
+    const softLead = ball.x + attack * (phase === "chance" ? 3.2 : 1.8);
+    if ((x - softLead) * attack > 0) x = softLead;
+  }
   x = clamp(x, -HALF_LENGTH + 3.5, HALF_LENGTH - 3.5);
   const clamped = pitchClamp(x, z, 2.4);
   return { ...clamped, role: profile.role, phase };
@@ -331,10 +337,20 @@ export function roleOnBallBias(player: Player): {
   }
 }
 
-/** True when this player should refuse to plant still and chase the loose ball. */
-export function mustChaseLoose(player: Player, ball: Ball, possessingSide: "home" | "away" | null): boolean {
+/**
+ * True when this player should refuse to plant still and chase the loose ball.
+ * Only the designated primary pursuer may full-chase — everyone else holds shape.
+ */
+export function mustChaseLoose(
+  player: Player,
+  ball: Ball,
+  possessingSide: "home" | "away" | null,
+  primaryPursuerId?: string | null,
+): boolean {
   if (possessingSide != null) return false;
   if (player.isGK || player.celebrating || player.sentOff) return false;
+  if (primaryPursuerId != null && player.id !== primaryPursuerId) return false;
+  // When no primary is provided (legacy/tests), only the absolute nearest in-range player chases.
   const d = player.distTo(ball.x, ball.z);
   const profile = roleProfile(player);
   const engage = Math.max(12 + profile.pressWeight * 8, closeDownRange(player) * (isAttackingDefender(player) ? 0.7 : 1));

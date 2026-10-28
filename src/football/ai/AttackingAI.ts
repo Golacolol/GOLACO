@@ -3,6 +3,7 @@ import { supportTarget } from "./SupportAI";
 import { blendTowardSupportSpot } from "./SupportSpotCalculator";
 import { pitchClamp } from "../pitch/PitchZones";
 import { HALF_LENGTH } from "../constants";
+import type { MatchPhase } from "./MatchBrain";
 
 export function attackingSupport(
   player: Player,
@@ -12,6 +13,7 @@ export function attackingSupport(
   carrier: Player | null = null,
   teammates: Player[] = [],
   opponents: Player[] = [],
+  phase?: MatchPhase,
 ): { x: number; z: number } {
   if (hasBall) {
     if (player.runTargetX !== 0 || player.runTargetZ !== 0) {
@@ -25,7 +27,7 @@ export function attackingSupport(
     }
     return pitchClamp(player.x + dir * Math.min(8, room), player.z * 0.92, 2.2);
   }
-  const s = supportTarget(player, ballX, ballZ, carrier, teammates, opponents);
+  const s = supportTarget(player, ballX, ballZ, carrier, teammates, opponents, phase);
   if (carrier) {
     const progress = (carrier.x * carrier.attackSign + HALF_LENGTH) / (HALF_LENGTH * 2);
     const blended = blendTowardSupportSpot(player, carrier, opponents, s.x, s.z, {

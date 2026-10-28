@@ -24,7 +24,8 @@ export interface ReceiveAim {
  */
 export function receiveLeadSeconds(ball: Ball): number {
   const ground = Math.hypot(ball.vx, ball.vz);
-  return clamp(0.16 + ground * 0.011, 0.14, 0.38);
+  // Longer lead on fast ground / through so receivers face the ball at contact.
+  return clamp(0.22 + ground * 0.016, 0.18, 0.55);
 }
 
 export function receiveAimPoint(ball: Ball, leadSec?: number): { x: number; z: number } {
@@ -58,8 +59,8 @@ export function planReceiveRun(
     z: aim.z,
     sprint: late || far,
     // Cap below open-play chase bursts — receive must look human.
-    speedMul: baseMul * 0.94,
-    accelMul: 0.86,
+    speedMul: baseMul * 0.96,
+    accelMul: 1.05,
   };
 }
 

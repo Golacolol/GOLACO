@@ -52,13 +52,17 @@ describe("passing model", () => {
     const kick = passKickVector(0, 0, 16, 0, "short");
     ball.y = 0.28;
     kickBall(ball, kick.vx, kick.vz, kick.vy);
+    expect(kick.vy).toBeLessThan(4.5);
     let closest = Infinity;
+    let maxY = ball.y;
     for (let i = 0; i < 90; i++) {
       stepBall(ball, 1 / 60);
       closest = Math.min(closest, Math.hypot(ball.x - 16, ball.z));
+      maxY = Math.max(maxY, ball.y);
     }
     expect(closest).toBeLessThan(3);
     expect(ball.x).toBeGreaterThan(12);
+    expect(maxY).toBeLessThan(2.2);
   });
 
   it("carries a 24m long pass into the landing area", () => {

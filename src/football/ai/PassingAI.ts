@@ -2,7 +2,7 @@ import { clamp, dist2, dot2, normalize2, stat01 } from "../../core/math";
 import { scorePassCandidate, type PassType } from "../ball/PassModel";
 import { HALF_LENGTH } from "../constants";
 import { inPenaltyArea } from "../pitch/PitchZones";
-import { isInOffsidePosition } from "../rules/Offside";
+import { isInOffsidePosition, offsideLineX } from "../rules/Offside";
 import type { Ball } from "../ball/Ball";
 import type { Player } from "../players/Player";
 import { setPieceRole } from "./SetPieceAI";
@@ -243,7 +243,11 @@ export function choosePassTarget(
     const wing = role === "wide" || Math.abs(mate.z) > 16;
     // Skip clogged lanes early — must find free routes, not thread bodies.
     if (passType === "short" && laneClear < (buildup ? 0.48 : 0.42)) continue;
-    if (passType !== "short" && laneClear < 0.36) continue;
+    // Through balls: soften the hard filter when the runner is onside with space ahead.
+    const aheadSpace = forward > 5 && space > 4.2;
+    if (passType === "through" && laneClear < 0.28) continue;
+    if (passType === "through" && laneClear < 0.5 && !aheadSpace) continue;
+    if (passType !== "short" && passType !== "through" && laneClear < 0.36) continue;
     const open = space > (buildup ? 4.5 : 5.5) && laneClear > (buildup ? 0.62 : 0.68);
     const tightPingPong = distance < 9 && width < 7 && Math.abs(forward) < 6;
     const passerWide = setPieceRole(passer) === "wide" || Math.abs(passer.z) > 16;
@@ -323,20 +327,21 @@ export function choosePassTarget(
       (acrossOwn ? -1.55 : acrossBox ? -1.35 : 0) +
       (cornerDump ? (passType === "short" ? -0.42 : -0.75) : 0) +
       (passType === "long" ? clamp(space / 10, 0, 0.14) - clamp(width / 20, 0, 1.05) - (oppositeWing ? 0.65 : 0) : 0) +
-      (shortBuild ? 0.78 : 0) +
-      (buildup && passType === "short" && distance < 16 && width < 11 && forward >= 0 ? 0.48 : 0) +
-      (passType === "short" && distance < 12 && width < 9 ? 0.28 : 0) +
-      (buildup && passType === "through" && wing && forward > 5 && !oppositeWing ? 0.1 : 0) +
+      (shortBuild ? 0.48 : 0) +
+      (buildup && passType === "short" && distance < 16 && width < 11 && forward >= 0 ? 0.28 : 0) +
+      (passType === "short" && distance < 12 && width < 9 ? 0.16 : 0) +
+      (passType === "through" && aheadSpace && laneClear >= 0.5 ? (buildup ? 0.28 : 0.42) : 0) +
+      (buildup && passType === "through" && wing && forward > 5 && !oppositeWing ? 0.14 : 0) +
       (buildup && passType === "long" ? -1.55 : 0) +
       (passType === "long" && !buildup ? -0.65 : 0) +
-      (passType === "through" && role === "wide" && forward > 6 && !oppositeWing ? (buildup ? 0.08 : 0.16) : 0) +
+      (passType === "through" && role === "wide" && forward > 6 && !oppositeWing ? (buildup ? 0.1 : 0.18) : 0) +
       // Support pocket + striker layoff (Buckland Simple Soccer ideas).
       supportDistanceScore(distance, buildup) +
       layoffOptionBonus(passer, mate, distance, forward, width) +
-      (role === "st" && open && forward > 4 && laneClear > 0.68
+      (role === "st" && open && forward > 4 && laneClear > 0.55
         ? passType === "through"
-          ? 0.32
-          : 0.1
+          ? 0.48
+          : 0.14
         : 0);
     const scored = scorePassCandidate({
       alignment: useStick ? alignment : buildup ? Math.max(alignment, 0.4) : alignment,
@@ -363,16 +368,33 @@ export function choosePassTarget(
   return best;
 }
 
-export function throughBallAim(passer: Player, mate: Player): { x: number; z: number } {
+export function throughBallAim(
+  passer: Player,
+  mate: Player,
+  opponents: Player[] = [],
+): { x: number; z: number } {
   const fwd = passer.attackSign;
   const pace01 = mate.attrs.pace / 100;
   const vision01 = passer.attrs.vision / 100;
-  // Modest lead into the runner's path — long leads were firing into empty channels / corners.
-  const lead = 3.4 + vision01 * 1.8 + pace01 * 2.6 + mate.speed * 0.16;
-  let z = mate.z + mate.vz * 0.4 + (mate.anchorZ - mate.z) * 0.12;
+  // Lead relative to runner pace/vector and the offside line — not only current feet.
+  const runLead = 2.8 + vision01 * 1.6 + pace01 * 3.2 + Math.max(0, mate.vx * fwd) * 0.55;
+  const runX = mate.x + mate.vx * 0.55 + fwd * runLead;
+  let aimX = runX;
+  if (opponents.length >= 2) {
+    const line = offsideLineX(opponents, fwd);
+    // Drop just onside of the line so the runner meets the ball legally.
+    const legal = line - fwd * (0.6 + (1 - pace01) * 0.5);
+    if ((aimX - legal) * fwd > 0) aimX = legal;
+    // Still reward a modest lead ahead of the mate when they are deep of the line.
+    const behindLine = (legal - mate.x) * fwd;
+    if (behindLine > 2) {
+      aimX = mate.x + fwd * Math.min(runLead, behindLine * 0.85);
+    }
+  }
+  let z = mate.z + mate.vz * 0.55 + (mate.desiredZ !== 0 ? (mate.desiredZ - mate.z) * 0.25 : (mate.anchorZ - mate.z) * 0.12);
   if (Math.abs(z) > 16) z *= 0.72;
   return {
-    x: mate.x + mate.vx * 0.5 + fwd * lead,
+    x: aimX,
     z: clamp(z, -22, 22),
   };
 }

@@ -80,16 +80,16 @@ function idealHold(type: PassType, distance: number): number {
 export function passPower(ctx: PassContext): number {
   const typeBoost =
     ctx.passType === "through"
-      ? 1.22
+      ? 1.08
       : ctx.passType === "chip"
         ? 1.08
         : ctx.passType === "cross"
           ? 1.18
           : ctx.passType === "long"
-            ? 1.42
+            ? 1.28
             : 1;
-  const shotish = 11 + ctx.distance * 0.42 + ctx.hold01 * 10;
-  return clamp(shotish * typeBoost, 8, 36);
+  const shotish = 10 + ctx.distance * 0.38 + ctx.hold01 * 9;
+  return clamp(shotish * typeBoost, 8, 32);
 }
 
 export function longPassLift(distance: number, hold01: number, longPassing: number, pressure: number): number {
@@ -122,9 +122,9 @@ export function passKickVector(
   // Slightly softer ground speed so lofted arcs read clearly.
   const groundScale =
     passType === "short"
-      ? 0.9
+      ? 0.86
       : passType === "through"
-        ? 0.88
+        ? 0.84
         : passType === "chip"
           ? 0.78
           : passType === "cross"
@@ -135,16 +135,17 @@ export function passKickVector(
   // Symmetric loft for BALL_GRAVITY so apex ≈ 0.5 * g * (t/2)^2 family.
   let vy = 0.5 * BALL_GRAVITY * t;
   if (passType === "short") {
-    // Short passes still hop / loft rather than skimming through ankles.
-    const loftMul = dist > 14 ? 1.08 : dist > 9 ? 0.92 : 0.8;
-    const floor = dist > 14 ? 3.1 : dist > 9 ? 2.05 : 1.55;
-    const ceil = dist > 16 ? 7.2 : dist > 12 ? 5.6 : 4.6;
+    // Keep short ground passes playable — skim, don't missile.
+    const loftMul = dist > 14 ? 0.72 : dist > 9 ? 0.55 : 0.42;
+    const floor = dist > 14 ? 1.15 : dist > 9 ? 0.65 : 0.35;
+    const ceil = dist > 16 ? 4.2 : dist > 12 ? 3.2 : 2.4;
     vy = clamp(vy * loftMul, floor, ceil);
   } else if (passType === "chip") {
     // Lofted chip over a closing defender — slower ground, higher arc.
     vy = clamp(vy * 1.45 + dist * 0.04, 4.8, 11.5);
   } else if (passType === "through") {
-    vy = clamp(vy * 1.05, 2.6, 7.2);
+    // Through balls stay low and weightable.
+    vy = clamp(vy * 0.55, 0.45, 2.8);
   } else if (passType === "cross") {
     // High hanging cross — classic header service.
     vy = clamp(vy * 1.38 + dist * 0.055, 7.0, 14.5);

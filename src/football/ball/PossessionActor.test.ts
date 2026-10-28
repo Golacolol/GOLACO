@@ -60,6 +60,27 @@ describe("settleFirstTouch", () => {
     expect(result.firstTouchTimer).toBeGreaterThan(0.1);
   });
 
+  it("nearly kills residual speed on routine foot collects", () => {
+    const ball = new Ball();
+    ball.y = 0.22;
+    ball.vx = 12;
+    ball.vz = 3;
+    ball.vy = 0.4;
+    const result = settleFirstTouch(ball, {
+      control: 78,
+      strength: 70,
+      pressure: 0.15,
+      energy: 1,
+      aerial: false,
+      zone: "foot",
+      rng: () => 0.5,
+    });
+    expect(result.zone).toBe("foot");
+    expect(result.lost).toBe(false);
+    expect(result.settle).toBeGreaterThanOrEqual(0.9);
+    expect(Math.hypot(ball.vx, ball.vz)).toBeLessThan(1.2);
+  });
+
   it("strength scales kick power", () => {
     expect(strengthKickScale(90)).toBeGreaterThan(strengthKickScale(40));
   });
