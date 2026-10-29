@@ -3132,11 +3132,19 @@ export class Match {
       prep.plan.takingSide === "home" ? this.home.gk() : this.away.gk();
 
     if (prep.phase === "collect") {
+      prep.t += dt;
       const tx = this.ball.x - gk.x;
       const tz = this.ball.z - gk.z;
       movePlayer(gk, dt, tx, tz, true, false, moveEx);
       gk.facing = Math.atan2(tx, tz);
-      if (gk.distTo(this.ball.x, this.ball.z) < 1.35) {
+      // Snap if the ball sits outside reachable pitch (GK would hang forever).
+      const reached = gk.distTo(this.ball.x, this.ball.z) < 1.35 || prep.t > 3.6;
+      if (reached) {
+        if (gk.distTo(this.ball.x, this.ball.z) >= 1.35) {
+          this.ball.x = gk.x;
+          this.ball.z = gk.z;
+          this.ball.y = BALL_RADIUS;
+        }
         this.takePossession(gk);
         gk.firstTouchTimer = 0;
         this.faceKeeperToPlay(gk);
@@ -3147,6 +3155,7 @@ export class Match {
     }
 
     if (prep.phase === "carry") {
+      prep.t += dt;
       if (this.possessing !== gk) this.takePossession(gk);
       const inset = -gk.attackSign * 0.85;
       const destX = spot.x + inset;
@@ -3164,7 +3173,7 @@ export class Match {
       this.ball.vz = 0;
       this.ball.vy = 0;
       this.ball.ownerId = gk.id;
-      if (Math.hypot(dx, dz) < 1.15) {
+      if (Math.hypot(dx, dz) < 1.15 || prep.t > 5.5) {
         gk.x = destX;
         gk.z = destZ;
         gk.vx = 0;
