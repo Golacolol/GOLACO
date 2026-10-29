@@ -5,11 +5,19 @@ import { hexColor, clamp, lerp, lerpAngle, normalize2, rotate2, stat01 } from ".
 import type { FixtureRecord, KitChoice } from "../data/schema";
 import { celebrateAI, celebrationStaysPut, clearCelebration, concedeReaction, type CelebrationRoutine } from "./ai/CelebrationAI";
 import { updateGoalkeeper, decideKeeperDistribution, keeperPassDelivery } from "./ai/GoalkeeperAI";
-import { choosePassTarget, interceptCandidate, isBackwardPass, safePassDestination, throughBallAim } from "./ai/PassingAI";
+import {
+  choosePassTarget,
+  interceptCandidate,
+  isBackwardPass,
+  passingLaneQuality,
+  safePassDestination,
+  throughBallAim,
+} from "./ai/PassingAI";
 import { tickStillPossession } from "./ai/StillPossession";
 import { updateTeamAI } from "./ai/TeamAI";
 import { containTarget, nearestPressTargets, pressTarget, jockeyTarget } from "./ai/DefensiveAI";
 import { decideAttack, isStriker, isWideAttacker, type AttackDecision } from "./ai/AttackingDecision";
+import { isPlayStyleId, resolvePlayStyle, type PlayStyleId, type PlayStyleProfile } from "./ai/PlayStyle";
 import { decisionTelemetry } from "./ai/DecisionTelemetry";
 import { decideFreeKick } from "./ai/FreeKickDecision";
 import { AI_CELEBRATION_SECONDS, chooseKickOffReceiver, KICK_OFF_PASS_DELAY, USER_CELEBRATION_MAX } from "./ai/KickOff";
@@ -59,7 +67,8 @@ import {
   restartLabel,
   type RestartPlan,
 } from "./Restarts";
-import { isInOffsidePosition, offsideRetreatTarget, playersOffsideAtPass } from "./rules/Offside";
+import { isInOffsidePosition, offsideLineX, offsideRetreatTarget, playersOffsideAtPass } from "./rules/Offside";
+import { teamMatchPhase, type MatchPhase } from "./ai/MatchBrain";
 import { createGoalEvent, type GoalEvent } from "./GoalEvent";
 import { defaultSpotKick, resolveSpotKick, type SpotKickPlacement } from "./practice/SpotKick";
 import { MatchClock } from "./MatchClock";
@@ -208,6 +217,8 @@ export class Match {
   env: EnvironmentPreset;
   lastDecision: AttackDecision | null = null;
   gameplayMode: "REAL" | "ARCADE" = "REAL";
+  homePlayStyle: PlayStyleProfile | null = null;
+  awayPlayStyle: PlayStyleProfile | null = null;
   stats = {
     passes: 0,
     shortPasses: 0,
@@ -225,7 +236,23 @@ export class Match {
     crosses: 0,
     shots: 0,
     longShots: 0,
+    offsides: 0,
     possessionDurations: [] as number[],
+    /** Sum of progressive pass distances (metres ahead of passer). */
+    progressivePassDistance: 0,
+    progressivePasses: 0,
+    passDistanceSum: 0,
+    /** Accumulated open-play seconds spent in each MatchBrain phase. */
+    phaseSeconds: {
+      defend: 0,
+      loose: 0,
+      transition: 0,
+      build: 0,
+      attack: 0,
+      chance: 0,
+    } as Record<MatchPhase, number>,
+    /** Samples of ST→offside-line gap (metres onside = positive) during attack/chance. */
+    stOffsideGapSamples: [] as number[],
   };
   debug = {
     fps: 0,
@@ -336,6 +363,8 @@ export class Match {
     });
     this.home = new Team(homeTeam, homeLine, "home", homeSquad, db.getSquad(fixture.homeTeamId), kits.home);
     this.away = new Team(awayTeam, awayLine, "away", awaySquad, db.getSquad(fixture.awayTeamId), kits.away);
+    this.homePlayStyle = resolvePlayStyle(homeTeam, this.home.players, homeLine.playStyle ?? null);
+    this.awayPlayStyle = resolvePlayStyle(awayTeam, this.away.players, awayLine.playStyle ?? null);
     this.clock = new MatchClock(fixture.durationSeconds);
     const stadium = db.getStadium(fixture.venueId);
     this.stadium = new Stadium(scene, stadium, db.advertising, homeTeam.primaryColor, awayTeam.primaryColor, this.env, {
@@ -417,10 +446,11 @@ export class Match {
     this.cameraToastT = 2.4;
   }
 
-  /** Apply pause-menu formation edits: substitutions, shape, and slot nudges. */
+  /** Apply pause-menu formation edits: substitutions, shape, slot nudges, play-style. */
   applyTacticalEdit(edit: {
     formation: string;
     starters: { playerId: string; slot: string; offsetX?: number; offsetZ?: number }[];
+    playStyle?: PlayStyleId | "auto" | null;
   }): { subsMade: number; formationChanged: boolean; subsQueued: number } {
     const team = this.userTeam();
     const formationChanged = edit.formation !== team.lineup.formation;
@@ -475,12 +505,26 @@ export class Match {
       };
     });
 
+    if (edit.playStyle !== undefined) {
+      const override =
+        edit.playStyle === "auto" || edit.playStyle === null || !isPlayStyleId(edit.playStyle)
+          ? null
+          : edit.playStyle;
+      if (override) team.lineup.playStyle = override;
+      else delete team.lineup.playStyle;
+      const style = resolvePlayStyle(team.record, team.players, override);
+      if (team.side === "home") this.homePlayStyle = style;
+      else this.awayPlayStyle = style;
+    }
+
     const pendingBefore = this.pendingCount(team.side);
     this.tryFlushPendingSubs();
     const stillQueued = this.pendingCount(team.side);
     const subsMade = Math.max(0, pendingBefore - stillQueued);
     const bits: string[] = [];
     if (formationChanged) bits.push(edit.formation);
+    if (edit.playStyle && edit.playStyle !== "auto") bits.push(String(edit.playStyle).toUpperCase());
+    else if (edit.playStyle === "auto") bits.push("STYLE AUTO");
     if (subsMade) bits.push(`${subsMade} SUB${subsMade === 1 ? "" : "S"}`);
     else if (stillQueued) bits.push(`${stillQueued} SUB${stillQueued === 1 ? "" : "S"} PENDING`);
     if (!bits.length) bits.push("LINE-UP UPDATED");
@@ -862,6 +906,7 @@ export class Match {
       minute01: clamp(this.clock.elapsed / Math.max(1, this.clock.duration), 0, 1),
       drainMul: this.tuning.staminaDrainMultiplier,
       matchDrainScale: staminaMatchDrainScale(this.clock.duration),
+      playStyle: this.homePlayStyle ?? undefined,
     });
     const awayAI = updateTeamAI(this.allPlayers(), "away", this.ball, homePoss, dt, awaySkip, {
       tuning: this.tuning,
@@ -877,7 +922,9 @@ export class Match {
       minute01: clamp(this.clock.elapsed / Math.max(1, this.clock.duration), 0, 1),
       drainMul: this.tuning.staminaDrainMultiplier,
       matchDrainScale: staminaMatchDrainScale(this.clock.duration),
+      playStyle: this.awayPlayStyle ?? undefined,
     });
+    this.sampleFidelityMetrics(dt, homePoss);
     this.pressingId =
       primaryPresser?.id ??
       secondaryPresser?.id ??
@@ -1108,13 +1155,14 @@ export class Match {
         : null;
     const contest = duel?.winner ?? this.contestForBall();
     if (!contest) return;
-    const yCap = aerial ? 3.05 : 1.55;
+    const heightM = contest.height || 1.82;
+    const yCap = aerial ? Math.min(3.35, 1.55 + heightM * 0.85) : Math.min(1.72, 0.55 + heightM * 0.55);
     const speedCap = aerial
       ? 14 + (contest.attrs.jumping ?? contest.attrs.heading ?? 50) * 0.045
       : 10 + contest.attrs.control * 0.06;
     const { reach } = aerial
       ? aerialContestReach(contest, speed)
-      : { reach: collectSpeed };
+      : { reach: collectSpeed * (0.94 + Math.min(0.14, (heightM - 1.7) * 0.35)) };
     if (contest.distTo(this.ball.x, this.ball.z) < reach && speed < speedCap && this.ball.y < yCap) {
       const wasAerial = aerial || this.incomingAerial;
       const contested = !!duel?.contested || this.opponentsOf(contest).some((o) => o.distTo(this.ball.x, this.ball.z) < 2.6);
@@ -1595,6 +1643,7 @@ export class Match {
       pressure: this.pressure,
       tuning: this.tuning,
       forbidIds: this.passForbidIds(passer),
+      playStyle: (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined,
     });
     this.lastDecision = decision;
     if (decisionTelemetry.enabled) {
@@ -1736,24 +1785,45 @@ export class Match {
       }
     }
     if (passLike && this.possessionTime < 0.14) action = "RUN";
-    // Stall breaker: clock kept running while players stood still on HOLD/RUN.
-    if ((action === "RUN" || action === "HOLD") && this.possessionTime >= 2.5) {
+    // Stall breaker: give think time; only force a pass into a clear lane.
+    const stallStyle = (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined;
+    const stallAt =
+      (stallStyle?.id === "possession" ? 4.2 : stallStyle?.id === "routeOne" || stallStyle?.id === "direct" ? 3.1 : 3.6) /
+      Math.max(0.85, stallStyle?.tempo ?? 1);
+    if ((action === "RUN" || action === "HOLD") && this.possessionTime >= stallAt) {
+      const style = stallStyle;
       if (passTarget && !forbid.includes(passTarget.id) && !passTarget.isGK) {
-        action = "PASS";
+        const lane = passingLaneQuality(passer, passTarget.x, passTarget.z, this.opponentsOf(passer));
+        const need = style?.id === "possession" ? 0.5 : 0.45;
+        if (lane >= need) action = "PASS";
+        else if (style?.id === "possession") action = "HOLD";
       } else {
         const softForbid = forbid.slice(-2);
-        const alt = choosePassTarget(
-          passer,
-          this.teamOf(passer).players,
-          this.opponentsOf(passer),
-          this.ball,
-          0,
-          0,
-          "short",
-          { forbidIds: softForbid, style: building ? "buildup" : "attack" },
-        );
-        if (alt) {
-          action = "PASS";
+        const direct = style?.id === "direct" || style?.id === "routeOne";
+        const counterBurst = style?.id === "counter" && this.possessionChangeAge < 3.2;
+        const alt =
+          choosePassTarget(
+            passer,
+            this.teamOf(passer).players,
+            this.opponentsOf(passer),
+            this.ball,
+            direct || counterBurst ? attackDir * 20 : 0,
+            0,
+            direct || counterBurst ? "through" : "short",
+            { forbidIds: softForbid, style: building ? "buildup" : "attack", playStyle: style },
+          ) ??
+          choosePassTarget(
+            passer,
+            this.teamOf(passer).players,
+            this.opponentsOf(passer),
+            this.ball,
+            0,
+            0,
+            "short",
+            { forbidIds: softForbid, style: building ? "buildup" : "attack", playStyle: style },
+          );
+        if (alt && passingLaneQuality(passer, alt.x, alt.z, this.opponentsOf(passer)) >= 0.42) {
+          action = direct && (alt.x - passer.x) * attackDir > 6 ? "THROUGH" : "PASS";
           passTarget = alt;
         }
       }
@@ -2124,6 +2194,12 @@ export class Match {
     {
       const width = Math.abs(destZ - passer.z);
       const ahead = (destX - passer.x) * passer.attackSign;
+      const dist = Math.hypot(destX - passer.x, destZ - passer.z);
+      this.stats.passDistanceSum += dist;
+      if (ahead >= 10) {
+        this.stats.progressivePasses += 1;
+        this.stats.progressivePassDistance += ahead;
+      }
       if (delivery !== "cross" && width > 16 && ahead < 10) this.stats.crossFieldPasses += 1;
     }
     if (delivery === "long" || delivery === "cross" || delivery === "chip") this.incomingAerial = true;
@@ -2666,11 +2742,14 @@ export class Match {
   private offsidePlayerInReceiveRange(collectSpeed: number, speed: number): Player | null {
     if (!this.offsidePassIds.size) return null;
     const aerial = this.ball.y > 1.35 || this.incomingAerial;
-    const yCap = aerial ? 3.15 : 1.65;
-    const reach = aerial ? collectSpeed * 1.15 : collectSpeed;
     for (const id of this.offsidePassIds) {
       const p = this.playerById(id);
       if (!p || p.kickTimer > 0) continue;
+      const heightM = p.height || 1.82;
+      const yCap = aerial ? Math.min(3.4, 1.55 + heightM * 0.85) : Math.min(1.78, 0.55 + heightM * 0.58);
+      const reach = aerial
+        ? collectSpeed * 1.15
+        : collectSpeed * (0.94 + Math.min(0.14, (heightM - 1.7) * 0.35));
       const speedCap = aerial
         ? 14 + (p.attrs.jumping ?? p.attrs.heading ?? 50) * 0.045
         : 10 + p.attrs.control * 0.06;
@@ -2681,10 +2760,41 @@ export class Match {
     return null;
   }
 
+  /** Lab / fidelity: phase time shares + ST–offside-line gap while attacking. */
+  private sampleFidelityMetrics(dt: number, possessingSide: "home" | "away" | null): void {
+    if (this.state !== FootballState.PLAYING && this.state !== FootballState.KICK_OFF) return;
+    const side = possessingSide ?? (this.ball.lastTouchSide as "home" | "away" | null);
+    if (!side) {
+      this.stats.phaseSeconds.loose += dt;
+      return;
+    }
+    const team = side === "home" ? this.home : this.away;
+    const opp = side === "home" ? this.away : this.home;
+    const attackSign = team.players[0]?.attackSign ?? (side === "home" ? 1 : -1);
+    const phase = teamMatchPhase(side, this.ball, possessingSide, attackSign, {
+      transitionAge: this.possessionChangeAge,
+      distGoal: Math.hypot(defendGoalX(side === "home" ? "away" : "home", this.endsFlipped) - this.ball.x, this.ball.z),
+    });
+    this.stats.phaseSeconds[phase] += dt;
+    if (phase === "attack" || phase === "chance" || phase === "build") {
+      const strikers = team.players.filter((p) => !p.isGK && !p.sentOff && isStriker(p));
+      if (strikers.length) {
+        const line = offsideLineX(opp.players, attackSign);
+        let sum = 0;
+        for (const st of strikers) sum += (line - st.x) * attackSign;
+        this.stats.stOffsideGapSamples.push(sum / strikers.length);
+        if (this.stats.stOffsideGapSamples.length > 2400) {
+          this.stats.stOffsideGapSamples.splice(0, this.stats.stOffsideGapSamples.length - 2400);
+        }
+      }
+    }
+  }
+
   private awardOffsideFoul(offender: Player): void {
     const defendingSide = offender.side === "home" ? "away" : "home";
     const foulX = this.ball.x;
     const foulZ = this.ball.z;
+    this.stats.offsides += 1;
     this.clock.addFoulTime(1.35);
     this.clearOffsidePhase();
     this.clearOwner();

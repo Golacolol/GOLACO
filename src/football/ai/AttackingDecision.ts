@@ -8,6 +8,8 @@ import { bestAvailableSpace, forwardPathCongested } from "./SpaceField";
 import type { SpaceSample } from "./SpaceField";
 import type { PassType } from "../ball/PassModel";
 import type { Ball } from "../ball/Ball";
+import { playStylePassWeights, playStyleProfile, type PlayStyleProfile } from "./PlayStyle";
+import { positionArchetype } from "./PositionArchetype";
 
 export type AttackAction = "PASS" | "THROUGH" | "LONG_PASS" | "CROSS" | "RUN" | "SHOT" | "LONG_SHOT" | "HOLD";
 
@@ -40,6 +42,8 @@ export interface AttackContext {
   tuning: GameplayTuning;
   rng?: () => number;
   forbidIds?: string[];
+  /** Team play-style (route one vs possession). */
+  playStyle?: PlayStyleProfile;
 }
 
 export function possessionUrgency(possessionTime: number): number {
@@ -138,28 +142,38 @@ export function isMidfielder(player: Player): boolean {
 
 export function decideAttack(ctx: AttackContext): AttackDecision {
   const { carrier, teammates, opponents, ball, possessionTime, pressure, tuning } = ctx;
+  const style = ctx.playStyle ?? playStyleProfile("balanced");
+  const arch = positionArchetype(carrier);
   const progress = clamp((carrier.x * (carrier.attackSign) + HALF_LENGTH) / (HALF_LENGTH * 2), 0, 1);
   const striker = isStriker(carrier);
   const wide = isWideAttacker(carrier);
   const midfield = isMidfielder(carrier);
   const footRole = classifyFootballRole(carrier);
   const roleBias = roleOnBallBias(carrier);
-  const building = progress < 0.64 && pressure < 0.62;
+  const directTeam = style.id === "direct" || style.id === "routeOne";
+  const counterTeam = style.id === "counter";
+  const building = progress < 0.64 && pressure < 0.62 && !directTeam;
+  // Tentative phase for style weights (refined again after chance calc).
+  const earlyPhase = progress < 0.55 ? "build" : "attack";
+  const styleW = playStylePassWeights(style, { phase: earlyPhase });
   const wantBuildup =
-    roleBias.buildup > 0.48 ||
-    (midfield && progress < 0.8) ||
-    (striker && progress < 0.66) ||
-    (wide && progress < 0.64 && pressure < 0.58) ||
-    (building && !wide) ||
-    (building && wide && progress < 0.58) ||
-    footRole === "CB" ||
-    footRole === "DM" ||
-    footRole === "FB" ||
-    footRole === "CM";
+    !directTeam &&
+    (roleBias.buildup > 0.48 ||
+      arch.safeRecycle > 0.65 ||
+      (midfield && progress < 0.8) ||
+      (striker && progress < 0.66) ||
+      (wide && progress < 0.64 && pressure < 0.58) ||
+      (building && !wide) ||
+      (building && wide && progress < 0.58) ||
+      footRole === "CB" ||
+      footRole === "DM" ||
+      footRole === "FB" ||
+      footRole === "CM");
   const forbid = new Set(ctx.forbidIds ?? []);
   const passOpts = {
     forbidIds: ctx.forbidIds,
     style: wantBuildup ? ("buildup" as const) : ("attack" as const),
+    playStyle: style,
   };
   const space = bestAvailableSpace(carrier, opponents, teammates);
   const congested = forwardPathCongested(carrier, opponents);
@@ -168,6 +182,7 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   const urgency =
     possessionUrgency(possessionTime) *
     tuning.passUrgencyMultiplier *
+    style.tempo *
     (wantBuildup && possessionTime < 4.2 ? 0.72 : wantBuildup ? 0.88 : 1);
   const vision = stat01(carrier.attrs.vision);
   const passing = stat01(carrier.attrs.passing);
@@ -288,19 +303,26 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
       throughBallScore += 0.22 + vision * 0.12 + Math.min(0.18, (thruSpace - 4) * 0.04);
     }
   }
+  throughBallScore += styleW.throughBonus + arch.progressiveRisk * 0.12;
   if (throughT && isWideAttacker(throughT) && (throughT.x - carrier.x) * carrier.attackSign > 5) {
     throughBallScore += wantBuildup ? 0.1 : 0.2 + vision * 0.08;
   }
   if (throughT && Math.abs(throughT.z) > 18) throughBallScore *= 0.55;
   let longPassScore = longT
-    ? (pressure > 0.62 || (Math.abs(carrier.z) > 18 && progress < 0.3)
-        ? 0.08 + stat01(carrier.attrs.longPassing) * 0.14 + vision * 0.06
-        : 0.02 + vision * 0.02)
+    ? (pressure > 0.62 || directTeam || (Math.abs(carrier.z) > 18 && progress < 0.3)
+        ? 0.08 +
+          stat01(carrier.attrs.longPassing) * 0.14 +
+          vision * 0.06 +
+          styleW.longBonus +
+          (directTeam ? 0.22 : 0)
+        : 0.02 + vision * 0.02 + styleW.longBonus * 0.5)
     : 0.01;
   if (longT) {
     const longWidth = Math.abs(longT.z - carrier.z);
     const longAhead = (longT.x - carrier.x) * carrier.attackSign;
-    if (longWidth > 14 && longAhead < 10) longPassScore *= 0.12;
+    // Route-one: reward vertical long; still punish flat switches.
+    if (directTeam && longAhead > 12 && longWidth < 14) longPassScore += 0.28 + style.longBias * 0.2;
+    else if (longWidth > 14 && longAhead < 10) longPassScore *= 0.12;
     else if (longWidth > 18) longPassScore *= 0.22;
     else if (longWidth > 12) longPassScore *= 0.55;
   }
@@ -321,26 +343,34 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     crossScore += 0.2 + passing * 0.08;
   }
   let holdScore = Math.max(0.04, 0.14 - pressure * 0.22 - (urgency - 1) * 0.12) * comp;
-  // Stall breaker — after a couple of seconds, circulate rather than freeze.
-  if (possessionTime > 2.4) {
-    holdScore *= 0.35;
-    passScore += 0.28 + (freeMan ? 0.18 : 0);
-    runScore *= 0.85;
+  // Stall breaker — longer window so players have think time; only dump if a lane exists.
+  const stallT = 3.6 / Math.max(0.85, style.tempo);
+  if (possessionTime > stallT) {
+    holdScore *= 0.45;
+    if (shortT && lane > 0.48) passScore += 0.18 + (freeMan ? 0.12 : 0);
+    else if (directTeam && (throughT || longT)) {
+      throughBallScore += 0.16;
+      longPassScore += 0.14;
+    } else {
+      holdScore += 0.08;
+      runScore += 0.1;
+    }
+    runScore *= 0.9;
   }
-  if (possessionTime > 4) {
-    holdScore *= 0.2;
-    passScore += 0.35;
-    throughBallScore *= 0.7;
-    longPassScore *= 0.75;
+  if (possessionTime > stallT + 2.2) {
+    holdScore *= 0.28;
+    if (shortT && lane > 0.4) passScore += 0.22;
+    else if (throughT) throughBallScore += 0.18;
+    else if (longT) longPassScore += 0.16;
   }
 
-  // MatchBrain role model — per-position on-ball tendencies (GRF lineage).
-  passScore += roleBias.pass;
-  runScore += roleBias.run;
+  // MatchBrain role model + position archetype.
+  passScore += roleBias.pass + styleW.shortBonus + arch.safeRecycle * 0.1;
+  runScore += roleBias.run + arch.stretchRun * 0.08;
   throughBallScore = Math.max(0, throughBallScore + roleBias.through);
   crossScore = Math.max(0, crossScore + roleBias.cross);
   holdScore = Math.max(0, holdScore + roleBias.hold);
-  shotScore = Math.max(0, shotScore + roleBias.shot);
+  shotScore = Math.max(0, shotScore + roleBias.shot + arch.finishBias * 0.08);
   if (footRole === "CB" || footRole === "DM") longPassScore += pressure > 0.4 ? 0.12 : -0.05;
   if (footRole === "FB" || footRole === "W" || footRole === "WM") {
     if (Math.abs(carrier.z) > 12 && distGoal < 40) crossScore += 0.14;
@@ -372,27 +402,30 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     chanceQuality: clearChance.quality,
   });
   if (phase === "transition") {
-    throughBallScore += 0.22;
-    runScore += 0.12;
-    holdScore *= 0.55;
-    longPassScore += 0.08;
+    throughBallScore += 0.22 + style.transitionBurst * 0.35;
+    runScore += 0.12 + (counterTeam ? 0.14 : 0);
+    holdScore *= counterTeam ? 0.35 : 0.55;
+    longPassScore += 0.08 + (counterTeam ? 0.06 : 0);
+    if (counterTeam) passScore *= 0.82;
   } else if (phase === "chance") {
     shotScore += 0.28;
     throughBallScore += 0.1;
     passScore *= 0.72;
     holdScore *= 0.2;
   } else if (phase === "build") {
-    passScore += 0.12;
-    throughBallScore *= 0.85;
+    passScore += 0.12 + (style.id === "possession" ? 0.14 : 0);
+    throughBallScore *= counterTeam || style.id === "possession" ? 0.72 : 0.85;
+    if (counterTeam) longPassScore *= 0.55;
   }
 
   if (building || wantBuildup) {
-    holdScore *= 0.7;
-    passScore += 0.42 + passing * 0.18 + lane * 0.22;
+    holdScore *= style.id === "possession" ? 0.85 : 0.7;
+    passScore += 0.42 + passing * 0.18 + lane * 0.22 + styleW.shortBonus * 0.35;
     runScore *= closeSupport ? 0.95 : 0.52;
-    // Soften through in build — don't crush progressive runners with space.
-    throughBallScore *= throughT && throughBallScore > 0.35 ? 0.92 : 0.78;
-    longPassScore *= pressure > 0.55 ? 0.35 : 0.12;
+    // Style-aware crush: possession kills long; direct keeps progressive alive.
+    const phaseW = playStylePassWeights(style, { phase });
+    throughBallScore *= throughT && throughBallScore > 0.35 ? Math.max(0.72, phaseW.buildupCrush + 0.15) : phaseW.buildupCrush;
+    longPassScore *= pressure > 0.55 ? 0.35 : directTeam ? 0.45 : counterTeam ? 0.18 : 0.12;
     // Don't suppress finishing when the chance is already there.
     if (clearChance.quality < 0.4) {
       shotScore *= 0.35;

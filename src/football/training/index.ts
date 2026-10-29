@@ -19,10 +19,12 @@ export {
 } from "./loadRealMatchCorpus";
 export {
   compareSimPassMixToReal,
+  compareSimToReal,
   derivePlayStyleTargets,
   evaluateFreeKickAgreement,
   evaluatePassGeometry,
   trainAgainstRealMatch,
+  type CompareSimOpts,
   type FreeKickAgreementReport,
   type PassGeometryReport,
   type RealMatchTrainingReport,

@@ -45,6 +45,7 @@ export class DebugOverlay {
       `PRESSURE ${match.pressure.toFixed(2)}`,
       `TACKLER ${match.currentTacklerId ?? "-"} cd=${p.tackleCooldown.toFixed(2)}`,
       `MODE ${match.gameplayMode} ${match.env.timeOfDay}/${match.env.weather}`,
+      `STYLE H=${match.homePlayStyle?.id ?? "-"} A=${match.awayPlayStyle?.id ?? "-"}`,
       `ACTION ${d?.action ?? "-"} space=${d?.space.kind ?? "-"}`,
       d
         ? `SCORES P${d.scores.passScore.toFixed(2)} R${d.scores.runScore.toFixed(2)} S${d.scores.shotScore.toFixed(2)} LS${d.scores.longShotScore.toFixed(2)} TH${d.scores.throughBallScore.toFixed(2)} LP${d.scores.longPassScore.toFixed(2)}`

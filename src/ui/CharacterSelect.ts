@@ -1,6 +1,13 @@
 import type { SquadPlayer } from "../core/Database";
 import { FORMATION_NAMES, getFormation, remapPlayersToFormation } from "../football/teams/Formation";
 import type { KitChoice, TeamKit, TeamRecord } from "../data/schema";
+import {
+  PLAY_STYLE_IDS,
+  PLAY_STYLE_LABELS,
+  isPlayStyleId,
+  type PlayStyleChoice,
+  type PlayStyleId,
+} from "../football/ai/PlayStyle";
 import { kitsClash, pickTeamKit, teamHomeKit, teamResolvedAwayKit } from "../football/teams/KitClash";
 import { fitKitSurnameElements, kitMarkerHtml, portraitHtml, teamBadgeHtml } from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
@@ -302,6 +309,8 @@ export class CharacterSelect {
   private userIsAwaySide = false;
   private teamRecord: TeamRecord | null = null;
   formation = "4-2-3-1";
+  /** Play-style override; Auto = derive at kick-off. */
+  playStyle: PlayStyleChoice = "auto";
   /** Shown in pause formation editor (substitutions remaining this match). */
   pauseSubsRemaining: number | null = null;
   /** Starting XI ids when the pause editor opened — used to count pending subs. */
@@ -352,6 +361,8 @@ export class CharacterSelect {
       /** User club is the away side for this fixture (AUTO may force away kit). */
       userIsAwaySide?: boolean;
       kitChoice?: KitChoice;
+      /** Lineup play-style override; null/absent → Auto. */
+      playStyle?: PlayStyleId | null;
     },
   ): void {
     this.teamName = teamName;
@@ -372,6 +383,7 @@ export class CharacterSelect {
         }
       : null;
     this.formation = options?.formation ?? "4-2-3-1";
+    this.playStyle = isPlayStyleId(options?.playStyle ?? undefined) ? options!.playStyle! : "auto";
     this.purpose = options?.purpose ?? "match";
     this.slotOffsets.clear();
     this.syncKitMarkerColors();
@@ -423,6 +435,7 @@ export class CharacterSelect {
   private lineupFingerprint(): string {
     return JSON.stringify({
       formation: this.formation,
+      playStyle: this.playStyle,
       starters: this.xi.map((row) => {
         const off = this.slotOffsets.get(row.slot);
         return {
@@ -433,6 +446,11 @@ export class CharacterSelect {
         };
       }),
     });
+  }
+
+  setPlayStyle(choice: PlayStyleChoice): void {
+    this.playStyle = choice === "auto" || isPlayStyleId(choice) ? choice : "auto";
+    this.markDirtyIfNeeded();
   }
 
   private markDirtyIfNeeded(): void {
@@ -571,10 +589,12 @@ export class CharacterSelect {
 
   getEditedLineup(): {
     formation: string;
+    playStyle: PlayStyleChoice;
     starters: { playerId: string; slot: string; offsetX?: number; offsetZ?: number }[];
   } {
     return {
       formation: this.formation,
+      playStyle: this.playStyle,
       starters: this.xi.map((row) => {
         const off = this.slotOffsets.get(row.slot);
         return {
@@ -720,6 +740,14 @@ export class CharacterSelect {
       <div class="char-panel char-panel-team ${this.purpose === "spot" ? "char-panel-spot" : ""}">
         <div class="team-select-head">
           ${this.teamTitleHtml(titleLabel)}
+          <div class="play-style-chips" role="group" aria-label="Play style">
+            ${(["auto", ...PLAY_STYLE_IDS] as PlayStyleChoice[])
+              .map(
+                (id) =>
+                  `<button type="button" class="formation-chip play-style-chip ${id === this.playStyle ? "on" : ""}" data-char="play-style" data-style="${id}">${PLAY_STYLE_LABELS[id]}</button>`,
+              )
+              .join("")}
+          </div>
           <div class="formation-chips">
             ${FORMATION_NAMES.map(
               (name) =>

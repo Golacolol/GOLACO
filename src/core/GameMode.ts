@@ -1,8 +1,9 @@
-/** High-level game modes. Only FOOTBALL is implemented in v0.3. */
+/** High-level game modes. */
 export const GameMode = {
   FOOTBALL: "FOOTBALL",
   OPEN_WORLD: "OPEN_WORLD",
   ARCADE: "ARCADE",
+  TABLE: "TABLE",
 } as const;
 
 export type GameMode = (typeof GameMode)[keyof typeof GameMode];

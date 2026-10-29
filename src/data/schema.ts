@@ -186,6 +186,11 @@ export interface LineupRecord {
   teamId: string;
   formation: string;
   starters: LineupSlot[];
+  /**
+   * Optional team play-style override for this lineup.
+   * Absent / null = Auto (derive from strength / league at kick-off).
+   */
+  playStyle?: "possession" | "balanced" | "counter" | "direct" | "routeOne" | null;
 }
 
 export interface FixtureRecord {

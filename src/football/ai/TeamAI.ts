@@ -16,6 +16,8 @@ import {
   selectClosingPlayers,
 } from "./DefensiveAI";
 import { designatePursuers, mustChaseLoose, roleShapeTarget, teamMatchPhase } from "./MatchBrain";
+import { playStyleProfile, type PlayStyleProfile } from "./PlayStyle";
+import { positionArchetype } from "./PositionArchetype";
 import { bestSupportSpot } from "./SupportSpotCalculator";
 import type { Ball } from "../ball/Ball";
 import { movePlayer } from "../players/PlayerMovement";
@@ -61,6 +63,8 @@ export function updateTeamAI(
     scoreDiff?: number;
     /** 0..1 through the match clock. */
     minute01?: number;
+    /** Team play-style (route one vs possession). */
+    playStyle?: PlayStyleProfile;
   },
 ): TeamAIResult {
   const us = players.filter((p) => p.side === side);
@@ -69,6 +73,7 @@ export function updateTeamAI(
   const autoClosers = extras?.autoClosers !== false;
   const forced = (extras?.forceClosers ?? []).filter((p) => p.side === side && !p.isGK && !p.celebrating);
   const looseBall = possessingSide == null;
+  const playStyle = extras?.playStyle ?? playStyleProfile("balanced");
   const pressWindow = 3.4 * (extras?.tuning?.counterPressWindowMultiplier ?? 1);
   const pressAggro = extras?.tuning?.counterPressAggressionMultiplier ?? 1;
   const counterPress =
@@ -218,16 +223,31 @@ export function updateTeamAI(
         const trap = Math.abs(ball.z) > 14;
         const isPrimary = primaryPursuer?.id === p.id;
         const isSupport = supportPursuer?.id === p.id;
-        // Loose: primary hunts; support contains / cuts the lane. Owned ball: prior behaviour.
-        if (loose && isSupport && !aggressive) {
-          target = containTarget(p, ball.x, ball.z, goalX);
-        } else if (aggressive || counterPress || (loose && isPrimary) || (!loose && ballDist > 4)) {
+        const arch = positionArchetype(p);
+        const styleStand = playStyle.standOffBias;
+        const standOff =
+          !loose &&
+          !aggressive &&
+          !counterPress &&
+          (isSupport ||
+            arch.standOff + styleStand * 0.55 > 0.68 ||
+            (styleStand > 0.58 && !isPrimary) ||
+            (aw > 0.55 && ballDist < 9));
+        // Loose: primary hunts; support contains. Owned: often stand off / cover angle.
+        if ((loose && isSupport && !aggressive) || standOff) {
+          target = containTarget(p, ball.x, ball.z, goalX, styleStand);
+        } else if (
+          aggressive ||
+          counterPress ||
+          (loose && isPrimary) ||
+          (!loose && isPrimary && ballDist > 5.5 && styleStand < 0.55)
+        ) {
           target =
             trap && !loose
               ? pressTrapTarget(p, ball.x, ball.z, goalX)
               : pressTarget(p, ball.x, ball.z, goalX);
-        } else if (aw > 0.58 && !aggressive) {
-          target = containTarget(p, ball.x, ball.z, goalX);
+        } else if (aw > 0.52 && !aggressive) {
+          target = containTarget(p, ball.x, ball.z, goalX, styleStand);
         } else {
           target = closeDownTarget(p, ball.x, ball.z, goalX);
         }
@@ -294,7 +314,7 @@ export function updateTeamAI(
         target = pitchClamp(p.x + dir * Math.min(8, room), p.z, 2.2);
       }
     } else {
-      const support = attackingSupport(p, ball.x, ball.z, p.hasBall, carrier, us, them, attackPhase);
+      const support = attackingSupport(p, ball.x, ball.z, p.hasBall, carrier, us, them, attackPhase, playStyle);
       const shape = roleShapeTarget(p, ball, possessingSide);
       // Role channels dominate for wide/FB; SupportAI owns CF/AM depth (avoid CF shape nudging past the line).
       const shapeW =

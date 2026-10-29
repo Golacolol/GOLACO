@@ -34,6 +34,8 @@ import { PlayerDatabaseEditor } from "../ui/PlayerDatabaseEditor";
 import { MatchSetup } from "../ui/MatchSetup";
 import { MatchCard, shouldFadeMatchCard } from "../ui/MatchCard";
 import { MatchSimulationLabMenu } from "../ui/MatchSimulationLabMenu";
+import { TableSetupMenu } from "../ui/TableSetupMenu";
+import { TableMatch, type TableMatchConfig } from "../football/table";
 import {
   runSimulationLab,
   exportReportJson,
@@ -59,6 +61,7 @@ export class Game {
   db!: GameDatabase;
   appState: AppState = AppState.BOOT;
   match: Match | null = null;
+  tableMatch: TableMatch | null = null;
   preferredPlayerId: string | null = null;
   private teamControl = false;
   /** Listed fixture started via SIMULATE (AI watch); do not chain attract matches. */
@@ -80,6 +83,7 @@ export class Game {
   private players!: PlayerDatabaseEditor;
   private setup!: MatchSetup;
   private simLab!: MatchSimulationLabMenu;
+  private tableSetup!: TableSetupMenu;
   private matchCard!: MatchCard;
   private hud: MatchHUD | null = null;
   private debug!: DebugOverlay;
@@ -144,6 +148,13 @@ export class Game {
     this.players = new PlayerDatabaseEditor(this.ui);
     this.setup = new MatchSetup(this.ui);
     this.simLab = new MatchSimulationLabMenu(this.ui);
+    this.tableSetup = new TableSetupMenu(this.ui);
+    this.tableSetup.onStart = (cfg) => this.beginTableMatch(cfg);
+    this.tableSetup.onCancel = () => {
+      this.tableSetup.hide();
+      this.appState = AppState.MAIN_MENU;
+      this.paintMainMenu();
+    };
     this.matchCard = new MatchCard(this.ui);
     this.debug = new DebugOverlay(this.ui);
     this.applyGraphics();
@@ -166,6 +177,13 @@ export class Game {
         this.appState = AppState.PAUSED;
         this.match.enterPause();
         this.audio.pauseStadiumAmbience();
+        this.pause.reset();
+        this.renderPause();
+        this.escapeClosedOverlay = true;
+        e.preventDefault();
+      } else if (this.appState === AppState.MATCH && this.tableMatch) {
+        this.appState = AppState.PAUSED;
+        this.tableMatch.paused = true;
         this.pause.reset();
         this.renderPause();
         this.escapeClosedOverlay = true;
@@ -217,7 +235,10 @@ export class Game {
         this.setMenuTimeOfDay(tod);
         return;
       }
-      if (this.appState === AppState.MAIN_MENU && (mode === "REAL" || mode === "ARCADE" || mode === "LEAGUE")) {
+      if (
+        this.appState === AppState.MAIN_MENU &&
+        (mode === "REAL" || mode === "ARCADE" || mode === "LEAGUE" || mode === "TABLE")
+      ) {
         this.setMenuPlayMode(mode);
         return;
       }
@@ -302,6 +323,14 @@ export class Game {
             }
             return;
           }
+          if (char === "play-style") {
+            const style = btn.getAttribute("data-style");
+            if (style === "auto" || style === "possession" || style === "balanced" || style === "counter" || style === "direct" || style === "routeOne") {
+              this.chars.setPlayStyle(style);
+              this.chars.render();
+            }
+            return;
+          }
           if (char === "pick") {
             const id = btn.getAttribute("data-id");
             if (id) {
@@ -341,6 +370,13 @@ export class Game {
           const form = btn.getAttribute("data-form");
           if (form) {
             this.chars.setFormation(form);
+            this.chars.render();
+          }
+        }
+        if (char === "play-style") {
+          const style = btn.getAttribute("data-style");
+          if (style === "auto" || style === "possession" || style === "balanced" || style === "counter" || style === "direct" || style === "routeOne") {
+            this.chars.setPlayStyle(style);
             this.chars.render();
           }
         }
@@ -495,7 +531,9 @@ export class Game {
     this.chars.hide();
     this.setup.hide();
     this.simLab.hide();
+    this.tableSetup.hide();
     this.pause.hide();
+    this.scenes.mode = GameMode.FOOTBALL;
     this.appState = AppState.MAIN_MENU;
     this.scenes.mode = GameMode.FOOTBALL;
     this.buildMenuWorld();
@@ -591,9 +629,18 @@ export class Game {
     this.paintMainMenu();
   }
 
-  private setMenuPlayMode(mode: "REAL" | "ARCADE" | "LEAGUE"): void {
+  private setMenuPlayMode(mode: "REAL" | "ARCADE" | "LEAGUE" | "TABLE"): void {
     if (mode === "LEAGUE" && !this.hasUserLeagueProgress()) {
       this.paintMainMenu();
+      return;
+    }
+    if (mode === "TABLE") {
+      const wasLeague = this.save.data.settings.leagueProgression;
+      if (wasLeague && this.hasUserLeagueProgress()) this.snapshotCareerFixtures();
+      this.save.data.settings.leagueProgression = false;
+      this.save.data.settings.gameplayMode = "TABLE";
+      this.save.save();
+      this.openTableSetup();
       return;
     }
     const wasLeague = this.save.data.settings.leagueProgression;
@@ -611,6 +658,35 @@ export class Game {
     this.buildMenuWorld();
     this.applyMenuEnvironment();
     this.paintMainMenu();
+  }
+
+  private openTableSetup(): void {
+    this.menu.hide();
+    this.tableSetup.open({
+      layoutId: this.save.data.settings.tableLayoutId,
+      opponent: this.save.data.settings.tableOpponent,
+      difficulty: this.save.data.settings.tableDifficulty,
+      firstTo: this.save.data.settings.tableFirstTo,
+      customMen: this.save.data.settings.tableCustomMen,
+    });
+    this.appState = AppState.MATCH_SETUP;
+  }
+
+  private beginTableMatch(cfg: TableMatchConfig): void {
+    this.save.data.settings.tableLayoutId = cfg.layoutId;
+    this.save.data.settings.tableOpponent = cfg.opponent;
+    this.save.data.settings.tableDifficulty = cfg.difficulty;
+    this.save.data.settings.tableFirstTo = cfg.firstTo;
+    this.save.data.settings.tableCustomMen = cfg.customMen;
+    this.save.data.settings.gameplayMode = "TABLE";
+    this.save.save();
+    this.tableSetup.hide();
+    this.clearMatch();
+    this.clearWorld();
+    this.scenes.mode = GameMode.TABLE;
+    this.tableMatch = new TableMatch(this.scene, innerWidth / innerHeight, this.ui, cfg);
+    this.appState = AppState.MATCH;
+    this.audio.ui();
   }
 
   private snapshotCareerFixtures(): void {
@@ -751,6 +827,10 @@ export class Game {
     if (id === "quick") {
       this.practice = "none";
       this.leagueFixtureId = null;
+      if (this.save.data.settings.gameplayMode === "TABLE") {
+        this.openTableSetup();
+        return;
+      }
       this.openMatchSetup("quick");
     }
     if (id === "spot") {
@@ -952,7 +1032,7 @@ export class Game {
       homeTeamId: f.homeTeamId,
       awayTeamId: f.awayTeamId,
       venueId: f.venueId,
-      gameplayMode: saved.gameplayMode,
+      gameplayMode: saved.gameplayMode === "ARCADE" ? "ARCADE" : "REAL",
       timeOfDay: saved.timeOfDay,
       weather: clampWeatherForTime(
         saved.timeOfDay,
@@ -974,7 +1054,7 @@ export class Game {
     const q = new URLSearchParams(location.search);
     if (q.get("debug") === "1") this.save.data.settings.debug = true;
     const mode = q.get("mode");
-    if (mode === "ARCADE" || mode === "REAL" || mode === "LEAGUE") this.setMenuPlayMode(mode);
+    if (mode === "ARCADE" || mode === "REAL" || mode === "LEAGUE" || mode === "TABLE") this.setMenuPlayMode(mode);
     const time = q.get("time") as TimeOfDay | null;
     if (time === "DAY" || time === "EVENING" || time === "NIGHT") this.save.data.settings.timeOfDay = time;
     const weather = q.get("weather") as Weather | null;
@@ -1005,6 +1085,7 @@ export class Game {
       opponentHomeKit: opponent?.defaultKit ?? null,
       userIsAwaySide,
       kitChoice: "auto",
+      playStyle: lineup.playStyle ?? null,
     });
     this.chars.render();
     this.appState = AppState.CHARACTER_SELECT;
@@ -1061,6 +1142,8 @@ export class Game {
       slot: s.slot,
       ...(s.offsetX || s.offsetZ ? { offsetX: s.offsetX, offsetZ: s.offsetZ } : {}),
     }));
+    if (edit.playStyle === "auto") delete lineup.playStyle;
+    else lineup.playStyle = edit.playStyle;
   }
 
   private spawnPreview(): void {
@@ -1126,7 +1209,7 @@ export class Game {
         userSide,
         autoplay,
         invertShotY: saved.invertShotY,
-        gameplayMode: saved.gameplayMode,
+        gameplayMode: saved.gameplayMode === "TABLE" ? "REAL" : saved.gameplayMode,
         timeOfDay: saved.timeOfDay,
         weather: saved.weather,
         graphicsPreset: saved.graphicsPreset,
@@ -1259,6 +1342,9 @@ export class Game {
     this.unitLines.dispose(this.scene);
     this.match?.dispose();
     this.match = null;
+    this.tableMatch?.dispose();
+    this.tableMatch = null;
+    this.tableSetup.hide();
     this.hud?.dispose();
     this.hud = null;
     this.clearWorld();
@@ -1360,6 +1446,7 @@ export class Game {
   private renderPause(): void {
     this.pause.audioEnabled = this.save.data.settings.audioEnabled !== false;
     this.hud?.hide();
+    this.tableMatch?.hud.hide();
     this.pause.render(this.match);
   }
 
@@ -1369,6 +1456,7 @@ export class Game {
     else if (action === "audio") this.togglePauseAudio();
     else if (action === "settings") this.openSettings();
     else if (action === "formation") {
+      if (this.tableMatch) return;
       this.openPauseFormation();
     } else if (action === "back") {
       this.pause.back();
@@ -1397,6 +1485,7 @@ export class Game {
       starterSlots: team.players.map((p) => p.slot),
       secondaryColor: team.record.secondaryColor,
       team: team.record,
+      playStyle: team.lineup.playStyle ?? null,
     });
     for (const row of team.lineup.starters) {
       if (row.offsetX || row.offsetZ) this.chars.nudgeSlot(row.slot, row.offsetX ?? 0, row.offsetZ ?? 0);
@@ -1439,6 +1528,10 @@ export class Game {
     this.hud?.show();
     this.appState = AppState.MATCH;
     if (this.match) this.match.leavePause();
+    if (this.tableMatch) {
+      this.tableMatch.paused = false;
+      this.tableMatch.hud.show();
+    }
     void this.audio.resumeStadiumAmbience();
   }
 
@@ -1479,8 +1572,15 @@ export class Game {
     }
 
     if (this.appState === AppState.MATCH_SETUP) {
-      if (intent.pause) this.goMenu();
-      if (intent.pass || intent.skip) this.confirmMatchSetup();
+      if (this.tableSetup.isOpen) {
+        if (intent.pause) {
+          this.tableSetup.hide();
+          this.goMenu();
+        }
+      } else {
+        if (intent.pause) this.goMenu();
+        if (intent.pass || intent.skip) this.confirmMatchSetup();
+      }
     }
 
     if (this.appState === AppState.CHARACTER_SELECT) {
@@ -1505,6 +1605,18 @@ export class Game {
         return;
       }
       if (this.preMatchT > PRE_MATCH_CARD_SECONDS || intent.skip || intent.anyGameplay) this.launchMatch();
+    }
+
+    if (this.appState === AppState.MATCH && this.tableMatch) {
+      const { pauseRequested } = this.tableMatch.update(dt);
+      if (pauseRequested || intent.pause) {
+        this.appState = AppState.PAUSED;
+        this.tableMatch.paused = true;
+        this.pause.reset();
+        this.renderPause();
+        return;
+      }
+      return;
     }
 
     if (this.appState === AppState.MATCH && this.match) {
@@ -1644,7 +1756,7 @@ export class Game {
         fixture,
         userSide: "home",
         autoplay: true,
-        gameplayMode: saved.gameplayMode,
+        gameplayMode: saved.gameplayMode === "TABLE" ? "REAL" : saved.gameplayMode,
         timeOfDay: saved.timeOfDay ?? fixture.timeOfDay,
         weather: saved.weather ?? fixture.weather,
         graphicsPreset: saved.graphicsPreset,
@@ -1714,11 +1826,13 @@ export class Game {
       this.lastExposure = exposure;
       this.renderer.toneMappingExposure = exposure;
     }
-    this.renderer.render(this.scene, this.camera.camera);
+    const cam = this.tableMatch ? this.tableMatch.camera.camera : this.camera.camera;
+    this.renderer.render(this.scene, cam);
   };
 
   private resize = (): void => {
     this.renderer.setSize(innerWidth, innerHeight);
     this.camera.setAspect(innerWidth / innerHeight);
+    this.tableMatch?.setAspect(innerWidth / innerHeight);
   };
 }

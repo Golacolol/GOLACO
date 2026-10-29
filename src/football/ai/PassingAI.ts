@@ -6,6 +6,7 @@ import { isInOffsidePosition, offsideLineX } from "../rules/Offside";
 import type { Ball } from "../ball/Ball";
 import type { Player } from "../players/Player";
 import { setPieceRole } from "./SetPieceAI";
+import { playStylePassWeights, type PlayStyleProfile } from "./PlayStyle";
 
 /** Buckland-style optimal support pocket (~12–18m). */
 export function supportDistanceScore(distance: number, buildup = false): number {
@@ -188,11 +189,14 @@ export function choosePassTarget(
   intentX: number,
   intentZ: number,
   passType: PassType,
-  opts?: { forbidIds?: string[]; style?: "attack" | "buildup" },
+  opts?: { forbidIds?: string[]; style?: "attack" | "buildup"; playStyle?: PlayStyleProfile },
 ): Player | null {
   void ball;
   const forbid = new Set(opts?.forbidIds ?? []);
   const buildup = opts?.style === "buildup" || setPieceRole(passer) === "mid";
+  const styleW = opts?.playStyle
+    ? playStylePassWeights(opts.playStyle, { phase: buildup ? "build" : "attack" })
+    : null;
   const intentIn = normalize2(intentX, intentZ);
   const useStick = Math.hypot(intentX, intentZ) > 0.15;
   const attackX = passer.attackSign;
@@ -342,6 +346,17 @@ export function choosePassTarget(
         ? passType === "through"
           ? 0.48
           : 0.14
+        : 0) +
+      (styleW
+        ? passType === "short"
+          ? styleW.shortBonus * 1.35
+          : passType === "through"
+            ? styleW.throughBonus * 1.25 + (aheadSpace ? 0.14 : 0)
+            : passType === "long"
+              ? styleW.longBonus * 1.2 +
+                (forward > 12 ? 0.18 : 0) +
+                (buildup ? -styleW.buildupCrush * 0.35 : 0)
+              : 0
         : 0);
     const scored = scorePassCandidate({
       alignment: useStick ? alignment : buildup ? Math.max(alignment, 0.4) : alignment,

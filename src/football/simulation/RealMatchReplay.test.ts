@@ -259,7 +259,20 @@ describe("sim gated by real match training corpus", () => {
       shortPasses: result.stats?.shortPasses ?? 0,
       longPasses: result.stats?.longPasses ?? 0,
       crossFieldPasses: result.stats?.crossFieldPasses ?? 0,
+      throughBalls: result.stats?.throughBalls,
+      crosses: result.stats?.crosses,
+      shots: result.stats?.shots,
+      offsides: result.stats?.offsides,
+      progressivePasses: result.stats?.progressivePasses,
+      meanPassLengthM: result.stats?.meanPassLengthM,
+      matchSeconds: result.simulatedMatchSeconds,
+      turnovers: result.stats?.turnovers,
+      stuckRecoveries: result.stats?.stuckRecoveries,
+      phaseSeconds: result.stats?.phaseShares,
+      meanStOffsideGap: result.stats?.meanStOffsideGap,
     });
     expect(gate.withinTolerance, `shortΔ=${gate.shortDelta.toFixed(2)} xfΔ=${gate.crossFieldDelta.toFixed(2)}`).toBe(true);
+    expect(result.stats?.meanPassLengthM ?? 0).toBeGreaterThan(0);
+    expect(result.stats?.phaseShares).toBeTruthy();
   }, 120_000);
 });

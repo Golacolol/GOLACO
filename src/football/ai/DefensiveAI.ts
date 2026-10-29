@@ -36,7 +36,8 @@ export function reactions01(player: Player): number {
 }
 
 export function closeDownRange(player: Player): number {
-  return 7.5 + awareness01(player) * 14 + aggression01(player) * 3;
+  // Slightly shorter engage so carriers get a decision window before the press arrives.
+  return 6.2 + awareness01(player) * 11 + aggression01(player) * 2.4;
 }
 
 export function selectPressingPlayer(
@@ -87,17 +88,18 @@ export function jockeyTarget(
   ballX: number,
   ballZ: number,
   goalX: number,
+  standOffBias = 0.48,
 ): { x: number; z: number } {
   const toBallX = ballX - goalX;
   const toBallZ = ballZ - 0;
   const len = Math.hypot(toBallX, toBallZ) || 1;
   const aw = awareness01(defender);
   const ag = aggression01(defender);
-  // Awareness tightens disciplined positioning; aggression closes further for a press.
-  const standOff = 0.9 + (1 - aw) * 0.4 - ag * 0.65;
+  // Awareness + team standOffBias sit deeper; aggression closes for a press.
+  const standOff = 1.15 + (1 - aw) * 0.5 - ag * 0.55 + standOffBias * 1.1;
   return {
-    x: ballX - (toBallX / len) * Math.max(0.25, standOff),
-    z: ballZ - (toBallZ / len) * Math.max(0.25, standOff),
+    x: ballX - (toBallX / len) * Math.max(0.55, standOff),
+    z: ballZ - (toBallZ / len) * Math.max(0.45, standOff),
   };
 }
 
@@ -313,16 +315,18 @@ export function containTarget(
   ballX: number,
   ballZ: number,
   goalX: number,
+  standOffBias = 0.48,
 ): { x: number; z: number } {
-  const jockey = jockeyTarget(defender, ballX, ballZ, goalX);
+  const jockey = jockeyTarget(defender, ballX, ballZ, goalX, standOffBias);
   const aw = awareness01(defender);
-  const standOffExtra = 0.55 + aw * 0.45;
+  // Sit off the ball and shade the goal — not a press.
+  const standOffExtra = 1.05 + aw * 0.85 + standOffBias * 0.9;
   const toBallX = ballX - goalX;
   const toBallZ = ballZ;
   const len = Math.hypot(toBallX, toBallZ) || 1;
   return {
-    x: jockey.x - (toBallX / len) * standOffExtra * 0.35,
-    z: jockey.z - (toBallZ / len) * standOffExtra * 0.2,
+    x: jockey.x - (toBallX / len) * standOffExtra * 0.55,
+    z: jockey.z - (toBallZ / len) * standOffExtra * 0.28,
   };
 }
 

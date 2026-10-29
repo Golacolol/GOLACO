@@ -212,9 +212,33 @@ export class SettingsMenu {
             <select id="gplay">
               <option value="REAL" ${settings.gameplayMode === "REAL" ? "selected" : ""}>REAL</option>
               <option value="ARCADE" ${settings.gameplayMode === "ARCADE" ? "selected" : ""}>ARCADE</option>
+              <option value="TABLE" ${settings.gameplayMode === "TABLE" ? "selected" : ""}>TABLE</option>
             </select>
           </label>
-          <p class="hint">Also available on the main menu. Match Setup can override per fixture.</p>
+          <p class="hint">Also on the main menu. ARCADE = same football AI with multipliers. TABLE = separate foosball mode (setup on launch).</p>
+          <label>TABLE layout
+            <select id="table-layout">
+              <option value="FRENCH_CLASSIC" ${settings.tableLayoutId === "FRENCH_CLASSIC" ? "selected" : ""}>French classic</option>
+              <option value="TOURNAMENT_MODERN" ${settings.tableLayoutId === "TOURNAMENT_MODERN" ? "selected" : ""}>Tournament modern</option>
+              <option value="OPEN_CUSTOM" ${settings.tableLayoutId === "OPEN_CUSTOM" ? "selected" : ""}>Open custom</option>
+            </select>
+          </label>
+          <label>TABLE opponent
+            <select id="table-opp">
+              <option value="AI" ${settings.tableOpponent === "AI" ? "selected" : ""}>Computer (AI)</option>
+              <option value="HUMAN" ${settings.tableOpponent === "HUMAN" ? "selected" : ""}>Hotseat 2P</option>
+            </select>
+          </label>
+          <label>TABLE AI difficulty
+            <select id="table-diff">
+              ${(["EASY", "NORMAL", "HARD", "EXPERT"] as const)
+                .map((d) => `<option value="${d}" ${settings.tableDifficulty === d ? "selected" : ""}>${d}</option>`)
+                .join("")}
+            </select>
+          </label>
+          <label>TABLE first to
+            <input id="table-first" type="number" min="1" max="21" value="${settings.tableFirstTo}"/>
+          </label>
           <label class="check"><input id="invertY" type="checkbox" ${settings.invertShotY ? "checked" : ""}/> Invert vertical aim</label>
           <label class="check"><input id="pass-target" type="checkbox" ${settings.showPassTargetHighlight ? "checked" : ""}/> Highlight pass target</label>
           <p class="hint">Shows a ring under the intended receiver while you aim a pass. Off by default.</p>
@@ -468,7 +492,32 @@ export class SettingsMenu {
       out.weather = weather.value;
     }
     const gplay = root.querySelector("#gplay") as HTMLSelectElement | null;
-    if (gplay && (gplay.value === "REAL" || gplay.value === "ARCADE")) out.gameplayMode = gplay.value;
+    if (gplay && (gplay.value === "REAL" || gplay.value === "ARCADE" || gplay.value === "TABLE")) {
+      out.gameplayMode = gplay.value;
+    }
+    const tableLayout = root.querySelector("#table-layout") as HTMLSelectElement | null;
+    if (
+      tableLayout &&
+      (tableLayout.value === "FRENCH_CLASSIC" ||
+        tableLayout.value === "TOURNAMENT_MODERN" ||
+        tableLayout.value === "OPEN_CUSTOM")
+    ) {
+      out.tableLayoutId = tableLayout.value;
+    }
+    const tableOpp = root.querySelector("#table-opp") as HTMLSelectElement | null;
+    if (tableOpp && (tableOpp.value === "AI" || tableOpp.value === "HUMAN")) out.tableOpponent = tableOpp.value;
+    const tableDiff = root.querySelector("#table-diff") as HTMLSelectElement | null;
+    if (
+      tableDiff &&
+      (tableDiff.value === "EASY" ||
+        tableDiff.value === "NORMAL" ||
+        tableDiff.value === "HARD" ||
+        tableDiff.value === "EXPERT")
+    ) {
+      out.tableDifficulty = tableDiff.value;
+    }
+    const tableFirst = root.querySelector("#table-first") as HTMLInputElement | null;
+    if (tableFirst) out.tableFirstTo = Math.max(1, Math.min(21, Number(tableFirst.value) || 5));
     const invertY = root.querySelector("#invertY") as HTMLInputElement | null;
     if (invertY) out.invertShotY = invertY.checked;
     const passTarget = root.querySelector("#pass-target") as HTMLInputElement | null;

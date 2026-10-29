@@ -64,11 +64,28 @@ export interface SimulatedMatchRecord {
     crosses: number;
     longPasses: number;
     crossFieldPasses: number;
+    throughBalls: number;
     tackles: number;
     turnovers: number;
     stuckRecoveries: number;
     possessionChanges: number;
+    offsides: number;
+    progressivePasses: number;
+    progressivePassDistance: number;
+    passDistanceSum: number;
+    meanPassLengthM: number;
+    progressiveShare: number;
+    meanPossessionDuration: number;
+    homePlayStyle?: string;
+    awayPlayStyle?: string;
+    phaseShares?: Record<string, number>;
+    meanStOffsideGap?: number;
+    offsidesPer90?: number;
+    turnoversPer90?: number;
+    stuckRecoveriesPer90?: number;
   };
+  /** DecisionTelemetry JSON when recordTelemetry was on. */
+  telemetryJson?: string;
 }
 
 export interface TeamSimAggregate {
@@ -379,6 +396,17 @@ export async function simulateOneMatch(
         base.result =
           match.homeScore > match.awayScore ? "HOME" : match.awayScore > match.homeScore ? "AWAY" : "DRAW";
         base.simulatedMatchSeconds = match.clock.elapsed;
+        const passes = Math.max(1, match.stats.passes);
+        const possDurs = match.stats.possessionDurations;
+        const matchSeconds = Math.max(1, match.clock.elapsed);
+        const per90 = (n: number) => (n / matchSeconds) * 90 * 60;
+        const phaseTotal =
+          Object.values(match.stats.phaseSeconds).reduce((a, b) => a + b, 0) || 1;
+        const phaseShares: Record<string, number> = {};
+        for (const [k, v] of Object.entries(match.stats.phaseSeconds)) {
+          phaseShares[k] = v / phaseTotal;
+        }
+        const stGaps = match.stats.stOffsideGapSamples;
         base.stats = {
           passes: match.stats.passes,
           shortPasses: match.stats.shortPasses,
@@ -389,11 +417,31 @@ export async function simulateOneMatch(
           crosses: match.stats.crosses,
           longPasses: match.stats.longPasses,
           crossFieldPasses: match.stats.crossFieldPasses,
+          throughBalls: match.stats.throughBalls,
           tackles: match.stats.tackles,
           turnovers: match.stats.turnovers,
           stuckRecoveries: match.stats.stuckRecoveries,
           possessionChanges: match.stats.possessionChanges,
+          offsides: match.stats.offsides,
+          progressivePasses: match.stats.progressivePasses,
+          progressivePassDistance: match.stats.progressivePassDistance,
+          passDistanceSum: match.stats.passDistanceSum,
+          meanPassLengthM: match.stats.passDistanceSum / passes,
+          progressiveShare: match.stats.progressivePasses / passes,
+          meanPossessionDuration:
+            possDurs.length > 0 ? possDurs.reduce((a, b) => a + b, 0) / possDurs.length : 0,
+          homePlayStyle: match.homePlayStyle?.id,
+          awayPlayStyle: match.awayPlayStyle?.id,
+          phaseShares,
+          meanStOffsideGap:
+            stGaps.length > 0 ? stGaps.reduce((a, b) => a + b, 0) / stGaps.length : 0,
+          offsidesPer90: per90(match.stats.offsides),
+          turnoversPer90: per90(match.stats.turnovers),
+          stuckRecoveriesPer90: per90(match.stats.stuckRecoveries),
         };
+        if (opts.recordTelemetry) {
+          base.telemetryJson = decisionTelemetry.dumpJson();
+        }
       } else if (!base.error) {
         base.error = `did_not_finish:${match.state}`;
       }

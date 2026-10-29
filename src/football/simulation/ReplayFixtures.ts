@@ -77,6 +77,7 @@ export const REAL_BLACKPOOL_PLYMOUTH_2026_09_19: RealMatchReplaySpec = {
   matchDurationSeconds: 90,
   stepSeconds: 1 / 20,
   stepsPerYield: 240,
+  trainingCorpusFile: "blackpool_plymouth_2026-09-19.json",
 };
 
 /** League One — Plymouth 0–2 Huddersfield, 17 Oct 2026 (played). */
@@ -90,6 +91,7 @@ export const REAL_PLYMOUTH_HUDDERSFIELD_2026_10_17: RealMatchReplaySpec = {
   matchDurationSeconds: 90,
   stepSeconds: 1 / 20,
   stepsPerYield: 240,
+  trainingCorpusFile: "plymouth_huddersfield_2026-10-17.json",
 };
 
 /** Curated real-world set used by regression / rebuild tests. */

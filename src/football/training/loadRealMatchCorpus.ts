@@ -1,10 +1,14 @@
 import type { RealMatchCorpus, RealMatchEvent, RealMatchMeta } from "./RealMatchEvent";
 import { REAL_MATCH_EVENT_SCHEMA_VERSION } from "./RealMatchEvent";
 import plymouthWimbledonCorpus from "../../../public/data/training/plymouth_wimbledon_2026-10-10.json";
+import blackpoolPlymouthCorpus from "../../../public/data/training/blackpool_plymouth_2026-09-19.json";
+import plymouthHuddersfieldCorpus from "../../../public/data/training/plymouth_huddersfield_2026-10-17.json";
 
 /** Bundled training corpora keyed by match id. */
 const BUNDLED: Record<string, RealMatchCorpus> = {
   [plymouthWimbledonCorpus.match.id]: plymouthWimbledonCorpus as RealMatchCorpus,
+  [blackpoolPlymouthCorpus.match.id]: blackpoolPlymouthCorpus as RealMatchCorpus,
+  [plymouthHuddersfieldCorpus.match.id]: plymouthHuddersfieldCorpus as RealMatchCorpus,
 };
 
 export function listBundledCorpusIds(): string[] {

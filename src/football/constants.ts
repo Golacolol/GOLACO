@@ -27,7 +27,8 @@ export const BALL_BOUNCE = 0.58;
 
 export const POSSESSION_RANGE = 1.15;
 export const TACKLE_RANGE = 1.05;
-export const PRESS_RANGE = 8.5;
+/** Soft engage radius — keep below sprint-close so stand-off remains viable. */
+export const PRESS_RANGE = 7.2;
 
 export const DEFAULT_HALF_SECONDS = 5 * 60;
 export const DEFAULT_MATCH_DURATION = DEFAULT_HALF_SECONDS * 2;

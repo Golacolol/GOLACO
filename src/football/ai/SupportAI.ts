@@ -4,6 +4,7 @@ import { offsideLineX } from "../rules/Offside";
 import { bestAvailableSpace } from "./SpaceField";
 import { classifyFootballRole, type MatchPhase } from "./MatchBrain";
 import { clamp, stat01 } from "../../core/math";
+import type { PlayStyleProfile } from "./PlayStyle";
 
 export type SupportRole =
   | "SUPPORT_BEHIND"
@@ -24,13 +25,18 @@ export function supportTarget(
   teammates: Player[],
   opponents: Player[],
   phase?: MatchPhase,
+  playStyle?: PlayStyleProfile,
 ): { x: number; z: number; role: SupportRole } {
   const dir = player.attackSign;
   const awareness = stat01(player.attrs.attackingAwareness ?? player.attrs.vision);
+  const stretch = playStyle?.stretchBias ?? 0.55;
+  const direct = playStyle?.id === "direct" || playStyle?.id === "routeOne";
+  const counter = playStyle?.id === "counter";
+  const possession = playStyle?.id === "possession";
   if (player.giveAndGoTimer > 0 && carrier) {
     const space = bestAvailableSpace(player, opponents, teammates, [8]);
     const x = dir > 0 ? Math.max(space.x, carrier.x + dir * 7) : Math.min(space.x, carrier.x + dir * 7);
-    return keepOnside({ x, z: space.z, role: "FORWARD_RUN" }, player, carrier, opponents);
+    return keepOnside({ x, z: space.z, role: "FORWARD_RUN" }, player, carrier, opponents, playStyle);
   }
   const foot = classifyFootballRole(player);
   const wide = foot === "W" || foot === "WM";
@@ -40,7 +46,7 @@ export function supportTarget(
   const fb = foot === "FB";
 
   const progress = Math.max(0, Math.min(1, (ballX * dir + HALF_LENGTH) / PITCH_LENGTH));
-  if (def || (foot === "CM" && progress < 0.42)) {
+  if (def || (foot === "CM" && progress < 0.42 && !direct && !(counter && phase === "transition"))) {
     return {
       x: player.anchorX + (ballX - player.anchorX) * (foot === "DM" ? 0.22 : 0.12),
       z: player.anchorZ + (ballZ - player.anchorZ) * (foot === "DM" ? 0.14 : 0.08),
@@ -52,16 +58,22 @@ export function supportTarget(
   const ballWide = Math.abs(ballZ) > 12;
   const deep = progress < 0.4;
   const progressivePhase =
-    phase === "transition" || phase === "attack" || phase === "chance";
+    phase === "transition" || phase === "attack" || phase === "chance" || (direct && progress > 0.32);
   let role: SupportRole = "SUPPORT_SIDE";
   if (st) {
-    // True build: check to feet. Transition / attack / chance: stretch into a legal through channel.
-    if (progressivePhase) {
+    // Counter: stay deeper until transition, then stretch. Direct: stretch early. Possession: check to feet.
+    if (counter && phase !== "transition" && phase !== "chance" && progress < 0.62) {
+      role = "CHECK_TO_BALL";
+    } else if (counter && (phase === "transition" || progress > 0.55)) {
+      role = idx % 2 === 0 ? "FORWARD_RUN" : "PENALTY_AREA_RUN";
+    } else if (direct && stretch > 0.7 && progress > 0.28) {
+      role = idx % 2 === 0 ? "FORWARD_RUN" : progress > 0.55 ? "PENALTY_AREA_RUN" : "FORWARD_RUN";
+    } else if (progressivePhase) {
       if (phase === "chance" || progress > 0.7) role = idx % 2 === 0 ? "PENALTY_AREA_RUN" : "FORWARD_RUN";
       else if (ballWide && deep) role = "CHECK_TO_BALL";
       else role = idx % 2 === 0 ? "FORWARD_RUN" : "SUPPORT_SIDE";
     } else if (deep || (ballWide && progress < 0.45) || phase === "build") {
-      role = "CHECK_TO_BALL";
+      role = possession || stretch < 0.55 ? "CHECK_TO_BALL" : stretch > 0.65 ? "FORWARD_RUN" : "CHECK_TO_BALL";
     } else if (progress > 0.68) {
       role = idx % 2 === 0 ? "PENALTY_AREA_RUN" : "EDGE_OF_BOX";
     } else {
@@ -94,7 +106,7 @@ export function supportTarget(
   let x = player.anchorX + dir * push;
   let z = player.anchorZ;
   if (!carrier) {
-    return keepOnside({ x, z, role }, player, null, opponents);
+    return keepOnside({ x, z, role }, player, null, opponents, playStyle);
   }
 
   const aheadMul = 0.7 + awareness * 0.55;
@@ -146,7 +158,7 @@ export function supportTarget(
   if (carrier && Math.hypot(x - carrier.x, z - carrier.z) < 4.2) {
     z += Math.sign(player.anchorZ - carrier.z || player.anchorZ || 1) * 5.5;
   }
-  return keepOnside({ x: clamp(x, -HALF_LENGTH + 2.5, HALF_LENGTH - 2.5), z, role }, player, carrier, opponents);
+  return keepOnside({ x: clamp(x, -HALF_LENGTH + 2.5, HALF_LENGTH - 2.5), z, role }, player, carrier, opponents, playStyle);
 }
 
 function keepOnside(
@@ -154,29 +166,31 @@ function keepOnside(
   player: Player,
   carrier: Player | null,
   opponents: Player[],
+  playStyle?: PlayStyleProfile,
 ): { x: number; z: number; role: SupportRole } {
   let { x, z, role } = spot;
   const dir = player.attackSign;
   const isSt = player.slot.includes("ST") || player.position === "ST";
+  const stretchBias = playStyle?.stretchBias ?? 0.55;
   if (opponents.length > 0) {
     const line = offsideLineX(opponents, player.attackSign);
-    // Thin onside buffer so strikers can occupy a legal channel ahead of midfield.
-    const margin = isSt ? 1.05 : 0.85;
+    // Clearer onside buffer — still allow a legal channel ahead of midfield.
+    const margin = isSt ? 1.35 : 0.95;
     const onsideX = line - dir * margin;
     if ((x - onsideX) * dir > 0) x = onsideX;
   }
   if (carrier && isSt) {
     const stretch =
       role === "FORWARD_RUN" || role === "PENALTY_AREA_RUN"
-        ? 9.5 + (player.attrs.pace / 100) * 2.4
+        ? 7.2 + stretchBias * 3.2 + (player.attrs.pace / 100) * 2.2
         : role === "CHECK_TO_BALL"
           ? 4.2
-          : 7.2;
+          : 6.5 + stretchBias * 1.5;
     const maxAhead = carrier.x + dir * stretch;
     if ((x - maxAhead) * dir > 0) x = maxAhead;
     // Only hard-hold deep in true build-up — mid-third must allow breaking runs.
     const ballProg = (carrier.x * dir + HALF_LENGTH) / PITCH_LENGTH;
-    if (ballProg < 0.42 && role === "CHECK_TO_BALL") {
+    if (ballProg < 0.42 && role === "CHECK_TO_BALL" && stretchBias < 0.7) {
       const hold = carrier.x + dir * 5.5;
       if ((x - hold) * dir > 0) x = hold;
     }

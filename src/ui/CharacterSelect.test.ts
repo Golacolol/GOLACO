@@ -73,6 +73,14 @@ describe("character select", () => {
     expect(view.root.textContent).toContain("START AS TEAM");
     expect(view.root.textContent).toContain("SUBSTITUTES");
     expect(view.root.textContent).toContain("SQUAD");
+    expect(view.root.querySelector(".play-style-chips")).toBeTruthy();
+    expect(view.root.querySelector('[data-char="play-style"][data-style="auto"]')).toBeTruthy();
+    expect(view.root.querySelector('[data-char="play-style"][data-style="counter"]')).toBeTruthy();
+    expect(view.playStyle).toBe("auto");
+    view.setPlayStyle("possession");
+    view.render();
+    expect(view.getEditedLineup().playStyle).toBe("possession");
+    expect(view.root.querySelector('[data-style="possession"]')?.classList.contains("on")).toBe(true);
   });
 
   it("shows the player card when player select is chosen", () => {

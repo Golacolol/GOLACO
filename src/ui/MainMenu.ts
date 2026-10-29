@@ -169,6 +169,8 @@ export class MainMenu {
               ${mode("REAL", "REAL")}
               <span class="vs">·</span>
               ${mode("ARCADE", "ARCADE")}
+              <span class="vs">·</span>
+              ${mode("TABLE", "TABLE")}
               ${
                 view.showLeague === true
                   ? `<span class="vs">·</span>

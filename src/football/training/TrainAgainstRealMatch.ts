@@ -182,6 +182,18 @@ export interface SimPassMix {
   shortPasses: number;
   longPasses: number;
   crossFieldPasses: number;
+  throughBalls?: number;
+  crosses?: number;
+  shots?: number;
+  offsides?: number;
+  progressivePasses?: number;
+  meanPassLengthM?: number;
+  /** Match duration in seconds (for /90 rates). Defaults to 90*60. */
+  matchSeconds?: number;
+  turnovers?: number;
+  stuckRecoveries?: number;
+  phaseSeconds?: Partial<Record<string, number>>;
+  meanStOffsideGap?: number;
 }
 
 export interface SimVsRealReport {
@@ -190,32 +202,69 @@ export interface SimVsRealReport {
   simShortShare: number;
   simLongShare: number;
   simCrossFieldShare: number;
+  simProgressiveShare: number;
+  simMeanPassLengthM: number;
+  simShotShare: number;
+  simOffsidesPer90: number;
   shortDelta: number;
   crossFieldDelta: number;
+  progressiveDelta: number;
+  lengthDelta: number;
   /** True when sim short share is within tolerance of real short share and cross-field is not spamming. */
   withinTolerance: boolean;
+  /** Extended fidelity gate (progressive + length when sim reports them). */
+  fidelityOk: boolean;
 }
 
-/** Compare a simulated pass mix to real-match derived targets. */
-export function compareSimPassMixToReal(
+export type CompareSimOpts = {
+  shortTolerance?: number;
+  crossFieldMax?: number;
+  progressiveTolerance?: number;
+  lengthToleranceM?: number;
+};
+
+/** Compare a simulated pass mix to real-match derived targets (expanded fidelity gate). */
+export function compareSimToReal(
   corpus: RealMatchCorpus,
   sim: SimPassMix,
-  opts: { shortTolerance?: number; crossFieldMax?: number } = {},
+  opts: CompareSimOpts = {},
 ): SimVsRealReport {
   const targets = derivePlayStyleTargets(corpus);
   // Slightly wider after progressive-pass overhaul — short sims still skew short-heavy.
   const shortTol = opts.shortTolerance ?? 0.24;
   const crossMax = opts.crossFieldMax ?? Math.max(0.28, targets.crossFieldShare + 0.12);
+  const progTol = opts.progressiveTolerance ?? 0.32;
+  const lenTol = opts.lengthToleranceM ?? 8;
   const passes = Math.max(1, sim.passes);
   const simShortShare = sim.shortPasses / passes;
   const simLongShare = sim.longPasses / passes;
   const simCrossFieldShare = sim.crossFieldPasses / passes;
+  const simProgressiveShare = (sim.progressivePasses ?? 0) / passes;
+  const simMeanPassLengthM = sim.meanPassLengthM ?? 0;
+  const actions = Math.max(1, sim.passes + (sim.shots ?? 0));
+  const simShotShare = (sim.shots ?? 0) / actions;
+  const matchSeconds = Math.max(1, sim.matchSeconds ?? 90 * 60);
+  const simOffsidesPer90 = ((sim.offsides ?? 0) / matchSeconds) * 90 * 60;
   const shortDelta = simShortShare - targets.shortPassShare;
   const crossFieldDelta = simCrossFieldShare - targets.crossFieldShare;
+  const progressiveDelta =
+    sim.progressivePasses != null ? simProgressiveShare - targets.progressivePassShare : 0;
+  const lengthDelta =
+    sim.meanPassLengthM != null && targets.avgPassLengthM > 0
+      ? simMeanPassLengthM - targets.avgPassLengthM
+      : 0;
   const withinTolerance =
     Math.abs(shortDelta) <= shortTol &&
     simShortShare > simLongShare &&
     simCrossFieldShare <= crossMax;
+
+  let fidelityOk = withinTolerance;
+  if (sim.progressivePasses != null && targets.progressivePassShare > 0) {
+    fidelityOk = fidelityOk && Math.abs(progressiveDelta) <= progTol;
+  }
+  if (sim.meanPassLengthM != null && targets.avgPassLengthM > 0) {
+    fidelityOk = fidelityOk && Math.abs(lengthDelta) <= lenTol;
+  }
 
   return {
     matchId: corpus.match.id,
@@ -223,10 +272,26 @@ export function compareSimPassMixToReal(
     simShortShare,
     simLongShare,
     simCrossFieldShare,
+    simProgressiveShare,
+    simMeanPassLengthM,
+    simShotShare,
+    simOffsidesPer90,
     shortDelta,
     crossFieldDelta,
+    progressiveDelta,
+    lengthDelta,
     withinTolerance,
+    fidelityOk,
   };
+}
+
+/** @deprecated Prefer compareSimToReal — kept for import stability. */
+export function compareSimPassMixToReal(
+  corpus: RealMatchCorpus,
+  sim: SimPassMix,
+  opts: CompareSimOpts = {},
+): SimVsRealReport {
+  return compareSimToReal(corpus, sim, opts);
 }
 
 export interface RealMatchTrainingReport {

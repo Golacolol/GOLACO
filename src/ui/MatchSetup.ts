@@ -93,7 +93,7 @@ export class MatchSetup {
             <option value="ARCADE" ${seed.gameplayMode === "ARCADE" ? "selected" : ""}>ARCADE FOOTBALL</option>
           </select>
         </label>
-        <p class="hint" id="ms-mode-blurb">${MODE_BLURBS[seed.gameplayMode]}</p>
+        <p class="hint" id="ms-mode-blurb">${MODE_BLURBS[seed.gameplayMode === "ARCADE" ? "ARCADE" : "REAL"]}</p>
         <label>Time of day
           <select id="ms-time">
             ${["DAY", "EVENING", "NIGHT"].map((t) => `<option ${seed.timeOfDay === t ? "selected" : ""}>${t}</option>`).join("")}
@@ -159,7 +159,7 @@ export class MatchSetup {
       awayTeamId: values.awayTeamId,
       venueId: values.venueId,
       durationSeconds: values.durationSeconds,
-      gameplayModeDefault: values.gameplayMode,
+      gameplayModeDefault: values.gameplayMode === "ARCADE" ? "ARCADE" : "REAL",
       timeOfDay: values.timeOfDay,
       weather: values.weather,
       homeLineupId: db.defaultLineupId(values.homeTeamId) ?? base.homeLineupId,

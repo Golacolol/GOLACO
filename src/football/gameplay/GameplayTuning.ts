@@ -1,4 +1,8 @@
-export type GameplayMode = "REAL" | "ARCADE";
+/**
+ * REAL / ARCADE share Match AI (ARCADE = multipliers only).
+ * TABLE is a separate foosball engine (`src/football/table/`) — no Match AI path.
+ */
+export type GameplayMode = "REAL" | "ARCADE" | "TABLE";
 
 export interface GameplayTuning {
   id: GameplayMode;
@@ -73,35 +77,36 @@ export const REAL_TUNING: GameplayTuning = {
   counterPressAggressionMultiplier: 0.92,
 };
 
+/** ARCADE stays multiplier-only off the same AI — faster, freer, more chaos. */
 export const ARCADE_TUNING: GameplayTuning = {
   id: "ARCADE",
-  movementAccelerationMultiplier: 1.28,
-  maxSpeedMultiplier: 1.12,
-  turnMultiplier: 1.22,
-  passSpeedMultiplier: 1.16,
-  passErrorMultiplier: 0.72,
-  shotPowerMultiplier: 1.22,
-  shotErrorMultiplier: 0.78,
-  staminaDrainMultiplier: 0.62,
-  firstTouchErrorMultiplier: 0.7,
-  tackleWindowMultiplier: 1.12,
-  longShotDecisionMultiplier: 1.45,
-  attackingRunMultiplier: 1.25,
-  keeperReactionMultiplier: 0.88,
-  ballFrictionMultiplier: 0.9,
-  celebrationDurationMultiplier: 0.62,
-  passUrgencyMultiplier: 1.08,
-  dribbleMagnetMultiplier: 0.92,
-  defenderDisturbMultiplier: 0.72,
-  turnLooseMultiplier: 0.58,
-  groundContestUpsetMultiplier: 0.7,
-  aftertouchMultiplier: 1.12,
-  headerContestUpsetMultiplier: 0.72,
-  headerTimingMultiplier: 0.85,
-  keeperDiveReachMultiplier: 1.18,
-  keeperHoldBiasMultiplier: 1.12,
-  counterPressWindowMultiplier: 1.25,
-  counterPressAggressionMultiplier: 1.28,
+  movementAccelerationMultiplier: 1.34,
+  maxSpeedMultiplier: 1.16,
+  turnMultiplier: 1.28,
+  passSpeedMultiplier: 1.2,
+  passErrorMultiplier: 0.68,
+  shotPowerMultiplier: 1.28,
+  shotErrorMultiplier: 0.74,
+  staminaDrainMultiplier: 0.58,
+  firstTouchErrorMultiplier: 0.66,
+  tackleWindowMultiplier: 1.16,
+  longShotDecisionMultiplier: 1.55,
+  attackingRunMultiplier: 1.32,
+  keeperReactionMultiplier: 0.86,
+  ballFrictionMultiplier: 0.88,
+  celebrationDurationMultiplier: 0.58,
+  passUrgencyMultiplier: 1.14,
+  dribbleMagnetMultiplier: 0.94,
+  defenderDisturbMultiplier: 0.68,
+  turnLooseMultiplier: 0.54,
+  groundContestUpsetMultiplier: 0.66,
+  aftertouchMultiplier: 1.18,
+  headerContestUpsetMultiplier: 0.68,
+  headerTimingMultiplier: 0.82,
+  keeperDiveReachMultiplier: 1.22,
+  keeperHoldBiasMultiplier: 1.14,
+  counterPressWindowMultiplier: 1.32,
+  counterPressAggressionMultiplier: 1.35,
 };
 
 export function tuningFor(mode: GameplayMode | undefined): GameplayTuning {
@@ -110,5 +115,6 @@ export function tuningFor(mode: GameplayMode | undefined): GameplayTuning {
 
 export const MODE_BLURBS: Record<GameplayMode, string> = {
   REAL: "Tactical, ratings-driven, measured football.",
-  ARCADE: "Faster, more responsive, more dramatic football.",
+  ARCADE: "Faster, freer, more chaos — same AI, expressive multipliers only.",
+  TABLE: "Foosball rods — twist, slide, spin. AI or hotseat 2P.",
 };

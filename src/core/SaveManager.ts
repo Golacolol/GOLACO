@@ -19,7 +19,13 @@ export interface SavedSettings {
   formationDebug: boolean;
   masterVolume: number;
   invertShotY: boolean;
-  gameplayMode: "REAL" | "ARCADE";
+  gameplayMode: "REAL" | "ARCADE" | "TABLE";
+  /** TABLE foosball defaults. */
+  tableLayoutId: "FRENCH_CLASSIC" | "TOURNAMENT_MODERN" | "OPEN_CUSTOM";
+  tableOpponent: "AI" | "HUMAN";
+  tableDifficulty: "EASY" | "NORMAL" | "HARD" | "EXPERT";
+  tableFirstTo: number;
+  tableCustomMen: [number, number, number, number];
   timeOfDay: "DAY" | "EVENING" | "NIGHT";
   weather: "SUNNY" | "MILD" | "RAINY" | "SNOWY";
   kickOffTime: string;
@@ -91,6 +97,11 @@ export const DEFAULT_SETTINGS: SavedSettings = {
   masterVolume: 0.7,
   invertShotY: false,
   gameplayMode: "REAL",
+  tableLayoutId: "FRENCH_CLASSIC",
+  tableOpponent: "AI",
+  tableDifficulty: "NORMAL",
+  tableFirstTo: 5,
+  tableCustomMen: [1, 2, 5, 3],
   timeOfDay: "EVENING",
   weather: "MILD",
   kickOffTime: DEFAULT_KICK_OFF_TIME,
@@ -166,6 +177,30 @@ export class SaveManager {
       settings.awayDefLineColor = clampHex(settings.awayDefLineColor, DEFAULT_SETTINGS.awayDefLineColor);
       settings.awayMidLineColor = clampHex(settings.awayMidLineColor, DEFAULT_SETTINGS.awayMidLineColor);
       settings.awayAttLineColor = clampHex(settings.awayAttLineColor, DEFAULT_SETTINGS.awayAttLineColor);
+      if (settings.gameplayMode !== "REAL" && settings.gameplayMode !== "ARCADE" && settings.gameplayMode !== "TABLE") {
+        settings.gameplayMode = "REAL";
+      }
+      if (
+        settings.tableLayoutId !== "FRENCH_CLASSIC" &&
+        settings.tableLayoutId !== "TOURNAMENT_MODERN" &&
+        settings.tableLayoutId !== "OPEN_CUSTOM"
+      ) {
+        settings.tableLayoutId = "FRENCH_CLASSIC";
+      }
+      if (settings.tableOpponent !== "AI" && settings.tableOpponent !== "HUMAN") settings.tableOpponent = "AI";
+      if (!["EASY", "NORMAL", "HARD", "EXPERT"].includes(settings.tableDifficulty)) {
+        settings.tableDifficulty = "NORMAL";
+      }
+      settings.tableFirstTo = Math.max(1, Math.min(21, Number(settings.tableFirstTo) || 5));
+      {
+        const m = settings.tableCustomMen;
+        settings.tableCustomMen = [
+          1,
+          Math.max(1, Math.min(5, Number(m?.[1]) || 2)),
+          Math.max(1, Math.min(5, Number(m?.[2]) || 5)),
+          Math.max(1, Math.min(5, Number(m?.[3]) || 3)),
+        ];
+      }
       return {
         ...this.blank(),
         ...parsed,
