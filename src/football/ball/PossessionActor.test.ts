@@ -73,12 +73,47 @@ describe("settleFirstTouch", () => {
       energy: 1,
       aerial: false,
       zone: "foot",
+      approachAlignment: 0.95,
       rng: () => 0.5,
     });
     expect(result.zone).toBe("foot");
     expect(result.lost).toBe(false);
     expect(result.settle).toBeGreaterThanOrEqual(0.9);
     expect(Math.hypot(ball.vx, ball.vz)).toBeLessThan(1.2);
+  });
+
+  it("lengthens the plant window when hips are off the ball", () => {
+    const ball = new Ball();
+    ball.y = 0.22;
+    ball.vx = 10;
+    ball.vz = 0;
+    const square = settleFirstTouch(ball, {
+      control: 70,
+      strength: 70,
+      pressure: 0.2,
+      energy: 1,
+      aerial: false,
+      zone: "foot",
+      approachAlignment: 0.95,
+      receivePatience: 0.5,
+      rng: () => 0.5,
+    });
+    const ball2 = new Ball();
+    ball2.y = 0.22;
+    ball2.vx = 10;
+    ball2.vz = 0;
+    const awkward = settleFirstTouch(ball2, {
+      control: 70,
+      strength: 70,
+      pressure: 0.2,
+      energy: 1,
+      aerial: false,
+      zone: "foot",
+      approachAlignment: 0.2,
+      receivePatience: 0.5,
+      rng: () => 0.5,
+    });
+    expect(awkward.firstTouchTimer).toBeGreaterThan(square.firstTouchTimer);
   });
 
   it("strength scales kick power", () => {

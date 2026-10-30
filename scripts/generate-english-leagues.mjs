@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 /**
- * Merges 2026/27 Premier League, Championship and League One clubs into
- * public/data/*.json without replacing the default Plymouth Argyle XI.
+ * Merges 2026/27 Premier League, Championship, League One, La Liga and Serie A
+ * clubs into public/data/*.json without replacing the default Plymouth Argyle XI.
  */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { CLUBS } from "./english-clubs.mjs";
+import { EUROPEAN_CLUBS } from "./european-clubs.mjs";
+
+const ALL_CLUBS = [...CLUBS, ...EUROPEAN_CLUBS];
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dataDir = path.join(root, "public", "data");
@@ -18,7 +21,13 @@ const SLOTS = {
   "3-4-2-1": ["GK", "RCB", "CB", "LCB", "RM", "RCM", "LCM", "LM", "RAM", "LAM", "ST"],
 };
 
-const TIER = { PREMIER_LEAGUE: 82, CHAMPIONSHIP: 72, LEAGUE_ONE: 66 };
+const TIER = {
+  PREMIER_LEAGUE: 82,
+  CHAMPIONSHIP: 72,
+  LEAGUE_ONE: 66,
+  LA_LIGA: 82,
+  SERIE_A: 82,
+};
 
 const POS = new Set(["GK", "RB", "CB", "LB", "RWB", "LWB", "DM", "CM", "AM", "RM", "LM", "RW", "LW", "ST"]);
 
@@ -142,7 +151,7 @@ function appearance(seed) {
 
 function makeStadium(id, name, capacity, league = "LEAGUE_ONE") {
   const dense = capacity > 25000 ? 0.96 : capacity > 12000 ? 0.9 : 0.82;
-  const deluxe = league === "PREMIER_LEAGUE";
+  const deluxe = league === "PREMIER_LEAGUE" || league === "LA_LIGA" || league === "SERIE_A";
   return {
     id,
     name,
@@ -259,8 +268,8 @@ function saveJson(name, value) {
 }
 
 function main() {
-  if (CLUBS.length < 66) throw new Error(`Expected 67 generated clubs, got ${CLUBS.length}`);
-  const built = CLUBS.map(buildClub);
+  if (ALL_CLUBS.length < 106) throw new Error(`Expected 107 generated clubs, got ${ALL_CLUBS.length}`);
+  const built = ALL_CLUBS.map(buildClub);
   const teams = loadJson("teams.json");
   const players = loadJson("players.json");
   const memberships = loadJson("teamMemberships.json");

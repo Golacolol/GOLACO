@@ -9,7 +9,12 @@ import overlayJson from "../../public/data/officialResultsOverlay.json";
  */
 export const OFFICIAL_RESULTS_AS_OF = "2026-08-01";
 
-export type OfficialCompetition = "Premier League" | "Championship" | "League One";
+export type OfficialCompetition =
+  | "Premier League"
+  | "Championship"
+  | "League One"
+  | "La Liga"
+  | "Serie A";
 
 export interface OfficialMatch {
   competition: OfficialCompetition;

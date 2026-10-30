@@ -8,6 +8,8 @@ export const LEAGUE_LABEL: Record<string, string> = {
   PREMIER_LEAGUE: "Premier League",
   CHAMPIONSHIP: "Championship",
   LEAGUE_ONE: "League One",
+  LA_LIGA: "La Liga",
+  SERIE_A: "Serie A",
   OTHER: "CLASSIC TEAMS",
 };
 
@@ -26,6 +28,8 @@ export function groupedTeamOptionsHtml(teams: TeamRecord[], currentId: string): 
     PREMIER_LEAGUE: [],
     CHAMPIONSHIP: [],
     LEAGUE_ONE: [],
+    LA_LIGA: [],
+    SERIE_A: [],
     OTHER: [],
   };
   for (const t of teams) {

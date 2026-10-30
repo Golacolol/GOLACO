@@ -29,12 +29,14 @@ describe("league schedule", () => {
     }
   });
 
-  it("builds a full home-and-away season for Premier League, Championship and League One", () => {
+  it("builds a full home-and-away season for all five domestic leagues", () => {
     const fixtures = buildEnglishLeagueFixtures(teams);
     const count = (league: string) => teams.filter((t) => t.league === league && t.teamType === "CURRENT_TEAM").length;
     expect(fixtures.filter((f) => f.competition === "Premier League")).toHaveLength(count("PREMIER_LEAGUE") * (count("PREMIER_LEAGUE") - 1));
     expect(fixtures.filter((f) => f.competition === "Championship")).toHaveLength(count("CHAMPIONSHIP") * (count("CHAMPIONSHIP") - 1));
     expect(fixtures.filter((f) => f.competition === "League One")).toHaveLength(count("LEAGUE_ONE") * (count("LEAGUE_ONE") - 1));
+    expect(fixtures.filter((f) => f.competition === "La Liga")).toHaveLength(count("LA_LIGA") * (count("LA_LIGA") - 1));
+    expect(fixtures.filter((f) => f.competition === "Serie A")).toHaveLength(count("SERIE_A") * (count("SERIE_A") - 1));
     const argyle = fixtures.filter((f) => f.homeTeamId === "plymouth_argyle_current" || f.awayTeamId === "plymouth_argyle_current");
     expect(argyle).toHaveLength(46);
     expect(argyle.every((f) => f.competition === "League One")).toBe(true);

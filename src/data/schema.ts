@@ -1,4 +1,9 @@
-export type EnglishLeague = "PREMIER_LEAGUE" | "CHAMPIONSHIP" | "LEAGUE_ONE";
+export type EnglishLeague =
+  | "PREMIER_LEAGUE"
+  | "CHAMPIONSHIP"
+  | "LEAGUE_ONE"
+  | "LA_LIGA"
+  | "SERIE_A";
 
 export type TeamType =
   | "CURRENT_TEAM"

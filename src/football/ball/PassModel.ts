@@ -51,7 +51,7 @@ export function computePassError(ctx: PassContext): PassResult {
           : ctx.passType === "chip"
             ? 1.16
             : 1;
-  const holdMultiplier = 1 + Math.abs(ctx.hold01 - idealHold(ctx.passType, ctx.distance)) * 0.45;
+  const holdMultiplier = 1 + Math.abs(ctx.hold01 - idealHold(ctx.passType, ctx.distance)) * 0.55;
 
   const baseError =
     ctx.passType === "short" ? 0.058 : ctx.passType === "through" || ctx.passType === "chip" ? 0.072 : 0.085;
@@ -68,11 +68,17 @@ export function computePassError(ctx: PassContext): PassResult {
   const angleCap = ctx.passType === "short" ? 0.28 : ctx.passType === "through" ? 0.4 : 0.55;
   const angleError = clamp(boundedNoise(error), -angleCap, angleCap);
   const power = passPower(ctx);
-  const powerError = boundedNoise(error * 3.2);
-  return { angleError, power, powerError: clamp(powerError, -4.5, 4.5) };
+  // Weight error: pressure + hips-off square → under/over-hit (PES pass weight).
+  const weightNoise =
+    error * 3.2 +
+    ctx.pressure * 1.15 * (1.15 - composure) +
+    (1 - clamp(ctx.bodyAlignment, 0, 1)) * 1.35 +
+    Math.abs(ctx.hold01 - idealHold(ctx.passType, ctx.distance)) * 2.1;
+  const powerError = boundedNoise(weightNoise);
+  return { angleError, power, powerError: clamp(powerError, -6.2, 6.2) };
 }
 
-function idealHold(type: PassType, distance: number): number {
+export function idealHold(type: PassType, distance: number): number {
   if (type === "through" || type === "chip") return clamp(0.35 + distance / 80, 0.4, 0.8);
   if (type === "long" || type === "cross") return clamp(0.55 + distance / 90, 0.6, 1);
   return clamp(distance / 36, 0.18, 0.72);

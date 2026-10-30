@@ -1335,11 +1335,11 @@ html.club-name-glow-off .club-line {
   position: absolute;
   transform: translate(-50%, 0);
   z-index: 2;
-  width: 64px;
-  min-height: 62px;
+  width: 52px;
+  min-height: 58px;
 }
 .pitch-slot.empty {
-  min-height: 56px;
+  min-height: 48px;
   border-radius: 10px;
 }
 .pitch-slot.nudging {
@@ -1406,43 +1406,49 @@ html.club-name-glow-off .club-line {
   min-width: 12rem;
   padding: 10px 14px;
 }
-.pitch-token .portrait,
-.kit-marker .portrait {
-  width: 48px;
-  height: 48px;
+/* Beat `.char-panel .portrait { 120px }` so formation discs stay compact. */
+.char-panel-team .pitch-token .portrait,
+.char-panel-team .kit-marker .portrait,
+.team-pitch .pitch-token .portrait,
+.team-pitch .kit-marker .portrait {
+  width: 36px;
+  height: 36px;
   margin: 0;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
 }
 .pitch-token .portrait-badge,
 .kit-marker .portrait-badge {
   border-radius: 50%;
 }
-.kit-marker {
+.char-panel-team .kit-marker,
+.team-pitch .kit-marker {
   display: grid;
   justify-items: center;
-  gap: 1px;
+  gap: 2px;
   min-width: 0;
-  max-width: 48px;
+  max-width: 56px;
 }
 .portrait-badge-kit {
-  padding: 3px 4px;
+  padding: 2px 3px;
   gap: 0;
   justify-content: center;
 }
-.portrait-badge-kit .num {
-  font-size: 12px;
+.char-panel-team .portrait-badge-kit .num,
+.team-pitch .portrait-badge-kit .num {
+  font-size: 11px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.02em;
   margin: 0;
 }
-.portrait-badge-kit .sur {
+.char-panel-team .portrait-badge-kit .sur,
+.team-pitch .portrait-badge-kit .sur {
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   line-height: 1.05;
   text-align: center;
   max-width: 100%;
@@ -1453,30 +1459,33 @@ html.club-name-glow-off .club-line {
   margin: 0;
   opacity: 1;
 }
-.kit-marker-caption {
+.char-panel-team .kit-marker-caption,
+.team-pitch .kit-marker-caption {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: baseline;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
-  max-width: 48px;
-  width: 48px;
+  max-width: 56px;
+  width: 56px;
   overflow: hidden;
 }
-.kit-marker-caption .kit-marker-num {
+.char-panel-team .kit-marker-caption .kit-marker-num,
+.team-pitch .kit-marker-caption .kit-marker-num {
   flex: 0 0 auto;
   font-weight: 800;
-  font-size: 10px;
+  font-size: 12px;
   letter-spacing: 0.02em;
   line-height: 1;
 }
-.kit-marker-caption .kit-marker-name {
+.char-panel-team .kit-marker-caption .kit-marker-name,
+.team-pitch .kit-marker-caption .kit-marker-name {
   flex: 1 1 auto;
   min-width: 0;
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.04em;
   line-height: 1.1;

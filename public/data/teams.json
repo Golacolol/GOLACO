@@ -2309,5 +2309,1045 @@
       "trim": "#7AC143",
       "numberColor": "#ffffff"
     }
+  },
+  {
+    "id": "athletic_current",
+    "name": "Athletic Club",
+    "abbreviation": "ATH",
+    "teamType": "CURRENT_TEAM",
+    "city": "Bilbao",
+    "primaryColor": "#EE2523",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#EE2523",
+      "shorts": "#FFFFFF",
+      "socks": "#EE2523",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "san_mames",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "osasuna_current",
+    "name": "CA Osasuna",
+    "abbreviation": "OSA",
+    "teamType": "CURRENT_TEAM",
+    "city": "Pamplona",
+    "primaryColor": "#D10000",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#D10000",
+      "shorts": "#000000",
+      "socks": "#D10000",
+      "trim": "#000000",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "el_sadar",
+    "defaultFormation": "4-3-3",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "atletico_current",
+    "name": "Club Atlético de Madrid",
+    "abbreviation": "ATM",
+    "teamType": "CURRENT_TEAM",
+    "city": "Madrid",
+    "primaryColor": "#CB3524",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#CB3524",
+      "shorts": "#FFFFFF",
+      "socks": "#CB3524",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "civitas_metropolitano",
+    "defaultFormation": "4-4-2",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "alaves_current",
+    "name": "Deportivo Alavés",
+    "abbreviation": "ALA",
+    "teamType": "CURRENT_TEAM",
+    "city": "Vitoria",
+    "primaryColor": "#004FA3",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#004FA3",
+      "shorts": "#FFFFFF",
+      "socks": "#004FA3",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "mendizorroza",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "elche_current",
+    "name": "Elche CF",
+    "abbreviation": "ELC",
+    "teamType": "CURRENT_TEAM",
+    "city": "Elche",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#007A33",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#007A33",
+      "socks": "#FFFFFF",
+      "trim": "#007A33",
+      "numberColor": "#007A33"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "martinez_valero",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "barcelona_current",
+    "name": "FC Barcelona",
+    "abbreviation": "FCB",
+    "teamType": "CURRENT_TEAM",
+    "city": "Barcelona",
+    "primaryColor": "#A50044",
+    "secondaryColor": "#004D98",
+    "defaultKit": {
+      "shirt": "#A50044",
+      "shorts": "#004D98",
+      "socks": "#A50044",
+      "trim": "#004D98",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "camp_nou",
+    "defaultFormation": "4-3-3",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "getafe_current",
+    "name": "Getafe CF",
+    "abbreviation": "GET",
+    "teamType": "CURRENT_TEAM",
+    "city": "Getafe",
+    "primaryColor": "#0057B8",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0057B8",
+      "shorts": "#FFFFFF",
+      "socks": "#0057B8",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "coliseum",
+    "defaultFormation": "4-4-2",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "levante_current",
+    "name": "Levante UD",
+    "abbreviation": "LEV",
+    "teamType": "CURRENT_TEAM",
+    "city": "Valencia",
+    "primaryColor": "#B5003C",
+    "secondaryColor": "#0057A8",
+    "defaultKit": {
+      "shirt": "#B5003C",
+      "shorts": "#0057A8",
+      "socks": "#B5003C",
+      "trim": "#0057A8",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "ciutat_de_valencia",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "malaga_current",
+    "name": "Málaga CF",
+    "abbreviation": "MLG",
+    "teamType": "CURRENT_TEAM",
+    "city": "Málaga",
+    "primaryColor": "#0057B8",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0057B8",
+      "shorts": "#FFFFFF",
+      "socks": "#0057B8",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "la_rosaleda",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "celta_current",
+    "name": "RC Celta de Vigo",
+    "abbreviation": "CEL",
+    "teamType": "CURRENT_TEAM",
+    "city": "Vigo",
+    "primaryColor": "#8AC7E8",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#8AC7E8",
+      "shorts": "#FFFFFF",
+      "socks": "#8AC7E8",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "balaidos",
+    "defaultFormation": "4-3-3",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "deportivo_current",
+    "name": "RC Deportivo La Coruña",
+    "abbreviation": "DEP",
+    "teamType": "CURRENT_TEAM",
+    "city": "A Coruña",
+    "primaryColor": "#0057B8",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0057B8",
+      "shorts": "#FFFFFF",
+      "socks": "#0057B8",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "riazor",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "espanyol_current",
+    "name": "RCD Espanyol de Barcelona",
+    "abbreviation": "ESP",
+    "teamType": "CURRENT_TEAM",
+    "city": "Barcelona",
+    "primaryColor": "#0072BC",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0072BC",
+      "shorts": "#FFFFFF",
+      "socks": "#0072BC",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "rcde_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "rayo_current",
+    "name": "Rayo Vallecano de Madrid",
+    "abbreviation": "RAY",
+    "teamType": "CURRENT_TEAM",
+    "city": "Madrid",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#E30613",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#E30613",
+      "socks": "#FFFFFF",
+      "trim": "#E30613",
+      "numberColor": "#E30613"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "vallecas",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "betis_current",
+    "name": "Real Betis Balompié",
+    "abbreviation": "BET",
+    "teamType": "CURRENT_TEAM",
+    "city": "Seville",
+    "primaryColor": "#0BB906",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0BB906",
+      "shorts": "#FFFFFF",
+      "socks": "#0BB906",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "benito_villamarin",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "realmadrid_current",
+    "name": "Real Madrid CF",
+    "abbreviation": "RMA",
+    "teamType": "CURRENT_TEAM",
+    "city": "Madrid",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#00529F",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#FFFFFF",
+      "socks": "#FFFFFF",
+      "trim": "#00529F",
+      "numberColor": "#00529F"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "santiago_bernabeu",
+    "defaultFormation": "4-3-3",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "racing_current",
+    "name": "Real Racing Club de Santander",
+    "abbreviation": "RAC",
+    "teamType": "CURRENT_TEAM",
+    "city": "Santander",
+    "primaryColor": "#007A33",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#007A33",
+      "shorts": "#FFFFFF",
+      "socks": "#007A33",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "el_sardinero",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "realsociedad_current",
+    "name": "Real Sociedad de Fútbol",
+    "abbreviation": "RSO",
+    "teamType": "CURRENT_TEAM",
+    "city": "San Sebastián",
+    "primaryColor": "#0067B1",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#0067B1",
+      "shorts": "#FFFFFF",
+      "socks": "#0067B1",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "anoeta",
+    "defaultFormation": "4-3-3",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "sevilla_current",
+    "name": "Sevilla FC",
+    "abbreviation": "SEV",
+    "teamType": "CURRENT_TEAM",
+    "city": "Seville",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#D10000",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#FFFFFF",
+      "socks": "#FFFFFF",
+      "trim": "#D10000",
+      "numberColor": "#D10000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "ramon_sanchez_pizjuan",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "valencia_current",
+    "name": "Valencia CF",
+    "abbreviation": "VCF",
+    "teamType": "CURRENT_TEAM",
+    "city": "Valencia",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#EE3524",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#FFFFFF",
+      "socks": "#FFFFFF",
+      "trim": "#EE3524",
+      "numberColor": "#EE3524"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "mestalla",
+    "defaultFormation": "4-2-3-1",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "villarreal_current",
+    "name": "Villarreal CF",
+    "abbreviation": "VIL",
+    "teamType": "CURRENT_TEAM",
+    "city": "Villarreal",
+    "primaryColor": "#FFFF00",
+    "secondaryColor": "#0057B8",
+    "defaultKit": {
+      "shirt": "#FFFF00",
+      "shorts": "#0057B8",
+      "socks": "#FFFF00",
+      "trim": "#0057B8",
+      "numberColor": "#0057B8"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "estadio_de_la_ceramica",
+    "defaultFormation": "4-4-2",
+    "league": "LA_LIGA"
+  },
+  {
+    "id": "milan_current",
+    "name": "AC Milan",
+    "abbreviation": "ACM",
+    "teamType": "CURRENT_TEAM",
+    "city": "Milan",
+    "primaryColor": "#FB090B",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FB090B",
+      "shorts": "#000000",
+      "socks": "#FB090B",
+      "trim": "#000000",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "san_siro",
+    "defaultFormation": "4-2-3-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "monza_current",
+    "name": "AC Monza",
+    "abbreviation": "MON",
+    "teamType": "CURRENT_TEAM",
+    "city": "Monza",
+    "primaryColor": "#ED1C24",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#ED1C24",
+      "shorts": "#FFFFFF",
+      "socks": "#ED1C24",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "brianteo",
+    "defaultFormation": "3-4-2-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "fiorentina_current",
+    "name": "ACF Fiorentina",
+    "abbreviation": "FIO",
+    "teamType": "CURRENT_TEAM",
+    "city": "Florence",
+    "primaryColor": "#482E92",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#482E92",
+      "shorts": "#FFFFFF",
+      "socks": "#482E92",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "stadio_artemio_franchi",
+    "defaultFormation": "4-2-3-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "roma_current",
+    "name": "AS Roma",
+    "abbreviation": "ROM",
+    "teamType": "CURRENT_TEAM",
+    "city": "Rome",
+    "primaryColor": "#8E1F2F",
+    "secondaryColor": "#F0BC42",
+    "defaultKit": {
+      "shirt": "#8E1F2F",
+      "shorts": "#F0BC42",
+      "socks": "#8E1F2F",
+      "trim": "#F0BC42",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "stadio_olimpico",
+    "defaultFormation": "4-2-3-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "atalanta_current",
+    "name": "Atalanta BC",
+    "abbreviation": "ATA",
+    "teamType": "CURRENT_TEAM",
+    "city": "Bergamo",
+    "primaryColor": "#1E3A8A",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#1E3A8A",
+      "shorts": "#000000",
+      "socks": "#1E3A8A",
+      "trim": "#000000",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "gewiss_stadium",
+    "defaultFormation": "3-4-2-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "bologna_current",
+    "name": "Bologna FC 1909",
+    "abbreviation": "BFC",
+    "teamType": "CURRENT_TEAM",
+    "city": "Bologna",
+    "primaryColor": "#1A1F71",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#1A1F71",
+      "shorts": "#FFFFFF",
+      "socks": "#1A1F71",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "renato_dall_ara",
+    "defaultFormation": "4-2-3-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "cagliari_current",
+    "name": "Cagliari Calcio",
+    "abbreviation": "CAG",
+    "teamType": "CURRENT_TEAM",
+    "city": "Cagliari",
+    "primaryColor": "#AD191D",
+    "secondaryColor": "#003DA5",
+    "defaultKit": {
+      "shirt": "#AD191D",
+      "shorts": "#003DA5",
+      "socks": "#AD191D",
+      "trim": "#003DA5",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "unica_stadium",
+    "defaultFormation": "4-3-3",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "como_current",
+    "name": "Como 1907",
+    "abbreviation": "COM",
+    "teamType": "CURRENT_TEAM",
+    "city": "Como",
+    "primaryColor": "#003DA5",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#003DA5",
+      "shorts": "#FFFFFF",
+      "socks": "#003DA5",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "giuseppe_sinigaglia",
+    "defaultFormation": "4-2-3-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "inter_current",
+    "name": "FC Internazionale Milano",
+    "abbreviation": "INT",
+    "teamType": "CURRENT_TEAM",
+    "city": "Milan",
+    "primaryColor": "#010E80",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#010E80",
+      "shorts": "#000000",
+      "socks": "#010E80",
+      "trim": "#000000",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "san_siro",
+    "defaultFormation": "3-4-2-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "frosinone_current",
+    "name": "Frosinone Calcio",
+    "abbreviation": "FRO",
+    "teamType": "CURRENT_TEAM",
+    "city": "Frosinone",
+    "primaryColor": "#FFD100",
+    "secondaryColor": "#003DA5",
+    "defaultKit": {
+      "shirt": "#FFD100",
+      "shorts": "#003DA5",
+      "socks": "#FFD100",
+      "trim": "#003DA5",
+      "numberColor": "#003DA5"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "benito_stirpe",
+    "defaultFormation": "4-3-3",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "genoa_current",
+    "name": "Genoa CFC",
+    "abbreviation": "GEN",
+    "teamType": "CURRENT_TEAM",
+    "city": "Genoa",
+    "primaryColor": "#C8102E",
+    "secondaryColor": "#003DA5",
+    "defaultKit": {
+      "shirt": "#C8102E",
+      "shorts": "#003DA5",
+      "socks": "#C8102E",
+      "trim": "#003DA5",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "luigi_ferraris",
+    "defaultFormation": "4-2-3-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "juventus_current",
+    "name": "Juventus FC",
+    "abbreviation": "JUV",
+    "teamType": "CURRENT_TEAM",
+    "city": "Turin",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#000000",
+      "socks": "#FFFFFF",
+      "trim": "#000000",
+      "numberColor": "#000000"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "juventus_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "parma_current",
+    "name": "Parma Calcio 1913",
+    "abbreviation": "PAR",
+    "teamType": "CURRENT_TEAM",
+    "city": "Parma",
+    "primaryColor": "#FFFFFF",
+    "secondaryColor": "#0066B3",
+    "defaultKit": {
+      "shirt": "#FFFFFF",
+      "shorts": "#FFFFFF",
+      "socks": "#FFFFFF",
+      "trim": "#0066B3",
+      "numberColor": "#0066B3"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "stadio_tardini",
+    "defaultFormation": "4-2-3-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "lazio_current",
+    "name": "SS Lazio",
+    "abbreviation": "LAZ",
+    "teamType": "CURRENT_TEAM",
+    "city": "Rome",
+    "primaryColor": "#87D8F7",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#87D8F7",
+      "shorts": "#FFFFFF",
+      "socks": "#87D8F7",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F27A1A",
+      "shorts": "#111111",
+      "socks": "#F27A1A",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "stadio_olimpico",
+    "defaultFormation": "4-3-3",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "napoli_current",
+    "name": "SSC Napoli",
+    "abbreviation": "NAP",
+    "teamType": "CURRENT_TEAM",
+    "city": "Naples",
+    "primaryColor": "#12A0D7",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#12A0D7",
+      "shorts": "#FFFFFF",
+      "socks": "#12A0D7",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "stadio_san_paolo",
+    "defaultFormation": "4-3-3",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "torino_current",
+    "name": "Torino FC",
+    "abbreviation": "TOR",
+    "teamType": "CURRENT_TEAM",
+    "city": "Turin",
+    "primaryColor": "#8B0000",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#8B0000",
+      "shorts": "#FFFFFF",
+      "socks": "#8B0000",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#7B5CFF",
+      "shorts": "#111111",
+      "socks": "#7B5CFF",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "olimpico_grande_torino",
+    "defaultFormation": "3-4-2-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "lecce_current",
+    "name": "US Lecce",
+    "abbreviation": "LEC",
+    "teamType": "CURRENT_TEAM",
+    "city": "Lecce",
+    "primaryColor": "#FFD100",
+    "secondaryColor": "#C8102E",
+    "defaultKit": {
+      "shirt": "#FFD100",
+      "shorts": "#C8102E",
+      "socks": "#FFD100",
+      "trim": "#C8102E",
+      "numberColor": "#C8102E"
+    },
+    "goalkeeperKit": {
+      "shirt": "#E8D44D",
+      "shorts": "#111111",
+      "socks": "#E8D44D",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "via_del_mare",
+    "defaultFormation": "4-3-3",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "sassuolo_current",
+    "name": "US Sassuolo Calcio",
+    "abbreviation": "SAS",
+    "teamType": "CURRENT_TEAM",
+    "city": "Sassuolo",
+    "primaryColor": "#00A651",
+    "secondaryColor": "#000000",
+    "defaultKit": {
+      "shirt": "#00A651",
+      "shorts": "#000000",
+      "socks": "#00A651",
+      "trim": "#000000",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "mapi_stadium",
+    "defaultFormation": "4-2-3-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "udinese_current",
+    "name": "Udinese Calcio",
+    "abbreviation": "UDI",
+    "teamType": "CURRENT_TEAM",
+    "city": "Udine",
+    "primaryColor": "#000000",
+    "secondaryColor": "#FFFFFF",
+    "defaultKit": {
+      "shirt": "#000000",
+      "shorts": "#000000",
+      "socks": "#000000",
+      "trim": "#FFFFFF",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#F4A7C3",
+      "shorts": "#111111",
+      "socks": "#F4A7C3",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "friuli",
+    "defaultFormation": "3-4-2-1",
+    "league": "SERIE_A"
+  },
+  {
+    "id": "venezia_current",
+    "name": "Venezia FC",
+    "abbreviation": "VEN",
+    "teamType": "CURRENT_TEAM",
+    "city": "Venice",
+    "primaryColor": "#FF6600",
+    "secondaryColor": "#009639",
+    "defaultKit": {
+      "shirt": "#FF6600",
+      "shorts": "#009639",
+      "socks": "#FF6600",
+      "trim": "#009639",
+      "numberColor": "#FFFFFF"
+    },
+    "goalkeeperKit": {
+      "shirt": "#3DDC97",
+      "shorts": "#111111",
+      "socks": "#3DDC97",
+      "trim": "#111111",
+      "numberColor": "#111111"
+    },
+    "defaultStadiumId": "pier_luigi_penzo",
+    "defaultFormation": "4-3-3",
+    "league": "SERIE_A"
   }
 ]

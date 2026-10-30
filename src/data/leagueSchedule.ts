@@ -9,6 +9,8 @@ export const LEAGUE_COMPETITION: Record<EnglishLeague, string> = {
   PREMIER_LEAGUE: "Premier League",
   CHAMPIONSHIP: "Championship",
   LEAGUE_ONE: "League One",
+  LA_LIGA: "La Liga",
+  SERIE_A: "Serie A",
 };
 
 export function todayIso(now = new Date()): string {
@@ -70,7 +72,7 @@ export function buildEnglishLeagueFixtures(
   template?: Partial<FixtureRecord>,
   lineupId?: (teamId: string) => string | undefined,
 ): FixtureRecord[] {
-  const leagues: EnglishLeague[] = ["PREMIER_LEAGUE", "CHAMPIONSHIP", "LEAGUE_ONE"];
+  const leagues: EnglishLeague[] = ["PREMIER_LEAGUE", "CHAMPIONSHIP", "LEAGUE_ONE", "LA_LIGA", "SERIE_A"];
   const byId = new Map(teams.map((t) => [t.id, t]));
   const official = officialSeasonMatches().map((match) => fixtureFromOfficial(match, byId, template, lineupId));
   const used = new Set(official.map((f) => pairingKey(f.homeTeamId, f.awayTeamId, f.competition)));

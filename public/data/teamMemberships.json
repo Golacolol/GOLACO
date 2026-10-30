@@ -10252,5 +10252,5805 @@
     "squadRole": "BENCH",
     "from": "2026-07-01",
     "to": null
+  },
+  {
+    "playerId": "player_athletic_unai_simon_1",
+    "teamId": "athletic_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_oscar_de_marcos_18",
+    "teamId": "athletic_current",
+    "shirtNumber": 18,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_dani_vivian_3",
+    "teamId": "athletic_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_aitor_paredes_4",
+    "teamId": "athletic_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_yuri_berchiche_17",
+    "teamId": "athletic_current",
+    "shirtNumber": 17,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_inigo_ruiz_de_galarreta_16",
+    "teamId": "athletic_current",
+    "shirtNumber": 16,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_benat_prados_24",
+    "teamId": "athletic_current",
+    "shirtNumber": 24,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_alex_berenguer_7",
+    "teamId": "athletic_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_oihan_sancet_8",
+    "teamId": "athletic_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_nico_williams_10",
+    "teamId": "athletic_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_gorka_guruzeta_9",
+    "teamId": "athletic_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_julen_agirrezabala_13",
+    "teamId": "athletic_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_yeray_alvarez_5",
+    "teamId": "athletic_current",
+    "shirtNumber": 5,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_inigo_lekue_15",
+    "teamId": "athletic_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_mikel_vesga_6",
+    "teamId": "athletic_current",
+    "shirtNumber": 6,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_unai_gomez_14",
+    "teamId": "athletic_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_inaki_williams_11",
+    "teamId": "athletic_current",
+    "shirtNumber": 11,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_athletic_alvaro_djalo_12",
+    "teamId": "athletic_current",
+    "shirtNumber": 12,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_sergio_herrera_1",
+    "teamId": "osasuna_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_nacho_vidal_2",
+    "teamId": "osasuna_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_david_garcia_5",
+    "teamId": "osasuna_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_catena_24",
+    "teamId": "osasuna_current",
+    "shirtNumber": 24,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_juan_cruz_3",
+    "teamId": "osasuna_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_lucas_torro_6",
+    "teamId": "osasuna_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_jon_moncayola_7",
+    "teamId": "osasuna_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_aimar_oroz_10",
+    "teamId": "osasuna_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_ruben_garcia_11",
+    "teamId": "osasuna_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_ante_budimir_9",
+    "teamId": "osasuna_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_moi_gomez_12",
+    "teamId": "osasuna_current",
+    "shirtNumber": 12,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_aitor_fernandez_13",
+    "teamId": "osasuna_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_unai_garcia_4",
+    "teamId": "osasuna_current",
+    "shirtNumber": 4,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_jorge_herrando_15",
+    "teamId": "osasuna_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_pablo_ibanez_8",
+    "teamId": "osasuna_current",
+    "shirtNumber": 8,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_iker_munoz_16",
+    "teamId": "osasuna_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_raul_garcia_17",
+    "teamId": "osasuna_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_osasuna_kike_barja_19",
+    "teamId": "osasuna_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_jan_oblak_13",
+    "teamId": "atletico_current",
+    "shirtNumber": 13,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_nahuel_molina_16",
+    "teamId": "atletico_current",
+    "shirtNumber": 16,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_jose_maria_gimenez_2",
+    "teamId": "atletico_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_stefan_savic_15",
+    "teamId": "atletico_current",
+    "shirtNumber": 15,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_cesar_azpilicueta_3",
+    "teamId": "atletico_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_marcos_llorente_14",
+    "teamId": "atletico_current",
+    "shirtNumber": 14,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_koke_6",
+    "teamId": "atletico_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_rodrigo_de_paul_5",
+    "teamId": "atletico_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_samuel_lino_22",
+    "teamId": "atletico_current",
+    "shirtNumber": 22,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_antoine_griezmann_7",
+    "teamId": "atletico_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_julian_alvarez_19",
+    "teamId": "atletico_current",
+    "shirtNumber": 19,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_juan_musso_1",
+    "teamId": "atletico_current",
+    "shirtNumber": 1,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_axel_witsel_20",
+    "teamId": "atletico_current",
+    "shirtNumber": 20,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_robin_le_normand_24",
+    "teamId": "atletico_current",
+    "shirtNumber": 24,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_pablo_barrios_8",
+    "teamId": "atletico_current",
+    "shirtNumber": 8,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_thomas_lemar_11",
+    "teamId": "atletico_current",
+    "shirtNumber": 11,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_alexander_s_rloth_9",
+    "teamId": "atletico_current",
+    "shirtNumber": 9,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atletico_rodrigo_riquelme_17",
+    "teamId": "atletico_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_antonio_sivera_1",
+    "teamId": "alaves_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_nahuel_tenaglia_14",
+    "teamId": "alaves_current",
+    "shirtNumber": 14,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_abdel_abqar_5",
+    "teamId": "alaves_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_santiago_mourino_2",
+    "teamId": "alaves_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_manu_sanchez_3",
+    "teamId": "alaves_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_ander_guevara_6",
+    "teamId": "alaves_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_antonio_blanco_8",
+    "teamId": "alaves_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_carlos_vicente_7",
+    "teamId": "alaves_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_joan_jordan_10",
+    "teamId": "alaves_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_carlos_martin_11",
+    "teamId": "alaves_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_kike_garcia_15",
+    "teamId": "alaves_current",
+    "shirtNumber": 15,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_jesus_owono_13",
+    "teamId": "alaves_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_aleksandar_sedlar_4",
+    "teamId": "alaves_current",
+    "shirtNumber": 4,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_hugo_novoa_16",
+    "teamId": "alaves_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_jon_guridi_18",
+    "teamId": "alaves_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_stoichkov_19",
+    "teamId": "alaves_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_asier_villalibre_9",
+    "teamId": "alaves_current",
+    "shirtNumber": 9,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_alaves_toni_martinez_17",
+    "teamId": "alaves_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_miguel_san_roman_1",
+    "teamId": "elche_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_mario_gaspar_2",
+    "teamId": "elche_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_pedro_bigas_5",
+    "teamId": "elche_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_diego_gonzalez_4",
+    "teamId": "elche_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_jose_salinas_3",
+    "teamId": "elche_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_nicolas_fernandez_mercau_6",
+    "teamId": "elche_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_raul_guti_8",
+    "teamId": "elche_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_mourad_el_ghezouani_7",
+    "teamId": "elche_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_oscar_plano_10",
+    "teamId": "elche_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_german_valera_11",
+    "teamId": "elche_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_jose_manuel_copete_9",
+    "teamId": "elche_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_edgar_badia_13",
+    "teamId": "elche_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_john_donald_15",
+    "teamId": "elche_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_josan_16",
+    "teamId": "elche_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_aleix_febas_14",
+    "teamId": "elche_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_rodrigo_mendoza_18",
+    "teamId": "elche_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_sergio_leon_17",
+    "teamId": "elche_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_elche_mourad_19",
+    "teamId": "elche_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_marc_andre_ter_stegen_1",
+    "teamId": "barcelona_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_jules_kounde_23",
+    "teamId": "barcelona_current",
+    "shirtNumber": 23,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_ronald_araujo_4",
+    "teamId": "barcelona_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_inigo_martinez_5",
+    "teamId": "barcelona_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_alejandro_balde_3",
+    "teamId": "barcelona_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_marc_casado_17",
+    "teamId": "barcelona_current",
+    "shirtNumber": 17,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_pedri_8",
+    "teamId": "barcelona_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_frenkie_de_jong_21",
+    "teamId": "barcelona_current",
+    "shirtNumber": 21,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_raphinha_11",
+    "teamId": "barcelona_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_robert_lewandowski_9",
+    "teamId": "barcelona_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_lamine_yamal_7",
+    "teamId": "barcelona_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_inaki_pena_13",
+    "teamId": "barcelona_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_pau_cubarsi_2",
+    "teamId": "barcelona_current",
+    "shirtNumber": 2,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_eric_garcia_24",
+    "teamId": "barcelona_current",
+    "shirtNumber": 24,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_gavi_6",
+    "teamId": "barcelona_current",
+    "shirtNumber": 6,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_dani_olmo_20",
+    "teamId": "barcelona_current",
+    "shirtNumber": 20,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_fermin_lopez_16",
+    "teamId": "barcelona_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_barcelona_ferran_torres_19",
+    "teamId": "barcelona_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_david_soria_13",
+    "teamId": "getafe_current",
+    "shirtNumber": 13,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_djene_2",
+    "teamId": "getafe_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_omar_alderete_15",
+    "teamId": "getafe_current",
+    "shirtNumber": 15,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_juan_berrocal_4",
+    "teamId": "getafe_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_diego_rico_16",
+    "teamId": "getafe_current",
+    "shirtNumber": 16,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_luis_milla_5",
+    "teamId": "getafe_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_mauro_arambarri_8",
+    "teamId": "getafe_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_yellu_santiago_6",
+    "teamId": "getafe_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_carles_alena_17",
+    "teamId": "getafe_current",
+    "shirtNumber": 17,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_borja_mayoral_9",
+    "teamId": "getafe_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_bertug_y_ld_r_m_19",
+    "teamId": "getafe_current",
+    "shirtNumber": 19,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_jankto_1",
+    "teamId": "getafe_current",
+    "shirtNumber": 1,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_domingos_duarte_3",
+    "teamId": "getafe_current",
+    "shirtNumber": 3,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_christantus_uche_7",
+    "teamId": "getafe_current",
+    "shirtNumber": 7,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_alvaro_rodriguez_10",
+    "teamId": "getafe_current",
+    "shirtNumber": 10,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_peter_federico_11",
+    "teamId": "getafe_current",
+    "shirtNumber": 11,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_juanmi_14",
+    "teamId": "getafe_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_getafe_jaime_mata_18",
+    "teamId": "getafe_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_andres_fernandez_1",
+    "teamId": "levante_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_andres_garcia_2",
+    "teamId": "levante_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_adrian_de_la_fuente_5",
+    "teamId": "levante_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_unai_elgezabal_4",
+    "teamId": "levante_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_manu_sanchez_3",
+    "teamId": "levante_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_oriol_rey_6",
+    "teamId": "levante_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_pablo_martinez_8",
+    "teamId": "levante_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_carlos_alvarez_7",
+    "teamId": "levante_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_jose_luis_morales_10",
+    "teamId": "levante_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_brugui_11",
+    "teamId": "levante_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_roger_brugue_9",
+    "teamId": "levante_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_alex_primo_13",
+    "teamId": "levante_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_jorge_cabello_15",
+    "teamId": "levante_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_sergio_postigo_16",
+    "teamId": "levante_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_alex_cantero_14",
+    "teamId": "levante_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_pablo_martinez_17",
+    "teamId": "levante_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_ivan_romero_18",
+    "teamId": "levante_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_levante_angel_algobia_19",
+    "teamId": "levante_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_alfonso_herrero_1",
+    "teamId": "malaga_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_einar_galilea_2",
+    "teamId": "malaga_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_nelson_monte_5",
+    "teamId": "malaga_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_diego_murillo_4",
+    "teamId": "malaga_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_carlos_dominguez_3",
+    "teamId": "malaga_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_manu_molina_6",
+    "teamId": "malaga_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_juanpe_8",
+    "teamId": "malaga_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_antonito_cordero_7",
+    "teamId": "malaga_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_dioni_10",
+    "teamId": "malaga_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_chupete_11",
+    "teamId": "malaga_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_haitam_abaida_9",
+    "teamId": "malaga_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_carlos_lopez_13",
+    "teamId": "malaga_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_nelson_monte_15",
+    "teamId": "malaga_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_victor_garcia_16",
+    "teamId": "malaga_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_roberto_14",
+    "teamId": "malaga_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_david_larrubia_17",
+    "teamId": "malaga_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_loren_zuniga_18",
+    "teamId": "malaga_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_malaga_kevin_villodres_19",
+    "teamId": "malaga_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_vicente_guaita_13",
+    "teamId": "celta_current",
+    "shirtNumber": 13,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_oscar_mingueza_3",
+    "teamId": "celta_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_carl_starfelt_2",
+    "teamId": "celta_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_carlos_dominguez_24",
+    "teamId": "celta_current",
+    "shirtNumber": 24,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_marcos_alonso_20",
+    "teamId": "celta_current",
+    "shirtNumber": 20,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_jailson_16",
+    "teamId": "celta_current",
+    "shirtNumber": 16,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_fran_beltran_8",
+    "teamId": "celta_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_ilaix_moriba_6",
+    "teamId": "celta_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_alfon_gonzalez_12",
+    "teamId": "celta_current",
+    "shirtNumber": 12,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_iago_aspas_10",
+    "teamId": "celta_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_jonathan_bamba_17",
+    "teamId": "celta_current",
+    "shirtNumber": 17,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_ivan_villar_1",
+    "teamId": "celta_current",
+    "shirtNumber": 1,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_unai_nunez_4",
+    "teamId": "celta_current",
+    "shirtNumber": 4,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_joseph_aidoo_15",
+    "teamId": "celta_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_hugo_sotelo_5",
+    "teamId": "celta_current",
+    "shirtNumber": 5,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_williot_swedberg_7",
+    "teamId": "celta_current",
+    "shirtNumber": 7,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_borja_iglesias_9",
+    "teamId": "celta_current",
+    "shirtNumber": 9,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_celta_tasos_douvikas_11",
+    "teamId": "celta_current",
+    "shirtNumber": 11,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_german_parreno_1",
+    "teamId": "deportivo_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_ximo_navarro_2",
+    "teamId": "deportivo_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_pablo_vazquez_5",
+    "teamId": "deportivo_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_pablo_martinez_4",
+    "teamId": "deportivo_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_rafel_obrador_3",
+    "teamId": "deportivo_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_diego_villares_6",
+    "teamId": "deportivo_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_jose_angel_jurado_8",
+    "teamId": "deportivo_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_yeremay_hernandez_7",
+    "teamId": "deportivo_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_lucas_perez_10",
+    "teamId": "deportivo_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_david_mella_11",
+    "teamId": "deportivo_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_zakaria_eddahchouri_9",
+    "teamId": "deportivo_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_eric_puerto_13",
+    "teamId": "deportivo_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_dani_barcia_15",
+    "teamId": "deportivo_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_jaime_sanchez_16",
+    "teamId": "deportivo_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_alex_petisca_14",
+    "teamId": "deportivo_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_hugo_rama_17",
+    "teamId": "deportivo_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_barbero_18",
+    "teamId": "deportivo_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_deportivo_mario_soriano_19",
+    "teamId": "deportivo_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_joan_garcia_1",
+    "teamId": "espanyol_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_omar_el_hilali_2",
+    "teamId": "espanyol_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_fernando_calero_5",
+    "teamId": "espanyol_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_carlos_romero_14",
+    "teamId": "espanyol_current",
+    "shirtNumber": 14,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_brian_olivan_3",
+    "teamId": "espanyol_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_jose_gragera_6",
+    "teamId": "espanyol_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_pol_lozano_8",
+    "teamId": "espanyol_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_javi_puado_7",
+    "teamId": "espanyol_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_alejo_veliz_10",
+    "teamId": "espanyol_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_jofre_carreras_11",
+    "teamId": "espanyol_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_walid_cheddira_9",
+    "teamId": "espanyol_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_angel_fortuno_13",
+    "teamId": "espanyol_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_leandro_cabrera_4",
+    "teamId": "espanyol_current",
+    "shirtNumber": 4,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_marash_kumbulla_15",
+    "teamId": "espanyol_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_alvaro_aguado_16",
+    "teamId": "espanyol_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_edu_exposito_17",
+    "teamId": "espanyol_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_martin_braithwaite_18",
+    "teamId": "espanyol_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_espanyol_irvin_cardona_19",
+    "teamId": "espanyol_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_dani_cardenas_1",
+    "teamId": "rayo_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_andrei_ratiu_2",
+    "teamId": "rayo_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_florian_lejeune_5",
+    "teamId": "rayo_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_pathe_ciss_24",
+    "teamId": "rayo_current",
+    "shirtNumber": 24,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_alfonso_espino_3",
+    "teamId": "rayo_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_oscar_valentin_6",
+    "teamId": "rayo_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_unai_lopez_17",
+    "teamId": "rayo_current",
+    "shirtNumber": 17,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_isi_palazon_7",
+    "teamId": "rayo_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_james_rodriguez_10",
+    "teamId": "rayo_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_alvaro_garcia_11",
+    "teamId": "rayo_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_raul_de_tomas_9",
+    "teamId": "rayo_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_miguel_angel_morro_13",
+    "teamId": "rayo_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_aridane_hernandez_4",
+    "teamId": "rayo_current",
+    "shirtNumber": 4,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_abdul_mumin_15",
+    "teamId": "rayo_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_pep_chavarria_8",
+    "teamId": "rayo_current",
+    "shirtNumber": 8,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_randy_nteka_14",
+    "teamId": "rayo_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_sergio_camello_18",
+    "teamId": "rayo_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_rayo_randy_nteka_19",
+    "teamId": "rayo_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_rui_silva_13",
+    "teamId": "betis_current",
+    "shirtNumber": 13,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_hector_bellerin_2",
+    "teamId": "betis_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_diego_llorente_3",
+    "teamId": "betis_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_natan_6",
+    "teamId": "betis_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_ricardo_rodriguez_12",
+    "teamId": "betis_current",
+    "shirtNumber": 12,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_johnny_cardoso_4",
+    "teamId": "betis_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_marc_roca_5",
+    "teamId": "betis_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_abde_ezzalzouli_7",
+    "teamId": "betis_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_isco_10",
+    "teamId": "betis_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_assane_diao_11",
+    "teamId": "betis_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_chimy_avila_9",
+    "teamId": "betis_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_adrian_1",
+    "teamId": "betis_current",
+    "shirtNumber": 1,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_marc_bartra_15",
+    "teamId": "betis_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_youssouf_sabaly_16",
+    "teamId": "betis_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_pablo_fornals_8",
+    "teamId": "betis_current",
+    "shirtNumber": 8,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_giovani_lo_celso_14",
+    "teamId": "betis_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_cedric_bakambu_17",
+    "teamId": "betis_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_betis_ayoze_perez_19",
+    "teamId": "betis_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_thibaut_courtois_1",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_dani_carvajal_2",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_eder_militao_3",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_antonio_rudiger_22",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 22,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_david_alaba_4",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_federico_valverde_8",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_aurelien_tchouameni_14",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 14,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_jude_bellingham_5",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_rodrygo_11",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_vinicius_junior_7",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_kylian_mbappe_9",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_andriy_lunin_13",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_raul_asencio_15",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_fran_garcia_18",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_eduardo_camavinga_6",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 6,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_luka_modric_10",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 10,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_arda_guler_17",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realmadrid_endrick_16",
+    "teamId": "realmadrid_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_jokin_ezkieta_1",
+    "teamId": "racing_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_alvaro_mantilla_2",
+    "teamId": "racing_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_manu_hernando_5",
+    "teamId": "racing_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_inigo_sainz_maza_4",
+    "teamId": "racing_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_saul_garcia_3",
+    "teamId": "racing_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_inigo_vicente_6",
+    "teamId": "racing_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_maguette_gueye_8",
+    "teamId": "racing_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_andres_martin_7",
+    "teamId": "racing_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_lago_junior_10",
+    "teamId": "racing_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_juan_carlos_arana_11",
+    "teamId": "racing_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_peque_fernandez_9",
+    "teamId": "racing_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_german_fernandez_13",
+    "teamId": "racing_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_mario_garcia_15",
+    "teamId": "racing_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_clement_michelin_16",
+    "teamId": "racing_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_unai_vencedor_14",
+    "teamId": "racing_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_pablo_rodriguez_17",
+    "teamId": "racing_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_ekain_zenitagoia_18",
+    "teamId": "racing_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_racing_marco_sangalli_19",
+    "teamId": "racing_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_alex_remiro_1",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_aritz_elustondo_6",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_igor_zubeldia_5",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_jon_pacheco_20",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 20,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_aihen_munoz_3",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_martin_zubimendi_4",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_benat_turrientes_8",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_mikel_oyarzabal_10",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_ander_barrenetxea_11",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_takefusa_kubo_7",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_luka_sucic_14",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 14,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_unai_marrero_13",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_hamari_traore_2",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 2,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_jon_aramburu_15",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_brais_mendez_16",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_arsen_zakharyan_17",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_umar_sadiq_9",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 9,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_realsociedad_orri_oskarsson_19",
+    "teamId": "realsociedad_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_rjan_nyland_1",
+    "teamId": "sevilla_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_jesus_navas_16",
+    "teamId": "sevilla_current",
+    "shirtNumber": 16,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_loic_bade_4",
+    "teamId": "sevilla_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_tanguy_nianzou_22",
+    "teamId": "sevilla_current",
+    "shirtNumber": 22,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_adria_pedrosa_3",
+    "teamId": "sevilla_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_lucien_agoume_6",
+    "teamId": "sevilla_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_nemanja_gudelj_18",
+    "teamId": "sevilla_current",
+    "shirtNumber": 18,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_dodi_lukebakio_7",
+    "teamId": "sevilla_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_suso_10",
+    "teamId": "sevilla_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_isaac_romero_11",
+    "teamId": "sevilla_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_chidera_ejuke_9",
+    "teamId": "sevilla_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_alvaro_valles_13",
+    "teamId": "sevilla_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_kike_salas_5",
+    "teamId": "sevilla_current",
+    "shirtNumber": 5,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_marcos_acuna_15",
+    "teamId": "sevilla_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_joan_jordan_8",
+    "teamId": "sevilla_current",
+    "shirtNumber": 8,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_stanis_idumbo_14",
+    "teamId": "sevilla_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_idrissi_17",
+    "teamId": "sevilla_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sevilla_mariano_diaz_19",
+    "teamId": "sevilla_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_stole_dimitrievski_25",
+    "teamId": "valencia_current",
+    "shirtNumber": 25,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_thierry_correia_2",
+    "teamId": "valencia_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_cristhian_mosquera_3",
+    "teamId": "valencia_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_cenk_ozkacar_5",
+    "teamId": "valencia_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_jesus_vazquez_21",
+    "teamId": "valencia_current",
+    "shirtNumber": 21,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_javi_guerra_8",
+    "teamId": "valencia_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_pepelu_6",
+    "teamId": "valencia_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_sergri_barrenetxea_7",
+    "teamId": "valencia_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_andre_almeida_10",
+    "teamId": "valencia_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_diego_lopez_11",
+    "teamId": "valencia_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_hugo_duro_9",
+    "teamId": "valencia_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_jaume_domenech_13",
+    "teamId": "valencia_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_mouctar_diakhaby_4",
+    "teamId": "valencia_current",
+    "shirtNumber": 4,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_yarek_gasiorowski_15",
+    "teamId": "valencia_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_fran_perez_14",
+    "teamId": "valencia_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_sergri_dominguez_16",
+    "teamId": "valencia_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_rafa_mir_17",
+    "teamId": "valencia_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_valencia_dani_gomez_19",
+    "teamId": "valencia_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_luiz_junior_1",
+    "teamId": "villarreal_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_kiko_femenia_2",
+    "teamId": "villarreal_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_raul_albiol_3",
+    "teamId": "villarreal_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_juan_foyth_5",
+    "teamId": "villarreal_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_alfonso_pedraza_24",
+    "teamId": "villarreal_current",
+    "shirtNumber": 24,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_pape_gueye_17",
+    "teamId": "villarreal_current",
+    "shirtNumber": 17,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_dani_parejo_8",
+    "teamId": "villarreal_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_santi_comesana_6",
+    "teamId": "villarreal_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_alex_baena_16",
+    "teamId": "villarreal_current",
+    "shirtNumber": 16,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_gerard_moreno_7",
+    "teamId": "villarreal_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_ayoze_perez_9",
+    "teamId": "villarreal_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_diego_conde_13",
+    "teamId": "villarreal_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_eric_bailly_4",
+    "teamId": "villarreal_current",
+    "shirtNumber": 4,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_logan_costa_15",
+    "teamId": "villarreal_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_ilias_akhomach_10",
+    "teamId": "villarreal_current",
+    "shirtNumber": 10,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_yeremy_pino_11",
+    "teamId": "villarreal_current",
+    "shirtNumber": 11,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_thierno_barry_14",
+    "teamId": "villarreal_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_villarreal_nicolas_pepe_19",
+    "teamId": "villarreal_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_mike_maignan_16",
+    "teamId": "milan_current",
+    "shirtNumber": 16,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_davide_calabria_2",
+    "teamId": "milan_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_fikayo_tomori_23",
+    "teamId": "milan_current",
+    "shirtNumber": 23,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_matteo_gabbia_46",
+    "teamId": "milan_current",
+    "shirtNumber": 46,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_theo_hernandez_19",
+    "teamId": "milan_current",
+    "shirtNumber": 19,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_tijjani_reijnders_14",
+    "teamId": "milan_current",
+    "shirtNumber": 14,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_ruben_loftus_cheek_8",
+    "teamId": "milan_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_christian_pulisic_10",
+    "teamId": "milan_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_yunus_musah_11",
+    "teamId": "milan_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_rafael_leao_7",
+    "teamId": "milan_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_alvaro_morata_9",
+    "teamId": "milan_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_marco_sportiello_1",
+    "teamId": "milan_current",
+    "shirtNumber": 1,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_emerson_royal_22",
+    "teamId": "milan_current",
+    "shirtNumber": 22,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_malick_thiaw_24",
+    "teamId": "milan_current",
+    "shirtNumber": 24,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_ismael_bennacer_4",
+    "teamId": "milan_current",
+    "shirtNumber": 4,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_samuel_chukwueze_21",
+    "teamId": "milan_current",
+    "shirtNumber": 21,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_noah_okafor_17",
+    "teamId": "milan_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_milan_tammy_abraham_18",
+    "teamId": "milan_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_stefano_turati_30",
+    "teamId": "monza_current",
+    "shirtNumber": 30,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_armando_izzo_4",
+    "teamId": "monza_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_pablo_mari_5",
+    "teamId": "monza_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_pedro_pereira_13",
+    "teamId": "monza_current",
+    "shirtNumber": 13,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_samuele_birindelli_19",
+    "teamId": "monza_current",
+    "shirtNumber": 19,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_roberto_gagliardini_6",
+    "teamId": "monza_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_matteo_pessina_32",
+    "teamId": "monza_current",
+    "shirtNumber": 32,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_georgios_kyriakopoulos_77",
+    "teamId": "monza_current",
+    "shirtNumber": 77,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_andrea_colpani_10",
+    "teamId": "monza_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_daniel_maldini_11",
+    "teamId": "monza_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_dany_mota_47",
+    "teamId": "monza_current",
+    "shirtNumber": 47,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_alessandro_sorrentino_1",
+    "teamId": "monza_current",
+    "shirtNumber": 1,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_giorgos_kyriakopoulos_2",
+    "teamId": "monza_current",
+    "shirtNumber": 2,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_luca_caldirola_3",
+    "teamId": "monza_current",
+    "shirtNumber": 3,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_warren_bondo_8",
+    "teamId": "monza_current",
+    "shirtNumber": 8,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_jose_machin_17",
+    "teamId": "monza_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_milan_uric_9",
+    "teamId": "monza_current",
+    "shirtNumber": 9,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_monza_samuele_vignato_20",
+    "teamId": "monza_current",
+    "shirtNumber": 20,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_david_de_gea_1",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_dodo_2",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_lucas_martinez_quarta_4",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_luca_ranieri_5",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_cristiano_biraghi_3",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_rolando_mandragora_6",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_danilo_cataldi_8",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_riccardo_sottil_7",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_albert_gu_mundsson_10",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_christian_kouame_11",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_moise_kean_9",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_tommaso_martinelli_30",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 30,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_pietro_comuzzo_15",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_marin_pongracic_16",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_edoardo_bove_14",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_lucas_beltran_17",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_andrea_belotti_18",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_fiorentina_jonathan_ikone_19",
+    "teamId": "fiorentina_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_mile_svilar_99",
+    "teamId": "roma_current",
+    "shirtNumber": 99,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_devyne_rensch_2",
+    "teamId": "roma_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_evan_ndicka_5",
+    "teamId": "roma_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_gianluca_mancini_23",
+    "teamId": "roma_current",
+    "shirtNumber": 23,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_angelino_3",
+    "teamId": "roma_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_bryan_cristante_4",
+    "teamId": "roma_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_leandro_paredes_16",
+    "teamId": "roma_current",
+    "shirtNumber": 16,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_paulo_dybala_7",
+    "teamId": "roma_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_lorenzo_pellegrini_10",
+    "teamId": "roma_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_matias_soule_11",
+    "teamId": "roma_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_artem_dovbyk_9",
+    "teamId": "roma_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_rui_patricio_1",
+    "teamId": "roma_current",
+    "shirtNumber": 1,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_mats_hummels_15",
+    "teamId": "roma_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_mehmet_zeki_celik_19",
+    "teamId": "roma_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_niccolo_pisilli_8",
+    "teamId": "roma_current",
+    "shirtNumber": 8,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_tommaso_baldanzi_17",
+    "teamId": "roma_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_eldor_shomurodov_18",
+    "teamId": "roma_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_roma_stephan_el_shaarawy_14",
+    "teamId": "roma_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_marco_carnesecchi_29",
+    "teamId": "atalanta_current",
+    "shirtNumber": 29,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_isak_hien_4",
+    "teamId": "atalanta_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_berat_djimsiti_19",
+    "teamId": "atalanta_current",
+    "shirtNumber": 19,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_sead_kolasinac_23",
+    "teamId": "atalanta_current",
+    "shirtNumber": 23,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_davide_zappacosta_77",
+    "teamId": "atalanta_current",
+    "shirtNumber": 77,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_mario_pasalic_8",
+    "teamId": "atalanta_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_ederson_13",
+    "teamId": "atalanta_current",
+    "shirtNumber": 13,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_matteo_ruggeri_22",
+    "teamId": "atalanta_current",
+    "shirtNumber": 22,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_ademola_lookman_7",
+    "teamId": "atalanta_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_charles_de_ketelaere_11",
+    "teamId": "atalanta_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_mateo_retegui_17",
+    "teamId": "atalanta_current",
+    "shirtNumber": 17,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_francesco_rossi_1",
+    "teamId": "atalanta_current",
+    "shirtNumber": 1,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_raoul_bellanova_2",
+    "teamId": "atalanta_current",
+    "shirtNumber": 2,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_odilon_kossounou_5",
+    "teamId": "atalanta_current",
+    "shirtNumber": 5,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_marten_de_roon_6",
+    "teamId": "atalanta_current",
+    "shirtNumber": 6,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_nicolo_zaniolo_10",
+    "teamId": "atalanta_current",
+    "shirtNumber": 10,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_gianluca_scamacca_9",
+    "teamId": "atalanta_current",
+    "shirtNumber": 9,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_atalanta_mateo_retegui_32",
+    "teamId": "atalanta_current",
+    "shirtNumber": 32,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_ukasz_skorupski_1",
+    "teamId": "bologna_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_lorenzo_de_silvestri_2",
+    "teamId": "bologna_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_sam_beukema_5",
+    "teamId": "bologna_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_jhon_lucumi_26",
+    "teamId": "bologna_current",
+    "shirtNumber": 26,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_juan_miranda_22",
+    "teamId": "bologna_current",
+    "shirtNumber": 22,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_remo_freuler_8",
+    "teamId": "bologna_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_michel_aebischer_6",
+    "teamId": "bologna_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_riccardo_orsolini_7",
+    "teamId": "bologna_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_lewis_ferguson_10",
+    "teamId": "bologna_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_dan_ndoye_11",
+    "teamId": "bologna_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_thijs_dallinga_9",
+    "teamId": "bologna_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_federico_ravaglia_34",
+    "teamId": "bologna_current",
+    "shirtNumber": 34,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_stefan_posch_3",
+    "teamId": "bologna_current",
+    "shirtNumber": 3,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_martin_erlic_4",
+    "teamId": "bologna_current",
+    "shirtNumber": 4,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_tommaso_pobega_14",
+    "teamId": "bologna_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_giovanni_fabbian_17",
+    "teamId": "bologna_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_santiago_castro_18",
+    "teamId": "bologna_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_bologna_jens_odgaard_19",
+    "teamId": "bologna_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_simone_scuffet_1",
+    "teamId": "cagliari_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_gabriele_zappa_2",
+    "teamId": "cagliari_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_yerry_mina_4",
+    "teamId": "cagliari_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_adam_obert_26",
+    "teamId": "cagliari_current",
+    "shirtNumber": 26,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_adam_diakite_3",
+    "teamId": "cagliari_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_michel_adopo_8",
+    "teamId": "cagliari_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_antoine_makoumbou_6",
+    "teamId": "cagliari_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_alessandro_deiola_10",
+    "teamId": "cagliari_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_zito_luvumbo_7",
+    "teamId": "cagliari_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_roberto_piccoli_9",
+    "teamId": "cagliari_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_gianluca_gaetano_11",
+    "teamId": "cagliari_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_giuseppe_ciocci_13",
+    "teamId": "cagliari_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_sebastiano_luperto_5",
+    "teamId": "cagliari_current",
+    "shirtNumber": 5,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_tommaso_augello_15",
+    "teamId": "cagliari_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_nadir_zortea_14",
+    "teamId": "cagliari_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_nicolas_viola_16",
+    "teamId": "cagliari_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_leonardo_pavoletti_17",
+    "teamId": "cagliari_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_cagliari_gianluca_lapadula_19",
+    "teamId": "cagliari_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_pepe_reina_1",
+    "teamId": "como_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_ignace_van_der_brempt_2",
+    "teamId": "como_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_alberto_dossena_5",
+    "teamId": "como_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_marc_oliver_kempf_6",
+    "teamId": "como_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_alex_valle_3",
+    "teamId": "como_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_maximo_perrone_8",
+    "teamId": "como_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_luca_mazzitelli_4",
+    "teamId": "como_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_gabriel_strefezza_7",
+    "teamId": "como_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_nico_paz_10",
+    "teamId": "como_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_patrick_cutrone_11",
+    "teamId": "como_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_andrea_belotti_9",
+    "teamId": "como_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_mauro_vigorito_13",
+    "teamId": "como_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_edoardo_goldaniga_15",
+    "teamId": "como_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_fellipe_jack_16",
+    "teamId": "como_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_yannik_engelhardt_14",
+    "teamId": "como_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_alessandro_gabrielloni_17",
+    "teamId": "como_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_anastasios_douvikas_18",
+    "teamId": "como_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_como_jonathan_ikone_19",
+    "teamId": "como_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_yann_sommer_1",
+    "teamId": "inter_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_stefan_de_vrij_6",
+    "teamId": "inter_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_francesco_acerbi_15",
+    "teamId": "inter_current",
+    "shirtNumber": 15,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_alessandro_bastoni_95",
+    "teamId": "inter_current",
+    "shirtNumber": 95,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_denzel_dumfries_2",
+    "teamId": "inter_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_nicolo_barella_23",
+    "teamId": "inter_current",
+    "shirtNumber": 23,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_hakan_calhanoglu_20",
+    "teamId": "inter_current",
+    "shirtNumber": 20,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_federico_dimarco_32",
+    "teamId": "inter_current",
+    "shirtNumber": 32,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_lautaro_martinez_10",
+    "teamId": "inter_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_marcus_thuram_9",
+    "teamId": "inter_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_piotr_zielinski_8",
+    "teamId": "inter_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_josep_martinez_13",
+    "teamId": "inter_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_benjamin_pavard_5",
+    "teamId": "inter_current",
+    "shirtNumber": 5,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_carlos_augusto_30",
+    "teamId": "inter_current",
+    "shirtNumber": 30,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_davide_frattesi_16",
+    "teamId": "inter_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_henrikh_mkhitaryan_22",
+    "teamId": "inter_current",
+    "shirtNumber": 22,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_mehdi_taremi_11",
+    "teamId": "inter_current",
+    "shirtNumber": 11,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_inter_marko_arnautovic_14",
+    "teamId": "inter_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_michele_cerofolini_1",
+    "teamId": "frosinone_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_anthony_oyono_2",
+    "teamId": "frosinone_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_simone_romagnoli_5",
+    "teamId": "frosinone_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_riccardo_marchizza_6",
+    "teamId": "frosinone_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_anthony_oyono_3",
+    "teamId": "frosinone_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_luca_mazzitelli_8",
+    "teamId": "frosinone_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_enzo_barrenechea_4",
+    "teamId": "frosinone_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_marco_brescianini_10",
+    "teamId": "frosinone_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_giuseppe_caso_7",
+    "teamId": "frosinone_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_walid_cheddira_9",
+    "teamId": "frosinone_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_kaio_jorge_11",
+    "teamId": "frosinone_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_pierluigi_frattali_13",
+    "teamId": "frosinone_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_caleb_okoli_15",
+    "teamId": "frosinone_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_pol_lirola_16",
+    "teamId": "frosinone_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_francesco_gelli_14",
+    "teamId": "frosinone_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_arijon_ibrahimovic_17",
+    "teamId": "frosinone_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_jaime_baez_18",
+    "teamId": "frosinone_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_frosinone_marvin_cuni_19",
+    "teamId": "frosinone_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_nicola_leali_1",
+    "teamId": "genoa_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_stefano_sabelli_2",
+    "teamId": "genoa_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_koni_de_winter_5",
+    "teamId": "genoa_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_alessandro_vogliacco_4",
+    "teamId": "genoa_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_aaron_martin_3",
+    "teamId": "genoa_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_morten_frendrup_8",
+    "teamId": "genoa_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_milan_badelj_6",
+    "teamId": "genoa_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_albert_gu_mundsson_7",
+    "teamId": "genoa_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_fabio_miretti_10",
+    "teamId": "genoa_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_vitinha_11",
+    "teamId": "genoa_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_andrea_pinamonti_9",
+    "teamId": "genoa_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_pierluigi_gollini_13",
+    "teamId": "genoa_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_mattia_bani_15",
+    "teamId": "genoa_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_alan_matturro_16",
+    "teamId": "genoa_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_ruslan_malinovskyi_14",
+    "teamId": "genoa_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_filippo_melegoni_17",
+    "teamId": "genoa_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_brooke_norton_cuffy_18",
+    "teamId": "genoa_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_genoa_caleb_ekuban_19",
+    "teamId": "genoa_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_michele_di_gregorio_1",
+    "teamId": "juventus_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_nicolo_savona_2",
+    "teamId": "juventus_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_bremer_3",
+    "teamId": "juventus_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_federico_gatti_4",
+    "teamId": "juventus_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_andrea_cambiaso_6",
+    "teamId": "juventus_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_manuel_locatelli_5",
+    "teamId": "juventus_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_teun_koopmeiners_8",
+    "teamId": "juventus_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_francisco_conceicao_7",
+    "teamId": "juventus_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_kenan_y_ld_z_10",
+    "teamId": "juventus_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_timothy_weah_11",
+    "teamId": "juventus_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_dusan_vlahovic_9",
+    "teamId": "juventus_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_carlo_pinsoglio_13",
+    "teamId": "juventus_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_pierre_kalulu_15",
+    "teamId": "juventus_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_juan_cabal_16",
+    "teamId": "juventus_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_weston_mckennie_14",
+    "teamId": "juventus_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_douglas_luiz_17",
+    "teamId": "juventus_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_arkadiusz_milik_18",
+    "teamId": "juventus_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_juventus_nico_gonzalez_19",
+    "teamId": "juventus_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_zion_suzuki_1",
+    "teamId": "parma_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_enrico_delprato_2",
+    "teamId": "parma_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_lautaro_valenti_5",
+    "teamId": "parma_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_yordan_osorio_4",
+    "teamId": "parma_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_alessandro_circati_3",
+    "teamId": "parma_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_adrian_bernabe_6",
+    "teamId": "parma_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_simon_sohm_8",
+    "teamId": "parma_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_dennis_man_7",
+    "teamId": "parma_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_hernani_10",
+    "teamId": "parma_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_ange_yoan_bonny_11",
+    "teamId": "parma_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_mateo_pellegrino_9",
+    "teamId": "parma_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_richard_marcone_13",
+    "teamId": "parma_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_botond_balogh_15",
+    "teamId": "parma_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_woyo_coulibaly_16",
+    "teamId": "parma_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_drissa_camara_14",
+    "teamId": "parma_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_nahuel_estevez_17",
+    "teamId": "parma_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_gabriel_charpentier_18",
+    "teamId": "parma_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_parma_anthony_partipilo_19",
+    "teamId": "parma_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_christos_mandas_35",
+    "teamId": "lazio_current",
+    "shirtNumber": 35,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_manuel_lazzari_2",
+    "teamId": "lazio_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_alessio_romagnoli_13",
+    "teamId": "lazio_current",
+    "shirtNumber": 13,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_patric_4",
+    "teamId": "lazio_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_nuno_tavares_3",
+    "teamId": "lazio_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_nicolo_rovella_6",
+    "teamId": "lazio_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_matteo_guendouzi_8",
+    "teamId": "lazio_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_luis_alberto_10",
+    "teamId": "lazio_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_gustav_isaksen_7",
+    "teamId": "lazio_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_valentin_castellanos_9",
+    "teamId": "lazio_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_pedro_11",
+    "teamId": "lazio_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_ivan_provedel_1",
+    "teamId": "lazio_current",
+    "shirtNumber": 1,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_mario_gila_5",
+    "teamId": "lazio_current",
+    "shirtNumber": 5,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_elseid_hysaj_15",
+    "teamId": "lazio_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_fisayo_dele_bashiru_14",
+    "teamId": "lazio_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_toma_basic_16",
+    "teamId": "lazio_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_boulaye_dia_17",
+    "teamId": "lazio_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lazio_taty_castellanos_19",
+    "teamId": "lazio_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_alex_meret_1",
+    "teamId": "napoli_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_giovanni_di_lorenzo_22",
+    "teamId": "napoli_current",
+    "shirtNumber": 22,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_juan_jesus_5",
+    "teamId": "napoli_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_amir_rrahmani_13",
+    "teamId": "napoli_current",
+    "shirtNumber": 13,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_leonardo_spinazzola_3",
+    "teamId": "napoli_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_stanislav_lobotka_4",
+    "teamId": "napoli_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_scott_mctominay_8",
+    "teamId": "napoli_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_khvicha_kvaratskhelia_10",
+    "teamId": "napoli_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_matteo_politano_7",
+    "teamId": "napoli_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_romelu_lukaku_9",
+    "teamId": "napoli_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_giacomo_raspadori_11",
+    "teamId": "napoli_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_nikita_contini_14",
+    "teamId": "napoli_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_mathias_olivera_6",
+    "teamId": "napoli_current",
+    "shirtNumber": 6,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_rafa_marin_17",
+    "teamId": "napoli_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_billy_gilmour_16",
+    "teamId": "napoli_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_andre_zambo_anguissa_20",
+    "teamId": "napoli_current",
+    "shirtNumber": 20,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_noah_okafor_18",
+    "teamId": "napoli_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_napoli_cyril_ngonge_19",
+    "teamId": "napoli_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_vanja_milinkovic_savic_1",
+    "teamId": "torino_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_guillermo_maripan_4",
+    "teamId": "torino_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_adam_masina_5",
+    "teamId": "torino_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_adrien_tameze_3",
+    "teamId": "torino_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_raoul_bellanova_19",
+    "teamId": "torino_current",
+    "shirtNumber": 19,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_samuele_ricci_8",
+    "teamId": "torino_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_ivan_ilic_6",
+    "teamId": "torino_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_valentino_lazaro_13",
+    "teamId": "torino_current",
+    "shirtNumber": 13,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_nikola_vlasic_7",
+    "teamId": "torino_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_cesare_casadei_10",
+    "teamId": "torino_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_che_adams_9",
+    "teamId": "torino_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_alberto_paleari_32",
+    "teamId": "torino_current",
+    "shirtNumber": 32,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_marcus_pedersen_2",
+    "teamId": "torino_current",
+    "shirtNumber": 2,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_sebastian_walukiewicz_15",
+    "teamId": "torino_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_karol_linetty_14",
+    "teamId": "torino_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_gvidas_gineitis_16",
+    "teamId": "torino_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_antonio_sanabria_11",
+    "teamId": "torino_current",
+    "shirtNumber": 11,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_torino_duvan_zapata_17",
+    "teamId": "torino_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_wladimiro_falcone_1",
+    "teamId": "lecce_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_frederic_guilbert_2",
+    "teamId": "lecce_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_federico_baschirotto_5",
+    "teamId": "lecce_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_kialonda_gaspar_6",
+    "teamId": "lecce_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_patrick_dorgu_3",
+    "teamId": "lecce_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_ylber_ramadani_8",
+    "teamId": "lecce_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_lassana_coulibaly_4",
+    "teamId": "lecce_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_mohamed_kaba_10",
+    "teamId": "lecce_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_santiago_pierotti_7",
+    "teamId": "lecce_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_nikola_krstovic_9",
+    "teamId": "lecce_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_tete_morente_11",
+    "teamId": "lecce_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_christian_fruchtl_13",
+    "teamId": "lecce_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_marin_pongracic_15",
+    "teamId": "lecce_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_antonino_gallo_16",
+    "teamId": "lecce_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_balthazar_pierret_14",
+    "teamId": "lecce_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_hamza_rafia_17",
+    "teamId": "lecce_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_roberto_piccoli_18",
+    "teamId": "lecce_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_lecce_joel_voelkerling_persson_19",
+    "teamId": "lecce_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_andrea_consigli_1",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_josh_doig_2",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_martin_erlic_5",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_mattia_viti_4",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_ruan_tressoldi_3",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_uros_racic_6",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_kristian_thorstvedt_8",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_domenico_berardi_7",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_nedim_bajrami_10",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_armand_lauriente_11",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_andrea_pinamonti_9",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_giacomo_satalino_13",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_marash_kumbulla_15",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_filippo_romagna_16",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_daniel_boloca_14",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_luca_moro_17",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_samu_aghehowa_18",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_sassuolo_cristian_volpato_19",
+    "teamId": "sassuolo_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_maduka_okoye_1",
+    "teamId": "udinese_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_jaka_bijol_5",
+    "teamId": "udinese_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_nehuen_perez_4",
+    "teamId": "udinese_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_thomas_kristensen_3",
+    "teamId": "udinese_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_kingsley_ehizibue_19",
+    "teamId": "udinese_current",
+    "shirtNumber": 19,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_sandi_lovric_8",
+    "teamId": "udinese_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_jesper_karlstrom_6",
+    "teamId": "udinese_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_hassane_kamara_12",
+    "teamId": "udinese_current",
+    "shirtNumber": 12,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_florian_thauvin_7",
+    "teamId": "udinese_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_brenner_10",
+    "teamId": "udinese_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_lorenzo_lucca_9",
+    "teamId": "udinese_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_daniele_padelli_13",
+    "teamId": "udinese_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_christian_kabasele_2",
+    "teamId": "udinese_current",
+    "shirtNumber": 2,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_enzo_ebosse_15",
+    "teamId": "udinese_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_martin_payero_14",
+    "teamId": "udinese_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_jordan_zemura_16",
+    "teamId": "udinese_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_keinan_davis_11",
+    "teamId": "udinese_current",
+    "shirtNumber": 11,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_udinese_isaac_success_17",
+    "teamId": "udinese_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_jesse_joronen_1",
+    "teamId": "venezia_current",
+    "shirtNumber": 1,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_ridgeciano_haps_2",
+    "teamId": "venezia_current",
+    "shirtNumber": 2,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_jay_idzes_5",
+    "teamId": "venezia_current",
+    "shirtNumber": 5,
+    "squadRole": "FIRST_TEAM",
+    "captain": true,
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_michael_svoboda_4",
+    "teamId": "venezia_current",
+    "shirtNumber": 4,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_francesco_zampano_3",
+    "teamId": "venezia_current",
+    "shirtNumber": 3,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_tanner_tessmann_6",
+    "teamId": "venezia_current",
+    "shirtNumber": 6,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_hans_nicolussi_caviglia_8",
+    "teamId": "venezia_current",
+    "shirtNumber": 8,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_gianluca_busio_10",
+    "teamId": "venezia_current",
+    "shirtNumber": 10,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_john_yeboah_7",
+    "teamId": "venezia_current",
+    "shirtNumber": 7,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_joel_pohjanpalo_9",
+    "teamId": "venezia_current",
+    "shirtNumber": 9,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_dennis_johnsen_11",
+    "teamId": "venezia_current",
+    "shirtNumber": 11,
+    "squadRole": "FIRST_TEAM",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_filip_stankovic_13",
+    "teamId": "venezia_current",
+    "shirtNumber": 13,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_marin_sverko_15",
+    "teamId": "venezia_current",
+    "shirtNumber": 15,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_giorgio_altare_16",
+    "teamId": "venezia_current",
+    "shirtNumber": 16,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_mikael_ellertsson_14",
+    "teamId": "venezia_current",
+    "shirtNumber": 14,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_antonio_raimondo_17",
+    "teamId": "venezia_current",
+    "shirtNumber": 17,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_christian_gytkj_r_18",
+    "teamId": "venezia_current",
+    "shirtNumber": 18,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
+  },
+  {
+    "playerId": "player_venezia_bjarki_bjarkason_19",
+    "teamId": "venezia_current",
+    "shirtNumber": 19,
+    "squadRole": "BENCH",
+    "from": "2026-07-01",
+    "to": null
   }
 ]

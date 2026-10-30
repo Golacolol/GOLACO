@@ -3568,5 +3568,2045 @@
         "slot": "ST"
       }
     ]
+  },
+  {
+    "id": "athletic_xi",
+    "teamId": "athletic_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_athletic_unai_simon_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_athletic_oscar_de_marcos_18",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_athletic_dani_vivian_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_athletic_aitor_paredes_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_athletic_yuri_berchiche_17",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_athletic_inigo_ruiz_de_galarreta_16",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_athletic_benat_prados_24",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_athletic_alex_berenguer_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_athletic_oihan_sancet_8",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_athletic_nico_williams_10",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_athletic_gorka_guruzeta_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "osasuna_xi",
+    "teamId": "osasuna_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_osasuna_sergio_herrera_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_osasuna_nacho_vidal_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_osasuna_david_garcia_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_osasuna_catena_24",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_osasuna_juan_cruz_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_osasuna_lucas_torro_6",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_osasuna_jon_moncayola_7",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_osasuna_aimar_oroz_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_osasuna_ruben_garcia_11",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_osasuna_ante_budimir_9",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_osasuna_moi_gomez_12",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "atletico_xi",
+    "teamId": "atletico_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_atletico_jan_oblak_13",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_atletico_nahuel_molina_16",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_atletico_jose_maria_gimenez_2",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_atletico_stefan_savic_15",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_atletico_cesar_azpilicueta_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_atletico_marcos_llorente_14",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_atletico_koke_6",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_atletico_rodrigo_de_paul_5",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_atletico_samuel_lino_22",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_atletico_antoine_griezmann_7",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_atletico_julian_alvarez_19",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "alaves_xi",
+    "teamId": "alaves_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_alaves_antonio_sivera_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_alaves_nahuel_tenaglia_14",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_alaves_abdel_abqar_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_alaves_santiago_mourino_2",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_alaves_manu_sanchez_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_alaves_ander_guevara_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_alaves_antonio_blanco_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_alaves_carlos_vicente_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_alaves_joan_jordan_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_alaves_carlos_martin_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_alaves_kike_garcia_15",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "elche_xi",
+    "teamId": "elche_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_elche_miguel_san_roman_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_elche_mario_gaspar_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_elche_pedro_bigas_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_elche_diego_gonzalez_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_elche_jose_salinas_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_elche_nicolas_fernandez_mercau_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_elche_raul_guti_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_elche_mourad_el_ghezouani_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_elche_oscar_plano_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_elche_german_valera_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_elche_jose_manuel_copete_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "barcelona_xi",
+    "teamId": "barcelona_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_barcelona_marc_andre_ter_stegen_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_barcelona_jules_kounde_23",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_barcelona_ronald_araujo_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_barcelona_inigo_martinez_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_barcelona_alejandro_balde_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_barcelona_marc_casado_17",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_barcelona_pedri_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_barcelona_frenkie_de_jong_21",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_barcelona_raphinha_11",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_barcelona_robert_lewandowski_9",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_barcelona_lamine_yamal_7",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "getafe_xi",
+    "teamId": "getafe_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_getafe_david_soria_13",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_getafe_djene_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_getafe_omar_alderete_15",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_getafe_juan_berrocal_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_getafe_diego_rico_16",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_getafe_luis_milla_5",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_getafe_mauro_arambarri_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_getafe_yellu_santiago_6",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_getafe_carles_alena_17",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_getafe_borja_mayoral_9",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_getafe_bertug_y_ld_r_m_19",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "levante_xi",
+    "teamId": "levante_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_levante_andres_fernandez_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_levante_andres_garcia_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_levante_adrian_de_la_fuente_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_levante_unai_elgezabal_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_levante_manu_sanchez_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_levante_oriol_rey_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_levante_pablo_martinez_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_levante_carlos_alvarez_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_levante_jose_luis_morales_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_levante_brugui_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_levante_roger_brugue_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "malaga_xi",
+    "teamId": "malaga_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_malaga_alfonso_herrero_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_malaga_einar_galilea_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_malaga_nelson_monte_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_malaga_diego_murillo_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_malaga_carlos_dominguez_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_malaga_manu_molina_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_malaga_juanpe_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_malaga_antonito_cordero_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_malaga_dioni_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_malaga_chupete_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_malaga_haitam_abaida_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "celta_xi",
+    "teamId": "celta_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_celta_vicente_guaita_13",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_celta_oscar_mingueza_3",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_celta_carl_starfelt_2",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_celta_carlos_dominguez_24",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_celta_marcos_alonso_20",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_celta_jailson_16",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_celta_fran_beltran_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_celta_ilaix_moriba_6",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_celta_alfon_gonzalez_12",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_celta_iago_aspas_10",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_celta_jonathan_bamba_17",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "deportivo_xi",
+    "teamId": "deportivo_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_deportivo_german_parreno_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_deportivo_ximo_navarro_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_deportivo_pablo_vazquez_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_deportivo_pablo_martinez_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_deportivo_rafel_obrador_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_deportivo_diego_villares_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_deportivo_jose_angel_jurado_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_deportivo_yeremay_hernandez_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_deportivo_lucas_perez_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_deportivo_david_mella_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_deportivo_zakaria_eddahchouri_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "espanyol_xi",
+    "teamId": "espanyol_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_espanyol_joan_garcia_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_espanyol_omar_el_hilali_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_espanyol_fernando_calero_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_espanyol_carlos_romero_14",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_espanyol_brian_olivan_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_espanyol_jose_gragera_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_espanyol_pol_lozano_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_espanyol_javi_puado_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_espanyol_alejo_veliz_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_espanyol_jofre_carreras_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_espanyol_walid_cheddira_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "rayo_xi",
+    "teamId": "rayo_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_rayo_dani_cardenas_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_rayo_andrei_ratiu_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_rayo_florian_lejeune_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_rayo_pathe_ciss_24",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_rayo_alfonso_espino_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_rayo_oscar_valentin_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_rayo_unai_lopez_17",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_rayo_isi_palazon_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_rayo_james_rodriguez_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_rayo_alvaro_garcia_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_rayo_raul_de_tomas_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "betis_xi",
+    "teamId": "betis_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_betis_rui_silva_13",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_betis_hector_bellerin_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_betis_diego_llorente_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_betis_natan_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_betis_ricardo_rodriguez_12",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_betis_johnny_cardoso_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_betis_marc_roca_5",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_betis_abde_ezzalzouli_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_betis_isco_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_betis_assane_diao_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_betis_chimy_avila_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "realmadrid_xi",
+    "teamId": "realmadrid_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_realmadrid_thibaut_courtois_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_realmadrid_dani_carvajal_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_realmadrid_eder_militao_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_realmadrid_antonio_rudiger_22",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_realmadrid_david_alaba_4",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_realmadrid_federico_valverde_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_realmadrid_aurelien_tchouameni_14",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_realmadrid_jude_bellingham_5",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_realmadrid_rodrygo_11",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_realmadrid_vinicius_junior_7",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_realmadrid_kylian_mbappe_9",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "racing_xi",
+    "teamId": "racing_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_racing_jokin_ezkieta_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_racing_alvaro_mantilla_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_racing_manu_hernando_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_racing_inigo_sainz_maza_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_racing_saul_garcia_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_racing_inigo_vicente_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_racing_maguette_gueye_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_racing_andres_martin_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_racing_lago_junior_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_racing_juan_carlos_arana_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_racing_peque_fernandez_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "realsociedad_xi",
+    "teamId": "realsociedad_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_realsociedad_alex_remiro_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_realsociedad_aritz_elustondo_6",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_realsociedad_igor_zubeldia_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_realsociedad_jon_pacheco_20",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_realsociedad_aihen_munoz_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_realsociedad_martin_zubimendi_4",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_realsociedad_benat_turrientes_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_realsociedad_mikel_oyarzabal_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_realsociedad_ander_barrenetxea_11",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_realsociedad_takefusa_kubo_7",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_realsociedad_luka_sucic_14",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "sevilla_xi",
+    "teamId": "sevilla_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_sevilla_rjan_nyland_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_sevilla_jesus_navas_16",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_sevilla_loic_bade_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_sevilla_tanguy_nianzou_22",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_sevilla_adria_pedrosa_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_sevilla_lucien_agoume_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_sevilla_nemanja_gudelj_18",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_sevilla_dodi_lukebakio_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_sevilla_suso_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_sevilla_isaac_romero_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_sevilla_chidera_ejuke_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "valencia_xi",
+    "teamId": "valencia_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_valencia_stole_dimitrievski_25",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_valencia_thierry_correia_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_valencia_cristhian_mosquera_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_valencia_cenk_ozkacar_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_valencia_jesus_vazquez_21",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_valencia_javi_guerra_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_valencia_pepelu_6",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_valencia_sergri_barrenetxea_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_valencia_andre_almeida_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_valencia_diego_lopez_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_valencia_hugo_duro_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "villarreal_xi",
+    "teamId": "villarreal_current",
+    "formation": "4-4-2",
+    "starters": [
+      {
+        "playerId": "player_villarreal_luiz_junior_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_villarreal_kiko_femenia_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_villarreal_raul_albiol_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_villarreal_juan_foyth_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_villarreal_alfonso_pedraza_24",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_villarreal_pape_gueye_17",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_villarreal_dani_parejo_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_villarreal_santi_comesana_6",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_villarreal_alex_baena_16",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_villarreal_gerard_moreno_7",
+        "slot": "RST"
+      },
+      {
+        "playerId": "player_villarreal_ayoze_perez_9",
+        "slot": "LST"
+      }
+    ]
+  },
+  {
+    "id": "milan_xi",
+    "teamId": "milan_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_milan_mike_maignan_16",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_milan_davide_calabria_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_milan_fikayo_tomori_23",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_milan_matteo_gabbia_46",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_milan_theo_hernandez_19",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_milan_tijjani_reijnders_14",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_milan_ruben_loftus_cheek_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_milan_christian_pulisic_10",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_milan_yunus_musah_11",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_milan_rafael_leao_7",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_milan_alvaro_morata_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "monza_xi",
+    "teamId": "monza_current",
+    "formation": "3-4-2-1",
+    "starters": [
+      {
+        "playerId": "player_monza_stefano_turati_30",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_monza_armando_izzo_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_monza_pablo_mari_5",
+        "slot": "CB"
+      },
+      {
+        "playerId": "player_monza_pedro_pereira_13",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_monza_samuele_birindelli_19",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_monza_roberto_gagliardini_6",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_monza_matteo_pessina_32",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_monza_georgios_kyriakopoulos_77",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_monza_andrea_colpani_10",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_monza_daniel_maldini_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_monza_dany_mota_47",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "fiorentina_xi",
+    "teamId": "fiorentina_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_fiorentina_david_de_gea_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_fiorentina_dodo_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_fiorentina_lucas_martinez_quarta_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_fiorentina_luca_ranieri_5",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_fiorentina_cristiano_biraghi_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_fiorentina_rolando_mandragora_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_fiorentina_danilo_cataldi_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_fiorentina_riccardo_sottil_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_fiorentina_albert_gu_mundsson_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_fiorentina_christian_kouame_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_fiorentina_moise_kean_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "roma_xi",
+    "teamId": "roma_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_roma_mile_svilar_99",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_roma_devyne_rensch_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_roma_evan_ndicka_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_roma_gianluca_mancini_23",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_roma_angelino_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_roma_bryan_cristante_4",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_roma_leandro_paredes_16",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_roma_paulo_dybala_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_roma_lorenzo_pellegrini_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_roma_matias_soule_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_roma_artem_dovbyk_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "atalanta_xi",
+    "teamId": "atalanta_current",
+    "formation": "3-4-2-1",
+    "starters": [
+      {
+        "playerId": "player_atalanta_marco_carnesecchi_29",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_atalanta_isak_hien_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_atalanta_berat_djimsiti_19",
+        "slot": "CB"
+      },
+      {
+        "playerId": "player_atalanta_sead_kolasinac_23",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_atalanta_davide_zappacosta_77",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_atalanta_mario_pasalic_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_atalanta_ederson_13",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_atalanta_matteo_ruggeri_22",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_atalanta_ademola_lookman_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_atalanta_charles_de_ketelaere_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_atalanta_mateo_retegui_17",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "bologna_xi",
+    "teamId": "bologna_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_bologna_ukasz_skorupski_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_bologna_lorenzo_de_silvestri_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_bologna_sam_beukema_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_bologna_jhon_lucumi_26",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_bologna_juan_miranda_22",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_bologna_remo_freuler_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_bologna_michel_aebischer_6",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_bologna_riccardo_orsolini_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_bologna_lewis_ferguson_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_bologna_dan_ndoye_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_bologna_thijs_dallinga_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "cagliari_xi",
+    "teamId": "cagliari_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_cagliari_simone_scuffet_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_cagliari_gabriele_zappa_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_cagliari_yerry_mina_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_cagliari_adam_obert_26",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_cagliari_adam_diakite_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_cagliari_michel_adopo_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_cagliari_antoine_makoumbou_6",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_cagliari_alessandro_deiola_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_cagliari_zito_luvumbo_7",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_cagliari_roberto_piccoli_9",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_cagliari_gianluca_gaetano_11",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "como_xi",
+    "teamId": "como_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_como_pepe_reina_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_como_ignace_van_der_brempt_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_como_alberto_dossena_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_como_marc_oliver_kempf_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_como_alex_valle_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_como_maximo_perrone_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_como_luca_mazzitelli_4",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_como_gabriel_strefezza_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_como_nico_paz_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_como_patrick_cutrone_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_como_andrea_belotti_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "inter_xi",
+    "teamId": "inter_current",
+    "formation": "3-4-2-1",
+    "starters": [
+      {
+        "playerId": "player_inter_yann_sommer_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_inter_stefan_de_vrij_6",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_inter_francesco_acerbi_15",
+        "slot": "CB"
+      },
+      {
+        "playerId": "player_inter_alessandro_bastoni_95",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_inter_denzel_dumfries_2",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_inter_nicolo_barella_23",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_inter_hakan_calhanoglu_20",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_inter_federico_dimarco_32",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_inter_lautaro_martinez_10",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_inter_marcus_thuram_9",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_inter_piotr_zielinski_8",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "frosinone_xi",
+    "teamId": "frosinone_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_frosinone_michele_cerofolini_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_frosinone_anthony_oyono_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_frosinone_simone_romagnoli_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_frosinone_riccardo_marchizza_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_frosinone_anthony_oyono_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_frosinone_luca_mazzitelli_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_frosinone_enzo_barrenechea_4",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_frosinone_marco_brescianini_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_frosinone_giuseppe_caso_7",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_frosinone_walid_cheddira_9",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_frosinone_kaio_jorge_11",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "genoa_xi",
+    "teamId": "genoa_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_genoa_nicola_leali_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_genoa_stefano_sabelli_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_genoa_koni_de_winter_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_genoa_alessandro_vogliacco_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_genoa_aaron_martin_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_genoa_morten_frendrup_8",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_genoa_milan_badelj_6",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_genoa_albert_gu_mundsson_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_genoa_fabio_miretti_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_genoa_vitinha_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_genoa_andrea_pinamonti_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "juventus_xi",
+    "teamId": "juventus_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_juventus_michele_di_gregorio_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_juventus_nicolo_savona_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_juventus_bremer_3",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_juventus_federico_gatti_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_juventus_andrea_cambiaso_6",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_juventus_manuel_locatelli_5",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_juventus_teun_koopmeiners_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_juventus_francisco_conceicao_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_juventus_kenan_y_ld_z_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_juventus_timothy_weah_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_juventus_dusan_vlahovic_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "parma_xi",
+    "teamId": "parma_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_parma_zion_suzuki_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_parma_enrico_delprato_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_parma_lautaro_valenti_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_parma_yordan_osorio_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_parma_alessandro_circati_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_parma_adrian_bernabe_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_parma_simon_sohm_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_parma_dennis_man_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_parma_hernani_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_parma_ange_yoan_bonny_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_parma_mateo_pellegrino_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "lazio_xi",
+    "teamId": "lazio_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_lazio_christos_mandas_35",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_lazio_manuel_lazzari_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_lazio_alessio_romagnoli_13",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_lazio_patric_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_lazio_nuno_tavares_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_lazio_nicolo_rovella_6",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_lazio_matteo_guendouzi_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_lazio_luis_alberto_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_lazio_gustav_isaksen_7",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_lazio_valentin_castellanos_9",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_lazio_pedro_11",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "napoli_xi",
+    "teamId": "napoli_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_napoli_alex_meret_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_napoli_giovanni_di_lorenzo_22",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_napoli_juan_jesus_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_napoli_amir_rrahmani_13",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_napoli_leonardo_spinazzola_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_napoli_stanislav_lobotka_4",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_napoli_scott_mctominay_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_napoli_khvicha_kvaratskhelia_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_napoli_matteo_politano_7",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_napoli_romelu_lukaku_9",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_napoli_giacomo_raspadori_11",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "torino_xi",
+    "teamId": "torino_current",
+    "formation": "3-4-2-1",
+    "starters": [
+      {
+        "playerId": "player_torino_vanja_milinkovic_savic_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_torino_guillermo_maripan_4",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_torino_adam_masina_5",
+        "slot": "CB"
+      },
+      {
+        "playerId": "player_torino_adrien_tameze_3",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_torino_raoul_bellanova_19",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_torino_samuele_ricci_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_torino_ivan_ilic_6",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_torino_valentino_lazaro_13",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_torino_nikola_vlasic_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_torino_cesare_casadei_10",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_torino_che_adams_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "lecce_xi",
+    "teamId": "lecce_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_lecce_wladimiro_falcone_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_lecce_frederic_guilbert_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_lecce_federico_baschirotto_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_lecce_kialonda_gaspar_6",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_lecce_patrick_dorgu_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_lecce_ylber_ramadani_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_lecce_lassana_coulibaly_4",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_lecce_mohamed_kaba_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_lecce_santiago_pierotti_7",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_lecce_nikola_krstovic_9",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_lecce_tete_morente_11",
+        "slot": "LW"
+      }
+    ]
+  },
+  {
+    "id": "sassuolo_xi",
+    "teamId": "sassuolo_current",
+    "formation": "4-2-3-1",
+    "starters": [
+      {
+        "playerId": "player_sassuolo_andrea_consigli_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_sassuolo_josh_doig_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_sassuolo_martin_erlic_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_sassuolo_mattia_viti_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_sassuolo_ruan_tressoldi_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_sassuolo_uros_racic_6",
+        "slot": "RDM"
+      },
+      {
+        "playerId": "player_sassuolo_kristian_thorstvedt_8",
+        "slot": "LDM"
+      },
+      {
+        "playerId": "player_sassuolo_domenico_berardi_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_sassuolo_nedim_bajrami_10",
+        "slot": "CAM"
+      },
+      {
+        "playerId": "player_sassuolo_armand_lauriente_11",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_sassuolo_andrea_pinamonti_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "udinese_xi",
+    "teamId": "udinese_current",
+    "formation": "3-4-2-1",
+    "starters": [
+      {
+        "playerId": "player_udinese_maduka_okoye_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_udinese_jaka_bijol_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_udinese_nehuen_perez_4",
+        "slot": "CB"
+      },
+      {
+        "playerId": "player_udinese_thomas_kristensen_3",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_udinese_kingsley_ehizibue_19",
+        "slot": "RM"
+      },
+      {
+        "playerId": "player_udinese_sandi_lovric_8",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_udinese_jesper_karlstrom_6",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_udinese_hassane_kamara_12",
+        "slot": "LM"
+      },
+      {
+        "playerId": "player_udinese_florian_thauvin_7",
+        "slot": "RAM"
+      },
+      {
+        "playerId": "player_udinese_brenner_10",
+        "slot": "LAM"
+      },
+      {
+        "playerId": "player_udinese_lorenzo_lucca_9",
+        "slot": "ST"
+      }
+    ]
+  },
+  {
+    "id": "venezia_xi",
+    "teamId": "venezia_current",
+    "formation": "4-3-3",
+    "starters": [
+      {
+        "playerId": "player_venezia_jesse_joronen_1",
+        "slot": "GK"
+      },
+      {
+        "playerId": "player_venezia_ridgeciano_haps_2",
+        "slot": "RB"
+      },
+      {
+        "playerId": "player_venezia_jay_idzes_5",
+        "slot": "RCB"
+      },
+      {
+        "playerId": "player_venezia_michael_svoboda_4",
+        "slot": "LCB"
+      },
+      {
+        "playerId": "player_venezia_francesco_zampano_3",
+        "slot": "LB"
+      },
+      {
+        "playerId": "player_venezia_tanner_tessmann_6",
+        "slot": "RCM"
+      },
+      {
+        "playerId": "player_venezia_hans_nicolussi_caviglia_8",
+        "slot": "CM"
+      },
+      {
+        "playerId": "player_venezia_gianluca_busio_10",
+        "slot": "LCM"
+      },
+      {
+        "playerId": "player_venezia_john_yeboah_7",
+        "slot": "RW"
+      },
+      {
+        "playerId": "player_venezia_joel_pohjanpalo_9",
+        "slot": "ST"
+      },
+      {
+        "playerId": "player_venezia_dennis_johnsen_11",
+        "slot": "LW"
+      }
+    ]
   }
 ]

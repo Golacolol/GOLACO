@@ -86,6 +86,8 @@ export function aiShotAimIntent(opts: {
   gkZ?: number;
   longShot?: boolean;
   powerBias?: number;
+  /** Shooter facing (rad). When set, alignment uses real hips vs goal, not geometry guess. */
+  facing?: number;
 }): { aimX: number; aimY: number; bodyAlignment: number } {
   const gkZ = opts.gkZ ?? 0;
   // Prefer the post away from the keeper.
@@ -99,10 +101,18 @@ export function aiShotAimIntent(opts: {
   const aimY = opts.longShot
     ? clamp(0.35 + power * 0.55 + Math.random() * 0.25, 0.2, 1)
     : clamp(0.08 + (dist > 16 ? 0.35 : 0.12) + Math.random() * 0.2, -0.15, 0.85);
-  const toGoalZ = clamp(aimX * 3.15, -3.2, 3.2) - opts.shooterZ;
   const toGoalX = opts.goalX - opts.shooterX;
-  const align = Math.abs(Math.atan2(toGoalX, toGoalZ));
-  // Facing roughly goalward → high alignment.
-  const bodyAlignment = clamp(1.05 - align / Math.PI, 0.35, 1);
+  const toGoalZ = clamp(aimX * 3.15, -3.2, 3.2) - opts.shooterZ;
+  let bodyAlignment: number;
+  if (opts.facing != null) {
+    const len = Math.hypot(toGoalX, toGoalZ) || 1;
+    const fx = Math.sin(opts.facing);
+    const fz = Math.cos(opts.facing);
+    const dot = fx * (toGoalX / len) + fz * (toGoalZ / len);
+    bodyAlignment = clamp((dot + 1) / 2, 0.15, 1);
+  } else {
+    const align = Math.abs(Math.atan2(toGoalX, toGoalZ));
+    bodyAlignment = clamp(1.05 - align / Math.PI, 0.35, 1);
+  }
   return { aimX, aimY, bodyAlignment };
 }

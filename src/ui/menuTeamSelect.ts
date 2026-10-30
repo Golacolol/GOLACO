@@ -1,6 +1,12 @@
 import type { TeamRecord } from "../data/schema";
 
-export type MenuTeamGroup = "PREMIER_LEAGUE" | "CHAMPIONSHIP" | "LEAGUE_ONE" | "CLASSIC";
+export type MenuTeamGroup =
+  | "PREMIER_LEAGUE"
+  | "CHAMPIONSHIP"
+  | "LEAGUE_ONE"
+  | "LA_LIGA"
+  | "SERIE_A"
+  | "CLASSIC";
 
 export interface MenuTeamOption {
   id: string;
@@ -18,7 +24,14 @@ export interface MenuTeamOption {
   eraSort: string;
 }
 
-const GROUP_ORDER: MenuTeamGroup[] = ["PREMIER_LEAGUE", "CHAMPIONSHIP", "LEAGUE_ONE", "CLASSIC"];
+const GROUP_ORDER: MenuTeamGroup[] = [
+  "PREMIER_LEAGUE",
+  "CHAMPIONSHIP",
+  "LEAGUE_ONE",
+  "LA_LIGA",
+  "SERIE_A",
+  "CLASSIC",
+];
 
 export const MENU_TEAM_GROUPS: MenuTeamGroup[] = [...GROUP_ORDER];
 
@@ -26,6 +39,8 @@ export const MENU_TEAM_GROUP_LABEL: Record<MenuTeamGroup, string> = {
   PREMIER_LEAGUE: "Premier League",
   CHAMPIONSHIP: "Championship",
   LEAGUE_ONE: "League One",
+  LA_LIGA: "La Liga",
+  SERIE_A: "Serie A",
   CLASSIC: "Classic Teams",
 };
 
@@ -94,7 +109,11 @@ function isSelectableClub(team: TeamRecord): boolean {
 function groupFor(team: TeamRecord): MenuTeamGroup {
   if (
     team.teamType === "CURRENT_TEAM" &&
-    (team.league === "PREMIER_LEAGUE" || team.league === "CHAMPIONSHIP" || team.league === "LEAGUE_ONE")
+    (team.league === "PREMIER_LEAGUE" ||
+      team.league === "CHAMPIONSHIP" ||
+      team.league === "LEAGUE_ONE" ||
+      team.league === "LA_LIGA" ||
+      team.league === "SERIE_A")
   ) {
     return team.league;
   }

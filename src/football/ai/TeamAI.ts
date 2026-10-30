@@ -132,19 +132,10 @@ export function updateTeamAI(
   }
   if (closers.length > closerSlots) closers = closers.slice(0, closerSlots);
   const primaryPursuer = closers[0] ?? null;
-  // Support: the intentional second closer presses with the primary. Otherwise the nearest
-  // other teammate only CONTAINS (~5 m stand-off) — shape, not a second ball hunter.
-  let supportPursuer: Player | null = null;
-  if (intentionalDouble && closers[1]) {
-    supportPursuer = closers[1];
-  } else if (defending && primaryPursuer && !extras?.kickOff && !extras?.keeperHold) {
-    supportPursuer =
-      [...us]
-        .filter((p) => !p.isGK && !p.celebrating && !p.sentOff && p.id !== primaryPursuer.id)
-        .sort((a, b) => a.distTo(ball.x, ball.z) - b.distTo(ball.x, ball.z))[0] ?? null;
-  }
+  // Second man only on an intentional double-team. Auto "contain support" was still
+  // dragging an extra body into the centre scrum — leave shape intact instead.
+  const supportPursuer = intentionalDouble && closers[1] ? closers[1]! : null;
   const closerIds = new Set(closers.map((p) => p.id));
-  if (supportPursuer) closerIds.add(supportPursuer.id);
   const presser = primaryPursuer;
   const onBall = players.find((p) => p.hasBall && p.side === side) ?? null;
   const carrier =
@@ -270,19 +261,34 @@ export function updateTeamAI(
         const containSupport = isSupport && !intentionalDouble;
         const arch = positionArchetype(p);
         const styleStand = playStyle.standOffBias;
+        // Settled midfield possession: jockey / contain instead of crashing the collect ring.
+        const settledCarry =
+          !loose &&
+          !aggressive &&
+          !counterPress &&
+          !intentionalDouble &&
+          (extras?.possessionChangeAge ?? 99) > 0.85 &&
+          Math.abs(ball.x) < 22;
         const standOff =
           !loose &&
           !aggressive &&
           !counterPress &&
-          (isSupport ||
+          (settledCarry ||
+            isSupport ||
             arch.standOff + styleStand * 0.55 > 0.68 ||
             (styleStand > 0.58 && !isPrimary) ||
             (aw > 0.55 && ballDist < 9));
-        if (containSupport) {
-          // Screens ~5 m away — shape, not a second hunter in the collect ring.
+        // Contain-first: high standOff / settled midfield never dive into the ring.
+        const containPrimary =
+          settledCarry &&
+          isPrimary &&
+          (ballDist < 5.2 || styleStand >= 0.45) &&
+          !(aggressive || counterPress);
+        if (containSupport || containPrimary) {
+          // Hold a jockey gap — creates the lane instead of a permanent 50/50 duel.
           const raw = containTarget(p, ball.x, ball.z, goalX, Math.max(styleStand, 0.55));
           const away = Math.hypot(raw.x - ball.x, raw.z - ball.z) || 1;
-          const hold = 5.2;
+          const hold = settledCarry ? 3.55 : 5.2;
           target =
             away < hold
               ? {
@@ -297,7 +303,7 @@ export function updateTeamAI(
           counterPress ||
           isSupport ||
           (loose && isPrimary) ||
-          (!loose && isPrimary && ballDist > 5.5 && styleStand < 0.55)
+          (!loose && isPrimary && ballDist > 6.2 && styleStand < 0.42)
         ) {
           // Intentional second man (isSupport here) presses into the collect ring.
           target =

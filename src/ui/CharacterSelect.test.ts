@@ -1,6 +1,12 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it } from "vitest";
-import { CharacterSelect, formationToPitchPercent, separatePitchMarkers } from "./CharacterSelect";
+import {
+  CharacterSelect,
+  formationToPitchPercent,
+  MARKER_MIN_DX,
+  MARKER_MIN_DY,
+  separatePitchMarkers,
+} from "./CharacterSelect";
 import { kitMarkerHtml } from "./Portrait";
 import type { SquadPlayer } from "../core/Database";
 import type { PlayerRecord } from "../data/schema";
@@ -324,8 +330,8 @@ describe("character select", () => {
     expect(out.get("GK")).toEqual({ left: 48.5, bottom: 5 });
     const pa = out.get("RCB")!;
     const pb = out.get("RB")!;
-    const nx = (pb.left - pa.left) / 10;
-    const ny = (pb.bottom - pa.bottom) / 10.8;
+    const nx = (pb.left - pa.left) / MARKER_MIN_DX;
+    const ny = (pb.bottom - pa.bottom) / MARKER_MIN_DY;
     expect(Math.hypot(nx, ny)).toBeGreaterThanOrEqual(0.98);
   });
 

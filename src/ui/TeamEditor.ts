@@ -14,11 +14,13 @@ export class TeamEditor {
 
   render(db: GameDatabase): void {
     this.root.hidden = false;
-    const order = ["PREMIER_LEAGUE", "CHAMPIONSHIP", "LEAGUE_ONE", "OTHER"] as const;
+    const order = ["PREMIER_LEAGUE", "CHAMPIONSHIP", "LEAGUE_ONE", "LA_LIGA", "SERIE_A", "OTHER"] as const;
     const labels: Record<string, string> = {
       PREMIER_LEAGUE: "Premier League",
       CHAMPIONSHIP: "Championship",
       LEAGUE_ONE: "League One",
+      LA_LIGA: "La Liga",
+      SERIE_A: "Serie A",
       OTHER: "CLASSIC TEAMS",
     };
     const grouped = new Map<string, TeamRecord[]>();
@@ -60,7 +62,7 @@ export class TeamEditor {
     this.root.innerHTML = `
       <div class="editor-card wide">
         <h2>Teams</h2>
-        <p class="hint">Premier League, Championship and League One squads for 2026/27. Players live in the global database; teams reference memberships and shirt numbers.</p>
+        <p class="hint">Premier League, Championship, League One, La Liga and Serie A squads for 2026/27. Players live in the global database; teams reference memberships and shirt numbers.</p>
         ${sections}
         <div class="row-btns">
           <button data-act="save">Save</button>

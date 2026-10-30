@@ -12,11 +12,13 @@ const memberships = membershipsJson as TeamMembership[];
 const players = playersJson as PlayerRecord[];
 
 describe("English league database", () => {
-  it("lists every 2026/27 Premier League, Championship and League One club", () => {
+  it("lists every 2026/27 Premier League, Championship, League One, La Liga and Serie A club", () => {
     const count = (league: string) => teams.filter((t) => t.league === league && t.teamType === "CURRENT_TEAM").length;
     expect(count("PREMIER_LEAGUE")).toBe(20);
     expect(count("CHAMPIONSHIP")).toBe(24);
     expect(count("LEAGUE_ONE")).toBe(24);
+    expect(count("LA_LIGA")).toBe(20);
+    expect(count("SERIE_A")).toBe(20);
   });
 
   it("gives each league club a named 18-player squad with unique shirt numbers and an XI", () => {

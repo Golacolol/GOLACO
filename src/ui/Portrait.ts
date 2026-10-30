@@ -109,10 +109,10 @@ export function fitKitSurnameElements(root: ParentNode): void {
       caption ??
       el.closest<HTMLElement>(".portrait-badge-kit, .pitch-kit") ??
       el.parentElement;
-    // Photo captions: number + name share one line no wider than the 48px disc.
+    // Photo captions: number + name share one line under the formation disc (~56px).
     const maxW = caption
-      ? Math.max(10, Math.min(48, caption.clientWidth || 48) - 2)
-      : Math.max(10, (host?.clientWidth ?? el.clientWidth ?? 48) - 2);
+      ? Math.max(12, Math.min(56, caption.clientWidth || 56) - 2)
+      : Math.max(10, (host?.clientWidth ?? el.clientWidth ?? 36) - 2);
     if (maxW < 8) continue;
     el.style.overflow = caption ? "hidden" : "visible";
     el.style.textOverflow = "clip";
@@ -154,8 +154,8 @@ export function kitMarkerHtml(
   const src = portraitAsset(player);
   const bench = (options.className ?? "").includes("kit-marker-bench");
   // Bench circles are larger; keep type modest so number+surname fit inside the disc.
-  const surSize = surnameFitPx(surname, bench ? 12 : 14);
-  const captionSize = surnameFitPx(surname, bench ? 11 : 11);
+  const surSize = surnameFitPx(surname, bench ? 12 : 12);
+  const captionSize = surnameFitPx(surname, bench ? 12 : 13);
   const tracking = surnameLetterSpacingEm(surname);
   const nameStyle = `font-size:${captionSize}px;letter-spacing:${tracking}em`;
   const surStyle = `font-size:${surSize}px;letter-spacing:${tracking}em`;

@@ -6424,5 +6424,1629 @@
     "lightingPreset": "EVENING_FLOODLIGHT",
     "crowdDensity": 0.98,
     "audioProfile": "pro_stadium"
+  },
+  {
+    "id": "san_mames",
+    "name": "San Mamés",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 53289,
+    "crowdSections": [
+      {
+        "id": "san_mames_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "san_mames_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "san_mames_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "san_mames_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "el_sadar",
+    "name": "El Sadar",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 23576,
+    "crowdSections": [
+      {
+        "id": "el_sadar_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "el_sadar_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "el_sadar_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "el_sadar_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "civitas_metropolitano",
+    "name": "Cívitas Metropolitano",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 70460,
+    "crowdSections": [
+      {
+        "id": "civitas_metropolitano_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "civitas_metropolitano_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "civitas_metropolitano_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "civitas_metropolitano_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "mendizorroza",
+    "name": "Mendizorroza",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 19840,
+    "crowdSections": [
+      {
+        "id": "mendizorroza_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "mendizorroza_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "mendizorroza_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "mendizorroza_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "martinez_valero",
+    "name": "Martínez Valero",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 33732,
+    "crowdSections": [
+      {
+        "id": "martinez_valero_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "martinez_valero_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "martinez_valero_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "martinez_valero_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "coliseum",
+    "name": "Coliseum",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 17393,
+    "crowdSections": [
+      {
+        "id": "coliseum_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "coliseum_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "coliseum_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "coliseum_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "ciutat_de_valencia",
+    "name": "Ciutat de València",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 26354,
+    "crowdSections": [
+      {
+        "id": "ciutat_de_valencia_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "ciutat_de_valencia_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "ciutat_de_valencia_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "ciutat_de_valencia_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "la_rosaleda",
+    "name": "La Rosaleda",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 30044,
+    "crowdSections": [
+      {
+        "id": "la_rosaleda_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "la_rosaleda_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "la_rosaleda_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "la_rosaleda_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "balaidos",
+    "name": "Abanca-Balaídos",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 24870,
+    "crowdSections": [
+      {
+        "id": "balaidos_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "balaidos_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "balaidos_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "balaidos_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "rcde_stadium",
+    "name": "RCDE Stadium",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 40000,
+    "crowdSections": [
+      {
+        "id": "rcde_stadium_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "rcde_stadium_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "rcde_stadium_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "rcde_stadium_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "vallecas",
+    "name": "Estadio de Vallecas",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 14708,
+    "crowdSections": [
+      {
+        "id": "vallecas_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "vallecas_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "vallecas_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "vallecas_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "benito_villamarin",
+    "name": "Benito Villamarín",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 60721,
+    "crowdSections": [
+      {
+        "id": "benito_villamarin_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "benito_villamarin_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "benito_villamarin_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "benito_villamarin_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "el_sardinero",
+    "name": "El Sardinero",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 22222,
+    "crowdSections": [
+      {
+        "id": "el_sardinero_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "el_sardinero_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "el_sardinero_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "el_sardinero_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "anoeta",
+    "name": "Reale Arena",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 39500,
+    "crowdSections": [
+      {
+        "id": "anoeta_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "anoeta_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "anoeta_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "anoeta_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "ramon_sanchez_pizjuan",
+    "name": "Ramón Sánchez-Pizjuán",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 43883,
+    "crowdSections": [
+      {
+        "id": "ramon_sanchez_pizjuan_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "ramon_sanchez_pizjuan_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "ramon_sanchez_pizjuan_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "ramon_sanchez_pizjuan_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "estadio_de_la_ceramica",
+    "name": "Estadio de la Cerámica",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 23500,
+    "crowdSections": [
+      {
+        "id": "estadio_de_la_ceramica_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "estadio_de_la_ceramica_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "estadio_de_la_ceramica_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "estadio_de_la_ceramica_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "brianteo",
+    "name": "U-Power Stadium",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 15039,
+    "crowdSections": [
+      {
+        "id": "brianteo_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "brianteo_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "brianteo_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "brianteo_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "gewiss_stadium",
+    "name": "Gewiss Stadium",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 24950,
+    "crowdSections": [
+      {
+        "id": "gewiss_stadium_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "gewiss_stadium_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "gewiss_stadium_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "gewiss_stadium_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "renato_dall_ara",
+    "name": "Renato Dall'Ara",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 38279,
+    "crowdSections": [
+      {
+        "id": "renato_dall_ara_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "renato_dall_ara_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "renato_dall_ara_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "renato_dall_ara_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "unica_stadium",
+    "name": "Unipol Domus",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 16416,
+    "crowdSections": [
+      {
+        "id": "unica_stadium_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "unica_stadium_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "unica_stadium_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "unica_stadium_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "giuseppe_sinigaglia",
+    "name": "Giuseppe Sinigaglia",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 13602,
+    "crowdSections": [
+      {
+        "id": "giuseppe_sinigaglia_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "giuseppe_sinigaglia_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "giuseppe_sinigaglia_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "giuseppe_sinigaglia_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "benito_stirpe",
+    "name": "Benito Stirpe",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 16227,
+    "crowdSections": [
+      {
+        "id": "benito_stirpe_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "benito_stirpe_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "benito_stirpe_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "benito_stirpe_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "luigi_ferraris",
+    "name": "Luigi Ferraris",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 36599,
+    "crowdSections": [
+      {
+        "id": "luigi_ferraris_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "luigi_ferraris_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "luigi_ferraris_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "luigi_ferraris_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "olimpico_grande_torino",
+    "name": "Olimpico Grande Torino",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 27958,
+    "crowdSections": [
+      {
+        "id": "olimpico_grande_torino_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "olimpico_grande_torino_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "olimpico_grande_torino_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "olimpico_grande_torino_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "via_del_mare",
+    "name": "Via del Mare",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 31533,
+    "crowdSections": [
+      {
+        "id": "via_del_mare_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "via_del_mare_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "via_del_mare_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "via_del_mare_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "mapi_stadium",
+    "name": "Mapei Stadium",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 21584,
+    "crowdSections": [
+      {
+        "id": "mapi_stadium_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.9
+      },
+      {
+        "id": "mapi_stadium_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.72
+      },
+      {
+        "id": "mapi_stadium_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.88
+      },
+      {
+        "id": "mapi_stadium_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.89
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.9,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "friuli",
+    "name": "Bluenergy Stadium",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 25144,
+    "crowdSections": [
+      {
+        "id": "friuli_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.96
+      },
+      {
+        "id": "friuli_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.78
+      },
+      {
+        "id": "friuli_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.94
+      },
+      {
+        "id": "friuli_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.95
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.96,
+    "audioProfile": "premier_stadium"
+  },
+  {
+    "id": "pier_luigi_penzo",
+    "name": "Pier Luigi Penzo",
+    "venueType": "PRO_STADIUM",
+    "pitchLength": 105,
+    "pitchWidth": 68,
+    "standConfiguration": "deluxe",
+    "crowdCapacity": 11150,
+    "crowdSections": [
+      {
+        "id": "pier_luigi_penzo_n",
+        "support": "HOME",
+        "stand": "north",
+        "density": 0.82
+      },
+      {
+        "id": "pier_luigi_penzo_s",
+        "support": "AWAY",
+        "stand": "south",
+        "density": 0.6399999999999999
+      },
+      {
+        "id": "pier_luigi_penzo_e",
+        "support": "HOME",
+        "stand": "east",
+        "density": 0.7999999999999999
+      },
+      {
+        "id": "pier_luigi_penzo_w",
+        "support": "HOME",
+        "stand": "west",
+        "density": 0.8099999999999999
+      }
+    ],
+    "scoreboard": {
+      "type": "LED_VIDEO_SCREEN",
+      "position": [
+        0,
+        22.5,
+        -58
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "width": 14.5,
+      "height": 5.2
+    },
+    "floodlights": true,
+    "tunnel": true,
+    "benches": true,
+    "advertisingSetId": "home_park_default",
+    "environment": "urban",
+    "lightingPreset": "EVENING_FLOODLIGHT",
+    "crowdDensity": 0.82,
+    "audioProfile": "premier_stadium"
   }
 ]

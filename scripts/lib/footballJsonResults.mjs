@@ -59,6 +59,8 @@ export const FOOTBALL_JSON_FILES = [
   { path: "2026-27/en.1.json", competition: "Premier League" },
   { path: "2026-27/en.2.json", competition: "Championship" },
   { path: "2026-27/en.3.json", competition: "League One" },
+  { path: "2026-27/es.1.json", competition: "La Liga" },
+  { path: "2026-27/it.1.json", competition: "Serie A" },
 ];
 
 export const FOOTBALL_JSON_BASE =

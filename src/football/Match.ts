@@ -50,6 +50,14 @@ import {
   shouldHeaderContest,
 } from "./ball/AerialContest";
 import { computePassError, holdPowerCurve, passKickVector, type PassType } from "./ball/PassModel";
+import {
+  bodyAlignment,
+  facingKickFloor,
+  firstTouchKickScale,
+  idealPassHold01,
+  kickCommitReady,
+  receiveApproachAlignment,
+} from "./ball/BodyMechanics";
 import { ballSpeed, isLegalStationary, isOutOfWorld, predictLanding } from "./ball/StuckBall";
 import { aimOnGoal, aiShotAimIntent, computeShot } from "./ball/ShotModel";
 import { MatchCamera, isPlayerView, nextTrack, nextView, supportsViewZoom, viewLabel } from "./camera/MatchCamera";
@@ -273,6 +281,8 @@ export class Match {
   /** After a contested ground claim, the losing side cannot remagnet for a beat. */
   private contestLockSide: "home" | "away" | null = null;
   private contestLockT = 0;
+  /** Brief window after a claim where the carrier can settle — no poke / remagnet scrum. */
+  private possessionSecureT = 0;
   /** One resolving ball action per tick (kick / collect / header / tackle). */
   private readonly ballActor = new PossessionActor();
   /** Seconds since possession last changed side (or became owned from loose). */
@@ -994,13 +1004,17 @@ export class Match {
 
     this.contestLockT = Math.max(0, this.contestLockT - dt);
     if (this.contestLockT <= 0) this.contestLockSide = null;
+    this.possessionSecureT = Math.max(0, this.possessionSecureT - dt);
 
     this.applyAftertouchWindow(intent, dt);
 
     // Close defenders poke the ball — change speed/direction without sticky steal.
+    // Skip while the new carrier is still settling (stops centre dual-fight flip-flops).
     if (
       this.possessing &&
       !this.possessing.isGK &&
+      this.possessionSecureT <= 0 &&
+      this.possessionTime > 0.55 &&
       this.state !== FootballState.KICK_OFF &&
       !isRestartState(this.state) &&
       !this.ballActor.resolved
@@ -1009,7 +1023,7 @@ export class Match {
         this.ball,
         this.possessing,
         this.opponentsOf(this.possessing),
-        this.tuning.defenderDisturbMultiplier,
+        this.tuning.defenderDisturbMultiplier * 0.82,
         Math.random,
         dt,
       );
@@ -1063,20 +1077,19 @@ export class Match {
       this.possessing.ballControlLockout <= 0 &&
       !this.possessing.isGK
     ) {
-      // Soft magnet during first-touch settle so the ball sticks under the foot.
+      // Light follow during settle — ball primacy; awkward touches can spill.
       const soft = stepDribble(this.ball, this.possessing, {
         pressure: this.pressure,
         dt,
-        magnetMul: this.tuning.dribbleMagnetMultiplier * 0.72,
-        turnLooseMul: this.tuning.turnLooseMultiplier * 0.55,
+        magnetMul: this.tuning.dribbleMagnetMultiplier * 0.48,
+        turnLooseMul: this.tuning.turnLooseMultiplier * 1.15,
       });
       if (soft === "loose") {
-        // Don't spill immediately on first touch — keep ownership unless ball flees.
-        if (this.possessing.distTo(this.ball.x, this.ball.z) > 2.4) {
+        if (this.possessing.distTo(this.ball.x, this.ball.z) > 1.85) {
           this.makeLoose(this.possessing);
         } else {
-          this.ball.vx *= 0.55;
-          this.ball.vz *= 0.55;
+          this.ball.vx *= 0.72;
+          this.ball.vz *= 0.72;
         }
       }
     } else {
@@ -1257,7 +1270,7 @@ export class Match {
     if (duel.contested) {
       const loserSide = duel.winner.side === "home" ? "away" : "home";
       this.contestLockSide = loserSide;
-      this.contestLockT = Math.max(this.contestLockT, 0.28 + (1 - clamp(duel.margin, 0, 1.2)) * 0.22);
+      this.contestLockT = Math.max(this.contestLockT, 0.55 + (1 - clamp(duel.margin, 0, 1.2)) * 0.35);
     }
     return duel.winner;
   }
@@ -1438,7 +1451,10 @@ export class Match {
     this.clearAftertouch();
     const speed = Math.hypot(this.ball.vx, this.ball.vz);
     const pressure = computePressure(player, this.opponentsOf(player)).value;
-    if (speed > 4.5 || aerial || this.ball.y > 0.85) {
+    const style = (player.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined;
+    const approach = receiveApproachAlignment(player.facing, this.ball.vx, this.ball.vz);
+    // Always settle paced / contested / aerial receives — not only hard passes.
+    if (speed > 2.2 || aerial || this.ball.y > 0.72 || pressure > 0.42) {
       const touch = settleFirstTouch(this.ball, {
         control: player.attrs.control,
         strength: player.attrs.strength,
@@ -1446,13 +1462,23 @@ export class Match {
         energy: player.energy.value,
         aerial: aerial || this.ball.y > 1.4,
         errorMul: this.tuning.firstTouchErrorMultiplier,
+        facing: player.facing,
+        approachAlignment: approach,
+        receivePatience: style?.receivePatience,
       });
       player.firstTouchTimer = touch.firstTouchTimer;
       if (touch.lost) {
         this.ballState = "loose";
         this.stats.looseBalls += 1;
+        player.ballControlLockout = Math.max(player.ballControlLockout, 0.28);
         return;
       }
+    } else {
+      // Soft receive still needs a short plant before the next kick.
+      player.firstTouchTimer = Math.max(
+        player.firstTouchTimer,
+        (0.08 + (1 - stat01(player.attrs.control)) * 0.1) * (0.85 + (style?.receivePatience ?? 0.45) * 0.35),
+      );
     }
     this.possessing = player;
     player.hasBall = true;
@@ -1462,6 +1488,8 @@ export class Match {
     this.ball.lastTouchSide = player.side;
     this.ballState = "owned";
     this.possessionTime = 0;
+    // Let the first touch settle before pokes start another midfield flip-flop.
+    this.possessionSecureT = Math.max(this.possessionSecureT, aerial ? 0.45 : 0.72);
     this.stats.possessionChanges += 1;
     this.passTargetId = null;
     this.longPassLanding = null;
@@ -1600,18 +1628,27 @@ export class Match {
     this.passTargetId = target?.id ?? null;
     this.passVector = dir;
 
+    // First-touch plant: no clean pass/shot until the ball settles under the foot.
+    const canKick = kickCommitReady(passer.firstTouchTimer, passer.kickTimer, 0.1);
+    if (!canKick && (intent.pass || intent.through || intent.cross || intent.chip || intent.shoot || intent.shootHeld || streamPass)) {
+      this.autoPassStreamT = 0;
+      // Allow a forced mishit only deep into settle with a hard press — otherwise wait.
+      if (passer.firstTouchTimer > 0.18 && !intent.shootHeld) return;
+    }
     if (!this.shotLock && intent.shootHeld && intent.shootHold >= 1.28) {
+      if (!canKick && passer.firstTouchTimer > 0.12) return;
       this.shotLock = true;
       this.executeShot(passer, intent, false, true);
       return;
     }
     if (intent.chip || intent.through || intent.cross) {
+      if (!canKick) return;
       this.autoPassStreamT = 0;
       this.executePass(passer, target, intent, passType, dir);
       return;
     }
     if (streamPass) {
-      if (passer.kickTimer > 0) {
+      if (passer.kickTimer > 0 || !canKick) {
         this.autoPassStreamT = 0;
         return;
       }
@@ -1624,8 +1661,10 @@ export class Match {
     }
     this.autoPassStreamT = 0;
     if (intent.pass) {
+      if (!canKick) return;
       this.executePass(passer, target, intent, passType, dir);
     } else if (!this.shotLock && intent.shoot) {
+      if (!canKick) return;
       this.shotLock = true;
       this.executeShot(passer, intent);
     }
@@ -1809,16 +1848,22 @@ export class Match {
         action = decision.scores.runScore >= 0.12 ? "RUN" : "HOLD";
       }
     }
+    const stallStyle = (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined;
+    // First-touch plant — AI must settle before kicking (PES second-touch timing).
+    if (passer.firstTouchTimer > 0.1 && (passLike || action === "SHOT" || action === "LONG_SHOT")) {
+      action = decision.scores.runScore >= 0.08 ? "RUN" : "HOLD";
+    }
     // Receive dwell — longer when there is grass to attack; shorter under pressure.
     {
       const composure = stat01(passer.attrs.composure);
       const vision = stat01(passer.attrs.vision);
+      const patience = stallStyle?.receivePatience ?? 0.45;
       const openGrass = this.pressure < 0.34 && decision.space.score > 1.3 && decision.space.kind !== "back";
       const dwell = openGrass
-        ? clamp(1.05 + (1 - composure) * 0.25 + stat01(passer.attrs.pace) * 0.2, 1.0, 1.7)
+        ? clamp(0.85 + (1 - composure) * 0.22 + stat01(passer.attrs.pace) * 0.15 + patience * 0.2, 0.75, 1.45)
         : this.pressure > 0.55
-          ? clamp(0.42 + (1 - composure) * 0.16, 0.42, 0.62)
-          : clamp(0.55 + (1 - composure) * 0.2 + (1 - vision) * 0.12, 0.5, 0.95);
+          ? clamp(0.42 + (1 - composure) * 0.16 - patience * 0.05, 0.38, 0.62)
+          : clamp(0.55 + (1 - composure) * 0.2 + (1 - vision) * 0.12 + patience * 0.12, 0.5, 1.05);
       if (passLike && this.possessionTime < dwell) action = "RUN";
     }
     // Marker on the ball + a cut lane = carry / shield, not a hopeful pass straight into him.
@@ -1830,7 +1875,6 @@ export class Match {
       }
     }
     // Stall breaker: give think time; only force a pass into a clear lane.
-    const stallStyle = (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined;
     const stallAt =
       (stallStyle?.id === "possession" ? 4.2 : stallStyle?.id === "routeOne" || stallStyle?.id === "direct" ? 3.1 : 3.6) /
       Math.max(0.85, stallStyle?.tempo ?? 1);
@@ -1881,6 +1925,7 @@ export class Match {
       gkZ: gk?.z,
       longShot: action === "LONG_SHOT",
       powerBias: action === "LONG_SHOT" ? 0.9 : 0.5,
+      facing: passer.facing,
     });
     const fakeBase = {
       moveX: decision.space.dx,
@@ -1894,23 +1939,34 @@ export class Match {
     this.shootCharge = 0;
     if (action === "RUN" || action === "HOLD") return;
     if (action === "SHOT" || action === "LONG_SHOT") {
+      // Back-to-goal finishes: refuse hopeful long shots; close range still mishits.
+      if (aiAim.bodyAlignment < facingKickFloor("shot") && action === "LONG_SHOT") {
+        action = decision.scores.runScore >= 0.1 ? "RUN" : "HOLD";
+        return;
+      }
       fakeBase.shootHold = action === "LONG_SHOT" ? 1.15 : isStriker(passer) ? 0.95 : 0.78;
       this.executeShot(passer, fakeBase, action === "LONG_SHOT", false, aiAim.bodyAlignment);
       return;
     }
     const passType: PassType =
       action === "THROUGH" ? "through" : action === "LONG_PASS" ? "long" : action === "CROSS" ? "cross" : "short";
-    fakeBase.passHold =
-      passType === "long" || passType === "cross"
-        ? 0.78
-        : passType === "through"
-          ? this.pressure > 0.45
-            ? 0.72
-            : 0.48
-          : 0.3;
+    const passDist = passTarget
+      ? passer.distTo(passTarget.x, passTarget.z)
+      : passType === "long" || passType === "cross"
+        ? 28
+        : 14;
+    fakeBase.passHold = idealPassHold01(passType, passDist, {
+      pressure: this.pressure,
+      composure: passer.attrs.composure,
+      tempo: stallStyle?.tempo,
+    });
     const dir = passTarget
       ? normalize2(passTarget.x - passer.x, passTarget.z - passer.z)
       : { x: decision.space.dx, z: decision.space.dz };
+    // Square hips to the pass before committing — otherwise carry.
+    if (bodyAlignment(passer.facing, dir.x, dir.z) < facingKickFloor("pass") && this.pressure < 0.72) {
+      return;
+    }
     this.executePass(passer, passTarget, fakeBase, passType, dir);
     if (passTarget && isBackwardPass(passer, passTarget.x, passTarget.z)) {
       passer.giveAndGoTimer = Math.max(passer.giveAndGoTimer, 2.1);
@@ -2171,19 +2227,24 @@ export class Match {
     }
     const distance =
       target ? passer.distTo(target.x, target.z) : delivery === "long" || delivery === "cross" ? 28 : 14;
-    const facingDir = { x: Math.sin(passer.facing), z: Math.cos(passer.facing) };
-    const bodyAlignment = (facingDir.x * dir.x + facingDir.z * dir.z + 1) / 2;
+    const align = bodyAlignment(passer.facing, dir.x, dir.z);
+    const touchScale = firstTouchKickScale(passer.firstTouchTimer);
     const result = computePassError({
       distance,
       pressure: computePressure(passer, this.opponentsOf(passer)).value,
-      bodyAlignment,
+      bodyAlignment: align * touchScale,
       energy: passer.energy.value,
       attrs: passer.attrs,
       passType: delivery,
       hold01,
     });
-    result.angleError *= this.tuning.passErrorMultiplier;
-    result.powerError *= this.tuning.passErrorMultiplier;
+    result.angleError *= this.tuning.passErrorMultiplier / Math.max(0.55, touchScale);
+    result.powerError *= this.tuning.passErrorMultiplier / Math.max(0.55, touchScale);
+    // Hips-off forced pass: inflate weight error so it underhits or skids wide.
+    if (align < facingKickFloor("pass")) {
+      result.angleError *= 1.55;
+      result.powerError = result.powerError * 1.4 - 1.8;
+    }
     // Aim into the receiver's run (desired / velocity), not static feet + oversized empty lead.
     let destX = target
       ? target.x +
@@ -2227,11 +2288,13 @@ export class Match {
       this.stats.passApexSamples.splice(0, this.stats.passApexSamples.length - 800);
     }
     this.clearOwner();
-    passer.kickTimer = 0.42;
+    // Plant after kick — can't remagnet / second-kick instantly.
+    passer.kickTimer = 0.48;
+    passer.firstTouchTimer = Math.max(passer.firstTouchTimer, 0.12);
     // Release window: the ball is leaving the boot, so a marker standing on the passer cannot
     // vacuum it up in the very first frames (a lane-block still happens once it travels on).
     for (const o of this.opponentsOf(passer)) {
-      if (!o.isGK && o.distTo(this.ball.x, this.ball.z) < 2.0) o.kickTimer = Math.max(o.kickTimer, 0.22);
+      if (!o.isGK && o.distTo(this.ball.x, this.ball.z) < 2.0) o.kickTimer = Math.max(o.kickTimer, 0.26);
     }
     this.assistCandidate = passer.id;
     this.ball.lastTouchId = passer.id;
@@ -2302,7 +2365,7 @@ export class Match {
     intent: InputIntent,
     longShot = false,
     overcharged = false,
-    bodyAlignment = 0.75,
+    alignmentHint = 0.75,
   ): void {
     const hold01 = clamp(intent.shootHold / 1.15, 0.15, 1);
     if (overcharged && (this.pressure > 0.28 || Math.random() < 0.42)) {
@@ -2320,10 +2383,14 @@ export class Match {
     const aim = aimOnGoal(intent.aimX, intent.aimY, this.invertShotY);
     const distGoal = passer.distTo(goalX, 0);
     const isHeader = this.ball.y > 1.45 || this.incomingAerial;
+    // Real hips vs goal — human and AI both gated by facing, not a flat 0.75.
+    const hips = bodyAlignment(passer.facing, goalX - passer.x, aim.x - passer.z);
+    const touchScale = firstTouchKickScale(passer.firstTouchTimer);
+    const alignment = clamp(Math.min(hips, alignmentHint) * touchScale, 0.12, 1);
     const result = computeShot({
       distance: distGoal,
       pressure: this.pressure,
-      bodyAlignment,
+      bodyAlignment: alignment,
       energy: passer.energy.value,
       attrs: passer.attrs,
       hold01,
@@ -2331,8 +2398,13 @@ export class Match {
       shotKind: longShot || hold01 > 0.85 ? "long" : distGoal < 12 ? "close" : hold01 > 0.7 ? "power" : "normal",
       overcharged,
     });
-    result.dx *= this.tuning.shotErrorMultiplier;
-    result.dy *= this.tuning.shotErrorMultiplier;
+    result.dx *= this.tuning.shotErrorMultiplier / Math.max(0.55, touchScale);
+    result.dy *= this.tuning.shotErrorMultiplier / Math.max(0.55, touchScale);
+    if (alignment < facingKickFloor("shot")) {
+      result.dx *= 1.45;
+      result.dy += 0.55;
+      result.power *= 0.82;
+    }
     const targetZ = aim.x + result.dx;
     const targetY = aim.y + result.dy;
     const dx = goalX - this.ball.x;
@@ -2353,7 +2425,8 @@ export class Match {
     const pack = nearbyDefenders(passer, this.opponentsOf(passer));
     this.clearOwner();
     this.clearOffsidePhase();
-    passer.kickTimer = 0.22;
+    passer.kickTimer = 0.36;
+    passer.firstTouchTimer = Math.max(passer.firstTouchTimer, 0.1);
     this.shotTarget = null;
     this.stats.shots += 1;
     if (longShot) this.stats.longShots += 1;

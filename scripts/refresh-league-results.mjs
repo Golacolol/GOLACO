@@ -4,7 +4,8 @@
  *
  * Runs via `npm run data:results` and on Vite server/build start.
  * Fetches Premier League / Championship / League One scores AND upcoming
- * fixtures from TheFishy into public/data/officialResultsOverlay.json.
+ * fixtures from TheFishy, plus La Liga / Serie A from openfootball, into
+ * public/data/officialResultsOverlay.json.
  *
  * Played overlay rows drive tables; unplayed overlay rows are the real
  * remaining calendar so the in-game schedule cannot invent wrong pairings.
@@ -119,6 +120,67 @@ const NAME_ALIASES = {
   hull: "Hull City",
   ipswich: "Ipswich Town",
   coventry: "Coventry City",
+  // La Liga
+  athletic: "Athletic Club",
+  "athletic club": "Athletic Club",
+  "athletic bilbao": "Athletic Club",
+  osasuna: "CA Osasuna",
+  atletico: "Club Atlético de Madrid",
+  "atlético": "Club Atlético de Madrid",
+  "atletico madrid": "Club Atlético de Madrid",
+  "atlético madrid": "Club Atlético de Madrid",
+  alaves: "Deportivo Alavés",
+  "alavés": "Deportivo Alavés",
+  elche: "Elche CF",
+  barcelona: "FC Barcelona",
+  "barça": "FC Barcelona",
+  getafe: "Getafe CF",
+  levante: "Levante UD",
+  malaga: "Málaga CF",
+  "málaga": "Málaga CF",
+  celta: "RC Celta de Vigo",
+  "celta vigo": "RC Celta de Vigo",
+  deportivo: "RC Deportivo La Coruña",
+  "deportivo la coruña": "RC Deportivo La Coruña",
+  espanyol: "RCD Espanyol de Barcelona",
+  rayo: "Rayo Vallecano de Madrid",
+  "rayo vallecano": "Rayo Vallecano de Madrid",
+  betis: "Real Betis Balompié",
+  "real betis": "Real Betis Balompié",
+  "real madrid": "Real Madrid CF",
+  racing: "Real Racing Club de Santander",
+  "racing santander": "Real Racing Club de Santander",
+  "real sociedad": "Real Sociedad de Fútbol",
+  sevilla: "Sevilla FC",
+  valencia: "Valencia CF",
+  villarreal: "Villarreal CF",
+  // Serie A
+  milan: "AC Milan",
+  "ac milan": "AC Milan",
+  monza: "AC Monza",
+  fiorentina: "ACF Fiorentina",
+  roma: "AS Roma",
+  "as roma": "AS Roma",
+  atalanta: "Atalanta BC",
+  bologna: "Bologna FC 1909",
+  cagliari: "Cagliari Calcio",
+  como: "Como 1907",
+  inter: "FC Internazionale Milano",
+  "inter milan": "FC Internazionale Milano",
+  internazionale: "FC Internazionale Milano",
+  frosinone: "Frosinone Calcio",
+  genoa: "Genoa CFC",
+  juventus: "Juventus FC",
+  juve: "Juventus FC",
+  parma: "Parma Calcio 1913",
+  lazio: "SS Lazio",
+  napoli: "SSC Napoli",
+  torino: "Torino FC",
+  lecce: "US Lecce",
+  sassuolo: "US Sassuolo Calcio",
+  udinese: "Udinese Calcio",
+  venezia: "Venezia FC",
+  venice: "Venezia FC",
 };
 
 function todayIso(d = new Date()) {
@@ -143,7 +205,10 @@ function buildTeamIndex(teams) {
     byName.set(team.name.toLowerCase(), team.id);
     byName.set(team.abbreviation.toLowerCase(), team.id);
     const short = team.name
-      .replace(/\b(AFC|FC|United|City|Town|Athletic|Rovers|Wanderers|County|Argyle|Hotspur|Albion)\b/gi, "")
+      .replace(
+        /\b(AFC|FC|CF|UD|BC|CFC|SSC|SS|US|AC|ACF|AS|RC|RCD|CA|United|City|Town|Athletic|Rovers|Wanderers|County|Argyle|Hotspur|Albion|Calcio|Club|de|Balompié|Fútbol)\b/gi,
+        "",
+      )
       .replace(/\s+/g, " ")
       .trim()
       .toLowerCase();

@@ -124,9 +124,9 @@ export function formationToPitchPercent(x: number, z: number): { left: number; b
   };
 }
 
-/** Minimum centre-to-centre gap so ~48px markers do not overlap (percent of pitch). */
-export const MARKER_MIN_DX = 10;
-export const MARKER_MIN_DY = 10.8;
+/** Minimum centre-to-centre gap so ~36px markers (+ caption) do not overlap (percent of pitch). */
+export const MARKER_MIN_DX = 8.5;
+export const MARKER_MIN_DY = 11.5;
 const MARKER_SEPARATE_ITERS = 10;
 
 export interface PitchMarkerPoint {

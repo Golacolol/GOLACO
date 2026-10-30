@@ -26,6 +26,8 @@ export interface PlayStyleProfile {
   tempo: number;
   /** Extra progressive/through weight in transition phase (0–1). */
   transitionBurst: number;
+  /** First-touch patience before second action (0–1). */
+  receivePatience: number;
 }
 
 const PROFILES: Record<PlayStyleId, Omit<PlayStyleProfile, "id">> = {
@@ -37,6 +39,7 @@ const PROFILES: Record<PlayStyleId, Omit<PlayStyleProfile, "id">> = {
     standOffBias: 0.62,
     tempo: 0.88,
     transitionBurst: 0.22,
+    receivePatience: 0.72,
   },
   balanced: {
     shortBias: 0.62,
@@ -46,6 +49,7 @@ const PROFILES: Record<PlayStyleId, Omit<PlayStyleProfile, "id">> = {
     standOffBias: 0.48,
     tempo: 1,
     transitionBurst: 0.45,
+    receivePatience: 0.5,
   },
   counter: {
     shortBias: 0.55,
@@ -55,6 +59,7 @@ const PROFILES: Record<PlayStyleId, Omit<PlayStyleProfile, "id">> = {
     standOffBias: 0.68,
     tempo: 1.05,
     transitionBurst: 0.88,
+    receivePatience: 0.42,
   },
   direct: {
     shortBias: 0.38,
@@ -64,6 +69,7 @@ const PROFILES: Record<PlayStyleId, Omit<PlayStyleProfile, "id">> = {
     standOffBias: 0.4,
     tempo: 1.12,
     transitionBurst: 0.7,
+    receivePatience: 0.32,
   },
   routeOne: {
     shortBias: 0.22,
@@ -73,6 +79,7 @@ const PROFILES: Record<PlayStyleId, Omit<PlayStyleProfile, "id">> = {
     standOffBias: 0.35,
     tempo: 1.22,
     transitionBurst: 0.75,
+    receivePatience: 0.22,
   },
 };
 
@@ -111,7 +118,7 @@ export function teamMeanOverall(players: Player[]): number {
 }
 
 function leagueTier(league?: EnglishLeague | string | null): number {
-  if (league === "PREMIER_LEAGUE") return 1;
+  if (league === "PREMIER_LEAGUE" || league === "LA_LIGA" || league === "SERIE_A") return 1;
   if (league === "CHAMPIONSHIP") return 0.55;
   if (league === "LEAGUE_ONE") return 0.2;
   return 0.4;

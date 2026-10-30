@@ -64,7 +64,7 @@ export class PossessionActor {
   ballBusy(ball: Ball, ownerId: string | null): boolean {
     if (ownerId) return false;
     const ground = Math.hypot(ball.vx, ball.vz);
-    return ground > 11.5 || (ball.y > 1.85 && ground > 6);
+    return ground > 10.2 || (ball.y > 1.7 && ground > 5.2);
   }
 }
 
@@ -83,6 +83,12 @@ export interface FirstTouchSettleOpts {
   /** From GameplayTuning.firstTouchErrorMultiplier */
   errorMul?: number;
   zone?: ContactZone;
+  /** Player facing (rad) — poor approach into the ball increases spill. */
+  facing?: number;
+  /** How square the hips are to the incoming ball (0–1). */
+  approachAlignment?: number;
+  /** Style patience: higher = longer settle before second action (0–1). */
+  receivePatience?: number;
   rng?: () => number;
 }
 
@@ -99,6 +105,7 @@ export interface FirstTouchSettleResult {
 /**
  * Controlled collect: kill flight, apply zone scatter, optionally spill under pressure.
  * Strength helps drive through a firm first touch (MIT sim engine idea).
+ * Facing / approach alignment decide whether the touch sticks or squirts away.
  */
 export function settleFirstTouch(ball: Ball, opts: FirstTouchSettleOpts): FirstTouchSettleResult {
   const rng = opts.rng ?? Math.random;
@@ -106,30 +113,39 @@ export function settleFirstTouch(ball: Ball, opts: FirstTouchSettleOpts): FirstT
   const strength = stat01(opts.strength);
   const zone = opts.zone ?? classifyContactZone(ball, opts.aerial);
   const errorMul = opts.errorMul ?? 1;
+  const approach = clamp(opts.approachAlignment ?? 0.75, 0, 1);
+  const patience = clamp(opts.receivePatience ?? 0.45, 0, 1);
+  const facePenalty = (1 - approach) * 0.85;
   const zoneScatter =
     zone === "air" ? 1.55 : zone === "body" ? 1.18 : 0.72;
   const scatterMag =
-    ((1 - control) * 0.72 * zoneScatter + opts.pressure * 0.48 + (1 - opts.energy) * 0.22) * errorMul;
+    ((1 - control) * 0.72 * zoneScatter + opts.pressure * 0.48 + (1 - opts.energy) * 0.22 + facePenalty * 0.55) *
+    errorMul;
   const scatterX = (rng() - 0.5) * scatterMag;
   const scatterZ = (rng() - 0.5) * scatterMag;
   // Foot / short collects nearly pin the ball; aerial/body keep meaningful scatter.
   const settle =
     zone === "foot"
-      ? clamp(0.9 + control * 0.08 + strength * 0.02 - opts.pressure * 0.08, 0.88, 0.98)
+      ? clamp(0.9 + control * 0.08 + strength * 0.02 - opts.pressure * 0.08 - facePenalty * 0.12, 0.78, 0.98)
       : zone === "body"
-        ? clamp(0.55 + control * 0.28 + strength * 0.1 - opts.pressure * 0.1, 0.45, 0.88)
-        : clamp(0.22 + control * 0.48 + strength * 0.12 - 0.08, 0.16, 0.78);
+        ? clamp(0.55 + control * 0.28 + strength * 0.1 - opts.pressure * 0.1 - facePenalty * 0.1, 0.4, 0.88)
+        : clamp(0.22 + control * 0.48 + strength * 0.12 - facePenalty * 0.08, 0.16, 0.78);
+  // Longer plant window so second touch / pass isn't instant after a firm receive.
   const firstTouchTimer =
-    zone === "foot"
-      ? 0.06 + (1 - control) * 0.12
-      : 0.1 + (1 - control) * 0.22 + (zone === "air" ? 0.12 : 0.06);
-  // Routine ground receives stick; lose mainly under real pressure / aerial mess.
+    (zone === "foot"
+      ? 0.1 + (1 - control) * 0.16 + facePenalty * 0.1
+      : 0.16 + (1 - control) * 0.26 + (zone === "air" ? 0.14 : 0.08) + facePenalty * 0.12) *
+    (0.85 + patience * 0.45) *
+    clamp(errorMul, 0.55, 1.35);
+  // Routine ground receives stick; lose mainly under real pressure / aerial mess / bad approach.
   const lost =
     zone === "air"
-      ? scatterMag > 1.0 && opts.pressure > 0.38 && rng() < clamp(0.32 + opts.pressure * 0.4 - control * 0.32, 0.08, 0.7)
-      : scatterMag > 1.25 &&
-        opts.pressure > 0.58 &&
-        rng() < clamp(0.18 + opts.pressure * 0.28 - control * 0.4, 0.02, 0.42);
+      ? scatterMag > 0.95 &&
+        (opts.pressure > 0.34 || approach < 0.45) &&
+        rng() < clamp(0.28 + opts.pressure * 0.4 + facePenalty * 0.35 - control * 0.3, 0.08, 0.75)
+      : scatterMag > 1.1 &&
+        (opts.pressure > 0.5 || approach < 0.38) &&
+        rng() < clamp(0.16 + opts.pressure * 0.28 + facePenalty * 0.3 - control * 0.38, 0.02, 0.48);
 
   ball.x += scatterX;
   ball.z += scatterZ;
@@ -142,6 +158,10 @@ export function settleFirstTouch(ball: Ball, opts: FirstTouchSettleOpts): FirstT
       ball.vx *= 0.15;
       ball.vz *= 0.15;
       ball.vy = Math.min(ball.vy, 0.08);
+    } else if (!lost && settle < 0.88) {
+      // Soft / awkward touch keeps a residual bounce away from the feet.
+      ball.vx += (rng() - 0.5) * (1 - settle) * 2.2;
+      ball.vz += (rng() - 0.5) * (1 - settle) * 2.2;
     }
     ball.y = Math.min(ball.y, BALL_RADIUS);
   } else if (zone !== "air" || settle > 0.4) {

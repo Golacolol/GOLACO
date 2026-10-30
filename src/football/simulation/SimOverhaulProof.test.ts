@@ -75,8 +75,8 @@ describe("sim overhaul proof", () => {
 
     const result = updateTeamAI(pool, "away", ball, null, 0.05, new Set());
     expect(result.primaryPursuerId).toBe(primary.id);
-    // Default: ONE hunter. A support man (if any) only contains — never a second presser.
-    expect(result.supportPursuerId == null || result.supportPursuerId !== result.primaryPursuerId).toBe(true);
+    // Default: ONE hunter only — no auto second man into the centre scrum.
+    expect(result.supportPursuerId).toBeNull();
 
     for (let i = 0; i < 12; i++) {
       updateTeamAI(pool, "away", ball, null, 0.05, new Set());
@@ -84,12 +84,6 @@ describe("sim overhaul proof", () => {
     const far = pool.find((p) => p.id === "st")!;
     expect(Math.abs(far.x - far.anchorX)).toBeLessThan(6);
     expect(Math.hypot(primary.vx, primary.vz)).toBeGreaterThan(0.4);
-    // The contain/support man holds a stand-off instead of closing into the collect ring.
-    if (result.supportPursuerId) {
-      const support = pool.find((p) => p.id === result.supportPursuerId)!;
-      const supportGap = support.distTo(ball.x, ball.z);
-      expect(supportGap).toBeGreaterThan(2.2);
-    }
   });
 
   it("only draws a second man into the ball on an intentional double-team", () => {

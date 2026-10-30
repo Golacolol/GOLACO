@@ -1,7 +1,7 @@
 {
   "asOf": "2026-10-27",
   "source": "thefishy+openfootball",
-  "refreshedAt": "2026-10-30T14:31:23.384Z",
+  "refreshedAt": "2026-10-30T18:08:36.211Z",
   "matches": [
     {
       "competition": "Championship",
@@ -214,6 +214,26 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-08-15",
+      "time": "19:30",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "getafe_current",
+      "homeScore": 3,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-15",
+      "time": "21:30",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "rayo_current",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
       "competition": "Championship",
       "date": "2026-08-16",
       "time": "13:30",
@@ -234,6 +254,26 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-08-16",
+      "time": "17:00",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "villarreal_current",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-16",
+      "time": "19:00",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "levante_current",
+      "homeScore": 3,
+      "awayScore": 0,
+      "played": true
+    },
+    {
       "competition": "Championship",
       "date": "2026-08-17",
       "time": "20:00",
@@ -241,6 +281,26 @@
       "awayTeamId": "wrexham_current",
       "homeScore": 1,
       "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-17",
+      "time": "21:00",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "elche_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-19",
+      "time": "21:00",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "malaga_current",
+      "homeScore": 2,
+      "awayScore": 0,
       "played": true
     },
     {
@@ -254,12 +314,32 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-08-20",
+      "time": "21:00",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "alaves_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-08-21",
       "time": "20:00",
       "homeTeamId": "arsenal_current",
       "awayTeamId": "coventry_city_current",
       "homeScore": 3,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-21",
+      "time": "21:00",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "realsociedad_current",
+      "homeScore": 1,
       "awayScore": 0,
       "played": true
     },
@@ -524,6 +604,16 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-08-22",
+      "time": "17:00",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "sevilla_current",
+      "homeScore": 1,
+      "awayScore": 3,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-08-22",
       "time": "17:30",
@@ -531,6 +621,66 @@
       "awayTeamId": "tottenham_hotspur_current",
       "homeScore": 3,
       "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-22",
+      "time": "18:30",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "como_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-22",
+      "time": "18:30",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "monza_current",
+      "homeScore": 4,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-22",
+      "time": "19:30",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "celta_current",
+      "homeScore": 0,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-22",
+      "time": "20:45",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "napoli_current",
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-22",
+      "time": "20:45",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "cagliari_current",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-22",
+      "time": "21:30",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "realmadrid_current",
+      "homeScore": 1,
+      "awayScore": 2,
       "played": true
     },
     {
@@ -574,6 +724,96 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-08-23",
+      "time": "17:00",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "villarreal_current",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-23",
+      "time": "18:30",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "juventus_current",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-23",
+      "time": "18:30",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "lecce_current",
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-23",
+      "time": "19:30",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "racing_current",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-23",
+      "time": "20:45",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "sassuolo_current",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-23",
+      "time": "20:45",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "milan_current",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-23",
+      "time": "21:30",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "barcelona_current",
+      "homeScore": 0,
+      "awayScore": 5,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-24",
+      "time": "18:30",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "lazio_current",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-24",
+      "time": "19:30",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "levante_current",
+      "homeScore": 0,
+      "awayScore": 0,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-08-24",
       "time": "20:00",
@@ -581,6 +821,76 @@
       "awayTeamId": "chelsea_current",
       "homeScore": 2,
       "awayScore": 3,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-24",
+      "time": "20:45",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "fiorentina_current",
+      "homeScore": 4,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-24",
+      "time": "21:30",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "deportivo_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-25",
+      "time": "21:00",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "betis_current",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-26",
+      "time": "21:00",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "realsociedad_current",
+      "homeScore": 4,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-27",
+      "time": "20:30",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "osasuna_current",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-27",
+      "time": "21:00",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "athletic_current",
+      "homeScore": 2,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-28",
+      "time": "19:00",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "elche_current",
+      "homeScore": 3,
+      "awayScore": 2,
       "played": true
     },
     {
@@ -601,6 +911,26 @@
       "awayTeamId": "birmingham_city_current",
       "homeScore": 1,
       "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-28",
+      "time": "20:45",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "venezia_current",
+      "homeScore": 2,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-28",
+      "time": "21:30",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "villarreal_current",
+      "homeScore": 1,
+      "awayScore": 0,
       "played": true
     },
     {
@@ -834,6 +1164,16 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-08-29",
+      "time": "17:00",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "betis_current",
+      "homeScore": 5,
+      "awayScore": 2,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-08-29",
       "time": "17:30",
@@ -841,6 +1181,66 @@
       "awayTeamId": "newcastle_united_current",
       "homeScore": 0,
       "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-29",
+      "time": "18:30",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "torino_current",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-29",
+      "time": "18:30",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "udinese_current",
+      "homeScore": 2,
+      "awayScore": 3,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-29",
+      "time": "18:30",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "frosinone_current",
+      "homeScore": 0,
+      "awayScore": 3,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-29",
+      "time": "19:00",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "espanyol_current",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-29",
+      "time": "20:45",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "parma_current",
+      "homeScore": 2,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-29",
+      "time": "21:30",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "atletico_current",
+      "homeScore": 1,
+      "awayScore": 3,
       "played": true
     },
     {
@@ -904,6 +1304,86 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-08-30",
+      "time": "17:00",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "malaga_current",
+      "homeScore": 4,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-30",
+      "time": "18:30",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "como_current",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-30",
+      "time": "19:30",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "valencia_current",
+      "homeScore": 3,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-30",
+      "time": "20:45",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "genoa_current",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-30",
+      "time": "20:45",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "inter_current",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-30",
+      "time": "21:30",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "athletic_current",
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-31",
+      "time": "18:30",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "roma_current",
+      "homeScore": 0,
+      "awayScore": 4,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-31",
+      "time": "19:30",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "getafe_current",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-08-31",
       "time": "20:00",
@@ -911,6 +1391,26 @@
       "awayTeamId": "arsenal_current",
       "homeScore": 0,
       "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-08-31",
+      "time": "20:45",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "bologna_current",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-08-31",
+      "time": "21:30",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "rayo_current",
+      "homeScore": 5,
+      "awayScore": 2,
       "played": true
     },
     {
@@ -1154,6 +1654,16 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-09-03",
+      "time": "21:00",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "celta_current",
+      "homeScore": 0,
+      "awayScore": 0,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-09-04",
       "time": "20:00",
@@ -1161,6 +1671,26 @@
       "awayTeamId": "liverpool_current",
       "homeScore": 0,
       "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-04",
+      "time": "20:45",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "como_current",
+      "homeScore": 1,
+      "awayScore": 4,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-04",
+      "time": "21:00",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "realmadrid_current",
+      "homeScore": 1,
+      "awayScore": 0,
       "played": true
     },
     {
@@ -1344,6 +1874,16 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-09-05",
+      "time": "15:00",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "torino_current",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
       "competition": "League One",
       "date": "2026-09-05",
       "time": "15:00",
@@ -1434,6 +1974,16 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-09-05",
+      "time": "16:15",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "atletico_current",
+      "homeScore": 3,
+      "awayScore": 0,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-09-05",
       "time": "17:30",
@@ -1444,6 +1994,26 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-09-05",
+      "time": "18:00",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "napoli_current",
+      "homeScore": 3,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-05",
+      "time": "18:30",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "racing_current",
+      "homeScore": 3,
+      "awayScore": 2,
+      "played": true
+    },
+    {
       "competition": "Championship",
       "date": "2026-09-05",
       "time": "20:00",
@@ -1451,6 +2021,26 @@
       "awayTeamId": "wrexham_current",
       "homeScore": 0,
       "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-05",
+      "time": "20:45",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "atalanta_current",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-05",
+      "time": "21:00",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "deportivo_current",
+      "homeScore": 2,
+      "awayScore": 3,
       "played": true
     },
     {
@@ -1474,12 +2064,112 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-09-06",
+      "time": "15:00",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "monza_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-06",
+      "time": "15:00",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "venezia_current",
+      "homeScore": 3,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-06",
+      "time": "16:15",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "barcelona_current",
+      "homeScore": 0,
+      "awayScore": 5,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-09-06",
       "time": "16:30",
       "homeTeamId": "arsenal_current",
       "awayTeamId": "chelsea_current",
       "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-06",
+      "time": "18:00",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "sassuolo_current",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-06",
+      "time": "18:30",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "osasuna_current",
+      "homeScore": 5,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-06",
+      "time": "18:30",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "levante_current",
+      "homeScore": 0,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-06",
+      "time": "20:45",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "milan_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-06",
+      "time": "21:00",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "sevilla_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-07",
+      "time": "18:30",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "lecce_current",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-07",
+      "time": "19:00",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "celta_current",
+      "homeScore": 1,
       "awayScore": 1,
       "played": true
     },
@@ -1491,6 +2181,26 @@
       "awayTeamId": "afc_wimbledon_current",
       "homeScore": 0,
       "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-07",
+      "time": "20:45",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "lazio_current",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-07",
+      "time": "21:30",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "realsociedad_current",
+      "homeScore": 2,
+      "awayScore": 3,
       "played": true
     },
     {
@@ -1604,6 +2314,26 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-09-11",
+      "time": "20:45",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "fiorentina_current",
+      "homeScore": 2,
+      "awayScore": 4,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-11",
+      "time": "21:00",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "valencia_current",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
       "competition": "Championship",
       "date": "2026-09-12",
       "time": "12:30",
@@ -1650,6 +2380,16 @@
       "homeTeamId": "notts_county_current",
       "awayTeamId": "bradford_city_current",
       "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-12",
+      "time": "14:00",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "alaves_current",
+      "homeScore": 2,
       "awayScore": 1,
       "played": true
     },
@@ -1774,6 +2514,16 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-09-12",
+      "time": "15:00",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "frosinone_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
       "competition": "League One",
       "date": "2026-09-12",
       "time": "15:00",
@@ -1864,6 +2614,16 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-09-12",
+      "time": "16:15",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "espanyol_current",
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-09-12",
       "time": "17:30",
@@ -1874,6 +2634,26 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-09-12",
+      "time": "18:00",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "milan_current",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-12",
+      "time": "18:30",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "elche_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-09-12",
       "time": "20:00",
@@ -1881,6 +2661,26 @@
       "awayTeamId": "arsenal_current",
       "homeScore": 0,
       "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-12",
+      "time": "20:45",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "cagliari_current",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-12",
+      "time": "21:00",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "rayo_current",
+      "homeScore": 4,
+      "awayScore": 1,
       "played": true
     },
     {
@@ -1904,6 +2704,36 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-09-13",
+      "time": "14:00",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "malaga_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-13",
+      "time": "15:00",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "monza_current",
+      "homeScore": 3,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-13",
+      "time": "16:15",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "barcelona_current",
+      "homeScore": 2,
+      "awayScore": 4,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-09-13",
       "time": "16:30",
@@ -1914,12 +2744,102 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-09-13",
+      "time": "18:00",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "bologna_current",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-13",
+      "time": "18:30",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "deportivo_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-13",
+      "time": "20:45",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "juventus_current",
+      "homeScore": 3,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-13",
+      "time": "21:00",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "atletico_current",
+      "homeScore": 0,
+      "awayScore": 3,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-14",
+      "time": "18:30",
+      "homeTeamId": "como_current",
+      "awayTeamId": "parma_current",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-14",
+      "time": "18:30",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "roma_current",
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-09-14",
       "time": "20:00",
       "homeTeamId": "leeds_united_current",
       "awayTeamId": "newcastle_united_current",
       "homeScore": 4,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-14",
+      "time": "20:45",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "udinese_current",
+      "homeScore": 5,
+      "awayScore": 3,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-14",
+      "time": "21:00",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "betis_current",
+      "homeScore": 1,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-15",
+      "time": "19:00",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "espanyol_current",
+      "homeScore": 2,
       "awayScore": 1,
       "played": true
     },
@@ -1944,6 +2864,66 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-09-15",
+      "time": "20:00",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "valencia_current",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-15",
+      "time": "21:30",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "realmadrid_current",
+      "homeScore": 2,
+      "awayScore": 3,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-16",
+      "time": "19:00",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "sevilla_current",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-16",
+      "time": "19:00",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "osasuna_current",
+      "homeScore": 4,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-16",
+      "time": "21:30",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "racing_current",
+      "homeScore": 7,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-17",
+      "time": "19:00",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "getafe_current",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
       "competition": "League One",
       "date": "2026-09-17",
       "time": "20:00",
@@ -1951,6 +2931,16 @@
       "awayTeamId": "mk_dons_current",
       "homeScore": 0,
       "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-17",
+      "time": "21:30",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "villarreal_current",
+      "homeScore": 1,
+      "awayScore": 3,
       "played": true
     },
     {
@@ -1971,6 +2961,26 @@
       "awayTeamId": "watford_current",
       "homeScore": 1,
       "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-18",
+      "time": "20:45",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "sassuolo_current",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-18",
+      "time": "21:00",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "elche_current",
+      "homeScore": 1,
+      "awayScore": 3,
       "played": true
     },
     {
@@ -2031,6 +3041,16 @@
       "awayTeamId": "mansfield_town_current",
       "homeScore": 2,
       "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-19",
+      "time": "14:00",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "rayo_current",
+      "homeScore": 1,
+      "awayScore": 1,
       "played": true
     },
     {
@@ -2124,6 +3144,26 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-09-19",
+      "time": "15:00",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "torino_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-19",
+      "time": "15:00",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "cagliari_current",
+      "homeScore": 0,
+      "awayScore": 1,
+      "played": true
+    },
+    {
       "competition": "League One",
       "date": "2026-09-19",
       "time": "15:00",
@@ -2214,6 +3254,16 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-09-19",
+      "time": "16:15",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "alaves_current",
+      "homeScore": 0,
+      "awayScore": 0,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-09-19",
       "time": "17:30",
@@ -2224,6 +3274,46 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-09-19",
+      "time": "18:00",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "inter_current",
+      "homeScore": 2,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-19",
+      "time": "18:30",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "racing_current",
+      "homeScore": 5,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-19",
+      "time": "20:45",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "lazio_current",
+      "homeScore": 0,
+      "awayScore": 2,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-19",
+      "time": "21:00",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "barcelona_current",
+      "homeScore": 1,
+      "awayScore": 3,
+      "played": true
+    },
+    {
       "competition": "Championship",
       "date": "2026-09-20",
       "time": "12:00",
@@ -2231,6 +3321,16 @@
       "awayTeamId": "west_bromwich_albion_current",
       "homeScore": 1,
       "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-20",
+      "time": "12:30",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "napoli_current",
+      "homeScore": 1,
+      "awayScore": 1,
       "played": true
     },
     {
@@ -2274,6 +3374,46 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-09-20",
+      "time": "14:00",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "malaga_current",
+      "homeScore": 1,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-20",
+      "time": "15:00",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "como_current",
+      "homeScore": 2,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-20",
+      "time": "15:00",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "genoa_current",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-20",
+      "time": "16:15",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "realmadrid_current",
+      "homeScore": 2,
+      "awayScore": 1,
+      "played": true
+    },
+    {
       "competition": "Premier League",
       "date": "2026-09-20",
       "time": "16:30",
@@ -2281,6 +3421,56 @@
       "awayTeamId": "manchester_united_current",
       "homeScore": 1,
       "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-20",
+      "time": "18:00",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "atalanta_current",
+      "homeScore": 2,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-20",
+      "time": "18:30",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "betis_current",
+      "homeScore": 1,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-20",
+      "time": "18:30",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "levante_current",
+      "homeScore": 3,
+      "awayScore": 1,
+      "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-09-20",
+      "time": "20:45",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "lecce_current",
+      "homeScore": 3,
+      "awayScore": 0,
+      "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-09-20",
+      "time": "21:00",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "realsociedad_current",
+      "homeScore": 2,
+      "awayScore": 3,
       "played": true
     },
     {
@@ -2364,6 +3554,14 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-10-09",
+      "time": "21:00",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-10",
       "time": "12:30",
@@ -2422,6 +3620,14 @@
       "homeScore": 2,
       "awayScore": 1,
       "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-10",
+      "time": "14:00",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "athletic_current",
+      "played": false
     },
     {
       "competition": "Premier League",
@@ -2634,6 +3840,22 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-10",
+      "time": "15:00",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-10",
+      "time": "16:15",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-10",
       "time": "17:30",
@@ -2644,6 +3866,38 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-10",
+      "time": "18:00",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-10",
+      "time": "18:30",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-10",
+      "time": "20:45",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-10",
+      "time": "21:00",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
       "competition": "Championship",
       "date": "2026-10-11",
       "time": "12:00",
@@ -2652,6 +3906,14 @@
       "homeScore": 1,
       "awayScore": 0,
       "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-11",
+      "time": "12:30",
+      "homeTeamId": "como_current",
+      "awayTeamId": "roma_current",
+      "played": false
     },
     {
       "competition": "Premier League",
@@ -2674,6 +3936,38 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-10-11",
+      "time": "14:00",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-11",
+      "time": "15:00",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-11",
+      "time": "15:00",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-11",
+      "time": "16:15",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-11",
       "time": "16:30",
@@ -2684,6 +3978,46 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-11",
+      "time": "18:00",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-11",
+      "time": "18:30",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-11",
+      "time": "20:45",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-11",
+      "time": "21:00",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-12",
+      "time": "18:30",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-12",
       "time": "20:00",
@@ -2692,6 +4026,22 @@
       "homeScore": 4,
       "awayScore": 1,
       "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-12",
+      "time": "20:45",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-12",
+      "time": "21:00",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
     },
     {
       "competition": "Championship",
@@ -2834,6 +4184,22 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-16",
+      "time": "20:45",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-16",
+      "time": "21:00",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-17",
       "time": "12:30",
@@ -2892,6 +4258,14 @@
       "homeScore": 2,
       "awayScore": 2,
       "played": true
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-17",
+      "time": "14:00",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "atletico_current",
+      "played": false
     },
     {
       "competition": "Premier League",
@@ -3094,6 +4468,22 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-17",
+      "time": "15:00",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-17",
+      "time": "16:15",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-17",
       "time": "17:30",
@@ -3102,6 +4492,46 @@
       "homeScore": 0,
       "awayScore": 1,
       "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-17",
+      "time": "18:00",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-17",
+      "time": "18:30",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-17",
+      "time": "20:45",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-17",
+      "time": "21:00",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-18",
+      "time": "12:30",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "lecce_current",
+      "played": false
     },
     {
       "competition": "Premier League",
@@ -3134,6 +4564,30 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-10-18",
+      "time": "14:00",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-18",
+      "time": "15:00",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-18",
+      "time": "16:15",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-18",
       "time": "16:30",
@@ -3144,6 +4598,46 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-18",
+      "time": "18:00",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-18",
+      "time": "18:30",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-18",
+      "time": "20:45",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-18",
+      "time": "21:00",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-19",
+      "time": "18:30",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-19",
       "time": "20:00",
@@ -3152,6 +4646,22 @@
       "homeScore": 3,
       "awayScore": 1,
       "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-19",
+      "time": "20:45",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-19",
+      "time": "21:00",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "rayo_current",
+      "played": false
     },
     {
       "competition": "Championship",
@@ -3284,6 +4794,14 @@
       "played": true
     },
     {
+      "competition": "La Liga",
+      "date": "2026-10-21",
+      "time": "20:00",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-23",
       "time": "20:00",
@@ -3302,6 +4820,14 @@
       "homeScore": 1,
       "awayScore": 5,
       "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-23",
+      "time": "20:45",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "monza_current",
+      "played": false
     },
     {
       "competition": "Premier League",
@@ -3564,6 +5090,22 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-24",
+      "time": "15:00",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-24",
+      "time": "15:00",
+      "homeTeamId": "como_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-24",
       "time": "17:30",
@@ -3572,6 +5114,100 @@
       "homeScore": 0,
       "awayScore": 2,
       "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-24",
+      "time": "18:00",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-24",
+      "time": "20:45",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-10-25",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-25",
+      "time": "12:30",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
     },
     {
       "competition": "Premier League",
@@ -3614,6 +5250,22 @@
       "played": true
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-25",
+      "time": "15:00",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-25",
+      "time": "15:00",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-25",
       "time": "16:30",
@@ -3622,6 +5274,30 @@
       "homeScore": 0,
       "awayScore": 0,
       "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-25",
+      "time": "18:00",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-25",
+      "time": "20:45",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-27",
+      "time": "18:30",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "lazio_current",
+      "played": false
     },
     {
       "competition": "League One",
@@ -3672,6 +5348,78 @@
       "homeScore": 1,
       "awayScore": 1,
       "played": true
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-27",
+      "time": "20:45",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-27",
+      "time": "20:45",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-28",
+      "time": "18:30",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-28",
+      "time": "18:30",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-28",
+      "time": "18:30",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-28",
+      "time": "20:45",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-28",
+      "time": "20:45",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-29",
+      "time": "18:30",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-29",
+      "time": "20:45",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
     },
     {
       "competition": "Championship",
@@ -3842,6 +5590,14 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-31",
+      "time": "15:00",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
       "competition": "League One",
       "date": "2026-10-31",
       "time": "15:00",
@@ -3914,11 +5670,105 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-10-31",
+      "time": "18:00",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-10-31",
       "time": "20:00",
       "homeTeamId": "aston_villa_current",
       "awayTeamId": "fulham_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-10-31",
+      "time": "20:45",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-01",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-01",
+      "time": "12:30",
+      "homeTeamId": "como_current",
+      "awayTeamId": "venezia_current",
       "played": false
     },
     {
@@ -3930,6 +5780,22 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-11-01",
+      "time": "15:00",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-01",
+      "time": "15:00",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-11-01",
       "time": "16:30",
@@ -3938,11 +5804,43 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-11-01",
+      "time": "18:00",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-01",
+      "time": "20:45",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-02",
+      "time": "18:30",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-11-02",
       "time": "20:00",
       "homeTeamId": "newcastle_united_current",
       "awayTeamId": "everton_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-02",
+      "time": "20:45",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "parma_current",
       "played": false
     },
     {
@@ -4074,6 +5972,14 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-11-06",
+      "time": "20:45",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
       "competition": "Championship",
       "date": "2026-11-07",
       "time": "12:30",
@@ -4202,6 +6108,116 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-11-07",
+      "time": "15:00",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-07",
+      "time": "15:00",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-07",
+      "time": "18:00",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-07",
+      "time": "20:45",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-08",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-08",
+      "time": "12:30",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-11-08",
       "time": "14:00",
@@ -4234,11 +6250,43 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-11-08",
+      "time": "15:00",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-08",
+      "time": "15:00",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-11-08",
       "time": "16:30",
       "homeTeamId": "manchester_united_current",
       "awayTeamId": "aston_villa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-08",
+      "time": "18:00",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-08",
+      "time": "20:45",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "juventus_current",
       "played": false
     },
     {
@@ -4498,6 +6546,22 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-11-21",
+      "time": "15:00",
+      "homeTeamId": "como_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-21",
+      "time": "15:00",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
       "competition": "League One",
       "date": "2026-11-21",
       "time": "15:00",
@@ -4578,11 +6642,105 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-11-21",
+      "time": "18:00",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-21",
+      "time": "20:45",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-22",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
       "competition": "Championship",
       "date": "2026-11-22",
       "time": "12:00",
       "homeTeamId": "burnley_current",
       "awayTeamId": "blackburn_rovers_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-22",
+      "time": "12:30",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "genoa_current",
       "played": false
     },
     {
@@ -4594,6 +6752,14 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-11-22",
+      "time": "15:00",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-11-22",
       "time": "16:30",
@@ -4602,11 +6768,43 @@
       "played": false
     },
     {
+      "competition": "Serie A",
+      "date": "2026-11-22",
+      "time": "18:00",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-22",
+      "time": "20:45",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-23",
+      "time": "18:30",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2026-11-23",
       "time": "20:00",
       "homeTeamId": "brentford_current",
       "awayTeamId": "everton_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-23",
+      "time": "20:45",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "venezia_current",
       "played": false
     },
     {
@@ -4927,6 +7125,146 @@
       "time": "17:30",
       "homeTeamId": "ipswich_town_current",
       "awayTeamId": "aston_villa_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-11-29",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "como_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-11-29",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "genoa_current",
       "played": false
     },
     {
@@ -5330,6 +7668,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-06",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-06",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
       "competition": "Championship",
       "date": "2026-12-06",
       "time": "12:00",
@@ -5698,6 +8176,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-13",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "como_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-13",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
       "competition": "Championship",
       "date": "2026-12-13",
       "time": "14:00",
@@ -5975,6 +8593,146 @@
       "time": "15:00",
       "homeTeamId": "wycombe_wanderers_current",
       "awayTeamId": "doncaster_rovers_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2026-12-20",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2026-12-20",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "monza_current",
       "played": false
     },
     {
@@ -6778,6 +9536,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-03",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "como_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-03",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2027-01-03",
       "time": "14:00",
@@ -6831,6 +9729,76 @@
       "time": "20:15",
       "homeTeamId": "sunderland_current",
       "awayTeamId": "liverpool_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-06",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "parma_current",
       "played": false
     },
     {
@@ -6970,6 +9938,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-10",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "como_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-10",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2027-01-16",
       "time": "15:00",
@@ -7239,6 +10347,146 @@
       "time": "15:00",
       "homeTeamId": "stevenage_current",
       "awayTeamId": "bradford_city_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-17",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-17",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "roma_current",
       "played": false
     },
     {
@@ -7607,6 +10855,146 @@
       "time": "15:00",
       "homeTeamId": "wycombe_wanderers_current",
       "awayTeamId": "afc_wimbledon_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-24",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "como_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-24",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "lazio_current",
       "played": false
     },
     {
@@ -7978,6 +11366,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-01-31",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-01-31",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2027-02-06",
       "time": "15:00",
@@ -8247,6 +11775,146 @@
       "time": "15:00",
       "homeTeamId": "wycombe_wanderers_current",
       "awayTeamId": "stockport_county_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-07",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "como_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-07",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "udinese_current",
       "played": false
     },
     {
@@ -8618,6 +12286,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-14",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-14",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
       "competition": "Championship",
       "date": "2027-02-16",
       "time": "19:45",
@@ -8975,6 +12783,146 @@
       "time": "15:00",
       "homeTeamId": "wycombe_wanderers_current",
       "awayTeamId": "leyton_orient_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-21",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "como_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-21",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "napoli_current",
       "played": false
     },
     {
@@ -9247,6 +13195,146 @@
       "time": "15:00",
       "homeTeamId": "reading_current",
       "awayTeamId": "stockport_county_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-02-28",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "como_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-02-28",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "napoli_current",
       "played": false
     },
     {
@@ -9626,6 +13714,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-07",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-07",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2027-03-13",
       "time": "15:00",
@@ -9895,6 +14123,146 @@
       "time": "15:00",
       "homeTeamId": "reading_current",
       "awayTeamId": "afc_wimbledon_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-14",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "como_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-14",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "atalanta_current",
       "played": false
     },
     {
@@ -10266,6 +14634,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-03-21",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-03-21",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
       "competition": "League One",
       "date": "2027-03-26",
       "time": "15:00",
@@ -10647,6 +15155,146 @@
       "time": "15:00",
       "homeTeamId": "stevenage_current",
       "awayTeamId": "wycombe_wanderers_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-04",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "como_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-04",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "udinese_current",
       "played": false
     },
     {
@@ -11018,6 +15666,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-11",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-11",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
       "competition": "League One",
       "date": "2027-04-13",
       "time": "19:45",
@@ -11386,6 +16174,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-18",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "como_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-18",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
       "competition": "Championship",
       "date": "2027-04-20",
       "time": "19:45",
@@ -11447,6 +16375,76 @@
       "time": "19:45",
       "homeTeamId": "charlton_athletic_current",
       "awayTeamId": "west_bromwich_albion_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-04-21",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "realsociedad_current",
       "played": false
     },
     {
@@ -11751,6 +16749,76 @@
       "time": "15:00",
       "homeTeamId": "wigan_athletic_current",
       "awayTeamId": "stevenage_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-04-25",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "bologna_current",
       "played": false
     },
     {
@@ -12122,6 +17190,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-02",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "como_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-02",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
       "competition": "League One",
       "date": "2027-05-08",
       "time": "12:30",
@@ -12298,6 +17506,146 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-09",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-09",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2027-05-15",
       "time": "15:00",
@@ -12378,6 +17726,286 @@
       "played": false
     },
     {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-16",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "como_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "parma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-16",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "atletico_current",
+      "awayTeamId": "athletic_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "alaves_current",
+      "awayTeamId": "realmadrid_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "sevilla_current",
+      "awayTeamId": "getafe_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "villarreal_current",
+      "awayTeamId": "osasuna_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "racing_current",
+      "awayTeamId": "levante_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "deportivo_current",
+      "awayTeamId": "espanyol_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "rayo_current",
+      "awayTeamId": "betis_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "barcelona_current",
+      "awayTeamId": "malaga_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "valencia_current",
+      "awayTeamId": "elche_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-23",
+      "homeTeamId": "celta_current",
+      "awayTeamId": "realsociedad_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "roma_current",
+      "awayTeamId": "como_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "parma_current",
+      "awayTeamId": "juventus_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "torino_current",
+      "awayTeamId": "napoli_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "atalanta_current",
+      "awayTeamId": "lecce_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "inter_current",
+      "awayTeamId": "lazio_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "udinese_current",
+      "awayTeamId": "sassuolo_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "frosinone_current",
+      "awayTeamId": "cagliari_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "fiorentina_current",
+      "awayTeamId": "monza_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "venezia_current",
+      "awayTeamId": "milan_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-23",
+      "homeTeamId": "genoa_current",
+      "awayTeamId": "bologna_current",
+      "played": false
+    },
+    {
       "competition": "Premier League",
       "date": "2027-05-23",
       "time": "15:00",
@@ -12455,6 +18083,146 @@
       "time": "15:00",
       "homeTeamId": "manchester_city_current",
       "awayTeamId": "aston_villa_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "levante_current",
+      "awayTeamId": "celta_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "realmadrid_current",
+      "awayTeamId": "deportivo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "betis_current",
+      "awayTeamId": "atletico_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "realsociedad_current",
+      "awayTeamId": "villarreal_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "malaga_current",
+      "awayTeamId": "sevilla_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "elche_current",
+      "awayTeamId": "racing_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "athletic_current",
+      "awayTeamId": "rayo_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "espanyol_current",
+      "awayTeamId": "alaves_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "getafe_current",
+      "awayTeamId": "barcelona_current",
+      "played": false
+    },
+    {
+      "competition": "La Liga",
+      "date": "2027-05-30",
+      "homeTeamId": "osasuna_current",
+      "awayTeamId": "valencia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "milan_current",
+      "awayTeamId": "udinese_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "juventus_current",
+      "awayTeamId": "frosinone_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "monza_current",
+      "awayTeamId": "torino_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "sassuolo_current",
+      "awayTeamId": "inter_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "cagliari_current",
+      "awayTeamId": "roma_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "lazio_current",
+      "awayTeamId": "fiorentina_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "como_current",
+      "awayTeamId": "genoa_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "napoli_current",
+      "awayTeamId": "atalanta_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "lecce_current",
+      "awayTeamId": "venezia_current",
+      "played": false
+    },
+    {
+      "competition": "Serie A",
+      "date": "2027-05-30",
+      "homeTeamId": "bologna_current",
+      "awayTeamId": "parma_current",
       "played": false
     },
     {

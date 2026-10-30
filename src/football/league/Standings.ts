@@ -20,6 +20,8 @@ export const LEAGUE_TABS: { id: EnglishLeague; label: string }[] = [
   { id: "PREMIER_LEAGUE", label: "Premier League" },
   { id: "CHAMPIONSHIP", label: "Championship" },
   { id: "LEAGUE_ONE", label: "League One" },
+  { id: "LA_LIGA", label: "La Liga" },
+  { id: "SERIE_A", label: "Serie A" },
 ];
 
 export function competitionForLeague(league: EnglishLeague): string {
