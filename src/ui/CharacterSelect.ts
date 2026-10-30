@@ -1,6 +1,6 @@
 import type { SquadPlayer } from "../core/Database";
 import { FORMATION_NAMES, getFormation, remapPlayersToFormation } from "../football/teams/Formation";
-import type { KitChoice, TeamKit, TeamRecord } from "../data/schema";
+import type { KitChoice, PositionCode, TeamKit, TeamRecord } from "../data/schema";
 import {
   PLAY_STYLE_IDS,
   PLAY_STYLE_LABELS,
@@ -11,6 +11,39 @@ import {
 import { kitsClash, pickTeamKit, teamHomeKit, teamResolvedAwayKit } from "../football/teams/KitClash";
 import { fitKitSurnameElements, kitMarkerHtml, portraitHtml, teamBadgeHtml } from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
+
+const EDIT_POSITIONS: PositionCode[] = [
+  "GK",
+  "RB",
+  "CB",
+  "LB",
+  "RWB",
+  "LWB",
+  "DM",
+  "CM",
+  "AM",
+  "RM",
+  "LM",
+  "RW",
+  "LW",
+  "ST",
+];
+
+/** Payload from Formation squad right-click edit → persist. */
+export type SquadPlayerEdit = {
+  playerId: string;
+  teamId: string;
+  name: string;
+  displayName: string;
+  shirtNumber: number;
+  primaryPosition: PositionCode;
+  pace: number;
+  passing: number;
+  control: number;
+  shooting: number;
+  defending: number;
+  stamina: number;
+};
 
 type TeamBadgeSource = {
   id?: string;
@@ -109,12 +142,16 @@ function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
 
+function escapeAttr(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+
 function clamp(n: number, lo: number, hi: number): number {
   return Math.min(hi, Math.max(lo, n));
 }
 
 /** Portrait formation layout: own goal at the bottom, attack toward the top. */
-const LATERAL_CENTER = 48.5;
+const LATERAL_CENTER = 50;
 const LATERAL_HALF_SPAN = 44;
 
 export function formationToPitchPercent(x: number, z: number): { left: number; bottom: number } {
@@ -124,9 +161,9 @@ export function formationToPitchPercent(x: number, z: number): { left: number; b
   };
 }
 
-/** Minimum centre-to-centre gap so ~36px markers (+ caption) do not overlap (percent of pitch). */
-export const MARKER_MIN_DX = 8.5;
-export const MARKER_MIN_DY = 11.5;
+/** Minimum centre-to-centre gap so ~88px markers (+ name under) do not overlap (percent of pitch). */
+export const MARKER_MIN_DX = 15.5;
+export const MARKER_MIN_DY = 19.5;
 const MARKER_SEPARATE_ITERS = 10;
 
 export interface PitchMarkerPoint {
@@ -295,6 +332,7 @@ export class CharacterSelect {
   index = 0;
   players: SquadPlayer[] = [];
   teamName = "";
+  teamId = "";
   teamColor = "#007A3D";
   teamSecondaryColor = "#ffffff";
   /** Optional club/nation record for the formation header crest. */
@@ -327,6 +365,10 @@ export class CharacterSelect {
   slotOffsets = new Map<string, SlotOffset>();
   private dragPlayerId: string | null = null;
   private nudge: NudgeState | null = null;
+  /** Open squad-list right-click editor (null while closed). */
+  private editingPlayerId: string | null = null;
+  /** Persist edits from the Formation squad editor. */
+  onSquadPlayerSave: ((edit: SquadPlayerEdit) => void) | null = null;
 
   constructor(parent: HTMLElement) {
     this.root = document.createElement("div");
@@ -346,6 +388,8 @@ export class CharacterSelect {
     this.root.addEventListener("pointermove", (e) => this.onPitchPointerMove(e));
     this.root.addEventListener("pointerup", (e) => this.onPitchPointerUp(e));
     this.root.addEventListener("pointercancel", (e) => this.onPitchPointerUp(e));
+    this.root.addEventListener("contextmenu", (e) => this.onRosterContextMenu(e));
+    this.root.addEventListener("click", (e) => this.onEditDialogClick(e));
   }
 
   setSquad(
@@ -369,6 +413,8 @@ export class CharacterSelect {
     },
   ): void {
     this.teamName = teamName;
+    this.teamId = options?.team?.id?.trim() || this.teamId;
+    this.editingPlayerId = null;
     this.teamColor = teamColor;
     this.teamSecondaryColor = options?.secondaryColor?.trim() || "#ffffff";
     this.teamRecord = options?.team && "defaultKit" in options.team ? options.team : null;
@@ -773,14 +819,14 @@ export class CharacterSelect {
                 ${stat("SHOT", a.shooting)}${stat("DEF", a.defending)}${stat("STM", a.stamina)}
               </div>
             </div>
-            <div class="team-roster-title">SQUAD</div>
+            <div class="team-roster-title">SQUAD <span class="team-roster-hint">Right-click to edit</span></div>
             <div class="team-roster-list">
               ${this.players
                 .map((p) => {
                   const name = kitSurname(p.player.displayName || p.player.name);
                   const active = p.player.id === selectedId ? "on" : "";
                   const role = onPitch.has(p.player.id) ? "XI" : "SUB";
-                  return `<button type="button" class="roster-row ${active}" data-char="pick" data-id="${p.player.id}">
+                  return `<button type="button" class="roster-row ${active}" data-char="pick" data-id="${p.player.id}" title="Left-click select · Right-click edit">
                     <span class="roster-num">${p.shirtNumber}</span>
                     <span class="roster-name">${escapeHtml(name)}</span>
                     <span class="roster-pos">${p.player.primaryPosition}</span>
@@ -848,7 +894,147 @@ export class CharacterSelect {
         </div>
         ${this.modeNavHtml("TEAM")}
       </div>
+      ${this.squadEditDialogHtml()}
     `;
+  }
+
+  private squadEditDialogHtml(): string {
+    if (!this.editingPlayerId) return "";
+    const sp = this.players.find((p) => p.player.id === this.editingPlayerId);
+    if (!sp) return "";
+    const p = sp.player;
+    const a = sp.attrs;
+    const posOpts = EDIT_POSITIONS.map(
+      (pos) =>
+        `<option value="${pos}"${pos === p.primaryPosition ? " selected" : ""}>${pos}</option>`,
+    ).join("");
+    return `
+      <div class="squad-edit-overlay" data-squad-edit="backdrop" role="presentation">
+        <div class="squad-edit-dialog" role="dialog" aria-modal="true" aria-label="Edit player" data-squad-edit="dialog">
+          <h3>Edit player</h3>
+          <p class="hint">Changes save to your local squad data.</p>
+          <label>Name <input data-edit-field="name" type="text" value="${escapeAttr(p.name)}" /></label>
+          <label>Display name <input data-edit-field="displayName" type="text" value="${escapeAttr(p.displayName || p.name)}" /></label>
+          <div class="squad-edit-row">
+            <label>Shirt # <input data-edit-field="shirtNumber" type="number" min="1" max="99" value="${sp.shirtNumber}" /></label>
+            <label>Position <select data-edit-field="primaryPosition">${posOpts}</select></label>
+          </div>
+          <div class="squad-edit-attrs">
+            <label>Pace <input data-edit-field="pace" type="number" min="1" max="100" value="${a.pace}" /></label>
+            <label>Pass <input data-edit-field="passing" type="number" min="1" max="100" value="${a.passing}" /></label>
+            <label>Ctrl <input data-edit-field="control" type="number" min="1" max="100" value="${a.control}" /></label>
+            <label>Shot <input data-edit-field="shooting" type="number" min="1" max="100" value="${a.shooting}" /></label>
+            <label>Def <input data-edit-field="defending" type="number" min="1" max="100" value="${a.defending}" /></label>
+            <label>Stm <input data-edit-field="stamina" type="number" min="1" max="100" value="${a.stamina}" /></label>
+          </div>
+          <div class="row-btns">
+            <button type="button" data-squad-edit="cancel">Cancel</button>
+            <button type="button" class="primary" data-squad-edit="save">Save</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private onRosterContextMenu(e: MouseEvent): void {
+    const row = (e.target as HTMLElement).closest<HTMLElement>(".roster-row[data-id]");
+    if (!row || !this.root.contains(row)) return;
+    e.preventDefault();
+    const id = row.getAttribute("data-id");
+    if (!id) return;
+    this.selectPlayerId(id);
+    this.editingPlayerId = id;
+    this.render();
+  }
+
+  private onEditDialogClick(e: MouseEvent): void {
+    const act = (e.target as HTMLElement).closest<HTMLElement>("[data-squad-edit]");
+    if (!act) return;
+    const kind = act.getAttribute("data-squad-edit");
+    if (kind === "cancel" || kind === "backdrop") {
+      e.preventDefault();
+      this.editingPlayerId = null;
+      this.render();
+      return;
+    }
+    if (kind === "dialog") {
+      e.stopPropagation();
+      return;
+    }
+    if (kind !== "save") return;
+    e.preventDefault();
+    this.commitSquadPlayerEdit();
+  }
+
+  private commitSquadPlayerEdit(): void {
+    const id = this.editingPlayerId;
+    if (!id) return;
+    const sp = this.players.find((p) => p.player.id === id);
+    if (!sp) {
+      this.editingPlayerId = null;
+      this.render();
+      return;
+    }
+    const read = (field: string): string => {
+      const el = this.root.querySelector<HTMLInputElement | HTMLSelectElement>(`[data-edit-field="${field}"]`);
+      return el?.value?.trim() ?? "";
+    };
+    const num = (field: string, fallback: number): number => {
+      const v = Number(read(field));
+      return Number.isFinite(v) ? v : fallback;
+    };
+    const clampAttr = (n: number) => Math.max(1, Math.min(100, Math.round(n)));
+    const posRaw = read("primaryPosition") as PositionCode;
+    const primaryPosition = EDIT_POSITIONS.includes(posRaw) ? posRaw : sp.player.primaryPosition;
+    const edit: SquadPlayerEdit = {
+      playerId: id,
+      teamId: this.teamId,
+      name: read("name") || sp.player.name,
+      displayName: read("displayName") || read("name") || sp.player.displayName,
+      shirtNumber: Math.max(1, Math.min(99, Math.round(num("shirtNumber", sp.shirtNumber)))),
+      primaryPosition,
+      pace: clampAttr(num("pace", sp.attrs.pace)),
+      passing: clampAttr(num("passing", sp.attrs.passing)),
+      control: clampAttr(num("control", sp.attrs.control)),
+      shooting: clampAttr(num("shooting", sp.attrs.shooting)),
+      defending: clampAttr(num("defending", sp.attrs.defending)),
+      stamina: clampAttr(num("stamina", sp.attrs.stamina)),
+    };
+    this.applySquadPlayerEditLocally(edit);
+    this.onSquadPlayerSave?.(edit);
+    this.editingPlayerId = null;
+    this.render();
+  }
+
+  private applySquadPlayerEditLocally(edit: SquadPlayerEdit): void {
+    const patch = (sp: SquadPlayer): void => {
+      if (sp.player.id !== edit.playerId) return;
+      sp.player.name = edit.name;
+      sp.player.displayName = edit.displayName;
+      sp.player.primaryPosition = edit.primaryPosition;
+      sp.player.pace = edit.pace;
+      sp.player.passing = edit.passing;
+      sp.player.control = edit.control;
+      sp.player.shooting = edit.shooting;
+      sp.player.defending = edit.defending;
+      sp.player.stamina = edit.stamina;
+      sp.membership.shirtNumber = edit.shirtNumber;
+      sp.shirtNumber = edit.shirtNumber;
+      sp.attrs = {
+        ...sp.attrs,
+        ...sp.player,
+        pace: edit.pace,
+        passing: edit.passing,
+        control: edit.control,
+        shooting: edit.shooting,
+        defending: edit.defending,
+        stamina: edit.stamina,
+      };
+    };
+    for (const sp of this.players) patch(sp);
+    for (const row of this.xi) patch(row.player);
+    for (const sp of this.bench) patch(sp);
+    this.syncPlayersList();
   }
 
   private modeNavHtml(mode: ControlMode): string {

@@ -124,13 +124,13 @@ export const ARGYLE_FANS_PLAYERS: PlayerRecord[] = [
 export const ARGYLE_FANS_XI: { id: string; shirtNumber: number; slot: string; captain?: boolean }[] = [
   { id: "player_fan_cd_pafc", shirtNumber: 1, slot: "GK" },
   { id: "player_fan_argyletweet", shirtNumber: 2, slot: "LB" },
-  { id: "player_fan_v_doo", shirtNumber: 21, slot: "LCB" },
+  { id: "player_fan_v_doo", shirtNumber: 5, slot: "LCB" },
   { id: "player_fan_t_bones", shirtNumber: 3, slot: "RCB" },
   { id: "player_fan_a_tweets", shirtNumber: 4, slot: "RB" },
-  { id: "player_fan_l_days", shirtNumber: 11, slot: "LM" },
+  { id: "player_fan_l_days", shirtNumber: 7, slot: "LM" },
   { id: "player_fan_c_pilgrim", shirtNumber: 8, slot: "LCM" },
   { id: "player_fan_a_life", shirtNumber: 6, slot: "RCM" },
-  { id: "player_fan_s_argotweets", shirtNumber: 7, slot: "RM" },
+  { id: "player_fan_s_argotweets", shirtNumber: 11, slot: "RM" },
   { id: "player_fan_s_down", shirtNumber: 9, slot: "LST" },
   { id: "player_fan_p_face", shirtNumber: 10, slot: "RST", captain: true },
 ];

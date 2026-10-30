@@ -25,7 +25,7 @@ import { createPlayerVisual } from "../football/players/PlayerVisual";
 import { Player } from "../football/players/Player";
 import { applyClubNameAppearance, applyTitleFont } from "../ui/TitleFonts";
 import { MainMenu } from "../ui/MainMenu";
-import { CharacterSelect } from "../ui/CharacterSelect";
+import { CharacterSelect, type SquadPlayerEdit } from "../ui/CharacterSelect";
 import { KitPanelPreview } from "../ui/KitPanelPreview";
 import { PauseMenu } from "../ui/PauseMenu";
 import { SettingsMenu } from "../ui/Settings";
@@ -139,6 +139,7 @@ export class Game {
     };
     this.menu.onPredictionsRefresh = () => this.paintMainMenu();
     this.chars = new CharacterSelect(this.ui);
+    this.chars.onSquadPlayerSave = (edit) => this.persistSquadPlayerEdit(edit);
     this.pause = new PauseMenu(this.ui);
     this.settings = new SettingsMenu(this.ui);
     this.settings.onSectionChange = (section) => {
@@ -1063,6 +1064,30 @@ export class Game {
     if (q.get("autoplay") === "1") this.startAttract();
   }
 
+  private persistSquadPlayerEdit(edit: SquadPlayerEdit): void {
+    const player = this.db.players.get(edit.playerId);
+    if (!player) return;
+    player.name = edit.name;
+    player.displayName = edit.displayName;
+    player.primaryPosition = edit.primaryPosition;
+    player.pace = edit.pace;
+    player.passing = edit.passing;
+    player.control = edit.control;
+    player.shooting = edit.shooting;
+    player.defending = edit.defending;
+    player.stamina = edit.stamina;
+    const teamId = edit.teamId || this.charTeamId;
+    for (const m of this.db.memberships) {
+      if (m.playerId === edit.playerId && (!teamId || m.teamId === teamId)) {
+        m.shirtNumber = edit.shirtNumber;
+      }
+    }
+    this.save.data.players = [...this.db.players.values()];
+    this.save.data.memberships = this.db.memberships;
+    this.save.save();
+    this.audio.ui();
+  }
+
   private openCharacterSelect(teamId: string): void {
     this.menu.hide();
     this.charTeamId = teamId;
@@ -1467,6 +1492,7 @@ export class Game {
   private openPauseFormation(): void {
     if (!this.match) return;
     const team = this.match.userTeam();
+    this.charTeamId = team.record.id;
     const byId = new Map(team.roster.map((s) => [s.player.id, s]));
     const starters = team.players
       .map((p) => byId.get(p.id))

@@ -75,29 +75,29 @@ export function kitSurnameFromName(name: string): string {
   return parts[parts.length - 1].toUpperCase();
 }
 
-/** Scale surname text so long names still fit in the kit circle / caption. */
+/** Scale surname text so long names still fit — mild shrink only; never go tiny when space exists. */
 export function surnameFitPx(surname: string, base: number): number {
   const len = surname.length;
-  if (len <= 4) return base;
-  if (len <= 6) return Math.round(base * 0.9);
-  if (len <= 8) return Math.round(base * 0.76);
-  if (len <= 10) return Math.round(base * 0.64);
-  if (len <= 12) return Math.round(base * 0.54);
-  if (len <= 14) return Math.round(base * 0.46);
-  return Math.max(7, Math.round(base * 0.4));
+  if (len <= 5) return base;
+  if (len <= 7) return Math.round(base * 0.9);
+  if (len <= 9) return Math.round(base * 0.8);
+  if (len <= 11) return Math.round(base * 0.72);
+  if (len <= 13) return Math.round(base * 0.64);
+  return Math.max(Math.round(base * 0.56), Math.min(base, 9));
 }
 
 /** Tighten tracking on long kit surnames so more letters fit before shrinking further. */
 export function surnameLetterSpacingEm(surname: string): number {
   const len = surname.length;
-  if (len <= 6) return 0.05;
-  if (len <= 9) return 0.03;
-  if (len <= 12) return 0.015;
+  if (len <= 6) return 0.04;
+  if (len <= 9) return 0.025;
+  if (len <= 12) return 0.01;
   return 0;
 }
 
 /**
  * Shrink kit surnames in-place until they fit their marker — never ellipsize with "…".
+ * Uses the full marker width for names under the disc; keeps a readable floor.
  */
 export function fitKitSurnameElements(root: ParentNode): void {
   const nodes = root.querySelectorAll<HTMLElement>(
@@ -105,41 +105,50 @@ export function fitKitSurnameElements(root: ParentNode): void {
   );
   for (const el of nodes) {
     const caption = el.closest<HTMLElement>(".kit-marker-caption");
+    const marker = el.closest<HTMLElement>(".kit-marker");
     const host =
       caption ??
       el.closest<HTMLElement>(".portrait-badge-kit, .pitch-kit") ??
       el.parentElement;
-    // Photo captions: number + name share one line under the formation disc (~56px).
+    // Name under photo: use full marker width (~72px+). Inside-badge: disc width.
+    const markerW = marker?.clientWidth || host?.clientWidth || 52;
+    // Caption is "num + name" on one row — fit against remaining width after the number.
+    const numEl = caption?.querySelector<HTMLElement>(".kit-marker-num");
+    const numW = numEl ? numEl.getBoundingClientRect().width + 4 : 0;
     const maxW = caption
-      ? Math.max(12, Math.min(56, caption.clientWidth || 56) - 2)
-      : Math.max(10, (host?.clientWidth ?? el.clientWidth ?? 36) - 2);
+      ? Math.max(36, Math.min(108, (caption.clientWidth || markerW || 112) - numW) - 4)
+      : Math.max(28, (host?.clientWidth ?? el.clientWidth ?? 88) - 8);
     if (maxW < 8) continue;
-    el.style.overflow = caption ? "hidden" : "visible";
+    el.style.overflow = "hidden";
     el.style.textOverflow = "clip";
     el.style.whiteSpace = "nowrap";
-    let size = parseFloat(el.style.fontSize) || parseFloat(getComputedStyle(el).fontSize) || 14;
+    let size = parseFloat(el.style.fontSize) || parseFloat(getComputedStyle(el).fontSize) || 18;
     const trackingMatch = /^([\d.]+)em$/.exec(el.style.letterSpacing.trim());
     let tracking = trackingMatch ? Number(trackingMatch[1]) : 0.04;
     el.style.fontSize = `${size}px`;
     el.style.letterSpacing = `${tracking}em`;
     let guard = 0;
-    const over = () => (caption ? caption.scrollWidth > maxW + 1 : el.scrollWidth > maxW);
-    while (over() && size > 6.5 && guard < 40) {
+    // Caption under disc: shrink earlier so long names never crowd the counter.
+    const floor = caption ? 10 : 9;
+    const over = () => el.scrollWidth > maxW + 0.5;
+    while (over() && size > floor && guard < 48) {
       size -= 0.5;
       el.style.fontSize = `${size}px`;
+      if (numEl) numEl.style.fontSize = `${size}px`;
       guard += 1;
     }
-    while (over() && tracking > 0 && guard < 60) {
+    while (over() && tracking > 0 && guard < 72) {
       tracking = Math.max(0, tracking - 0.01);
       el.style.letterSpacing = `${tracking}em`;
       guard += 1;
     }
+    if (numEl && !numEl.style.fontSize) numEl.style.fontSize = `${size}px`;
   }
 }
 
 /**
  * Formation / substitute marker: circle badge with number above surname,
- * or PNG circle with number + surname under the image.
+ * or PNG circle with shirt number overlaid on top and surname under the image.
  */
 export function kitMarkerHtml(
   player: PortraitSource,
@@ -153,12 +162,13 @@ export function kitMarkerHtml(
   const surname = kitSurnameFromName(label);
   const src = portraitAsset(player);
   const bench = (options.className ?? "").includes("kit-marker-bench");
-  // Bench circles are larger; keep type modest so number+surname fit inside the disc.
-  const surSize = surnameFitPx(surname, bench ? 12 : 12);
-  const captionSize = surnameFitPx(surname, bench ? 12 : 13);
+  const surSize = surnameFitPx(surname, bench ? 15 : 17);
+  // Match shirt number size under PNG counters.
+  const captionSize = surnameFitPx(surname, bench ? 15 : 17);
   const tracking = surnameLetterSpacingEm(surname);
   const nameStyle = `font-size:${captionSize}px;letter-spacing:${tracking}em`;
   const surStyle = `font-size:${surSize}px;letter-spacing:${tracking}em`;
+  // Photo: shirt number then surname under the disc (no overlay on the PNG).
   const caption = `<div class="kit-marker-caption" style="color:${escapePortrait(text)}"><span class="kit-marker-num">${shirtNumber}</span><span class="kit-marker-name" style="${nameStyle}">${escapePortrait(surname)}</span></div>`;
   const badge = `<div class="portrait-badge portrait-badge-kit" style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div>`;
 

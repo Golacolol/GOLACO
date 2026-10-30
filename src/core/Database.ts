@@ -85,10 +85,11 @@ export class GameDatabase {
     for (const s of stadiums) db.stadiums.set(s.id, s);
     db.advertising = advertising;
     db.stories = stories;
-    db.applySave(save);
+    // Authored squads first; then save overlays player/membership edits so they persist.
     db.applyArgyleFansXi();
     db.applyArgyle101();
     db.applyClassicTeams();
+    db.applySave(save);
     await db.applyAssetPack();
     return db;
   }
@@ -153,10 +154,9 @@ export class GameDatabase {
         },
       });
     }
-    const squadMem = this.memberships.filter((m) => m.teamId === options.teamId);
-    if (!squadMem.some((m) => m.playerId.startsWith(options.playerPrefix))) {
-      this.memberships = this.memberships.filter((m) => m.teamId !== options.teamId).concat(options.memberships);
-    }
+    // Always refresh named-squad memberships from TS (shirt numbers / slots).
+    // Saved edits overlay this later via applySave.
+    this.memberships = this.memberships.filter((m) => m.teamId !== options.teamId).concat(options.memberships);
     const lineup = this.lineups.find((l) => l.teamId === options.teamId);
     if (!lineup?.starters.some((s) => s.playerId.startsWith(options.playerPrefix))) {
       this.lineups = this.lineups.filter((l) => l.teamId !== options.teamId).concat(options.lineup);
@@ -246,7 +246,16 @@ export class GameDatabase {
     for (const t of save.data.teams as TeamRecord[]) {
       if (t?.id) this.teams.set(t.id, { ...(this.teams.get(t.id) ?? t), ...t });
     }
-    if (save.data.memberships.length) this.memberships = save.data.memberships as TeamMembership[];
+    if (save.data.memberships.length) {
+      // Overlay saved memberships onto authored squads so shirt/role edits persist.
+      for (const raw of save.data.memberships as TeamMembership[]) {
+        if (!raw?.playerId || !raw?.teamId) continue;
+        const i = this.memberships.findIndex((m) => m.teamId === raw.teamId && m.playerId === raw.playerId);
+        if (i >= 0) this.memberships[i] = { ...this.memberships[i], ...raw };
+        else this.memberships.push(raw);
+      }
+      this.migrateArgyleFansShirtNumbers();
+    }
     const savedTeam = (save.data.settings as { defaultTeamId?: string }).defaultTeamId;
     if (savedTeam && this.teams.has(savedTeam)) this.userTeamId = savedTeam;
     if (save.data.settings.leagueProgression && save.data.playedListedFixture && save.data.fixtures.length) {
@@ -255,6 +264,20 @@ export class GameDatabase {
       this.overlayUserFixtureResults(save.data.fixtures as FixtureRecord[]);
     }
     if (save.data.advertising.length) this.advertising = save.data.advertising as AdvertisingBoardRecord[];
+  }
+
+  /** One-shot remap for older saves that still have Doo #21 / Days #11 / ArgoTweets #7. */
+  private migrateArgyleFansShirtNumbers(): void {
+    const doo = this.memberships.find((m) => m.teamId === ARGYLE_FANS_TEAM_ID && m.playerId === "player_fan_v_doo");
+    const days = this.memberships.find((m) => m.teamId === ARGYLE_FANS_TEAM_ID && m.playerId === "player_fan_l_days");
+    const argo = this.memberships.find(
+      (m) => m.teamId === ARGYLE_FANS_TEAM_ID && m.playerId === "player_fan_s_argotweets",
+    );
+    if (doo?.shirtNumber === 21) doo.shirtNumber = 5;
+    if (days?.shirtNumber === 11 && argo?.shirtNumber === 7) {
+      days.shirtNumber = 7;
+      argo.shirtNumber = 11;
+    }
   }
 
   /** Rebuild the English league calendar from scratch (casual / REAL baseline). */

@@ -107,7 +107,7 @@
   {
     "playerId": "player_fan_v_doo",
     "teamId": "argyle_fans_xi",
-    "shirtNumber": 21,
+    "shirtNumber": 5,
     "squadRole": "FAN",
     "from": "2026-01-01",
     "to": null
@@ -131,7 +131,7 @@
   {
     "playerId": "player_fan_l_days",
     "teamId": "argyle_fans_xi",
-    "shirtNumber": 11,
+    "shirtNumber": 7,
     "squadRole": "FAN",
     "from": "2026-01-01",
     "to": null
@@ -155,7 +155,7 @@
   {
     "playerId": "player_fan_s_argotweets",
     "teamId": "argyle_fans_xi",
-    "shirtNumber": 7,
+    "shirtNumber": 11,
     "squadRole": "FAN",
     "from": "2026-01-01",
     "to": null

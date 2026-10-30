@@ -4,8 +4,8 @@
  *
  * Runs via `npm run data:results` and on Vite server/build start.
  * Fetches Premier League / Championship / League One scores AND upcoming
- * fixtures from TheFishy, plus La Liga / Serie A from openfootball, into
- * public/data/officialResultsOverlay.json.
+ * fixtures from TheFishy, La Liga / Serie A scores from ESPN (with
+ * openfootball schedule gap-fill), into public/data/officialResultsOverlay.json.
  *
  * Played overlay rows drive tables; unplayed overlay rows are the real
  * remaining calendar so the in-game schedule cannot invent wrong pairings.
@@ -19,6 +19,7 @@ import {
   mapFootballJsonMatches,
   normalizeClubName,
 } from "./lib/footballJsonResults.mjs";
+import { fetchEspnLeagueMatches } from "./lib/espnResults.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const outFile = join(root, "public", "data", "officialResultsOverlay.json");
@@ -120,7 +121,7 @@ const NAME_ALIASES = {
   hull: "Hull City",
   ipswich: "Ipswich Town",
   coventry: "Coventry City",
-  // La Liga
+  // La Liga (+ ESPN short labels)
   athletic: "Athletic Club",
   "athletic club": "Athletic Club",
   "athletic bilbao": "Athletic Club",
@@ -131,6 +132,8 @@ const NAME_ALIASES = {
   "atlético madrid": "Club Atlético de Madrid",
   alaves: "Deportivo Alavés",
   "alavés": "Deportivo Alavés",
+  "deportivo alavés": "Deportivo Alavés",
+  "deportivo alaves": "Deportivo Alavés",
   elche: "Elche CF",
   barcelona: "FC Barcelona",
   "barça": "FC Barcelona",
@@ -142,6 +145,8 @@ const NAME_ALIASES = {
   "celta vigo": "RC Celta de Vigo",
   deportivo: "RC Deportivo La Coruña",
   "deportivo la coruña": "RC Deportivo La Coruña",
+  "deportivo de a coruña": "RC Deportivo La Coruña",
+  "deportivo la coruna": "RC Deportivo La Coruña",
   espanyol: "RCD Espanyol de Barcelona",
   rayo: "Rayo Vallecano de Madrid",
   "rayo vallecano": "Rayo Vallecano de Madrid",
@@ -150,11 +155,12 @@ const NAME_ALIASES = {
   "real madrid": "Real Madrid CF",
   racing: "Real Racing Club de Santander",
   "racing santander": "Real Racing Club de Santander",
+  "racing de santander": "Real Racing Club de Santander",
   "real sociedad": "Real Sociedad de Fútbol",
   sevilla: "Sevilla FC",
   valencia: "Valencia CF",
   villarreal: "Villarreal CF",
-  // Serie A
+  // Serie A (+ ESPN short labels)
   milan: "AC Milan",
   "ac milan": "AC Milan",
   monza: "AC Monza",
@@ -162,6 +168,7 @@ const NAME_ALIASES = {
   roma: "AS Roma",
   "as roma": "AS Roma",
   atalanta: "Atalanta BC",
+  "atalanta bc": "Atalanta BC",
   bologna: "Bologna FC 1909",
   cagliari: "Cagliari Calcio",
   como: "Como 1907",
@@ -175,6 +182,7 @@ const NAME_ALIASES = {
   parma: "Parma Calcio 1913",
   lazio: "SS Lazio",
   napoli: "SSC Napoli",
+  "ssc napoli": "SSC Napoli",
   torino: "Torino FC",
   lecce: "US Lecce",
   sassuolo: "US Sassuolo Calcio",
@@ -468,15 +476,32 @@ async function main() {
     console.warn(`TheFishy refresh failed (${err instanceof Error ? err.message : err}).`);
   }
 
-  // Always pull openfootball as backup / gap-fill (CC0). Fishy rows win on upsert for same pairing.
+  // openfootball: full calendar + early scores (CC0). Fishy / ESPN overwrite same pairings.
   console.log("Fetching openfootball/football.json fallback…");
   const fb = await fetchFootballJsonFallback(byName);
   if (fb.length) {
     collected.push(...fb);
     source = fishyOk ? "thefishy+openfootball" : "openfootball";
-  } else if (!fishyOk) {
+  }
+
+  // ESPN fills La Liga / Serie A results that openfootball often lags on.
+  console.log("Fetching ESPN La Liga / Serie A…");
+  const espn = await fetchEspnLeagueMatches((name) => resolveTeamLoose(byName, name), {
+    throughDate: todayIso(),
+    aheadDays: 21,
+  });
+  if (espn.length) {
+    collected.push(...espn);
+    source = source.includes("thefishy")
+      ? "thefishy+openfootball+espn"
+      : source === "openfootball"
+        ? "openfootball+espn"
+        : "espn";
+  }
+
+  if (!collected.length) {
     source = "manual";
-    console.warn("No Fishy or openfootball data — keeping existing overlay.");
+    console.warn("No Fishy, openfootball, or ESPN data — keeping existing overlay.");
     if (existsSync(outFile)) {
       const prev = JSON.parse(readFileSync(outFile, "utf8"));
       console.log(`Overlay asOf=${prev.asOf ?? "?"} matches=${(prev.matches ?? []).length}`);
@@ -486,10 +511,12 @@ async function main() {
 
   const season = collected.filter((m) => m.date >= "2026-08-01");
   const byKey = new Map();
-  // Prefer TheFishy: seed openfootball first, then Fishy overwrites same pairings.
+  // Seed openfootball, then ESPN (EU scores), then Fishy (English) — later wins on upsert.
   const fbRefs = new Set(fb);
+  const espnRefs = new Set(espn);
   for (const match of season.filter((m) => fbRefs.has(m))) upsertMatch(byKey, match);
-  for (const match of season.filter((m) => !fbRefs.has(m))) upsertMatch(byKey, match);
+  for (const match of season.filter((m) => espnRefs.has(m))) upsertMatch(byKey, match);
+  for (const match of season.filter((m) => !fbRefs.has(m) && !espnRefs.has(m))) upsertMatch(byKey, match);
 
   // Drop same-day double-bookings (Fishy sometimes lists rearranged + original cards).
   // Prefer played rows, then earlier kick-off.

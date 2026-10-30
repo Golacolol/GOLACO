@@ -791,12 +791,19 @@ html.club-name-glow-off .club-line {
 }
 .menu-list .league-tabs {
   margin: 0 0 10px;
-  gap: 6px;
+  gap: 4px;
   flex: 0 0 auto;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .menu-list .league-tabs button {
-  padding: 5px 8px;
-  font-size: 10px;
+  padding: 5px 6px;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  flex: 1 1 0;
+  white-space: nowrap;
+  min-width: 0;
 }
 .menu-list.panel-league .table-wrap {
   flex: 1 1 auto;
@@ -1230,6 +1237,80 @@ html.club-name-glow-off .club-line {
 }
 .char-stats-compact div { padding-bottom: 4px; }
 .char-stats-compact i { height: 2px; bottom: -1px; }
+.team-roster-hint {
+  margin-left: 6px;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  opacity: 0.45;
+  text-transform: none;
+}
+.squad-edit-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background: rgba(4, 18, 12, 0.72);
+  padding: 16px;
+}
+.squad-edit-dialog {
+  width: min(420px, 100%);
+  max-height: min(90vh, 640px);
+  overflow: auto;
+  padding: 18px 18px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(197, 165, 114, 0.45);
+  background: linear-gradient(165deg, #0d2a1c 0%, #071810 100%);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  color: var(--paper);
+}
+.squad-edit-dialog h3 {
+  margin: 0 0 4px;
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  letter-spacing: 0.06em;
+  font-size: 18px;
+}
+.squad-edit-dialog .hint {
+  margin: 0 0 12px;
+  font-size: 11px;
+  opacity: 0.65;
+}
+.squad-edit-dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+}
+.squad-edit-dialog input,
+.squad-edit-dialog select {
+  font: inherit;
+  padding: 7px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--paper);
+}
+.squad-edit-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.squad-edit-attrs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.squad-edit-dialog .row-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
 .team-roster-title {
   color: var(--gold);
   letter-spacing: 0.18em;
@@ -1335,11 +1416,11 @@ html.club-name-glow-off .club-line {
   position: absolute;
   transform: translate(-50%, 0);
   z-index: 2;
-  width: 52px;
-  min-height: 58px;
+  width: 112px;
+  min-height: 126px;
 }
 .pitch-slot.empty {
-  min-height: 48px;
+  min-height: 88px;
   border-radius: 10px;
 }
 .pitch-slot.nudging {
@@ -1364,7 +1445,7 @@ html.club-name-glow-off .club-line {
   cursor: grab;
   display: grid;
   justify-items: center;
-  gap: 2px;
+  gap: 0;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
@@ -1406,17 +1487,19 @@ html.club-name-glow-off .club-line {
   min-width: 12rem;
   padding: 10px 14px;
 }
-/* Beat `.char-panel .portrait { 120px }` so formation discs stay compact. */
+/* Beat `.char-panel .portrait { 120px }` — formation discs large enough to read. */
 .char-panel-team .pitch-token .portrait,
 .char-panel-team .kit-marker .portrait,
 .team-pitch .pitch-token .portrait,
 .team-pitch .kit-marker .portrait {
-  width: 36px;
-  height: 36px;
+  position: relative;
+  width: 88px;
+  height: 88px;
   margin: 0;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
 }
 .pitch-token .portrait-badge,
 .kit-marker .portrait-badge {
@@ -1426,18 +1509,18 @@ html.club-name-glow-off .club-line {
 .team-pitch .kit-marker {
   display: grid;
   justify-items: center;
-  gap: 2px;
+  gap: 8px;
   min-width: 0;
-  max-width: 56px;
+  max-width: 112px;
 }
 .portrait-badge-kit {
-  padding: 2px 3px;
-  gap: 0;
+  padding: 5px 6px;
+  gap: 2px;
   justify-content: center;
 }
 .char-panel-team .portrait-badge-kit .num,
 .team-pitch .portrait-badge-kit .num {
-  font-size: 11px;
+  font-size: 22px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.02em;
@@ -1446,18 +1529,19 @@ html.club-name-glow-off .club-line {
 .char-panel-team .portrait-badge-kit .sur,
 .team-pitch .portrait-badge-kit .sur {
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.03em;
   line-height: 1.05;
   text-align: center;
   max-width: 100%;
-  overflow: visible;
+  overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
-  padding: 0 1px;
+  padding: 0 5px;
   margin: 0;
   opacity: 1;
+  box-sizing: border-box;
 }
 .char-panel-team .kit-marker-caption,
 .team-pitch .kit-marker-caption {
@@ -1466,33 +1550,40 @@ html.club-name-glow-off .club-line {
   flex-wrap: nowrap;
   align-items: baseline;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
-  max-width: 56px;
-  width: 56px;
+  max-width: 112px;
+  width: 112px;
+  margin: 2px auto 0;
+  padding-top: 1px;
   overflow: hidden;
+  text-align: center;
+  /* Keep caption clear of the disc (no bleed into the counter). */
+  position: relative;
+  z-index: 0;
 }
 .char-panel-team .kit-marker-caption .kit-marker-num,
 .team-pitch .kit-marker-caption .kit-marker-num {
   flex: 0 0 auto;
-  font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  line-height: 1;
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
 }
 .char-panel-team .kit-marker-caption .kit-marker-name,
 .team-pitch .kit-marker-caption .kit-marker-name {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-width: 0;
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
-  text-align: left;
+  text-align: center;
 }
 .kit-marker:not(.kit-marker-photo) .kit-marker-caption {
   display: none;
@@ -1582,8 +1673,8 @@ html.club-name-glow-off .club-line {
   height: 72px;
 }
 .bench-card .kit-marker-bench .kit-marker-caption {
-  max-width: 72px;
-  width: 72px;
+  max-width: 96px;
+  width: 96px;
 }
 .bench-card .portrait-badge-kit {
   padding: 3px 4px;
@@ -1593,17 +1684,15 @@ html.club-name-glow-off .club-line {
   overflow: hidden;
 }
 .bench-card .portrait-badge-kit .num {
-  font-size: 12px;
+  font-size: 14px;
 }
 .bench-card .portrait-badge-kit .sur {
   font-size: 13px;
   max-width: 100%;
 }
-.bench-card .kit-marker-caption .kit-marker-num {
-  font-size: 11px;
-}
+.bench-card .kit-marker-caption .kit-marker-num,
 .bench-card .kit-marker-caption .kit-marker-name {
-  font-size: 12px;
+  font-size: 15px;
 }
 .team-bench-hint {
   margin: 8px 2px 0;
@@ -1712,9 +1801,11 @@ html.club-name-glow-off .club-line {
 .league-head { margin: 22px 0 10px; letter-spacing: 0.12em; font-size: 13px; color: var(--gold); }
 .league-tabs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  flex-wrap: nowrap;
+  gap: 5px;
   margin: 8px 0 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .league-tabs button {
   width: auto;
@@ -1722,10 +1813,13 @@ html.club-name-glow-off .club-line {
   border: 1px solid rgba(197,165,114,0.4);
   background: transparent;
   color: var(--paper);
-  padding: 7px 12px;
-  letter-spacing: 0.08em;
-  font-size: 12px;
+  padding: 6px 8px;
+  letter-spacing: 0.05em;
+  font-size: 11px;
   cursor: pointer;
+  flex: 1 1 0;
+  white-space: nowrap;
+  min-width: 0;
 }
 .league-tabs button.on {
   background: var(--green);

@@ -20,12 +20,12 @@ describe("Argyle Fans XI", () => {
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(1))?.displayName).toBe("CD-PAFC");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(2))?.displayName).toBe("Argyletweet");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(3))?.displayName).toBe("T. Bones");
-    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(21))?.displayName).toBe("V. Doo");
+    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(5))?.displayName).toBe("V. Doo");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(4))?.displayName).toBe("A. Tweets");
-    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(7))?.displayName).toBe("S. ArgoTweets");
+    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(11))?.displayName).toBe("S. ArgoTweets");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(6))?.displayName).toBe("A. Life");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(8))?.displayName).toBe("C. Pilgrim");
-    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(11))?.displayName).toBe("L. Days");
+    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(7))?.displayName).toBe("L. Days");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(9))?.displayName).toBe("S. Down");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(10))?.displayName).toBe("P. Face");
     expect(ARGYLE_FANS_LINEUP.starters.map((s) => s.playerId)).toEqual(ARGYLE_FANS_XI.map((s) => s.id));

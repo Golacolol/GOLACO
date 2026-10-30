@@ -1077,19 +1077,19 @@ export class Match {
       this.possessing.ballControlLockout <= 0 &&
       !this.possessing.isGK
     ) {
-      // Light follow during settle — ball primacy; awkward touches can spill.
+      // Soft settle still keeps the ball underfoot so a first touch can become a carry.
       const soft = stepDribble(this.ball, this.possessing, {
         pressure: this.pressure,
         dt,
-        magnetMul: this.tuning.dribbleMagnetMultiplier * 0.48,
-        turnLooseMul: this.tuning.turnLooseMultiplier * 1.15,
+        magnetMul: this.tuning.dribbleMagnetMultiplier * 0.85,
+        turnLooseMul: this.tuning.turnLooseMultiplier * 0.7,
       });
       if (soft === "loose") {
-        if (this.possessing.distTo(this.ball.x, this.ball.z) > 1.85) {
+        if (this.possessing.distTo(this.ball.x, this.ball.z) > 2.35) {
           this.makeLoose(this.possessing);
         } else {
-          this.ball.vx *= 0.72;
-          this.ball.vz *= 0.72;
+          this.ball.vx *= 0.45;
+          this.ball.vz *= 0.45;
         }
       }
     } else {

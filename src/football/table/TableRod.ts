@@ -38,10 +38,16 @@ export function rodWorldMen(
   }));
 }
 
-/** Slide along the rod. No input → hard stop (no coasting). */
-export function stepRodSlide(rod: TableRodState, slideInput: number, dt: number, speed = 5.8): void {
+/**
+ * Smooth continuous slide along the full rod axis (−1..1).
+ * Input is a velocity request; no discrete steps / snaps.
+ * No input → hard stop (no coasting).
+ */
+export function stepRodSlide(rod: TableRodState, slideInput: number, dt: number, speed = 2.15): void {
   if (Math.abs(slideInput) < 0.01) return;
-  rod.slide = Math.max(-1, Math.min(1, rod.slide + slideInput * speed * dt));
+  // Cap per-frame travel so high dt never teleports the rod.
+  const step = Math.max(-1, Math.min(1, slideInput)) * speed * Math.min(dt, 1 / 30);
+  rod.slide = Math.max(-1, Math.min(1, rod.slide + step));
 }
 
 const SPIN_ENGAGE = 0.2;

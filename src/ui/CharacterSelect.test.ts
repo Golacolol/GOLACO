@@ -218,8 +218,7 @@ describe("character select", () => {
     const { left: centre } = formationToPitchPercent(0.5, 0);
     const { left: leftWing } = formationToPitchPercent(0.5, -0.4);
     const { left: rightWing } = formationToPitchPercent(0.5, 0.4);
-    expect(centre).toBeLessThan(50);
-    expect(centre).toBeGreaterThan(47);
+    expect(centre).toBe(50);
     expect(centre - leftWing).toBeCloseTo(rightWing - centre, 5);
   });
 
@@ -295,7 +294,7 @@ describe("character select", () => {
     host.remove();
   });
 
-  it("uses secondary colour for kit-marker text and captions PNG number+name on one line", () => {
+  it("uses secondary colour for kit-marker text; PNG caption is number then name", () => {
     const host = document.createElement("div");
     document.body.appendChild(host);
     const view = new CharacterSelect(host);
@@ -313,8 +312,9 @@ describe("character select", () => {
     expect(gkBadge?.querySelector(".num")?.textContent).toBe("1");
     const photo = view.root.querySelector('[data-id="p2"] .kit-marker-photo');
     expect(photo).toBeTruthy();
-    expect(photo?.querySelector(".kit-marker-num")?.textContent).toBe("9");
-    expect(photo?.querySelector(".kit-marker-name")?.textContent).toBe("HARDIE");
+    expect(photo?.querySelector(".kit-marker-num-overlay")).toBeNull();
+    expect(photo?.querySelector(".kit-marker-caption .kit-marker-num")?.textContent).toBe("9");
+    expect(photo?.querySelector(".kit-marker-caption .kit-marker-name")?.textContent).toBe("HARDIE");
     const stBadge = photo?.querySelector(".portrait-badge-kit") as HTMLElement | null;
     // Photo markers keep caption in secondary; hidden fallback badge still carries team colours.
     expect(stBadge?.style.color.toLowerCase()).toBe("rgb(197, 165, 114)");
