@@ -32,8 +32,10 @@ describe("passing model", () => {
 
   it("increases error with distance for the same passer", () => {
     const ctx = { pressure: 0.2, bodyAlignment: 0.9, energy: 1, attrs, passType: "short" as const, hold01: 0.4 };
+    // Larger sample kills flaky CI noise from boundedNoise.
     const samples = (distance: number) =>
-      Array.from({ length: 40 }, () => Math.abs(computePassError({ ...ctx, distance }).angleError)).reduce((a, b) => a + b, 0) / 40;
+      Array.from({ length: 240 }, () => Math.abs(computePassError({ ...ctx, distance }).angleError)).reduce((a, b) => a + b, 0) /
+      240;
     expect(samples(32)).toBeGreaterThan(samples(8));
   });
 

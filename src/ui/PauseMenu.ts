@@ -78,12 +78,14 @@ export class PauseMenu {
 
   private buildItems(match: Match | null): PauseItem[] {
     this.note = "";
+    void match;
     const items: PauseItem[] = [
       { action: "resume", label: "Resume" },
       { action: "audio", label: this.audioEnabled ? "Audio: On" : "Audio: Off" },
+      { action: "formation", label: "Formation" },
+      { action: "settings", label: "Settings" },
+      { action: "quit", label: "Quit to Menu" },
     ];
-    if (match) items.push({ action: "formation", label: "Formation" });
-    items.push({ action: "settings", label: "Settings" }, { action: "quit", label: "Quit to Menu" });
     return items;
   }
 }
