@@ -244,14 +244,20 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     shortT && lane > 0.58 && carrier.distTo(shortT.x, shortT.z) >= 7 && (forwardMate > 2 || Math.abs(shortT.z - carrier.z) > 6);
 
   let runScore =
-    (0.22 + space.score * 0.08 + drib * 0.22 + pace * 0.16 + attAw * 0.18 - pressure * 0.32) *
+    (0.22 + space.score * 0.28 + drib * 0.22 + pace * 0.16 + attAw * 0.18 - pressure * 0.32) *
     tuning.attackingRunMultiplier *
     (1.18 - urgency * 0.12);
   if (congested && space.kind === "forward") runScore *= 0.28;
   if (space.kind === "diagonal" || space.kind === "lateral") runScore += 0.18;
   if (space.kind === "back" && pressure > 0.45) runScore += 0.08;
   if (pressure > 0.55 && space.score < 1.2) runScore *= 0.4;
-  if (pressure < 0.32 && space.score > 1.4) runScore += 0.16;
+  if (pressure < 0.32 && space.score > 1.4) runScore += 0.28;
+  // Open grass ahead: carry / attack — do not recycle the moment the ball arrives.
+  const openCarry = pressure < 0.34 && space.score > 1.35 && space.kind !== "back" && !congested;
+  if (openCarry) {
+    runScore += 0.42 + pace * 0.18 + drib * 0.12;
+    passScore *= 0.58;
+  }
   // Close support: carry briefly, but do not starve the pass forever.
   if (closeSupport && possessionTime < 1.6) {
     runScore += 0.22;
@@ -344,6 +350,7 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     crossScore += 0.2 + passing * 0.08;
   }
   let holdScore = Math.max(0.04, 0.14 - pressure * 0.22 - (urgency - 1) * 0.12) * comp;
+  if (openCarry) holdScore *= 0.7;
   // Stall breaker — longer window so players have think time; only dump if a lane exists.
   const stallT = 3.6 / Math.max(0.85, style.tempo);
   if (possessionTime > stallT) {
@@ -442,8 +449,8 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     } else if (progress < 0.5) {
       passScore += 0.12;
     }
-    if (recycleTarget && pressure < 0.48 && possessionTime > 0.7 && !closeSupport) {
-      passScore += 0.18;
+    if (recycleTarget && pressure > 0.5 && possessionTime > 0.9 && !closeSupport && !openCarry) {
+      passScore += 0.1;
     }
     if (shortT && lane > 0.55 && Math.abs(shortT.z - carrier.z) > 8 && progress < 0.62) {
       const ahead = (shortT.x - carrier.x) * carrier.attackSign;
@@ -527,7 +534,7 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
       const ahead = (shortT.x - carrier.x) * carrier.attackSign;
       passScore += ahead > 5 ? 0.16 : ahead > 2 ? 0.04 : -0.22;
     }
-    if (recycleTarget && !closeSupport) passScore += 0.14;
+    if (recycleTarget && !closeSupport && !openCarry && pressure > 0.4) passScore += 0.14;
   }
 
   // Prefer a progressive switch; flat midfield switches are weak.
@@ -585,16 +592,20 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   const pick = pickAttackAction(ranked, ctx.rng ?? Math.random);
   let passTarget = pick.target;
   if (pick.action === "PASS") {
-    if (goMate) {
+    // Give-and-go only when the return is progressive — never a forced bounce-back.
+    if (goMate && (goMate.x - carrier.x) * carrier.attackSign > 3.5) {
       passTarget = goMate;
     } else if (
       recycleTarget &&
       wantBuildup &&
-      pressure < 0.4 &&
+      pressure > 0.48 &&
+      !openCarry &&
       !closeSupport &&
-      (ctx.rng ?? Math.random)() < 0.22 &&
+      forwardMate < 2 &&
+      (ctx.rng ?? Math.random)() < 0.12 &&
       (!passTarget || passingLaneQuality(carrier, recycleTarget.x, recycleTarget.z, opponents) >= lane - 0.05)
     ) {
+      // Recycle only under real pressure with no forward outlet — not a random build-up habit.
       passTarget = recycleTarget;
     }
   }

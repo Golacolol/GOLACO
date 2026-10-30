@@ -93,8 +93,10 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
     ball.vz = ball.vz * keep + player.vz * 0.4 + fz * intent * (0.28 + control * 0.12);
     ball.vy *= 0.35;
 
+    // Mild softening of pressure-driven spills (0.78 in light pressure, 0.9 when hounded).
+    const pressSoft = pressure > 0.55 ? 0.9 : 0.78;
     const looseChance = clamp(
-      pressure * 0.22 * (1.2 - drib) * (1.15 - player.energy.value * 0.4) * (close ? 0.42 : 1) *
+      pressure * 0.22 * pressSoft * (1.2 - drib) * (1.15 - player.energy.value * 0.4) * (close ? 0.42 : 1) *
         (1.15 - magnetMul * 0.25),
       0,
       0.32,

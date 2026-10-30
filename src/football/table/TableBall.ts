@@ -25,8 +25,8 @@ export function serveTableBall(ball: TableBallState, dims: TableDims, toward: "h
   ball.z = (Math.random() - 0.5) * dims.width * 0.25;
   ball.y = dims.playY + dims.ballRadius;
   const dir = toward === "home" ? -1 : 1;
-  ball.vx = dir * (1.8 + Math.random() * 1.2);
-  ball.vz = (Math.random() - 0.5) * 1.4;
+  ball.vx = dir * (2.6 + Math.random() * 1.6);
+  ball.vz = (Math.random() - 0.5) * 1.8;
 }
 
 export function resetTableBallIdle(ball: TableBallState, dims: TableDims): void {

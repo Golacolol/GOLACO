@@ -31,6 +31,7 @@ export class TableMatch {
   winner: "home" | "away" | null = null;
   private serveT = 0;
   private goalT = 0;
+  private stuckT = 0;
   private nextServeToward: "home" | "away" = "away";
   private light: THREE.DirectionalLight;
   private amb: THREE.AmbientLight;
@@ -77,11 +78,12 @@ export class TableMatch {
 
   private beginServe(toward: "home" | "away"): void {
     this.phase = "serve";
-    this.serveT = 0.85;
+    this.serveT = 0.7;
+    this.stuckT = 0;
     serveTableBall(this.ball, this.layout.dims, toward);
-    // Soft serve
-    this.ball.vx *= 0.55;
-    this.ball.vz *= 0.55;
+    // Keep enough pace that the first rods can actually strike.
+    this.ball.vx *= 0.92;
+    this.ball.vz *= 0.92;
   }
 
   private applySide(
@@ -91,6 +93,7 @@ export class TableMatch {
     kickHeld: boolean,
     kickHold: number,
     kickReleased: boolean,
+    kickPressed: boolean,
     dt: number,
   ): void {
     const rods = side === "home" ? this.homeRods() : this.awayRods();
@@ -98,7 +101,7 @@ export class TableMatch {
     for (const rod of rods) {
       if (!selected.includes(rod.spec.index)) continue;
       stepRodSlide(rod, slide, dt);
-      stepRodKick(rod, kickHeld, kickHold, kickReleased, dt, sign);
+      stepRodKick(rod, kickHeld, kickHold, kickReleased, dt, sign, kickPressed);
     }
   }
 
@@ -134,6 +137,7 @@ export class TableMatch {
         this.intent.home.kickHeld,
         this.intent.home.kickHoldSeconds,
         this.intent.home.kickReleased,
+        this.intent.home.kickPressed,
         dt,
       );
       if (this.config.opponent === "HUMAN" || this.config.opponent === "AI") {
@@ -144,6 +148,7 @@ export class TableMatch {
           this.intent.away.kickHeld,
           this.intent.away.kickHoldSeconds,
           this.intent.away.kickReleased,
+          this.intent.away.kickPressed,
           dt,
         );
       }
@@ -163,9 +168,21 @@ export class TableMatch {
         else this.awayScore += 1;
         this.phase = "goal";
         this.goalT = 1.1;
+        this.stuckT = 0;
         this.nextServeToward = goal === "home" ? "away" : "home";
         if (this.homeScore >= this.config.firstTo) this.winner = "home";
         if (this.awayScore >= this.config.firstTo) this.winner = "away";
+      } else {
+        // Dead ball under a man — nudge so the table never freezes.
+        const speed = Math.hypot(this.ball.vx, this.ball.vz);
+        if (speed < 0.15) this.stuckT += dt;
+        else this.stuckT = 0;
+        if (this.stuckT > 1.35) {
+          this.stuckT = 0;
+          const nudge = 2.4 + Math.random() * 1.6;
+          this.ball.vx += (Math.random() - 0.5) * nudge;
+          this.ball.vz += (Math.random() - 0.5) * nudge;
+        }
       }
     }
 

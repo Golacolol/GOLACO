@@ -69,7 +69,7 @@ describe("passing model", () => {
     expect(closest).toBeLessThan(2.5);
     expect(ball.x).toBeGreaterThan(12);
     expect(speedAtClosest).toBeLessThan(11.5);
-    expect(maxY).toBeGreaterThan(0.55);
+    expect(maxY).toBeGreaterThan(0.9);
     expect(maxY).toBeLessThan(3.5);
   });
 

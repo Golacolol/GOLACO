@@ -69,7 +69,7 @@ export class TableHUD {
     }
     if (help) {
       help.textContent =
-        "Home: 1–4 rods (5=all) · WASD/arrows slide · Space twist/spin · Away: 6–9 (0=all) · IJKL · Enter · V view · +/- zoom · Esc pause";
+        "Home: 1–4 select rod (stays selected, 5=all) · WASD/arrows slide · Space=strike (hold=spin, release=stop) · Away: 6–9 · IJKL · Enter · V view · Esc pause";
     }
   }
 

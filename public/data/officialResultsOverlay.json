@@ -1,7 +1,7 @@
 {
   "asOf": "2026-10-27",
   "source": "thefishy+openfootball",
-  "refreshedAt": "2026-10-28T23:01:33.112Z",
+  "refreshedAt": "2026-10-30T14:31:23.384Z",
   "matches": [
     {
       "competition": "Championship",
@@ -3938,30 +3938,6 @@
       "played": false
     },
     {
-      "competition": "League One",
-      "date": "2026-11-01",
-      "time": "19:45",
-      "homeTeamId": "huddersfield_town_current",
-      "awayTeamId": "luton_town_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-11-01",
-      "time": "19:45",
-      "homeTeamId": "wigan_athletic_current",
-      "awayTeamId": "mansfield_town_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-11-01",
-      "time": "19:45",
-      "homeTeamId": "oxford_united_current",
-      "awayTeamId": "reading_current",
-      "played": false
-    },
-    {
       "competition": "Premier League",
       "date": "2026-11-02",
       "time": "20:00",
@@ -4026,6 +4002,22 @@
       "played": false
     },
     {
+      "competition": "League One",
+      "date": "2026-11-03",
+      "time": "19:45",
+      "homeTeamId": "huddersfield_town_current",
+      "awayTeamId": "luton_town_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-11-03",
+      "time": "19:45",
+      "homeTeamId": "wigan_athletic_current",
+      "awayTeamId": "mansfield_town_current",
+      "played": false
+    },
+    {
       "competition": "Championship",
       "date": "2026-11-03",
       "time": "20:00",
@@ -4055,6 +4047,14 @@
       "time": "19:45",
       "homeTeamId": "wrexham_current",
       "awayTeamId": "middlesbrough_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-11-04",
+      "time": "19:45",
+      "homeTeamId": "oxford_united_current",
+      "awayTeamId": "reading_current",
       "played": false
     },
     {
@@ -5708,14 +5708,86 @@
     {
       "competition": "League One",
       "date": "2026-12-15",
-      "time": "19:45",
-      "homeTeamId": "doncaster_rovers_current",
+      "time": "12:30",
+      "homeTeamId": "barnsley_current",
+      "awayTeamId": "huddersfield_town_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-12-15",
+      "time": "12:30",
+      "homeTeamId": "sheffield_wednesday_current",
+      "awayTeamId": "luton_town_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-12-15",
+      "time": "15:00",
+      "homeTeamId": "afc_wimbledon_current",
       "awayTeamId": "oxford_united_current",
       "played": false
     },
     {
       "competition": "League One",
-      "date": "2026-12-18",
+      "date": "2026-12-15",
+      "time": "15:00",
+      "homeTeamId": "blackpool_current",
+      "awayTeamId": "burton_albion_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-12-15",
+      "time": "15:00",
+      "homeTeamId": "bromley_current",
+      "awayTeamId": "bradford_city_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-12-15",
+      "time": "15:00",
+      "homeTeamId": "leyton_orient_current",
+      "awayTeamId": "notts_county_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-12-15",
+      "time": "15:00",
+      "homeTeamId": "plymouth_argyle_current",
+      "awayTeamId": "mansfield_town_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-12-15",
+      "time": "15:00",
+      "homeTeamId": "reading_current",
+      "awayTeamId": "leicester_city_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-12-15",
+      "time": "15:00",
+      "homeTeamId": "stockport_county_current",
+      "awayTeamId": "mk_dons_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-12-15",
+      "time": "15:00",
+      "homeTeamId": "wigan_athletic_current",
+      "awayTeamId": "peterborough_united_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2026-12-15",
       "time": "19:45",
       "homeTeamId": "cambridge_united_current",
       "awayTeamId": "stevenage_current",
@@ -5767,22 +5839,6 @@
       "time": "12:30",
       "homeTeamId": "watford_current",
       "awayTeamId": "bolton_wanderers_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "12:30",
-      "homeTeamId": "barnsley_current",
-      "awayTeamId": "huddersfield_town_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "12:30",
-      "homeTeamId": "sheffield_wednesday_current",
-      "awayTeamId": "luton_town_current",
       "played": false
     },
     {
@@ -5911,70 +5967,6 @@
       "time": "15:00",
       "homeTeamId": "southampton_current",
       "awayTeamId": "blackburn_rovers_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "15:00",
-      "homeTeamId": "afc_wimbledon_current",
-      "awayTeamId": "oxford_united_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "15:00",
-      "homeTeamId": "blackpool_current",
-      "awayTeamId": "burton_albion_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "15:00",
-      "homeTeamId": "bromley_current",
-      "awayTeamId": "bradford_city_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "15:00",
-      "homeTeamId": "leyton_orient_current",
-      "awayTeamId": "notts_county_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "15:00",
-      "homeTeamId": "plymouth_argyle_current",
-      "awayTeamId": "mansfield_town_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "15:00",
-      "homeTeamId": "reading_current",
-      "awayTeamId": "leicester_city_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "15:00",
-      "homeTeamId": "stockport_county_current",
-      "awayTeamId": "mk_dons_current",
-      "played": false
-    },
-    {
-      "competition": "League One",
-      "date": "2026-12-19",
-      "time": "15:00",
-      "homeTeamId": "wigan_athletic_current",
-      "awayTeamId": "peterborough_united_current",
       "played": false
     },
     {
@@ -7650,14 +7642,6 @@
       "played": false
     },
     {
-      "competition": "League One",
-      "date": "2027-01-26",
-      "time": "15:00",
-      "homeTeamId": "burton_albion_current",
-      "awayTeamId": "wycombe_wanderers_current",
-      "played": false
-    },
-    {
       "competition": "Championship",
       "date": "2027-01-26",
       "time": "19:45",
@@ -7927,6 +7911,14 @@
       "time": "15:00",
       "homeTeamId": "norwich_city_current",
       "awayTeamId": "bristol_city_current",
+      "played": false
+    },
+    {
+      "competition": "League One",
+      "date": "2027-01-30",
+      "time": "15:00",
+      "homeTeamId": "burton_albion_current",
+      "awayTeamId": "wycombe_wanderers_current",
       "played": false
     },
     {

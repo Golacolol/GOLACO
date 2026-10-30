@@ -65,7 +65,7 @@ export const REAL_TUNING: GameplayTuning = {
   celebrationDurationMultiplier: 1,
   passUrgencyMultiplier: 0.88,
   dribbleMagnetMultiplier: 0.78,
-  defenderDisturbMultiplier: 0.92,
+  defenderDisturbMultiplier: 0.85,
   turnLooseMultiplier: 0.95,
   groundContestUpsetMultiplier: 1,
   aftertouchMultiplier: 1,

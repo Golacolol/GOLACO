@@ -31,7 +31,7 @@ export interface TeamAIResult {
   pressingId: string | null;
   /** Loose-ball primary pursuer (full press). */
   primaryPursuerId: string | null;
-  /** Loose-ball support (contain only). */
+  /** Support: contain-only shape, or the intentional second closer on a double-team. */
   supportPursuerId: string | null;
 }
 
@@ -89,29 +89,62 @@ export function updateTeamAI(
     ? defensiveBlockFor(ball.x, ownGoal, attackSign, extras?.scoreDiff ?? 0, extras?.minute01 ?? 0.5)
     : "mid";
   const blockDepth = blockLineDepth(block);
+  // Default: ONE hunter. A second man is only drawn to the ball on an intentional
+  // double-team (user forced >=2 closers, AI counter-press, or a touchline trap) —
+  // that leaves someone exposed, which is what creates the pass / space.
+  const touchlineTrap =
+    defending && !looseBall && Math.abs(ball.z) > 18 && Math.abs(ball.x - ownGoal) > 28;
+  const intentionalDouble =
+    forced.length >= 2 ||
+    (counterPress && pressAggro >= 1.0) ||
+    (touchlineTrap && pressAggro >= 0.9);
+  const closerSlots = intentionalDouble ? 2 : 1;
   let closers =
     defending && !extras?.kickOff && !extras?.keeperHold
       ? forced.length > 0
-        ? forced
+        ? forced.slice(0, closerSlots)
         : autoClosers
-          ? selectClosingPlayers(us, ball, 2)
+          ? selectClosingPlayers(us, ball, closerSlots)
           : []
       : [];
-  // MatchBrain: loose ball always has designated pursuers (Gameplay Football pattern).
+  if (
+    forced.length > 0 &&
+    intentionalDouble &&
+    closers.length < closerSlots &&
+    defending &&
+    !extras?.kickOff &&
+    !extras?.keeperHold
+  ) {
+    const have = new Set(closers.map((p) => p.id));
+    for (const p of selectClosingPlayers(us, ball, closerSlots)) {
+      if (!have.has(p.id) && closers.length < closerSlots) closers = [...closers, p];
+    }
+  }
+  // Loose ball: designated pursuers, capped at the closer slots (one unless intentional double).
   // Skip when this is OUR pass in flight — teammates should offer support, not swarm the ball.
   if (looseBall && !inFlightAttack && !extras?.kickOff && !extras?.keeperHold && autoClosers) {
-    const pursuers = designatePursuers(us, ball, 2);
+    const pursuers = designatePursuers(us, ball, closerSlots);
     const ids = new Set(closers.map((p) => p.id));
     for (const p of pursuers) {
-      if (!ids.has(p.id)) closers = [...closers, p].slice(0, 2);
+      if (!ids.has(p.id)) closers = [...closers, p].slice(0, closerSlots);
     }
     if (!closers.length) closers = pursuers;
   }
-  // Pursuit roles: primary full-presses; support contains only (no swarm).
-  if (closers.length > 2) closers = closers.slice(0, 2);
+  if (closers.length > closerSlots) closers = closers.slice(0, closerSlots);
   const primaryPursuer = closers[0] ?? null;
-  const supportPursuer = closers[1] ?? null;
+  // Support: the intentional second closer presses with the primary. Otherwise the nearest
+  // other teammate only CONTAINS (~5 m stand-off) — shape, not a second ball hunter.
+  let supportPursuer: Player | null = null;
+  if (intentionalDouble && closers[1]) {
+    supportPursuer = closers[1];
+  } else if (defending && primaryPursuer && !extras?.kickOff && !extras?.keeperHold) {
+    supportPursuer =
+      [...us]
+        .filter((p) => !p.isGK && !p.celebrating && !p.sentOff && p.id !== primaryPursuer.id)
+        .sort((a, b) => a.distTo(ball.x, ball.z) - b.distTo(ball.x, ball.z))[0] ?? null;
+  }
   const closerIds = new Set(closers.map((p) => p.id));
+  if (supportPursuer) closerIds.add(supportPursuer.id);
   const presser = primaryPursuer;
   const onBall = players.find((p) => p.hasBall && p.side === side) ?? null;
   const carrier =
@@ -233,6 +266,8 @@ export function updateTeamAI(
         const trap = Math.abs(ball.z) > 14;
         const isPrimary = primaryPursuer?.id === p.id;
         const isSupport = supportPursuer?.id === p.id;
+        // Non-intentional support: contain only, held out of the collect ring.
+        const containSupport = isSupport && !intentionalDouble;
         const arch = positionArchetype(p);
         const styleStand = playStyle.standOffBias;
         const standOff =
@@ -243,15 +278,28 @@ export function updateTeamAI(
             arch.standOff + styleStand * 0.55 > 0.68 ||
             (styleStand > 0.58 && !isPrimary) ||
             (aw > 0.55 && ballDist < 9));
-        // Loose: primary hunts; support contains. Owned: often stand off / cover angle.
-        if ((loose && isSupport && !aggressive) || standOff) {
+        if (containSupport) {
+          // Screens ~5 m away — shape, not a second hunter in the collect ring.
+          const raw = containTarget(p, ball.x, ball.z, goalX, Math.max(styleStand, 0.55));
+          const away = Math.hypot(raw.x - ball.x, raw.z - ball.z) || 1;
+          const hold = 5.2;
+          target =
+            away < hold
+              ? {
+                  x: ball.x + ((raw.x - ball.x) / away) * hold,
+                  z: ball.z + ((raw.z - ball.z) / away) * hold,
+                }
+              : raw;
+        } else if (standOff && !isSupport) {
           target = containTarget(p, ball.x, ball.z, goalX, styleStand);
         } else if (
           aggressive ||
           counterPress ||
+          isSupport ||
           (loose && isPrimary) ||
           (!loose && isPrimary && ballDist > 5.5 && styleStand < 0.55)
         ) {
+          // Intentional second man (isSupport here) presses into the collect ring.
           target =
             trap && !loose
               ? pressTrapTarget(p, ball.x, ball.z, goalX)
@@ -264,15 +312,15 @@ export function updateTeamAI(
         let dx = target.x - p.x;
         let dz = target.z - p.z;
         // If the waypoint is underfoot but the ball is still away, chase the ball (primary only on loose).
-        if (Math.hypot(dx, dz) < 0.35 && ballDist > 1.15 && (!loose || isPrimary)) {
+        if (Math.hypot(dx, dz) < 0.35 && ballDist > 1.15 && !containSupport && (!loose || isPrimary)) {
           dx = ball.x - p.x;
           dz = ball.z - p.z;
         }
         const dist = Math.hypot(dx, dz);
         const sprint =
-          (loose && isPrimary) || counterPress
+          (loose && isPrimary) || counterPress || (loose && isSupport && intentionalDouble)
             ? ballDist > 1.4
-            : loose && isSupport
+            : loose && containSupport
               ? false
               : dist > (aggressive ? 1.4 : 3.1 - aw * 1.5);
         p.desiredX = target.x;
@@ -280,9 +328,9 @@ export function updateTeamAI(
         const huntMul =
           counterPress
             ? 1.05 + aw * 0.2 * pressAggro
-            : aggressive || (loose && isPrimary)
+            : aggressive || (loose && isPrimary) || (loose && isSupport && intentionalDouble)
               ? 1.05 + aw * 0.2
-              : loose && isSupport
+              : loose && containSupport
                 ? 0.7 + aw * 0.25
                 : 0.76 + aw * 0.42;
         movePlayer(p, dt, dx, dz, sprint, !loose && !aggressive && !counterPress && dist < 4.2, {

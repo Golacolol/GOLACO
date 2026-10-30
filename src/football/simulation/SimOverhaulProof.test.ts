@@ -75,6 +75,7 @@ describe("sim overhaul proof", () => {
 
     const result = updateTeamAI(pool, "away", ball, null, 0.05, new Set());
     expect(result.primaryPursuerId).toBe(primary.id);
+    // Default: ONE hunter. A support man (if any) only contains — never a second presser.
     expect(result.supportPursuerId == null || result.supportPursuerId !== result.primaryPursuerId).toBe(true);
 
     for (let i = 0; i < 12; i++) {
@@ -83,6 +84,41 @@ describe("sim overhaul proof", () => {
     const far = pool.find((p) => p.id === "st")!;
     expect(Math.abs(far.x - far.anchorX)).toBeLessThan(6);
     expect(Math.hypot(primary.vx, primary.vz)).toBeGreaterThan(0.4);
+    // The contain/support man holds a stand-off instead of closing into the collect ring.
+    if (result.supportPursuerId) {
+      const support = pool.find((p) => p.id === result.supportPursuerId)!;
+      const supportGap = support.distTo(ball.x, ball.z);
+      expect(supportGap).toBeGreaterThan(2.2);
+    }
+  });
+
+  it("only draws a second man into the ball on an intentional double-team", () => {
+    const ball = new Ball();
+    ball.x = 4;
+    ball.z = 0;
+    ball.ownerId = null;
+    const build = () => [
+      make("cb1", 1, 1, "RCB", "away"),
+      make("cb2", -4, 6, "LCB", "away"),
+      make("dm", -8, 0, "CDM", "away"),
+      make("st", -16, -4, "RST", "away"),
+      make("cm", -10, 8, "LCM", "away"),
+    ];
+    const single = build();
+    const one = updateTeamAI(single, "away", ball, null, 0.05, new Set());
+    const pressers = single.filter((p) => p.id === one.primaryPursuerId);
+    expect(pressers).toHaveLength(1);
+
+    const double = build();
+    const forced = [double[0]!, double[1]!];
+    const two = updateTeamAI(double, "away", ball, "home", 0.05, new Set(), {
+      forceClosers: forced,
+      aggressivePress: true,
+    });
+    expect(two.pressingId).toBe(forced[0]!.id);
+    for (const p of forced) {
+      expect(Math.hypot(p.desiredX - ball.x, p.desiredZ - ball.z)).toBeLessThan(4);
+    }
   });
 
   it("places ST ahead of midfield but onside in attack phase", () => {
@@ -104,10 +140,11 @@ describe("sim overhaul proof", () => {
   it("keeps short and through ground passes mid-loft (not flat lasers or missiles)", () => {
     const short = passKickVector(0, 0, 14, 2, "short");
     const through = passKickVector(0, 0, 18, 1, "through");
-    expect(short.vy).toBeGreaterThan(1.5);
+    // Modest loft bump over the old carpet-hugger — still not a missile.
+    expect(short.vy).toBeGreaterThan(3.4);
     expect(short.vy).toBeLessThan(6.5);
-    expect(through.vy).toBeGreaterThan(2);
-    expect(through.vy).toBeLessThan(5.5);
+    expect(through.vy).toBeGreaterThan(2.8);
+    expect(through.vy).toBeLessThan(6.1);
     expect(Math.hypot(short.vx, short.vz)).toBeGreaterThan(6);
     expect(Math.hypot(through.vx, through.vz)).toBeGreaterThan(6);
   });

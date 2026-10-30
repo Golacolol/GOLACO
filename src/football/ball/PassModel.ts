@@ -123,15 +123,15 @@ export function passArrivalSpeed(passType: PassType): number {
 export function passLoftVy(distance: number, passType: PassType, flightT: number): number {
   const ballistic = 0.5 * BALL_GRAVITY * flightT;
   if (passType === "short") {
-    // Driven mid-loft — apex ~0.7–2.2 m so the ball leaves the carpet.
-    const loftMul = distance > 16 ? 0.82 : distance > 11 ? 0.7 : distance > 7 ? 0.58 : 0.5;
-    const floor = distance > 16 ? 4.6 : distance > 11 ? 4.0 : distance > 7 ? 3.4 : 3.0;
-    const ceil = distance > 18 ? 7.5 : distance > 12 ? 6.2 : 5.2;
+    // Driven mid-loft (modest bump over the old carpet-hugger) — apex ~0.8–2.4 m.
+    const loftMul = distance > 16 ? 0.88 : distance > 11 ? 0.78 : distance > 7 ? 0.68 : 0.58;
+    const floor = distance > 16 ? 5.0 : distance > 11 ? 4.4 : distance > 7 ? 3.8 : 3.4;
+    const ceil = distance > 18 ? 8.0 : distance > 12 ? 6.8 : 5.8;
     return clamp(ballistic * loftMul, floor, ceil);
   }
   if (passType === "through") {
-    // Low weightable through — still clears ~1–2 m.
-    return clamp(ballistic * 0.62, 2.2, 5.2);
+    // Weightable through — clears the carpet without a missile arc.
+    return clamp(ballistic * 0.74, 2.8, 6.0);
   }
   if (passType === "chip") {
     return clamp(ballistic * 1.45 + distance * 0.04, 4.8, 11.5);

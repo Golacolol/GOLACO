@@ -283,6 +283,8 @@ export class Match {
   private lastBallX = 0;
   private lastBallZ = 0;
   private stuckTimer = 0;
+  /** Seconds a 3+ player slow-ball cling cluster has been active. */
+  private ballClusterTimer = 0;
   private incomingAerial = false;
   private incomingShot = false;
   private passDebugLine: THREE.Line;
@@ -1001,22 +1003,28 @@ export class Match {
       !this.possessing.isGK &&
       this.state !== FootballState.KICK_OFF &&
       !isRestartState(this.state) &&
-      !this.ballActor.resolved &&
-      this.ballActor.tryClaim("disturb", this.possessing.id)
+      !this.ballActor.resolved
     ) {
       const disturb = tryDefenderDisturbance(
         this.ball,
         this.possessing,
         this.opponentsOf(this.possessing),
         this.tuning.defenderDisturbMultiplier,
+        Math.random,
+        dt,
       );
-      if (disturb === "loose") {
-        this.makeLoose(this.possessing);
-      } else if (disturb === "poke") {
-        this.possessing.ballControlLockout = Math.max(this.possessing.ballControlLockout, 0.2);
-        this.possessing.firstTouchTimer = Math.max(this.possessing.firstTouchTimer, 0.14);
+      if (disturb !== "none" && this.ballActor.tryClaim("disturb", this.possessing.id)) {
+        if (disturb === "loose") {
+          this.makeLoose(this.possessing);
+        } else {
+          // Long enough that the magnet cannot snap the ball straight back into the ring.
+          this.possessing.ballControlLockout = Math.max(this.possessing.ballControlLockout, 0.48);
+          this.possessing.firstTouchTimer = Math.max(this.possessing.firstTouchTimer, 0.22);
+        }
       }
     }
+    // Break 3+ player cling clusters around a slow ball (jitter / "everyone stuck to the ball").
+    this.breakBallCluster(dt);
 
     if (this.state === FootballState.KICK_OFF && this.possessing) {
       this.ball.x = 0;
@@ -1745,12 +1753,15 @@ export class Match {
     this.aiAct = 0;
     let action = decision.action;
     let passTarget = decision.passTarget;
-    // Progressive nudge: after recirculating, prefer a through when a legal runner exists.
+    // Progressive through only when it beats the carry and a runner is clearly ahead —
+    // never a forced hoof through midfield after two seconds of possession.
     if (
-      (action === "PASS" || action === "HOLD" || action === "RUN") &&
-      this.possessionTime > 2.0 &&
-      decision.scores.throughBallScore >= 0.18 &&
-      decision.scores.throughBallScore + 0.08 >= decision.scores.passScore * 0.72
+      (action === "PASS" || action === "HOLD") &&
+      this.possessionTime > 2.4 &&
+      this.pressure > 0.28 &&
+      decision.scores.throughBallScore >= 0.32 &&
+      decision.scores.throughBallScore + 0.05 >= decision.scores.passScore &&
+      decision.scores.throughBallScore >= decision.scores.runScore + 0.12
     ) {
       const thru = choosePassTarget(
         passer,
@@ -1760,9 +1771,13 @@ export class Match {
         goalX - passer.x,
         0,
         "through",
-        { forbidIds: this.passForbidIds(passer), style: building ? "buildup" : "attack" },
+        {
+          forbidIds: this.passForbidIds(passer),
+          style: building ? "buildup" : "attack",
+          playStyle: (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined,
+        },
       );
-      if (thru && (thru.x - passer.x) * attackDir > 4) {
+      if (thru && (thru.x - passer.x) * attackDir > 6 && Math.abs(thru.z - passer.z) < 14) {
         action = "THROUGH";
         passTarget = thru;
       }
@@ -1794,12 +1809,25 @@ export class Match {
         action = decision.scores.runScore >= 0.12 ? "RUN" : "HOLD";
       }
     }
-    // Receive dwell — look up before re-passing (attribute-scaled 0.4–0.75 s).
+    // Receive dwell — longer when there is grass to attack; shorter under pressure.
     {
       const composure = stat01(passer.attrs.composure);
       const vision = stat01(passer.attrs.vision);
-      const dwell = clamp(0.42 + (1 - composure) * 0.2 + (1 - vision) * 0.12, 0.4, 0.75);
+      const openGrass = this.pressure < 0.34 && decision.space.score > 1.3 && decision.space.kind !== "back";
+      const dwell = openGrass
+        ? clamp(1.05 + (1 - composure) * 0.25 + stat01(passer.attrs.pace) * 0.2, 1.0, 1.7)
+        : this.pressure > 0.55
+          ? clamp(0.42 + (1 - composure) * 0.16, 0.42, 0.62)
+          : clamp(0.55 + (1 - composure) * 0.2 + (1 - vision) * 0.12, 0.5, 0.95);
       if (passLike && this.possessionTime < dwell) action = "RUN";
+    }
+    // Marker on the ball + a cut lane = carry / shield, not a hopeful pass straight into him.
+    if (passLike && passTarget && action !== "LONG_PASS" && action !== "CROSS" && this.possessionTime < 3.0) {
+      const opps = this.opponentsOf(passer);
+      const marked = opps.some((o) => !o.isGK && o.distTo(this.ball.x, this.ball.z) < 1.7);
+      if (marked && passingLaneQuality(passer, passTarget.x, passTarget.z, opps) < 0.62) {
+        action = decision.scores.runScore >= 0.1 ? "RUN" : "HOLD";
+      }
     }
     // Stall breaker: give think time; only force a pass into a clear lane.
     const stallStyle = (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined;
@@ -2200,6 +2228,11 @@ export class Match {
     }
     this.clearOwner();
     passer.kickTimer = 0.42;
+    // Release window: the ball is leaving the boot, so a marker standing on the passer cannot
+    // vacuum it up in the very first frames (a lane-block still happens once it travels on).
+    for (const o of this.opponentsOf(passer)) {
+      if (!o.isGK && o.distTo(this.ball.x, this.ball.z) < 2.0) o.kickTimer = Math.max(o.kickTimer, 0.22);
+    }
     this.assistCandidate = passer.id;
     this.ball.lastTouchId = passer.id;
     this.ball.lastTouchSide = passer.side;
@@ -3008,6 +3041,53 @@ export class Match {
       p.desiredX = t.x;
       p.desiredZ = t.z;
       movePlayer(p, dt, t.x - p.x, t.z - p.z, true, false, this.moveExtras());
+    }
+  }
+
+  /**
+   * When 3+ outfielders crowd a slow ball for >1.55s, force a clean break —
+   * ownership stays (or goes to the nearest) and the others are pushed out of the ring.
+   */
+  private breakBallCluster(dt: number): void {
+    if (this.state !== FootballState.PLAYING && this.state !== FootballState.AUTOPLAY) {
+      this.ballClusterTimer = 0;
+      return;
+    }
+    const speed = Math.hypot(this.ball.vx, this.ball.vz);
+    if (speed > 2.8 || this.ball.y > 1.1) {
+      this.ballClusterTimer = 0;
+      return;
+    }
+    const near = this.allPlayers().filter(
+      (p) => !p.isGK && !p.sentOff && !p.celebrating && p.distTo(this.ball.x, this.ball.z) < 2.35,
+    );
+    if (near.length < 3) {
+      this.ballClusterTimer = 0;
+      return;
+    }
+    this.ballClusterTimer += dt;
+    if (this.ballClusterTimer < 1.55) return;
+    this.ballClusterTimer = 0;
+    const owner = this.possessing;
+    const keeper =
+      owner ?? [...near].sort((a, b) => a.distTo(this.ball.x, this.ball.z) - b.distTo(this.ball.x, this.ball.z))[0]!;
+    for (const p of near) {
+      if (p.id === keeper.id) continue;
+      const away = normalize2(p.x - this.ball.x, p.z - this.ball.z);
+      p.x += away.x * 1.85;
+      p.z += away.z * 1.85;
+      p.vx *= 0.35;
+      p.vz *= 0.35;
+      p.desiredX = p.x + away.x * 3.5;
+      p.desiredZ = p.z + away.z * 3.5;
+      p.kickTimer = Math.max(p.kickTimer, 0.35);
+    }
+    if (owner) {
+      owner.ballControlLockout = 0;
+      this.ball.vx *= 0.4;
+      this.ball.vz *= 0.4;
+    } else if (!keeper.isGK) {
+      this.takePossession(keeper);
     }
   }
 

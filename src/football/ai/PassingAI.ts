@@ -97,7 +97,14 @@ export function ownGoalX(side: "home" | "away", endsFlipped = false): number {
 
 export function isBackwardPass(passer: Player, toX: number, _toZ: number): boolean {
   const forward = (toX - passer.x) * passer.attackSign;
-  return forward < 1.2;
+  // True recycle only — laterals are not "backward".
+  return forward < -1.0;
+}
+
+export function isLateralPass(passer: Player, toX: number, toZ: number): boolean {
+  const forward = (toX - passer.x) * passer.attackSign;
+  const width = Math.abs(toZ - passer.z);
+  return forward >= -1.0 && forward < 3.5 && width >= 6;
 }
 
 /**
@@ -319,30 +326,36 @@ export function choosePassTarget(
             : -0.12
         : 0) +
       (space < 2.8 && forward > 8 ? -0.55 : 0) +
-      (role === "mid" ? (buildup ? 0.48 : 0.24) : 0) +
-      (role === "cb" && buildup && forward > -4 && width < 12 ? 0.22 : 0) +
+      (role === "mid" ? (buildup ? 0.22 : 0.2) : 0) +
+      (role === "cb" && buildup && forward > -4 && width < 12 ? 0.1 : 0) +
       wingBonus +
-      (recycle && buildup ? 0.22 : 0) +
-      (open ? (buildup ? 0.75 : 0.38) : space < 3.2 ? -0.35 : 0) +
+      (recycle && buildup ? 0.06 : 0) +
+      (open ? (buildup ? 0.55 : 0.38) : space < 3.2 ? -0.35 : 0) +
       // Continuous reward for clear corridors so free routes beat sticky triangles.
       (laneClear - 0.5) * (buildup ? 0.78 : 0.42) +
       switchedLane +
       (flatReswitch ? -1.95 : 0) +
-      (crossFieldSpam ? (passType === "short" ? -1.05 : -1.75) : 0) +
-      (flatSwitch ? (progressiveSwitch ? -0.55 : passType === "short" ? -1.45 : -2.1) : 0) +
-      (oppositeWing && forward < 12 ? -0.75 : 0) +
-      (width > 14 && forward < 5 ? -0.95 : 0) +
+      (crossFieldSpam ? (passType === "short" ? -1.35 : -1.95) : 0) +
+      (flatSwitch ? (progressiveSwitch ? -0.85 : passType === "short" ? -1.75 : -2.3) : 0) +
+      (oppositeWing && forward < 12 ? -0.95 : 0) +
+      (width > 14 && forward < 5 ? -1.15 : 0) +
       (tightPingPong ? -0.85 : 0) +
       (acrossOwn ? -1.55 : acrossBox ? -1.35 : 0) +
       (cornerDump ? (passType === "short" ? -0.42 : -0.75) : 0) +
-      (passType === "long" ? clamp(space / 10, 0, 0.14) - clamp(width / 20, 0, 1.05) - (oppositeWing ? 0.65 : 0) : 0) +
-      (shortBuild ? 0.48 : 0) +
-      (buildup && passType === "short" && distance < 16 && width < 11 && forward >= 0 ? 0.28 : 0) +
-      (passType === "short" && distance < 12 && width < 9 ? 0.16 : 0) +
-      (passType === "through" && aheadSpace && laneClear >= 0.5 ? (buildup ? 0.28 : 0.42) : 0) +
-      (buildup && passType === "through" && wing && forward > 5 && !oppositeWing ? 0.14 : 0) +
-      (buildup && passType === "long" ? -0.45 : 0) +
-      (passType === "long" && !buildup ? -0.18 : 0) +
+      // Low-pressure backwards / lateral dumps are not "safe football".
+      (forward < -3 && !buildup ? -0.65 : forward < -3 && buildup ? -0.35 : 0) +
+      (passType === "short" && forward < 1 && width > 10 ? -0.55 : 0) +
+      (passType === "long"
+        ? clamp(space / 10, 0, 0.14) - clamp(width / 14, 0, 1.35) - (oppositeWing ? 0.75 : 0) - (forward < 8 ? 0.55 : 0)
+        : 0) +
+      (passType === "through" ? -clamp((width - 12) / 14, 0, 0.85) : 0) +
+      (shortBuild ? 0.32 : 0) +
+      (buildup && passType === "short" && distance < 16 && width < 11 && forward >= 0 ? 0.22 : 0) +
+      (passType === "short" && distance < 12 && width < 9 && forward > 1 ? 0.16 : 0) +
+      (passType === "through" && aheadSpace && laneClear >= 0.5 && width < 14 ? (buildup ? 0.22 : 0.38) : 0) +
+      (buildup && passType === "through" && wing && forward > 5 && !oppositeWing ? 0.1 : 0) +
+      (buildup && passType === "long" ? -0.65 : 0) +
+      (passType === "long" && !buildup ? -0.28 : 0) +
       (passType === "through" && role === "wide" && forward > 6 && !oppositeWing ? (buildup ? 0.1 : 0.18) : 0) +
       // Support pocket + striker layoff (Buckland Simple Soccer ideas).
       supportDistanceScore(distance, buildup) +

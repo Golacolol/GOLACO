@@ -60,7 +60,8 @@ describe("ball flight physics", () => {
       stepBall(ball, 1 / 60);
       maxY = Math.max(maxY, ball.y);
     }
-    expect(maxY).toBeGreaterThan(0.7);
+    // Modestly above the old carpet-hugger (~1.05 m apex at 15 m).
+    expect(maxY).toBeGreaterThan(0.95);
     expect(maxY).toBeLessThan(3.2);
   });
 

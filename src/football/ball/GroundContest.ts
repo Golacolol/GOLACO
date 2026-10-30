@@ -133,6 +133,8 @@ export function tryDefenderDisturbance(
   opponents: Player[],
   disturbMul = 1,
   rng: () => number = Math.random,
+  /** Frame dt — converts the per-second poke rate into a per-frame probability. */
+  dt = 1 / 60,
 ): DisturbResult {
   if (carrier.isGK || carrier.ballControlLockout > 0) return "none";
   const ballSpeed = Math.hypot(ball.vx, ball.vz);
@@ -142,12 +144,12 @@ export function tryDefenderDisturbance(
     if (def.sentOff || def.isGK || def.kickTimer > 0) continue;
     if (def.sliding || def.slideRecoverTimer > 0.35) continue;
     const dist = def.distTo(ball.x, ball.z);
-    // Must be on the ball, not just body-to-body.
-    if (dist > 1.18) continue;
+    // Tighter — only genuine contact on the ball, not a multi-man ring.
+    if (dist > 0.95) continue;
     const toCarrier = def.distTo(carrier.x, carrier.z);
-    if (toCarrier > 2.05) continue;
+    if (toCarrier > 1.75) continue;
     const w =
-      (1.25 - dist) +
+      (1.15 - dist) +
       stat01(tacklingStat(def)) * 0.45 +
       stat01(def.attrs.strength) * 0.25 +
       stat01(def.attrs.defending) * 0.2 +
@@ -158,7 +160,7 @@ export function tryDefenderDisturbance(
     if (!best || w > best.weight) best = { def, dist, weight: w };
   }
 
-  if (!best || best.weight < 0.28) return "none";
+  if (!best || best.weight < 0.38) return "none";
 
   const def = best.def;
   const resist =
@@ -166,7 +168,9 @@ export function tryDefenderDisturbance(
     stat01(carrier.attrs.dribbling) * 0.35 +
     stat01(carrier.attrs.strength) * 0.2 +
     carrier.energy.value * 0.12;
-  const pokeChance = clamp((0.22 + best.weight * 0.38 - resist * 0.45) * disturbMul, 0.04, 0.72);
+  // Per-second rate (~0.2–1.6 Hz), not a per-frame roll that guaranteed spam.
+  const pokeRate = clamp((0.55 + best.weight * 0.9 - resist * 0.85) * disturbMul, 0.2, 1.6);
+  const pokeChance = 1 - Math.exp(-pokeRate * Math.max(dt, 1 / 120));
   if (rng() > pokeChance) return "none";
 
   // Direction: away from defender through the ball (partial redirect).
@@ -175,17 +179,19 @@ export function tryDefenderDisturbance(
   const mixX = away.x * 0.72 + along.x * 0.28;
   const mixZ = away.z * 0.72 + along.z * 0.28;
   const dir = normalize2(mixX, mixZ);
-  const impulse = (2.4 + best.weight * 2.8 + clamp(def.speed * 0.35, 0, 2.2)) * clamp(disturbMul, 0.65, 1.35);
+  const impulse = (3.2 + best.weight * 3.4 + clamp(def.speed * 0.4, 0, 2.6)) * clamp(disturbMul, 0.65, 1.35);
   // Preserve some existing motion — defender changes pattern, does not reset it.
-  const keep = clamp(0.42 + ballSpeed * 0.04, 0.35, 0.62);
+  const keep = clamp(0.28 + ballSpeed * 0.03, 0.22, 0.48);
   ball.vx = ball.vx * keep + dir.x * impulse;
   ball.vz = ball.vz * keep + dir.z * impulse;
-  ball.vy = Math.max(ball.vy, 0.15 + rng() * 0.35);
-  ball.y = Math.max(ball.y, 0.12);
+  ball.vy = Math.max(ball.vy, 0.35 + rng() * 0.55);
+  ball.y = Math.max(ball.y, 0.18);
+  // Cooldown so the same defender cannot re-poke every frame.
+  def.kickTimer = Math.max(def.kickTimer, 0.55);
 
   const spill =
-    pokeChance > 0.48 ||
-    (best.weight > 0.85 && rng() < 0.55 * disturbMul) ||
-    (carrier.speed > 6.5 && rng() < 0.4);
+    pokeRate > 1.05 ||
+    (best.weight > 0.85 && rng() < 0.62 * disturbMul) ||
+    (carrier.speed > 6.5 && rng() < 0.48);
   return spill ? "loose" : "poke";
 }

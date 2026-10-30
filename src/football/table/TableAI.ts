@@ -117,19 +117,24 @@ export class TableAI {
 
     const ballComing = ball.vx * Math.sign(rod.spec.x) > -0.5 || Math.abs(ball.x) > Math.abs(rod.spec.x) - 0.8;
 
-    if (lined && ballComing && Math.random() < p.spinAggression * 0.08 + 0.02) {
+    // Strike on press; rare long holds for spin.
+    if (lined && ballComing && Math.random() < p.spinAggression * 0.12 + 0.04) {
       this.kicking = true;
       this.spinHold = 0;
     }
 
     if (this.kicking) {
       this.spinHold += dt;
+      const wantSpin = Math.random() < p.spinAggression * 0.18;
+      const releaseAt = wantSpin ? p.maxSpinHold * (0.4 + Math.random() * 0.4) : 0.05;
+      intent.kickPressed = this.spinHold <= dt + 1e-6; // rising edge → strike
       intent.kickHeld = true;
       intent.kickHoldSeconds = this.spinHold;
       intent.kickReleased = false;
-      if (this.spinHold >= p.maxSpinHold * (0.35 + Math.random() * 0.5)) {
+      if (this.spinHold >= releaseAt) {
         intent.kickReleased = true;
         intent.kickHeld = false;
+        intent.kickPressed = false;
         this.kicking = false;
         this.spinHold = 0;
       }
@@ -137,6 +142,7 @@ export class TableAI {
       intent.kickHeld = false;
       intent.kickHoldSeconds = 0;
       intent.kickReleased = false;
+      intent.kickPressed = false;
     }
   }
 }
