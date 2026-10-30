@@ -105,7 +105,8 @@ export class Team {
     const dir = this.endsFlipped ? (this.side === "home" ? -1 : 1) : this.side === "home" ? 1 : -1;
     const xFromOwn = (nx - 0.5) * HALF_LENGTH * 2;
     player.anchorX = dir * xFromOwn;
-    player.anchorZ = dir * nz * HALF_WIDTH * 2 * 0.5;
+    // Full pitch width (nz is ±0.5-ish formation lateral); do not half-squeeze shape.
+    player.anchorZ = dir * nz * HALF_WIDTH * 2;
     player.facing = dir > 0 ? Math.PI / 2 : -Math.PI / 2;
     player.attackSign = dir;
   }

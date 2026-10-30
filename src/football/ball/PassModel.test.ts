@@ -52,17 +52,23 @@ describe("passing model", () => {
     const kick = passKickVector(0, 0, 16, 0, "short");
     ball.y = 0.28;
     kickBall(ball, kick.vx, kick.vz, kick.vy);
-    expect(kick.vy).toBeLessThan(4.5);
     let closest = Infinity;
+    let speedAtClosest = Infinity;
     let maxY = ball.y;
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 120; i++) {
       stepBall(ball, 1 / 60);
-      closest = Math.min(closest, Math.hypot(ball.x - 16, ball.z));
+      const d = Math.hypot(ball.x - 16, ball.z);
+      if (d < closest) {
+        closest = d;
+        speedAtClosest = Math.hypot(ball.vx, ball.vz);
+      }
       maxY = Math.max(maxY, ball.y);
     }
-    expect(closest).toBeLessThan(3);
+    expect(closest).toBeLessThan(2.5);
     expect(ball.x).toBeGreaterThan(12);
-    expect(maxY).toBeLessThan(2.2);
+    expect(speedAtClosest).toBeLessThan(11.5);
+    expect(maxY).toBeGreaterThan(0.55);
+    expect(maxY).toBeLessThan(3.5);
   });
 
   it("carries a 24m long pass into the landing area", () => {
@@ -114,6 +120,31 @@ describe("shooting model", () => {
     });
     expect(Math.abs(shot.dx)).toBeLessThanOrEqual(2.4);
     expect(Math.abs(shot.dy)).toBeLessThanOrEqual(1.5);
+  });
+
+  it("keeps REAL shot power in a playable arc band", () => {
+    const normal = computeShot({
+      distance: 16,
+      pressure: 0.2,
+      bodyAlignment: 0.9,
+      energy: 1,
+      attrs,
+      hold01: 0.55,
+      shotKind: "normal",
+    });
+    const long = computeShot({
+      distance: 28,
+      pressure: 0.2,
+      bodyAlignment: 0.85,
+      energy: 1,
+      attrs,
+      hold01: 0.85,
+      shotKind: "long",
+    });
+    expect(normal.power).toBeGreaterThanOrEqual(18);
+    expect(normal.power).toBeLessThanOrEqual(32);
+    expect(long.power).toBeGreaterThanOrEqual(18);
+    expect(long.power).toBeLessThanOrEqual(32);
   });
 
   it("overcharging a shot makes it wilder than a timed strike", () => {

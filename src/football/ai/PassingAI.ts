@@ -212,20 +212,25 @@ export function choosePassTarget(
     const offside = opponents.length >= 2 && isInOffsidePosition(mate, passer.x, opponents);
     // Never pick an offside runner — through balls especially must stay legal.
     if (offside) continue;
-    const dx = mate.x - passer.x;
-    const dz = mate.z - passer.z;
-    const distance = Math.hypot(dx, dz);
-    const forward = dx * passer.attackSign;
+    // Score lanes / alignment to the same lead point executePass aims at.
+    const lead =
+      passType === "through" || passType === "chip"
+        ? throughBallAim(passer, mate, opponents)
+        : passLeadPoint(mate);
+    const dx = lead.x - passer.x;
+    const dz = lead.z - passer.z;
+    const distance = Math.hypot(mate.x - passer.x, mate.z - passer.z);
+    const forward = (mate.x - passer.x) * passer.attackSign;
     if (distance < 2.2) continue;
     if (passType === "short" && distance > (buildup ? 26 : 30)) continue;
-    if (passType === "short" && distance < 6.5 && Math.abs(dz) < 5.5 && forward < 4) continue;
+    if (passType === "short" && distance < 6.5 && Math.abs(mate.z - passer.z) < 5.5 && forward < 4) continue;
     if (passType === "through" && distance < 6) continue;
     if (passType === "long" && distance < 14) continue;
     // Extreme flat dumps only — milder switches stay available but lose to short options on score.
-    if (passType !== "cross" && Math.abs(dz) >= 28 && forward < 5) continue;
-    if (passType === "short" && Math.abs(dz) > 24 && forward < 6) continue;
-    if (passType === "long" && Math.abs(dz) > 24 && forward < 10) continue;
-    if (passType === "long" && Math.abs(dz) > 18 && forward < 5) continue;
+    if (passType !== "cross" && Math.abs(mate.z - passer.z) >= 28 && forward < 5) continue;
+    if (passType === "short" && Math.abs(mate.z - passer.z) > 24 && forward < 6) continue;
+    if (passType === "long" && Math.abs(mate.z - passer.z) > 24 && forward < 10) continue;
+    if (passType === "long" && Math.abs(mate.z - passer.z) > 18 && forward < 5) continue;
     if (forward < (buildup ? -16 : -6)) continue;
     if (mate.distTo(own, 0) < 14) continue;
     if (towardOwnKeeper(passer, mate.x, mate.z, teammates)) continue;
@@ -238,8 +243,8 @@ export function choosePassTarget(
     const alignment = (dot2(intent.x, intent.z, dir.x, dir.z) + 1) / 2;
     if (useStick && alignment < 0.16 && passType === "short") continue;
     if (useStick && alignment < 0.26 && passType !== "short") continue;
-    const laneClear = passingLaneQuality(passer, mate.x, mate.z, opponents);
-    const width = Math.abs(dz);
+    const laneClear = passingLaneQuality(passer, lead.x, lead.z, opponents);
+    const width = Math.abs(mate.z - passer.z);
     const space = nearestOpp(mate, opponents);
     const role = setPieceRole(mate);
     const lateral = width > 7 && forward < 10;
@@ -336,8 +341,8 @@ export function choosePassTarget(
       (passType === "short" && distance < 12 && width < 9 ? 0.16 : 0) +
       (passType === "through" && aheadSpace && laneClear >= 0.5 ? (buildup ? 0.28 : 0.42) : 0) +
       (buildup && passType === "through" && wing && forward > 5 && !oppositeWing ? 0.14 : 0) +
-      (buildup && passType === "long" ? -1.55 : 0) +
-      (passType === "long" && !buildup ? -0.65 : 0) +
+      (buildup && passType === "long" ? -0.45 : 0) +
+      (passType === "long" && !buildup ? -0.18 : 0) +
       (passType === "through" && role === "wide" && forward > 6 && !oppositeWing ? (buildup ? 0.1 : 0.18) : 0) +
       // Support pocket + striker layoff (Buckland Simple Soccer ideas).
       supportDistanceScore(distance, buildup) +
@@ -383,6 +388,20 @@ export function choosePassTarget(
   return best;
 }
 
+/** Lead point matching Match.executePass ground-pass aim (desired/velocity blend). */
+export function passLeadPoint(mate: Player): { x: number; z: number } {
+  return {
+    x:
+      mate.x +
+      (mate.desiredX !== 0 ? (mate.desiredX - mate.x) * 0.35 : mate.vx * 0.45) +
+      mate.vx * 0.25,
+    z:
+      mate.z +
+      (mate.desiredZ !== 0 ? (mate.desiredZ - mate.z) * 0.35 : mate.vz * 0.45) +
+      mate.vz * 0.25,
+  };
+}
+
 export function throughBallAim(
   passer: Player,
   mate: Player,
@@ -424,8 +443,8 @@ export function passingLaneQuality(from: Player, toX: number, toZ: number, oppon
   for (const op of opponents) {
     if (op.isGK) continue;
     const t = Math.max(0, Math.min(1, ((op.x - from.x) * dx + (op.z - from.z) * dz) / (len * len)));
-    // Ignore markers hugging the receiver / passer ends; judge the middle of the lane.
-    if (t < 0.12 || t > 0.9) continue;
+    // Include pressers on the passer and markers on the receiver (full lane).
+    if (t < 0.02 || t > 0.98) continue;
     const px = from.x + dx * t;
     const pz = from.z + dz * t;
     const d = dist2(op.x, op.z, px, pz);
@@ -454,7 +473,7 @@ export function interceptCandidate(
   const dz = toZ - fromZ;
   const len = Math.hypot(dx, dz) || 1;
   for (const op of opponents) {
-    const t = Math.max(0.12, Math.min(0.88, ((op.x - fromX) * dx + (op.z - fromZ) * dz) / (len * len)));
+    const t = Math.max(0.02, Math.min(0.98, ((op.x - fromX) * dx + (op.z - fromZ) * dz) / (len * len)));
     const px = fromX + dx * t;
     const pz = fromZ + dz * t;
     const d = dist2(op.x, op.z, px, pz);

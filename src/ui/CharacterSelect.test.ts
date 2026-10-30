@@ -289,7 +289,7 @@ describe("character select", () => {
     host.remove();
   });
 
-  it("uses secondary colour for kit-marker text and captions PNG under the circle", () => {
+  it("uses secondary colour for kit-marker text and captions PNG number+name on one line", () => {
     const host = document.createElement("div");
     document.body.appendChild(host);
     const view = new CharacterSelect(host);
@@ -324,8 +324,8 @@ describe("character select", () => {
     expect(out.get("GK")).toEqual({ left: 48.5, bottom: 5 });
     const pa = out.get("RCB")!;
     const pb = out.get("RB")!;
-    const nx = (pb.left - pa.left) / 12.5;
-    const ny = (pb.bottom - pa.bottom) / 13.5;
+    const nx = (pb.left - pa.left) / 10;
+    const ny = (pb.bottom - pa.bottom) / 10.8;
     expect(Math.hypot(nx, ny)).toBeGreaterThanOrEqual(0.98);
   });
 

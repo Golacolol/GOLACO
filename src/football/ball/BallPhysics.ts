@@ -17,7 +17,19 @@ const ROLL_FRICTION = 1.05;
 /** Spinless ground-hop horizontal loss on each bounce. */
 const BOUNCE_GRIP = 0.88;
 
-export function stepBall(ball: Ball, dt: number, frictionMul = 1, windZ = 0): void {
+/** Minimal motion state for physics (avoids allocating THREE meshes when solving kicks). */
+export interface BallMotion {
+  x: number;
+  y: number;
+  z: number;
+  vx: number;
+  vy: number;
+  vz: number;
+  spinX: number;
+  spinY: number;
+}
+
+export function stepBall(ball: BallMotion, dt: number, frictionMul = 1, windZ = 0): void {
   // Integrate with drag before gravity so lofted balls arc naturally.
   const speed3 = Math.hypot(ball.vx, ball.vy, ball.vz);
   if (speed3 > 0.05) {

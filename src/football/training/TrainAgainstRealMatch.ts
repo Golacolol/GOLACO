@@ -194,6 +194,12 @@ export interface SimPassMix {
   stuckRecoveries?: number;
   phaseSeconds?: Partial<Record<string, number>>;
   meanStOffsideGap?: number;
+  /** Own-team completions (for absolute gameplay fidelity). */
+  completedPasses?: number;
+  meanPossessionSpell?: number;
+  medianPassApex?: number;
+  medianShotApex?: number;
+  meanTeamWidth?: number;
 }
 
 export interface SimVsRealReport {
@@ -214,6 +220,8 @@ export interface SimVsRealReport {
   withinTolerance: boolean;
   /** Extended fidelity gate (progressive + length when sim reports them). */
   fidelityOk: boolean;
+  /** Absolute gameplay floors when completion / hold / apex / width are reported. */
+  gameplayOk: boolean;
 }
 
 export type CompareSimOpts = {
@@ -266,6 +274,24 @@ export function compareSimToReal(
     fidelityOk = fidelityOk && Math.abs(lengthDelta) <= lenTol;
   }
 
+  let gameplayOk = true;
+  if (sim.completedPasses != null && sim.passes >= 8) {
+    gameplayOk = gameplayOk && sim.completedPasses / Math.max(1, sim.passes) >= 0.55;
+  }
+  if (sim.meanPossessionSpell != null) {
+    gameplayOk = gameplayOk && sim.meanPossessionSpell >= 0.7;
+  }
+  if (sim.medianPassApex != null) {
+    gameplayOk = gameplayOk && sim.medianPassApex >= 0.55;
+  }
+  if (sim.medianShotApex != null && sim.medianShotApex > 0) {
+    gameplayOk = gameplayOk && sim.medianShotApex >= 0.7;
+  }
+  if (sim.meanTeamWidth != null && sim.meanTeamWidth > 0) {
+    gameplayOk = gameplayOk && sim.meanTeamWidth >= 30;
+  }
+  fidelityOk = fidelityOk && gameplayOk;
+
   return {
     matchId: corpus.match.id,
     targets,
@@ -282,6 +308,7 @@ export function compareSimToReal(
     lengthDelta,
     withinTolerance,
     fidelityOk,
+    gameplayOk,
   };
 }
 

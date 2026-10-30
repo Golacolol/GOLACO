@@ -23,6 +23,13 @@ export function isClassicTeamRecord(team: TeamRecord): boolean {
   return isClassicTeamId(team.id);
 }
 
+function medianOf(values: number[]): number {
+  if (!values.length) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid]! : (sorted[mid - 1]! + sorted[mid]!) * 0.5;
+}
+
 export type SimulationPoolMode = "CURRENT" | "CLASSIC_INCLUDED" | "CLASSIC_ONLY" | "FIXED";
 
 export interface SimulationLabOptions {
@@ -76,6 +83,9 @@ export interface SimulatedMatchRecord {
     meanPassLengthM: number;
     progressiveShare: number;
     meanPossessionDuration: number;
+    medianPassApex?: number;
+    medianShotApex?: number;
+    meanTeamWidth?: number;
     homePlayStyle?: string;
     awayPlayStyle?: string;
     phaseShares?: Record<string, number>;
@@ -430,6 +440,12 @@ export async function simulateOneMatch(
           progressiveShare: match.stats.progressivePasses / passes,
           meanPossessionDuration:
             possDurs.length > 0 ? possDurs.reduce((a, b) => a + b, 0) / possDurs.length : 0,
+          medianPassApex: medianOf(match.stats.passApexSamples),
+          medianShotApex: medianOf(match.stats.shotApexSamples),
+          meanTeamWidth:
+            match.stats.teamWidthSamples.length > 0
+              ? match.stats.teamWidthSamples.reduce((a, b) => a + b, 0) / match.stats.teamWidthSamples.length
+              : 0,
           homePlayStyle: match.homePlayStyle?.id,
           awayPlayStyle: match.awayPlayStyle?.id,
           phaseShares,

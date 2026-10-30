@@ -5,8 +5,9 @@ const FROM = "2021-07-01";
 export const ARGYLE_101_TEAM_ID = "argyle_historic_sample";
 export const ARGYLE_101_LINEUP_ID = "argyle_historic_xi";
 export const ARGYLE_101_FORMATION = "4-4-2";
-export const ARGYLE_101_NAME = "Plymouth Argyle 101";
+export const ARGYLE_101_NAME = "Plymouth Argyle — 101";
 export const ARGYLE_101_ABBREVIATION = "101";
+export const ARGYLE_101_ERA = "101";
 
 function legend(
   id: string,

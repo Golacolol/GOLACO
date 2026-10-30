@@ -1335,11 +1335,11 @@ html.club-name-glow-off .club-line {
   position: absolute;
   transform: translate(-50%, 0);
   z-index: 2;
-  width: 84px;
-  min-height: 78px;
+  width: 64px;
+  min-height: 62px;
 }
 .pitch-slot.empty {
-  min-height: 72px;
+  min-height: 56px;
   border-radius: 10px;
 }
 .pitch-slot.nudging {
@@ -1408,12 +1408,12 @@ html.club-name-glow-off .club-line {
 }
 .pitch-token .portrait,
 .kit-marker .portrait {
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   margin: 0;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.45);
 }
 .pitch-token .portrait-badge,
 .kit-marker .portrait-badge {
@@ -1422,17 +1422,17 @@ html.club-name-glow-off .club-line {
 .kit-marker {
   display: grid;
   justify-items: center;
-  gap: 2px;
+  gap: 1px;
   min-width: 0;
-  max-width: 90px;
+  max-width: 48px;
 }
 .portrait-badge-kit {
-  padding: 4px 5px;
-  gap: 1px;
+  padding: 3px 4px;
+  gap: 0;
   justify-content: center;
 }
 .portrait-badge-kit .num {
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: 0.02em;
@@ -1440,7 +1440,7 @@ html.club-name-glow-off .club-line {
 }
 .portrait-badge-kit .sur {
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1.05;
@@ -1454,28 +1454,36 @@ html.club-name-glow-off .club-line {
   opacity: 1;
 }
 .kit-marker-caption {
-  display: grid;
-  justify-items: center;
-  gap: 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 2px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
-  max-width: 90px;
+  max-width: 48px;
+  width: 48px;
+  overflow: hidden;
 }
 .kit-marker-caption .kit-marker-num {
+  flex: 0 0 auto;
   font-weight: 800;
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  font-size: 10px;
+  letter-spacing: 0.02em;
   line-height: 1;
 }
 .kit-marker-caption .kit-marker-name {
+  flex: 1 1 auto;
+  min-width: 0;
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 16px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   line-height: 1.1;
   white-space: nowrap;
-  overflow: visible;
+  overflow: hidden;
   text-overflow: clip;
-  max-width: 100%;
+  text-align: left;
 }
 .kit-marker:not(.kit-marker-photo) .kit-marker-caption {
   display: none;
@@ -1485,7 +1493,7 @@ html.club-name-glow-off .club-line {
   justify-items: center;
   gap: 0;
   min-width: 0;
-  max-width: 90px;
+  max-width: 48px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
 }
 .pitch-num {
@@ -1557,7 +1565,7 @@ html.club-name-glow-off .club-line {
 .bench-card:active { cursor: grabbing; }
 .bench-card.dragging { opacity: 0.45; }
 .bench-card .kit-marker-bench {
-  max-width: 84px;
+  max-width: 72px;
   gap: 2px;
 }
 .bench-card .kit-marker-bench .portrait {
@@ -1565,7 +1573,8 @@ html.club-name-glow-off .club-line {
   height: 72px;
 }
 .bench-card .kit-marker-bench .kit-marker-caption {
-  max-width: 84px;
+  max-width: 72px;
+  width: 72px;
 }
 .bench-card .portrait-badge-kit {
   padding: 3px 4px;

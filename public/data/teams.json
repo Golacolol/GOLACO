@@ -67,7 +67,7 @@
   },
   {
     "id": "argyle_fans_xi",
-    "name": "Plymouth Argyle Fans XI",
+    "name": "Plymouth Argyle — FANSXI",
     "abbreviation": "FAN",
     "teamType": "FANS_TEAM",
     "city": "Plymouth",
@@ -89,6 +89,7 @@
     },
     "defaultStadiumId": "central_park_pitch",
     "defaultFormation": "4-4-2-W",
+    "historicSeason": "FANSXI",
     "fanTeam": true,
     "awayKit": {
       "shirt": "#C5A572",
@@ -100,7 +101,7 @@
   },
   {
     "id": "argyle_historic_sample",
-    "name": "Plymouth Argyle 101",
+    "name": "Plymouth Argyle — 101",
     "abbreviation": "101",
     "teamType": "HISTORIC_TEAM",
     "city": "Plymouth",
@@ -122,7 +123,7 @@
     },
     "defaultStadiumId": "home_park",
     "defaultFormation": "4-4-2",
-    "historicSeason": "2021-22",
+    "historicSeason": "101",
     "awayKit": {
       "shirt": "#FFFFFF",
       "shorts": "#000000",

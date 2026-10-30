@@ -52,7 +52,8 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
   const ahead = dribbleAhead(player.speed, player.attrs.control, player.sprinting) * (close ? 0.88 : 1);
   const tx = player.x + fx * ahead;
   const tz = player.z + fz * ahead;
-  const reach = 1.55 + (1 - control) * 0.35 + (close ? 0.12 : 0);
+  // Collect-ish reach for a touch; final retain below is larger (hysteresis).
+  const reach = 1.48 + (1 - control) * 0.28 + (close ? 0.1 : 0);
 
   // Sharp cut at pace — classic over-turn spill.
   const turnRate = Math.abs(facingDelta(player.prevFacing, player.facing)) / Math.max(dt, 1 / 120);
@@ -109,7 +110,8 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
     if (ball.y < BALL_RADIUS + 0.08) ball.y = BALL_RADIUS;
   }
 
-  if (player.distTo(ball.x, ball.z) > 1.72 + (1 - control) * 0.45) return "loose";
+  // Retain beyond collect reach so a take cannot instantly drop (hysteresis).
+  if (player.distTo(ball.x, ball.z) > 2.05 + (1 - control) * 0.35) return "loose";
   return "keep";
 }
 

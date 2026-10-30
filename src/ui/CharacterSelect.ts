@@ -124,9 +124,9 @@ export function formationToPitchPercent(x: number, z: number): { left: number; b
   };
 }
 
-/** Minimum centre-to-centre gap so 60px markers do not overlap (percent of pitch). */
-const MARKER_MIN_DX = 12.5;
-const MARKER_MIN_DY = 13.5;
+/** Minimum centre-to-centre gap so ~48px markers do not overlap (percent of pitch). */
+export const MARKER_MIN_DX = 10;
+export const MARKER_MIN_DY = 10.8;
 const MARKER_SEPARATE_ITERS = 10;
 
 export interface PitchMarkerPoint {
@@ -281,6 +281,9 @@ interface NudgeState {
   playerId: string;
   startClientX: number;
   startClientY: number;
+  /** Cursor minus slot anchor at grab (percent), so drag does not jump to cursor centre. */
+  grabOffsetLeft: number;
+  grabOffsetBottom: number;
   moved: boolean;
   slotEl: HTMLElement;
   pitchEl: HTMLElement;
@@ -920,12 +923,25 @@ export class CharacterSelect {
     e.preventDefault();
     this.selectPlayerId(playerId);
     const origin = this.slotOffsets.get(slotId) ?? { dx: 0, dz: 0 };
+    const form = getFormation(this.formation).find((s) => s.id === slotId);
+    const rect = pitchEl.getBoundingClientRect();
+    let grabOffsetLeft = 0;
+    let grabOffsetBottom = 0;
+    if (form && rect.width > 0 && rect.height > 0) {
+      const anchor = formationToPitchPercent(form.x + origin.dx, form.z + origin.dz);
+      const cursorLeft = ((e.clientX - rect.left) / rect.width) * 100;
+      const cursorBottom = ((rect.bottom - e.clientY) / rect.height) * 100;
+      grabOffsetLeft = cursorLeft - anchor.left;
+      grabOffsetBottom = cursorBottom - anchor.bottom;
+    }
     this.nudge = {
       pointerId: e.pointerId,
       slotId,
       playerId,
       startClientX: e.clientX,
       startClientY: e.clientY,
+      grabOffsetLeft,
+      grabOffsetBottom,
       moved: false,
       slotEl,
       pitchEl,
@@ -947,8 +963,8 @@ export class CharacterSelect {
     const rect = n.pitchEl.getBoundingClientRect();
     if (rect.width <= 0 || rect.height <= 0) return;
 
-    const left = ((e.clientX - rect.left) / rect.width) * 100;
-    const bottom = ((rect.bottom - e.clientY) / rect.height) * 100;
+    const left = ((e.clientX - rect.left) / rect.width) * 100 - n.grabOffsetLeft;
+    const bottom = ((rect.bottom - e.clientY) / rect.height) * 100 - n.grabOffsetBottom;
     this.applyNudgeFromPercent(n.slotId, left, bottom);
     const off = this.slotOffsets.get(n.slotId) ?? { dx: 0, dz: 0 };
     const form = getFormation(this.formation).find((s) => s.id === n.slotId);
@@ -994,7 +1010,7 @@ export class CharacterSelect {
   /** Prefer a nearby occupied slot for swap targeting (avoids pointer-capture hit-test issues). */
   private slotNearPoint(clientX: number, clientY: number, excludeSlotId: string): HTMLElement | null {
     let best: HTMLElement | null = null;
-    let bestDist = 56 * 56;
+    let bestDist = 44 * 44;
     for (const el of this.root.querySelectorAll<HTMLElement>(".pitch-slot[data-slot]:not(.empty)")) {
       const id = el.getAttribute("data-slot");
       if (!id || id === excludeSlotId) continue;

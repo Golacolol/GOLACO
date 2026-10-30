@@ -53,8 +53,10 @@ export function computeShot(ctx: ShotContext): ShotResult {
   const dx = clamp(boundedNoise(error * 1.6), -spread, spread);
   const dy = clamp(boundedNoise(error * 1.15), -spread * 0.6, spread * 0.6);
   // Long / power shots carry more punch and more lateral miss — goals and wides both rise.
-  const kindMul = ctx.shotKind === "long" || ctx.shotKind === "power" ? 1.34 : ctx.shotKind === "close" ? 1.16 : 1.12;
-  const power = clamp(19 + powerStat * 15 + ctx.hold01 * 16 - overpower * 1.2, 16, ctx.overcharged ? 52 : 48) * kindMul;
+  // Apply kindMul BEFORE the clamp so power stays in a playable REAL band (~22–32 m/s).
+  const kindMul = ctx.shotKind === "long" || ctx.shotKind === "power" ? 1.22 : ctx.shotKind === "close" ? 1.1 : 1.06;
+  const raw = (17 + powerStat * 11 + ctx.hold01 * 10 - overpower * 1.2) * kindMul;
+  const power = clamp(raw, 18, ctx.overcharged ? 36 : 32);
   if (ctx.shotKind === "long" || ctx.shotKind === "power") {
     return {
       dx: clamp(dx * 1.22, -spread * 1.15, spread * 1.15),

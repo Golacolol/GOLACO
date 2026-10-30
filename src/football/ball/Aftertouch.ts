@@ -199,8 +199,22 @@ export function aiAftertouchStrengthMul(distanceToGoal: number): number {
   return 1;
 }
 
-export function aiCurveSide(targetZ: number, ballZ: number, rng: () => number = Math.random): -1 | 1 {
+/**
+ * Pick AI curve side relative to kick-left normal.
+ * Positive side bends toward +kickLeft (world); we choose the side that pulls toward targetZ.
+ */
+export function aiCurveSide(
+  targetZ: number,
+  ballZ: number,
+  opts?: { dirX?: number; dirZ?: number; rng?: () => number },
+): -1 | 1 {
+  const rng = opts?.rng ?? Math.random;
   const d = targetZ - ballZ;
   if (Math.abs(d) < 0.35) return rng() < 0.5 ? -1 : 1;
-  return d < 0 ? -1 : 1;
+  const dirX = opts?.dirX ?? 1;
+  const dirZ = opts?.dirZ ?? 0;
+  const left = kickLeftNormal(dirX, dirZ);
+  // Which curve side moves the ball toward targetZ?
+  if (Math.abs(left.z) < 0.08) return d < 0 ? -1 : 1;
+  return d * left.z > 0 ? 1 : -1;
 }

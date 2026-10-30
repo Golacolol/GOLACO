@@ -69,10 +69,12 @@ export function updateTeamAI(
 ): TeamAIResult {
   const us = players.filter((p) => p.side === side);
   const them = players.filter((p) => p.side !== side);
-  const defending = possessingSide !== side;
+  const looseBall = possessingSide == null;
+  // Our pass / loose ball after our touch stays attacking so support runs form in flight.
+  const inFlightAttack = looseBall && ball.lastTouchSide === side;
+  const defending = possessingSide !== side && !inFlightAttack;
   const autoClosers = extras?.autoClosers !== false;
   const forced = (extras?.forceClosers ?? []).filter((p) => p.side === side && !p.isGK && !p.celebrating);
-  const looseBall = possessingSide == null;
   const playStyle = extras?.playStyle ?? playStyleProfile("balanced");
   const pressWindow = 3.4 * (extras?.tuning?.counterPressWindowMultiplier ?? 1);
   const pressAggro = extras?.tuning?.counterPressAggressionMultiplier ?? 1;
@@ -96,7 +98,8 @@ export function updateTeamAI(
           : []
       : [];
   // MatchBrain: loose ball always has designated pursuers (Gameplay Football pattern).
-  if (looseBall && !extras?.kickOff && !extras?.keeperHold && autoClosers) {
+  // Skip when this is OUR pass in flight — teammates should offer support, not swarm the ball.
+  if (looseBall && !inFlightAttack && !extras?.kickOff && !extras?.keeperHold && autoClosers) {
     const pursuers = designatePursuers(us, ball, 2);
     const ids = new Set(closers.map((p) => p.id));
     for (const p of pursuers) {
@@ -110,7 +113,14 @@ export function updateTeamAI(
   const supportPursuer = closers[1] ?? null;
   const closerIds = new Set(closers.map((p) => p.id));
   const presser = primaryPursuer;
-  const carrier = players.find((p) => p.hasBall && p.side === side) ?? null;
+  const onBall = players.find((p) => p.hasBall && p.side === side) ?? null;
+  const carrier =
+    onBall ??
+    (inFlightAttack
+      ? [...us]
+          .filter((p) => !p.isGK && !p.celebrating)
+          .sort((a, b) => a.distTo(ball.x, ball.z) - b.distTo(ball.x, ball.z))[0] ?? null
+      : null);
   const markedIds = new Set<string>();
   const coveringCbs = us.filter((p) => p.slot.includes("CB") && !closerIds.has(p.id) && !p.celebrating);
   const cbLineX = defending ? centreBackLineX(coveringCbs, ball.x, { blockDepth }) : null;

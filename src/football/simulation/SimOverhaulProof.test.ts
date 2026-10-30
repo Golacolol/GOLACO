@@ -101,11 +101,13 @@ describe("sim overhaul proof", () => {
     expect((spot.x - line) * st.attackSign).toBeLessThanOrEqual(0.05);
   });
 
-  it("keeps short and through ground passes low (no lofted missiles)", () => {
+  it("keeps short and through ground passes mid-loft (not flat lasers or missiles)", () => {
     const short = passKickVector(0, 0, 14, 2, "short");
     const through = passKickVector(0, 0, 18, 1, "through");
-    expect(short.vy).toBeLessThan(3.5);
-    expect(through.vy).toBeLessThan(3.0);
+    expect(short.vy).toBeGreaterThan(1.5);
+    expect(short.vy).toBeLessThan(6.5);
+    expect(through.vy).toBeGreaterThan(2);
+    expect(through.vy).toBeLessThan(5.5);
     expect(Math.hypot(short.vx, short.vz)).toBeGreaterThan(6);
     expect(Math.hypot(through.vx, through.vz)).toBeGreaterThan(6);
   });

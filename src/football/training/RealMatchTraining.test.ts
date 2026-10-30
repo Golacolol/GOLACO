@@ -89,6 +89,7 @@ describe("real match training corpus", () => {
     });
     expect(ok.withinTolerance).toBe(true);
     expect(ok.fidelityOk).toBe(true);
+    expect(ok.gameplayOk).toBe(true);
     expect(ok.simOffsidesPer90).toBeGreaterThan(0);
 
     const tooLong = compareSimToReal(corpus, {
@@ -101,5 +102,19 @@ describe("real match training corpus", () => {
     });
     expect(tooLong.withinTolerance).toBe(true);
     expect(tooLong.fidelityOk).toBe(false);
+
+    const flatPasses = compareSimToReal(corpus, {
+      passes: 40,
+      shortPasses: 28,
+      longPasses: 8,
+      crossFieldPasses: 4,
+      progressivePasses: Math.round(targets.progressivePassShare * 40),
+      meanPassLengthM: targets.avgPassLengthM || 12,
+      completedPasses: 10,
+      meanPossessionSpell: 0.2,
+      medianPassApex: 0.2,
+    });
+    expect(flatPasses.gameplayOk).toBe(false);
+    expect(flatPasses.fidelityOk).toBe(false);
   });
 });

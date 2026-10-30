@@ -50,6 +50,20 @@ function make(id: string, x: number, z: number, heading = 80): Player {
 }
 
 describe("ball flight physics", () => {
+  it("lofts a short pass off the carpet into a mid arc", () => {
+    const ball = new Ball();
+    ball.reset(0, 0);
+    const kick = passKickVector(0, 0, 15, 0, "short");
+    kickBall(ball, kick.vx, kick.vz, kick.vy);
+    let maxY = ball.y;
+    for (let i = 0; i < 90; i++) {
+      stepBall(ball, 1 / 60);
+      maxY = Math.max(maxY, ball.y);
+    }
+    expect(maxY).toBeGreaterThan(0.7);
+    expect(maxY).toBeLessThan(3.2);
+  });
+
   it("lofts a cross above head height and keeps it aerial long enough to challenge", () => {
     const ball = new Ball();
     ball.reset(0, 0);

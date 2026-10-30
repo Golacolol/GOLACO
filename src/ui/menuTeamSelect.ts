@@ -56,17 +56,21 @@ export function formatEraRoll(season: string | null | undefined): string {
   if (decade) return `${decade[1]!.slice(2)}s`;
   // Already a short date token like "04-05" / "91/92"
   if (/^\d{2}[\/\-–]\d{2}$/.test(raw)) return raw.replace(/[\/–]/g, "-");
+  // Short era codes (101, FAN) — not calendar seasons
+  if (/^[A-Za-z0-9]{2,6}$/.test(raw) && !/^\d{4}$/.test(raw)) return raw.toUpperCase();
   return "";
 }
 
-/** Prefer historicSeason; else parse from "Club — 2003/04 …". */
+/** Prefer historicSeason; else parse from "Club — 2003/04 …" or "Club — 101". */
 export function eraFromTeam(team: TeamRecord): string {
   if (team.historicSeason?.trim()) return team.historicSeason.trim();
   const parts = team.name.split(/\s*[—–]\s*/);
   if (parts.length < 2) return "";
   const tail = parts.slice(1).join(" — ").trim();
   const m = /^(\d{4}(?:\s*[\/\-–]\s*\d{2,4})?|\d{4}s?)/.exec(tail);
-  return m?.[1]?.replace(/\s+/g, "") ?? "";
+  if (m) return m[1]!.replace(/\s+/g, "");
+  if (/^[A-Za-z0-9]{2,6}$/.test(tail)) return tail;
+  return "";
 }
 
 function isClassicTeam(team: TeamRecord): boolean {

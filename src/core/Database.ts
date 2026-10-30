@@ -13,6 +13,7 @@ import type { SaveManager } from "./SaveManager";
 import { DEFAULT_TEAM_ID } from "../football/constants";
 import {
   ARGYLE_101_ABBREVIATION,
+  ARGYLE_101_ERA,
   ARGYLE_101_FORMATION,
   ARGYLE_101_LINEUP,
   ARGYLE_101_MEMBERSHIPS,
@@ -22,6 +23,7 @@ import {
 } from "../data/argyle101";
 import {
   ARGYLE_FANS_ABBREVIATION,
+  ARGYLE_FANS_ERA,
   ARGYLE_FANS_FORMATION,
   ARGYLE_FANS_LINEUP,
   ARGYLE_FANS_MEMBERSHIPS,
@@ -178,7 +180,7 @@ export class GameDatabase {
       memberships: ARGYLE_FANS_MEMBERSHIPS,
       lineup: ARGYLE_FANS_LINEUP,
       formation: ARGYLE_FANS_FORMATION,
-      rename: { name: ARGYLE_FANS_NAME, abbreviation: ARGYLE_FANS_ABBREVIATION },
+      rename: { name: ARGYLE_FANS_NAME, abbreviation: ARGYLE_FANS_ABBREVIATION, historicSeason: ARGYLE_FANS_ERA },
     });
   }
 
@@ -190,7 +192,7 @@ export class GameDatabase {
       memberships: ARGYLE_101_MEMBERSHIPS,
       lineup: ARGYLE_101_LINEUP,
       formation: ARGYLE_101_FORMATION,
-      rename: { name: ARGYLE_101_NAME, abbreviation: ARGYLE_101_ABBREVIATION, historicSeason: "2021-22" },
+      rename: { name: ARGYLE_101_NAME, abbreviation: ARGYLE_101_ABBREVIATION, historicSeason: ARGYLE_101_ERA },
     });
   }
 

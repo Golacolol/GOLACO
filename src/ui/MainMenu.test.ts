@@ -62,6 +62,7 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector('[data-mode="LEAGUE"]')).toBeNull();
     expect(menu.root.querySelector('[data-mode="REAL"]')).toBeTruthy();
     expect(menu.root.querySelector('[data-mode="ARCADE"]')).toBeTruthy();
+    expect(menu.root.querySelector('[data-mode="TABLE"]')?.textContent).toMatch(/Foosball/i);
   });
 
   it("shows LEAGUE after career progress is unlocked", () => {

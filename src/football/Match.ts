@@ -53,7 +53,7 @@ import { computePassError, holdPowerCurve, passKickVector, type PassType } from 
 import { ballSpeed, isLegalStationary, isOutOfWorld, predictLanding } from "./ball/StuckBall";
 import { aimOnGoal, aiShotAimIntent, computeShot } from "./ball/ShotModel";
 import { MatchCamera, isPlayerView, nextTrack, nextView, supportsViewZoom, viewLabel } from "./camera/MatchCamera";
-import { BALL_RADIUS, GOAL_WIDTH, HALF_LENGTH, HALF_TIME_PAUSE, HALF_WIDTH, SPEED_BURST_SHOT_MUL } from "./constants";
+import { BALL_GRAVITY, BALL_RADIUS, GOAL_WIDTH, HALF_LENGTH, HALF_TIME_PAUSE, HALF_WIDTH, SPEED_BURST_SHOT_MUL } from "./constants";
 import type { InputIntent } from "./controls/InputIntent";
 import { FootballState } from "./FootballState";
 import { defendGoalX, scorerForWorldGoal } from "./pitch/PitchEnds";
@@ -253,6 +253,11 @@ export class Match {
     } as Record<MatchPhase, number>,
     /** Samples of ST→offside-line gap (metres onside = positive) during attack/chance. */
     stOffsideGapSamples: [] as number[],
+    /** Approximate apex heights (m) from kick loft — fidelity gates. */
+    passApexSamples: [] as number[],
+    shotApexSamples: [] as number[],
+    /** Outfield width (maxZ − minZ) samples while a side possesses. */
+    teamWidthSamples: [] as number[],
   };
   debug = {
     fps: 0,
@@ -776,12 +781,14 @@ export class Match {
     this.pressure = this.possessing ? computePressure(this.possessing, this.opponentsOf(this.possessing)).value : 0;
     this.switchLock = Math.max(0, this.switchLock - dt);
     {
+      // Ignore null flicker (take→loose→take) so phase is not stuck on "transition".
       const side = this.possessing?.side ?? null;
-      if (side !== this.lastPossessingSide) {
+      if (side != null && side !== this.lastPossessingSide) {
         this.possessionChangeAge = 0;
         this.lastPossessingSide = side;
       } else {
         this.possessionChangeAge += dt;
+        if (side != null) this.lastPossessingSide = side;
       }
     }
     if (this.teamControl && !this.autoplay && this.switchLock <= 0) {
@@ -1119,7 +1126,9 @@ export class Match {
   }
 
   private updatePossession(): void {
-    if (this.possessing && !this.possessing.isGK && this.possessing.distTo(this.ball.x, this.ball.z) > 1.85) {
+    // Retain radius > collect radius — prevents take/drop flicker (plan Phase 2).
+    const retainRadius = 2.05;
+    if (this.possessing && !this.possessing.isGK && this.possessing.distTo(this.ball.x, this.ball.z) > retainRadius) {
       this.makeLoose(this.possessing);
     }
     if (this.possessing) return;
@@ -1137,7 +1146,8 @@ export class Match {
         }
       }
     }
-    const collectSpeed = aerial ? 1.95 : speed < 0.85 ? 2.2 : 1.45;
+    // Collect must be ≤ retain (stationary was 2.2 > drop 1.85 — caused flicker).
+    const collectSpeed = aerial ? 1.85 : speed < 0.85 ? 1.55 : 1.42;
     const offsideTouch = this.offsidePlayerInReceiveRange(collectSpeed, speed);
     if (offsideTouch) {
       this.awardOffsideFoul(offsideTouch);
@@ -1784,7 +1794,13 @@ export class Match {
         action = decision.scores.runScore >= 0.12 ? "RUN" : "HOLD";
       }
     }
-    if (passLike && this.possessionTime < 0.14) action = "RUN";
+    // Receive dwell — look up before re-passing (attribute-scaled 0.4–0.75 s).
+    {
+      const composure = stat01(passer.attrs.composure);
+      const vision = stat01(passer.attrs.vision);
+      const dwell = clamp(0.42 + (1 - composure) * 0.2 + (1 - vision) * 0.12, 0.4, 0.75);
+      if (passLike && this.possessionTime < dwell) action = "RUN";
+    }
     // Stall breaker: give think time; only force a pass into a clear lane.
     const stallStyle = (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined;
     const stallAt =
@@ -1856,7 +1872,14 @@ export class Match {
     }
     const passType: PassType =
       action === "THROUGH" ? "through" : action === "LONG_PASS" ? "long" : action === "CROSS" ? "cross" : "short";
-    fakeBase.passHold = passType === "long" || passType === "cross" ? 0.78 : passType === "through" ? 0.42 : 0.3;
+    fakeBase.passHold =
+      passType === "long" || passType === "cross"
+        ? 0.78
+        : passType === "through"
+          ? this.pressure > 0.45
+            ? 0.72
+            : 0.48
+          : 0.3;
     const dir = passTarget
       ? normalize2(passTarget.x - passer.x, passTarget.z - passer.z)
       : { x: decision.space.dx, z: decision.space.dz };
@@ -2108,15 +2131,15 @@ export class Match {
     if (target?.isGK && !passer.isGK) target = null;
     const hold01 = clamp(holdPowerCurve(intent.passHold, 1.1), 0.12, 1);
     let delivery: PassType = passType;
-    // Explicit chip, or charged through under pressure → lofted chip over the closing man.
-    if (delivery === "chip") {
-      /* already lofted */
-    } else if (
-      delivery === "through" &&
-      hold01 > 0.62 &&
-      computePressure(passer, this.opponentsOf(passer)).value > 0.45
-    ) {
-      delivery = "chip";
+    // Explicit chip, or through under heavy pressure → lofted chip over the closing man.
+    {
+      const press = computePressure(passer, this.opponentsOf(passer)).value;
+      const human = !this.autoplay && passer.id === this.controlled.id;
+      if (delivery === "chip") {
+        /* already lofted */
+      } else if (delivery === "through" && press > 0.62 && (hold01 > 0.55 || (!human && press > 0.72))) {
+        delivery = "chip";
+      }
     }
     const distance =
       target ? passer.distTo(target.x, target.z) : delivery === "long" || delivery === "cross" ? 28 : 14;
@@ -2164,10 +2187,17 @@ export class Match {
     if (!this.ballActor.tryClaim("kick", passer.id)) return;
     const kick = passKickVector(this.ball.x, this.ball.z, destX, destZ, delivery);
     const strengthScale = strengthKickScale(passer.attrs.strength);
-    const speedScale =
-      clamp(1 + result.powerError / 22, 0.86, 1.14) * this.tuning.passSpeedMultiplier * strengthScale;
+    // Kick is already calibrated to stepBall — only apply small error/strength, not mode speed mul
+    // (mode mul was undershooting catchable arrivals after the solver).
+    const execScale = clamp(1 + result.powerError / 22, 0.9, 1.1) * clamp(strengthScale, 0.92, 1.08);
+    const modeNudge = clamp(this.tuning.passSpeedMultiplier, 0.92, 1.08);
     if (this.ball.y < 0.25) this.ball.y = 0.28;
-    kickBall(this.ball, kick.vx * speedScale, kick.vz * speedScale, kick.vy);
+    const loftVy = kick.vy * execScale;
+    kickBall(this.ball, kick.vx * execScale * modeNudge, kick.vz * execScale * modeNudge, loftVy);
+    this.stats.passApexSamples.push(BALL_RADIUS + (loftVy * loftVy) / (2 * BALL_GRAVITY));
+    if (this.stats.passApexSamples.length > 800) {
+      this.stats.passApexSamples.splice(0, this.stats.passApexSamples.length - 800);
+    }
     this.clearOwner();
     passer.kickTimer = 0.42;
     this.assistCandidate = passer.id;
@@ -2177,13 +2207,15 @@ export class Match {
     {
       const kickDir = normalize2(kick.vx, kick.vz);
       const human = !this.autoplay && passer.id === this.controlled.id;
+      const lofted = delivery === "long" || delivery === "cross" || delivery === "chip";
+      // Routine ground passes: no AI banana — curve was missing the 1.45 m collect radius.
       this.aftertouch = openAftertouch({
         kind: "pass",
         dirX: kickDir.x,
         dirZ: kickDir.z,
         technique: passer.attrs.passing * 0.5 + passer.attrs.composure * 0.3 + (passer.attrs.crossing ?? passer.attrs.longPassing) * 0.2,
-        strengthMul: this.tuning.aftertouchMultiplier * (human ? 1 : 0.72),
-        aiSide: human ? null : aiCurveSide(destZ, this.ball.z),
+        strengthMul: this.tuning.aftertouchMultiplier * (human ? 1 : lofted ? 0.32 : 0.05),
+        aiSide: human || !lofted ? null : aiCurveSide(destZ, this.ball.z, { dirX: kickDir.x, dirZ: kickDir.z }),
       });
     }
     this.stats.passes += 1;
@@ -2278,12 +2310,13 @@ export class Match {
       this.tuning.shotPowerMultiplier *
       (passer.boosting ? SPEED_BURST_SHOT_MUL : 1) *
       (isStriker(passer) ? 1.06 : 1);
-    let lift = longShot
-      ? Math.max(3.2, targetY * 1.55 + hold01 * 1.4)
-      : isHeader
-        ? Math.max(1.4, targetY * 1.1)
-        : Math.max(1.05, targetY * 1.15 + hold01 * 0.85);
-    if (isStriker(passer) && !longShot) lift = Math.max(lift, 1.15);
+    // Ballistic loft: reach aim height near the goal plane (vy ≈ h/T + 0.5 g T).
+    const flightT = clamp(dist / Math.max(12, power * 0.72), 0.45, longShot ? 1.55 : 1.15);
+    const aimH = clamp(targetY, 0.35, 2.35);
+    let lift = isHeader
+      ? clamp(aimH / flightT + 0.5 * BALL_GRAVITY * flightT * 0.55, 1.6, 6.5)
+      : clamp(aimH / flightT + 0.5 * BALL_GRAVITY * flightT * (longShot ? 0.72 : 0.62), longShot ? 4.2 : 3.2, longShot ? 11 : 8.5);
+    if (isStriker(passer) && !longShot && !isHeader) lift = Math.max(lift, 3.6);
     const pack = nearbyDefenders(passer, this.opponentsOf(passer));
     this.clearOwner();
     this.clearOffsidePhase();
@@ -2310,7 +2343,13 @@ export class Match {
     }
     kickBall(this.ball, (dx / dist) * power, (dz / dist) * power, lift);
     this.incomingShot = true;
-    this.incomingAerial = longShot || lift > 1.6;
+    // Gate aerial from real loft — flat lasers with lift~1–3 must not use header/air collect.
+    const apexApprox = BALL_RADIUS + (lift * lift) / (2 * BALL_GRAVITY);
+    this.stats.shotApexSamples.push(apexApprox);
+    if (this.stats.shotApexSamples.length > 200) {
+      this.stats.shotApexSamples.splice(0, this.stats.shotApexSamples.length - 200);
+    }
+    this.incomingAerial = longShot || isHeader || apexApprox >= 1.55;
     {
       const human = !this.autoplay && passer.id === this.controlled.id;
       const tech =
@@ -2785,6 +2824,19 @@ export class Match {
         this.stats.stOffsideGapSamples.push(sum / strikers.length);
         if (this.stats.stOffsideGapSamples.length > 2400) {
           this.stats.stOffsideGapSamples.splice(0, this.stats.stOffsideGapSamples.length - 2400);
+        }
+      }
+      const outfield = team.players.filter((p) => !p.isGK && !p.sentOff);
+      if (outfield.length >= 2) {
+        let minZ = Infinity;
+        let maxZ = -Infinity;
+        for (const p of outfield) {
+          minZ = Math.min(minZ, p.z);
+          maxZ = Math.max(maxZ, p.z);
+        }
+        this.stats.teamWidthSamples.push(maxZ - minZ);
+        if (this.stats.teamWidthSamples.length > 1200) {
+          this.stats.teamWidthSamples.splice(0, this.stats.teamWidthSamples.length - 1200);
         }
       }
     }
@@ -3760,14 +3812,17 @@ export class Match {
     const dist = Math.hypot(dx, dz) || 1;
     const power =
       (18.5 + hold01 * 9 + stat01(taker.attrs.shotPower) * 3.5 + setTech * 2) * this.tuning.shotPowerMultiplier;
-    const lift = Math.max(1.35, targetY * 1.25 + hold01 * 1.15 + (1 - setTech) * 0.35);
+    const flightT = clamp(dist / Math.max(12, power * 0.7), 0.5, 1.45);
+    const aimH = clamp(targetY, 0.4, 2.35);
+    const lift = clamp(aimH / flightT + 0.5 * BALL_GRAVITY * flightT * 0.68, 3.4, 9.5);
     if (this.ball.y < 0.25) this.ball.y = 0.28;
     kickBall(this.ball, (dx / dist) * power, (dz / dist) * power, lift);
     this.shotTarget = null;
     this.shootCharge = 0;
     this.stats.shots += 1;
     this.incomingShot = true;
-    this.incomingAerial = lift > 2.4;
+    const apexApprox = BALL_RADIUS + (lift * lift) / (2 * BALL_GRAVITY);
+    this.incomingAerial = apexApprox >= 1.55;
     this.aftertouch = openAftertouch({
       kind: "shot",
       dirX: dx / dist,

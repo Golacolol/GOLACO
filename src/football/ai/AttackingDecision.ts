@@ -322,9 +322,10 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     const longAhead = (longT.x - carrier.x) * carrier.attackSign;
     // Route-one: reward vertical long; still punish flat switches.
     if (directTeam && longAhead > 12 && longWidth < 14) longPassScore += 0.28 + style.longBias * 0.2;
-    else if (longWidth > 14 && longAhead < 10) longPassScore *= 0.12;
-    else if (longWidth > 18) longPassScore *= 0.22;
-    else if (longWidth > 12) longPassScore *= 0.55;
+    else if (longWidth > 14 && longAhead < 10) longPassScore *= 0.42;
+    else if (longWidth > 18) longPassScore *= 0.48;
+    else if (longWidth > 12) longPassScore *= 0.78;
+    if (longAhead > 10 && longWidth < 16) longPassScore += 0.12 + vision * 0.06;
   }
   const boxMate = teammates.some(
     (t) =>
@@ -419,13 +420,14 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   }
 
   if (building || wantBuildup) {
-    holdScore *= style.id === "possession" ? 0.85 : 0.7;
-    passScore += 0.42 + passing * 0.18 + lane * 0.22 + styleW.shortBonus * 0.35;
-    runScore *= closeSupport ? 0.95 : 0.52;
+    holdScore *= style.id === "possession" ? 0.95 : 0.82;
+    // Softened pass stack so RUN/HOLD can compete after receive dwell.
+    passScore += 0.28 + passing * 0.14 + lane * 0.16 + styleW.shortBonus * 0.28;
+    runScore *= closeSupport ? 1.05 : 0.72;
     // Style-aware crush: possession kills long; direct keeps progressive alive.
     const phaseW = playStylePassWeights(style, { phase });
     throughBallScore *= throughT && throughBallScore > 0.35 ? Math.max(0.72, phaseW.buildupCrush + 0.15) : phaseW.buildupCrush;
-    longPassScore *= pressure > 0.55 ? 0.35 : directTeam ? 0.45 : counterTeam ? 0.18 : 0.12;
+    longPassScore *= pressure > 0.55 ? 0.55 : directTeam ? 0.72 : counterTeam ? 0.4 : 0.38;
     // Don't suppress finishing when the chance is already there.
     if (clearChance.quality < 0.4) {
       shotScore *= 0.35;
@@ -435,7 +437,7 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
       passScore += 0.28;
       runScore *= 0.62;
       holdScore += 0.12;
-      longPassScore *= 0.15;
+      longPassScore *= 0.45;
       shotScore *= 0.2;
     } else if (progress < 0.5) {
       passScore += 0.12;
@@ -548,7 +550,7 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     passScore *= 0.88;
     throughBallScore += 0.12;
   }
-  longPassScoreAdj *= wantBuildup ? (pressure > 0.5 ? 0.7 : 0.55) : 0.85;
+  longPassScoreAdj *= wantBuildup ? (pressure > 0.5 ? 0.85 : 0.78) : 0.95;
 
   // Final floor: clear chances must outrank recycle/pass after all modifiers.
   if (clearChance.quality > 0.4) {

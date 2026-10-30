@@ -104,11 +104,17 @@ export function fitKitSurnameElements(root: ParentNode): void {
     ".portrait-badge-kit .sur, .kit-marker-caption .kit-marker-name, .pitch-name",
   );
   for (const el of nodes) {
+    const caption = el.closest<HTMLElement>(".kit-marker-caption");
     const host =
-      el.closest<HTMLElement>(".portrait-badge-kit, .kit-marker-caption, .pitch-kit") ?? el.parentElement;
-    const maxW = Math.max(10, (host?.clientWidth ?? el.clientWidth ?? 48) - 2);
+      caption ??
+      el.closest<HTMLElement>(".portrait-badge-kit, .pitch-kit") ??
+      el.parentElement;
+    // Photo captions: number + name share one line no wider than the 48px disc.
+    const maxW = caption
+      ? Math.max(10, Math.min(48, caption.clientWidth || 48) - 2)
+      : Math.max(10, (host?.clientWidth ?? el.clientWidth ?? 48) - 2);
     if (maxW < 8) continue;
-    el.style.overflow = "visible";
+    el.style.overflow = caption ? "hidden" : "visible";
     el.style.textOverflow = "clip";
     el.style.whiteSpace = "nowrap";
     let size = parseFloat(el.style.fontSize) || parseFloat(getComputedStyle(el).fontSize) || 14;
@@ -117,12 +123,13 @@ export function fitKitSurnameElements(root: ParentNode): void {
     el.style.fontSize = `${size}px`;
     el.style.letterSpacing = `${tracking}em`;
     let guard = 0;
-    while (el.scrollWidth > maxW && size > 6.5 && guard < 40) {
+    const over = () => (caption ? caption.scrollWidth > maxW + 1 : el.scrollWidth > maxW);
+    while (over() && size > 6.5 && guard < 40) {
       size -= 0.5;
       el.style.fontSize = `${size}px`;
       guard += 1;
     }
-    while (el.scrollWidth > maxW && tracking > 0 && guard < 60) {
+    while (over() && tracking > 0 && guard < 60) {
       tracking = Math.max(0, tracking - 0.01);
       el.style.letterSpacing = `${tracking}em`;
       guard += 1;
@@ -147,8 +154,8 @@ export function kitMarkerHtml(
   const src = portraitAsset(player);
   const bench = (options.className ?? "").includes("kit-marker-bench");
   // Bench circles are larger; keep type modest so number+surname fit inside the disc.
-  const surSize = surnameFitPx(surname, bench ? 13 : 18);
-  const captionSize = surnameFitPx(surname, bench ? 12 : 16);
+  const surSize = surnameFitPx(surname, bench ? 12 : 14);
+  const captionSize = surnameFitPx(surname, bench ? 11 : 11);
   const tracking = surnameLetterSpacingEm(surname);
   const nameStyle = `font-size:${captionSize}px;letter-spacing:${tracking}em`;
   const surStyle = `font-size:${surSize}px;letter-spacing:${tracking}em`;

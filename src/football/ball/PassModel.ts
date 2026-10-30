@@ -1,7 +1,8 @@
 import { boundedNoise, clamp, stat01 } from "../../core/math";
-import { BALL_GRAVITY } from "../constants";
+import { BALL_GRAVITY, BALL_RADIUS } from "../constants";
 import { passStatForDistance } from "../players/PlayerStats";
 import type { PlayerAttributes } from "../../data/schema";
+import { stepBall, type BallMotion } from "./BallPhysics";
 
 export type PassType = "short" | "through" | "long" | "cross" | "chip";
 
@@ -106,6 +107,117 @@ export function passFlightTime(distance: number, passType: PassType): number {
   return clamp(0.42 + distance / 34, 0.44, 1.08);
 }
 
+/** Target catchable arrival speed (m/s) by delivery. */
+export function passArrivalSpeed(passType: PassType): number {
+  if (passType === "through") return 7.2;
+  if (passType === "chip") return 5.5;
+  if (passType === "cross") return 5.2;
+  if (passType === "long") return 5.8;
+  return 6.2;
+}
+
+/**
+ * Loft for a pass type. Short/through use mid-loft so the ball leaves the carpet;
+ * chip/long/cross stay high service.
+ */
+export function passLoftVy(distance: number, passType: PassType, flightT: number): number {
+  const ballistic = 0.5 * BALL_GRAVITY * flightT;
+  if (passType === "short") {
+    // Driven mid-loft — apex ~0.7–2.2 m so the ball leaves the carpet.
+    const loftMul = distance > 16 ? 0.82 : distance > 11 ? 0.7 : distance > 7 ? 0.58 : 0.5;
+    const floor = distance > 16 ? 4.6 : distance > 11 ? 4.0 : distance > 7 ? 3.4 : 3.0;
+    const ceil = distance > 18 ? 7.5 : distance > 12 ? 6.2 : 5.2;
+    return clamp(ballistic * loftMul, floor, ceil);
+  }
+  if (passType === "through") {
+    // Low weightable through — still clears ~1–2 m.
+    return clamp(ballistic * 0.62, 2.2, 5.2);
+  }
+  if (passType === "chip") {
+    return clamp(ballistic * 1.45 + distance * 0.04, 4.8, 11.5);
+  }
+  if (passType === "cross") {
+    return clamp(ballistic * 1.38 + distance * 0.055, 7.0, 14.5);
+  }
+  // long
+  return clamp(ballistic * 1.28 + distance * 0.05, 6.2, 14.2);
+}
+
+/** Simulate how far a kick travels along +X before speed drops near arrival or time expires. */
+function simulatePassTravel(
+  groundSpeed: number,
+  vy: number,
+  targetDist: number,
+  maxT: number,
+  lofted: boolean,
+): {
+  dist: number;
+  speedAtClosest: number;
+  closest: number;
+  apex: number;
+  landX: number;
+} {
+  const ball: BallMotion = {
+    x: 0,
+    y: Math.max(BALL_RADIUS + 0.02, 0.28),
+    z: 0,
+    vx: groundSpeed,
+    vy,
+    vz: 0,
+    spinX: clamp(vy / 10, -0.35, 0.85),
+    spinY: 0,
+  };
+  const dt = 1 / 60;
+  const steps = Math.ceil(maxT / dt) + 8;
+  let closest = Infinity;
+  let speedAtClosest = groundSpeed;
+  let apex = ball.y;
+  let landX = 0;
+  let wasAir = false;
+  for (let i = 0; i < steps; i++) {
+    stepBall(ball, dt);
+    apex = Math.max(apex, ball.y);
+    if (ball.y > BALL_RADIUS + 0.35) wasAir = true;
+    if (wasAir && ball.y <= BALL_RADIUS + 0.12 && landX === 0) landX = ball.x;
+    const d = Math.abs(ball.x - targetDist);
+    if (d < closest) {
+      closest = d;
+      speedAtClosest = Math.hypot(ball.vx, ball.vz);
+    }
+    // Past the target and slowing — done.
+    if (ball.x > targetDist + 1.5 && Math.hypot(ball.vx, ball.vz) < 2) break;
+    if (ball.x > targetDist + 10) break;
+  }
+  if (landX === 0) landX = ball.x;
+  const refX = lofted ? landX : ball.x;
+  return { dist: refX, speedAtClosest, closest, apex, landX };
+}
+
+/**
+ * Binary-search ground speed so the ball's closest approach to `dist` is near the target
+ * at a catchable arrival speed — matches real `stepBall` drag/bounce/roll.
+ */
+export function solvePassGroundSpeed(distance: number, vy: number, passType: PassType, flightT: number): number {
+  const dist = Math.max(1, distance);
+  const arrive = passArrivalSpeed(passType);
+  const lofted = passType === "long" || passType === "cross" || passType === "chip";
+  const maxT = Math.max(flightT * 1.85, flightT + 0.55);
+  let lo = lofted ? 8 : 5;
+  let hi = lofted ? 42 : 32;
+  for (let i = 0; i < 14; i++) {
+    const mid = (lo + hi) * 0.5;
+    const sim = simulatePassTravel(mid, vy, dist, maxT, lofted);
+    const overshoot = sim.dist > dist + (lofted ? 2.2 : 1.2);
+    const tooFast = !lofted && sim.closest < 2.5 && sim.speedAtClosest > arrive + 3.5;
+    const short = sim.dist < dist - (lofted ? 1.5 : 0.8);
+    if (short && !tooFast) lo = mid;
+    else if (overshoot || tooFast) hi = mid;
+    else if (sim.closest > (lofted ? 3.2 : 1.8)) lo = mid;
+    else hi = mid;
+  }
+  return clamp((lo + hi) * 0.5, 6, 40);
+}
+
 export function passKickVector(
   fromX: number,
   fromZ: number,
@@ -117,42 +229,10 @@ export function passKickVector(
   const dz = toZ - fromZ;
   const dist = Math.max(1, Math.hypot(dx, dz));
   const t = passFlightTime(dist, passType);
-  const k = 0.4;
-  const mag = (dist * k) / Math.max(0.12, 1 - Math.exp(-k * t));
-  // Slightly softer ground speed so lofted arcs read clearly.
-  const groundScale =
-    passType === "short"
-      ? 0.86
-      : passType === "through"
-        ? 0.84
-        : passType === "chip"
-          ? 0.78
-          : passType === "cross"
-            ? 0.86
-            : 0.85;
-  const vx = (dx / dist) * mag * groundScale;
-  const vz = (dz / dist) * mag * groundScale;
-  // Symmetric loft for BALL_GRAVITY so apex ≈ 0.5 * g * (t/2)^2 family.
-  let vy = 0.5 * BALL_GRAVITY * t;
-  if (passType === "short") {
-    // Keep short ground passes playable — skim, don't missile.
-    const loftMul = dist > 14 ? 0.72 : dist > 9 ? 0.55 : 0.42;
-    const floor = dist > 14 ? 1.15 : dist > 9 ? 0.65 : 0.35;
-    const ceil = dist > 16 ? 4.2 : dist > 12 ? 3.2 : 2.4;
-    vy = clamp(vy * loftMul, floor, ceil);
-  } else if (passType === "chip") {
-    // Lofted chip over a closing defender — slower ground, higher arc.
-    vy = clamp(vy * 1.45 + dist * 0.04, 4.8, 11.5);
-  } else if (passType === "through") {
-    // Through balls stay low and weightable.
-    vy = clamp(vy * 0.55, 0.45, 2.8);
-  } else if (passType === "cross") {
-    // High hanging cross — classic header service.
-    vy = clamp(vy * 1.38 + dist * 0.055, 7.0, 14.5);
-  } else {
-    // long
-    vy = clamp(vy * 1.28 + dist * 0.05, 6.2, 14.2);
-  }
+  const vy = passLoftVy(dist, passType, t);
+  const mag = solvePassGroundSpeed(dist, vy, passType, t);
+  const vx = (dx / dist) * mag;
+  const vz = (dz / dist) * mag;
   return { vx, vz, vy, t };
 }
 

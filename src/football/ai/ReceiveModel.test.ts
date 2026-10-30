@@ -67,12 +67,13 @@ describe("ReceiveModel", () => {
     expect(cap).toBeLessThan(topSpeedFromPace(r.attrs.pace, true, false) * 1.01);
   });
 
-  it("hands aerial / landing runs to the lofted path", () => {
+  it("hands aerial runs to the lofted path; ground landing markers stay steerable", () => {
     const ball = new Ball();
     ball.y = 1.5;
     expect(receiveIsAerialOwned(ball, false, false)).toBe(true);
     ball.y = 0.2;
-    expect(receiveIsAerialOwned(ball, false, true)).toBe(true);
+    expect(receiveIsAerialOwned(ball, false, true)).toBe(false);
+    expect(receiveIsAerialOwned(ball, true, true)).toBe(true);
     expect(receiveIsAerialOwned(ball, false, false)).toBe(false);
   });
 

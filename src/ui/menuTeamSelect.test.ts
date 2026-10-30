@@ -36,6 +36,8 @@ describe("menuTeamSelect", () => {
     expect(formatEraRoll("2000")).toBe("00");
     expect(formatEraRoll("2021-22")).toBe("21-22");
     expect(formatEraRoll("Chelsea — 2004/05 Mourinho")).toBe("04-05");
+    expect(formatEraRoll("101")).toBe("101");
+    expect(formatEraRoll("FANSXI")).toBe("FANSXI");
   });
 
   it("lists club-only Classic dial labels with date eras; keeps full TeamRecord names elsewhere", () => {
@@ -60,9 +62,16 @@ describe("menuTeamSelect", () => {
         historicSeason: "2002/03",
       }),
       team({
+        id: "argyle_historic_sample",
+        name: "Plymouth Argyle — 101",
+        teamType: "HISTORIC_TEAM",
+        historicSeason: "101",
+      }),
+      team({
         id: "argyle_fans_xi",
-        name: "Plymouth Argyle Fans XI",
+        name: "Plymouth Argyle — FANSXI",
         teamType: "FANS_TEAM",
+        historicSeason: "FANSXI",
         fanTeam: true,
       }),
     ]);
@@ -76,10 +85,11 @@ describe("menuTeamSelect", () => {
     expect(classic.map((o) => o.label)).toEqual([
       "Chelsea",
       "Chelsea",
-      "Plymouth Argyle Fans XI",
+      "Plymouth Argyle",
+      "Plymouth Argyle",
       "Real Madrid",
     ]);
-    expect(classic.map((o) => o.eraLabel)).toEqual(["04-05", "11-12", "—", "02-03"]);
+    expect(classic.map((o) => o.eraLabel)).toEqual(["04-05", "11-12", "101", "FANSXI", "02-03"]);
     expect(classic.every((o) => !o.eraLabel.includes("Mourinho"))).toBe(true);
     expect(classic.every((o) => !o.label.includes("Mourinho"))).toBe(true);
 
@@ -90,8 +100,12 @@ describe("menuTeamSelect", () => {
       "classic_chelsea_2011_12",
     ]);
 
+    const argyleEras = erasForClub(options, "plymouth argyle");
+    expect(argyleEras.map((o) => o.eraLabel)).toEqual(["101", "FANSXI"]);
+    expect(argyleEras.map((o) => o.id)).toEqual(["argyle_historic_sample", "argyle_fans_xi"]);
+
     const clubs = uniqueClubsInGroup(options, "CLASSIC");
-    expect(clubs.map((o) => o.label)).toEqual(["Chelsea", "Plymouth Argyle Fans XI", "Real Madrid"]);
+    expect(clubs.map((o) => o.label)).toEqual(["Chelsea", "Plymouth Argyle", "Real Madrid"]);
     expect(clubs.find((o) => o.clubKey === "chelsea")?.id).toBe("classic_chelsea_2004_05");
 
     expect(secondaryDialLabel(classic[0]!)).toBe("Classic Teams");

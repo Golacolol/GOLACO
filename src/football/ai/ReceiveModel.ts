@@ -65,6 +65,8 @@ export function planReceiveRun(
 }
 
 /** True when aerial / lofted logic should own the run (landing prediction). */
-export function receiveIsAerialOwned(ball: Ball, incomingAerial: boolean, hasLanding: boolean): boolean {
-  return incomingAerial || ball.y > 1.12 || hasLanding;
+export function receiveIsAerialOwned(ball: Ball, incomingAerial: boolean, _hasLanding = false): boolean {
+  // Ground passes always set a landing marker for the camera — that must NOT disable steerPassReceiver.
+  void _hasLanding;
+  return incomingAerial || ball.y > 1.12;
 }
