@@ -7,7 +7,7 @@ import {
   MARKER_MIN_DY,
   separatePitchMarkers,
 } from "./CharacterSelect";
-import { kitMarkerHtml } from "./Portrait";
+import { kitCaptionSurname, kitMarkerHtml, kitSurnameFromName } from "./Portrait";
 import type { SquadPlayer } from "../core/Database";
 import type { PlayerRecord } from "../data/schema";
 
@@ -252,7 +252,7 @@ describe("character select", () => {
     view.selectPlayerId(target.player.player.id);
     view.render();
     expect(view.root.querySelector(".pitch-token.on")?.getAttribute("data-id")).toBe(target.player.player.id);
-    const surname = (target.player.player.displayName || target.player.player.name).split(" ").pop()!.toUpperCase();
+    const surname = kitSurnameFromName(target.player.player.displayName || target.player.player.name);
     expect(view.root.querySelector(".spot-select-btn")?.textContent).toContain(surname);
   });
 
@@ -412,7 +412,7 @@ describe("character select", () => {
     expect(photo).toBeTruthy();
     expect(photo?.querySelector(".kit-marker-num-overlay")).toBeNull();
     expect(photo?.querySelector(".kit-marker-caption .kit-marker-num")?.textContent).toBe("9.");
-    expect(photo?.querySelector(".kit-marker-caption .kit-marker-name")?.textContent).toBe("HARDIE");
+    expect(photo?.querySelector(".kit-marker-caption .kit-marker-name")?.textContent).toBe("R. HARDIE");
     const stBadge = photo?.querySelector(".portrait-badge-kit") as HTMLElement | null;
     // Photo markers keep caption in secondary; hidden fallback badge still carries team colours.
     expect(stBadge?.style.color.toLowerCase()).toBe("rgb(197, 165, 114)");
@@ -577,6 +577,29 @@ describe("character select", () => {
   });
 });
 
+describe("kitSurnameFromName", () => {
+  it("keeps compound surnames with particles", () => {
+    expect(kitSurnameFromName("van der Sar")).toBe("VAN DER SAR");
+    expect(kitSurnameFromName("Edwin van der Sar")).toBe("VAN DER SAR");
+    expect(kitSurnameFromName("Del Piero")).toBe("DEL PIERO");
+    expect(kitSurnameFromName("Alessandro Del Piero")).toBe("DEL PIERO");
+    expect(kitSurnameFromName("F. de Boer")).toBe("DE BOER");
+    expect(kitSurnameFromName("van Vossen")).toBe("VAN VOSSEN");
+    expect(kitSurnameFromName("Di Livio")).toBe("DI LIVIO");
+    expect(kitSurnameFromName("De Rossi")).toBe("DE ROSSI");
+    expect(kitSurnameFromName("M. Cooper")).toBe("COOPER");
+    expect(kitSurnameFromName("Hardie")).toBe("HARDIE");
+  });
+
+  it("abbreviates given names for under-photo captions", () => {
+    expect(kitCaptionSurname("van der Sar", "Edwin van der Sar")).toBe("E. VAN DER SAR");
+    expect(kitCaptionSurname("Del Piero", "Alessandro Del Piero")).toBe("A. DEL PIERO");
+    expect(kitCaptionSurname("de Boer", "Frank de Boer")).toBe("F. DE BOER");
+    expect(kitCaptionSurname("Hardie", "Ryan Hardie")).toBe("R. HARDIE");
+    expect(kitCaptionSurname("Del Piero")).toBe("DEL PIERO");
+  });
+});
+
 describe("kitMarkerHtml", () => {
   it("puts number above surname on the badge fill", () => {
     const html = kitMarkerHtml({ name: "M. Cooper" }, 8, {
@@ -586,6 +609,27 @@ describe("kitMarkerHtml", () => {
     expect(html).toContain('class="num">8<');
     expect(html).toContain(">COOPER</span>");
     expect(html).not.toContain("kit-marker-photo");
+  });
+
+  it("renders full compound surnames on kit badges", () => {
+    const sar = kitMarkerHtml({ name: "van der Sar" }, 1);
+    expect(sar).toContain(">VAN DER SAR</span>");
+    const del = kitMarkerHtml({ displayName: "Del Piero" }, 10);
+    expect(del).toContain(">DEL PIERO</span>");
+  });
+
+  it("uses initial + surname under PNG and keeps badge text off the photo", () => {
+    const html = kitMarkerHtml(
+      {
+        name: "Edwin van der Sar",
+        displayName: "van der Sar",
+        appearance: { portraitAsset: "/images/l1.png" },
+      },
+      1,
+    );
+    expect(html).toContain("kit-marker-photo");
+    expect(html).toContain(">E. VAN DER SAR</span>");
+    expect(html).toMatch(/portrait-badge-kit" hidden/);
   });
 
   it("keeps number/name inside the disc when no known PNG (no under-caption flash)", () => {

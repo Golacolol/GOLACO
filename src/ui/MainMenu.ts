@@ -179,7 +179,7 @@ export class MainMenu {
               </span>
             </div>
             <div class="menu-fixture menu-fixture-labeled">
-              <span class="meta fixture-section-label">GAMEPLAY</span>
+              <span class="meta fixture-section-label">Gameplay</span>
               <span class="tod-row">
                 ${mode("REAL", "REAL")}
                 <span class="vs">·</span>
@@ -197,7 +197,7 @@ export class MainMenu {
               </span>
             </div>
             <div class="menu-fixture menu-fixture-labeled">
-              <span class="meta fixture-section-label">LIGHTING</span>
+              <span class="meta fixture-section-label">Lighting</span>
               <span class="tod-row">
                 ${tod("DAY", "DAY")}
                 <span class="vs">·</span>
@@ -207,23 +207,25 @@ export class MainMenu {
               </span>
             </div>
             <div class="menu-fixture fixture-match">
-              <div class="fixture-teams-row">
-                <button type="button" class="fixture-copy" data-id="next" aria-label="Play next fixture ${home.abbreviation} vs ${away.abbreviation}">
-                  <div class="fixture-teams">
-                    ${teamBadgeHtml(home, { className: "fixture-crest", size: 28 })}
-                    <strong>${home.abbreviation}</strong>
-                    <span class="vs">vs</span>
-                    ${teamBadgeHtml(away, { className: "fixture-crest", size: 28 })}
-                    <strong>${away.abbreviation}</strong>
-                    <span class="vs">·</span>
-                    ${kickCountdownHtml(fixture.date, view.kickOffTime || DEFAULT_KICK_OFF_TIME)}
-                  </div>
-                </button>
-                ${halfSpinHtml(this.matchDuration)}
+              <div class="fixture-match-main">
+                <div class="fixture-teams-row">
+                  <button type="button" class="fixture-copy" data-id="next" aria-label="Play next fixture ${home.abbreviation} vs ${away.abbreviation}">
+                    <div class="fixture-teams">
+                      ${teamBadgeHtml(home, { className: "fixture-crest", size: 28 })}
+                      <strong>${home.abbreviation}</strong>
+                      <span class="vs">vs</span>
+                      ${teamBadgeHtml(away, { className: "fixture-crest", size: 28 })}
+                      <strong>${away.abbreviation}</strong>
+                      <span class="vs">·</span>
+                      ${kickCountdownHtml(fixture.date, view.kickOffTime || DEFAULT_KICK_OFF_TIME)}
+                    </div>
+                  </button>
+                </div>
+                <div class="fixture-detail-row">
+                  <span class="meta">${fixture.competition} · ${view.kickOffTime || DEFAULT_KICK_OFF_TIME} · ${club.matchGround.name}</span>
+                </div>
               </div>
-              <div class="fixture-detail-row">
-                <span class="meta">${fixture.competition} · ${view.kickOffTime || DEFAULT_KICK_OFF_TIME} · ${club.matchGround.name}</span>
-              </div>
+              ${halfSpinHtml(this.matchDuration)}
             </div>
           </div>
           <button type="button" class="sim-timer" data-id="sim">

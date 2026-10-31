@@ -10,7 +10,7 @@ import {
 } from "../football/ai/PlayStyle";
 import { kitsClash, pickTeamKit, teamHomeKit, teamResolvedAwayKit } from "../football/teams/KitClash";
 import { applyPhysicalToAppearance } from "../football/players/PlayerStats";
-import { fitKitSurnameElements, kitMarkerHtml, portraitHtml, teamBadgeHtml } from "./Portrait";
+import { fitKitSurnameElements, kitMarkerHtml, kitSurnameFromName, portraitHtml, teamBadgeHtml } from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
 import { imageLabel, listPlayerImages, uploadPlayerImage } from "./playerImages";
 import { profileStatsBlock } from "./ProfileHex";
@@ -204,9 +204,7 @@ function sideRankFromPosition(pos: string): number {
 }
 
 function kitSurname(name: string): string {
-  const parts = name.replace(/\./g, " ").trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return "PLAYER";
-  return parts[parts.length - 1].toUpperCase();
+  return kitSurnameFromName(name);
 }
 
 function escapeHtml(s: string): string {

@@ -67,13 +67,14 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector('[data-mode="FLICK"]')?.textContent).toMatch(/Flickball/i);
   });
 
-  it("shows KIT dial after Team Select and GAMEPLAY / LIGHTING section labels", () => {
+  it("shows KIT dial after Team Select and Gameplay / Lighting section labels", () => {
     const menu = paint(false);
     expect(menu.root.querySelector("[data-kit-spin]")?.textContent).toMatch(/Home/);
-    expect(menu.root.querySelector(".fixture-section-label")?.textContent).toBe("GAMEPLAY");
+    expect(menu.root.querySelector(".fixture-section-label")?.textContent).toBe("Gameplay");
     const labels = [...menu.root.querySelectorAll(".fixture-section-label")].map((el) => el.textContent);
-    expect(labels).toEqual(["GAMEPLAY", "LIGHTING"]);
-    expect(menu.root.querySelector(".fixture-teams-row [data-half-spin]")).toBeTruthy();
+    expect(labels).toEqual(["Gameplay", "Lighting"]);
+    expect(menu.root.querySelector(".fixture-match > [data-half-spin]")).toBeTruthy();
+    expect(menu.root.querySelector(".fixture-teams-row [data-half-spin]")).toBeNull();
     expect(menu.root.querySelector(".fixture-detail-row .meta")?.textContent).toContain("League One");
   });
 
@@ -164,7 +165,7 @@ describe("MainMenu LEAGUE mode button", () => {
     const club = hero.querySelector(".club-wrap");
     const teamSelect = hero.querySelector(".team-select-fixture");
     const gameplay = [...hero.querySelectorAll(".menu-fixture")].find((el) =>
-      el.querySelector(".fixture-section-label")?.textContent === "GAMEPLAY",
+      el.querySelector(".fixture-section-label")?.textContent === "Gameplay",
     );
     expect(stack).toBeTruthy();
     expect(stack?.contains(title!)).toBe(true);

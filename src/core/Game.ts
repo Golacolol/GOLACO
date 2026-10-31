@@ -594,7 +594,6 @@ export class Game {
     // Always restart the 60s simulator idle clock when landing on the main menu —
     // time spent in formation / play-next must not immediately auto-start a match.
     this.input.lastInputAt = performance.now();
-    this.menu.setCountdown(AUTOPLAY_IDLE_SECONDS);
     this.menu.attract = false;
     this.audio.stopStadiumAmbience();
     this.clearMatch();
@@ -618,7 +617,12 @@ export class Game {
     this.menu.selected = 0;
     this.menu.setPanel("menu", false);
     this.menu.unlockTeamSelect();
+    // Reset idle + countdown after paint so the Simulator chip is back at 60s
+    // (hide() during Play Next Fixture tears down the old timer DOM).
+    this.menu.countdown = AUTOPLAY_IDLE_SECONDS;
     this.paintMainMenu();
+    this.input.lastInputAt = performance.now();
+    this.menu.setCountdown(AUTOPLAY_IDLE_SECONDS);
     this.matchCard.hide();
   }
 

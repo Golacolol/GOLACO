@@ -402,6 +402,7 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   text-align: left;
   min-width: 0;
   width: 100%;
+  min-height: 0;
 }
 /* Stack fills the left column (same width as the menu list when closed). */
 .menu-hero-stack {
@@ -411,6 +412,9 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
   box-sizing: border-box;
   --menu-fixture-height: 72px;
 }
@@ -731,48 +735,56 @@ html.club-name-glow-off .club-line {
   padding: 0;
   opacity: 0.88;
   font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   line-height: 1.15;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--paper);
 }
 .menu-fixture.menu-fixture-labeled .tod-row {
   width: 100%;
 }
 .menu-hero-stack > .menu-fixture.fixture-match {
-  /* Two rows (teams + details/time) — allow a little more height so crests aren't clipped. */
+  /* Teams + detail line beside a vertically centred half-length dial. */
   height: auto;
   min-height: var(--menu-fixture-height);
   max-height: none;
 }
 .menu-fixture.fixture-match {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-wrap: nowrap;
-  justify-content: center;
-  align-items: stretch;
-  gap: 3px;
+  justify-content: flex-start;
+  align-items: center; /* half-length dial sits on the panel mid-line */
+  gap: 10px;
   padding: 6px 10px 6px 12px;
   overflow: hidden;
+}
+.fixture-match-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 0;
 }
 .fixture-teams-row {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  align-items: center; /* Y-centre crests, countdown, and half-length dial */
+  align-items: center;
   justify-content: flex-start;
   gap: 10px;
   width: 100%;
   min-width: 0;
+  padding-bottom: 5px;
 }
 .fixture-copy {
   display: block;
-  /* Shrink-wrap the teams/countdown — do not grow and shove the half-length dial right. */
+  /* Shrink-wrap the teams/countdown — dial lives beside the whole block now. */
   flex: 0 1 auto;
   width: auto;
   min-width: 0;
-  max-width: calc(100% - 5em);
+  max-width: 100%;
   margin: 0;
   padding: 0;
   border: 0;
@@ -794,6 +806,8 @@ html.club-name-glow-off .club-line {
   gap: 10px;
   width: 100%;
   min-width: 0;
+  padding-top: 5px;
+  border-top: 1px solid rgba(197, 165, 114, 0.28);
 }
 .fixture-copy:hover,
 .fixture-copy:focus-visible {
@@ -882,16 +896,17 @@ html.club-name-glow-off .club-line {
   text-align: center;
   line-height: 1;
 }
-.fixture-teams-row .duration-spin.time-spin {
-  /* Keep the dial box Y-centred on the crest / countdown row. */
+.fixture-match > .duration-spin.time-spin {
+  /* Y-centre against the full fixture panel (teams + Friendly line). */
   align-self: center;
+  flex: 0 0 auto;
 }
-.fixture-teams-row .duration-spin .spin-ghost {
+.fixture-match > .duration-spin .spin-ghost {
   font-size: 10px;
   line-height: 1;
   opacity: 0.34;
 }
-.fixture-teams-row .duration-spin strong {
+.fixture-match > .duration-spin strong {
   display: block;
   width: 100%;
   text-align: center;
@@ -999,7 +1014,8 @@ html.club-name-glow-off .club-line {
   gap: 8px;
   align-items: center;
   align-self: flex-start;
-  margin-top: 4px;
+  flex: 0 0 auto;
+  margin-top: 10px;
   color: var(--gold);
   letter-spacing: 0.08em;
   font-family: inherit;
@@ -1565,6 +1581,14 @@ html.club-name-glow-off .club-line {
   border: 2px solid rgba(255, 255, 255, 0.85);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   overflow: hidden;
+  box-sizing: border-box;
+}
+.team-roster-card .kit-marker-roster.kit-marker-photo .portrait {
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(197, 165, 114, 0.55),
+    0 4px 12px rgba(0, 0, 0, 0.4);
 }
 .team-roster-card .kit-marker-roster .portrait-badge-kit .num {
   font-size: 20px;
@@ -2039,6 +2063,18 @@ html.club-name-glow-off .club-line {
   border: 2px solid rgba(255, 255, 255, 0.85);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
   overflow: hidden;
+  box-sizing: border-box;
+}
+/* PNG markers: framed box around the photo; never paint number/name on the image. */
+.kit-marker-photo .portrait {
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(197, 165, 114, 0.55),
+    0 6px 16px rgba(0, 0, 0, 0.45);
+}
+.kit-marker-photo .portrait-badge-kit {
+  display: none !important;
 }
 .pitch-token .portrait-badge,
 .kit-marker .portrait-badge {

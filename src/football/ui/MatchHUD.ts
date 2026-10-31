@@ -232,7 +232,8 @@ export class MatchHUD {
         ${portraitHtml(
           {
             id: player.id,
-            name: player.displayName,
+            name: player.name,
+            displayName: player.displayName,
             appearance: { portraitAsset: player.appearance.portraitAsset },
           },
           player.shirtNumber,
@@ -297,7 +298,8 @@ export class MatchHUD {
       ${portraitHtml(
         {
           id: player.id,
-          name: player.displayName,
+          name: player.name,
+          displayName: player.displayName,
           appearance: { portraitAsset: player.appearance.portraitAsset },
         },
         player.shirtNumber,
