@@ -584,4 +584,33 @@ describe("kitMarkerHtml", () => {
     expect(html).toContain(">COOPER</span>");
     expect(html).not.toContain("kit-marker-photo");
   });
+
+  it("keeps number/name inside the disc when no known PNG (no under-caption flash)", () => {
+    // Player id alone used to speculative-load /assets/players/{id}.png and show
+    // caption underneath until onerror — that flash is the formation-panel bug.
+    const html = kitMarkerHtml({ id: "player_no_art", name: "A. Ghost" }, 14, {
+      primaryColor: "#007A3D",
+      textColor: "#ffffff",
+    });
+    expect(html.startsWith('<div class="kit-marker">') || html.startsWith('<div class="kit-marker ')).toBe(true);
+    expect(html).not.toMatch(/class="[^"]*kit-marker-photo/);
+    expect(html).toContain('class="num">14<');
+    expect(html).toContain(">GHOST</span>");
+    // Speculative probe may still be present, but must not start in photo mode.
+    if (html.includes("<img")) {
+      expect(html).toContain("onload=");
+      expect(html).toContain('style="display:none"');
+    }
+  });
+
+  it("uses under-disc caption immediately for explicit portrait assets", () => {
+    const html = kitMarkerHtml(
+      { id: "p9", name: "R. Hardie", appearance: { portraitAsset: "/portraits/hardie.png" } },
+      9,
+    );
+    expect(html).toContain("kit-marker-photo");
+    expect(html).toContain("kit-marker-caption");
+    expect(html).toContain(">9.<");
+    expect(html).toContain(">HARDIE</span>");
+  });
 });
