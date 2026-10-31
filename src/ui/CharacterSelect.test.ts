@@ -404,7 +404,7 @@ describe("character select", () => {
     const gkBadge = view.root.querySelector(".pitch-token .portrait-badge-kit") as HTMLElement | null;
     expect(gkBadge?.style.background.toLowerCase()).toBe("rgb(31, 174, 91)");
     expect(gkBadge?.style.color.toLowerCase()).toBe("rgb(255, 255, 255)");
-    expect(gkBadge?.querySelector(".num")?.textContent).toBe("1.");
+    expect(gkBadge?.querySelector(".num")?.textContent).toBe("1");
     const photo = view.root.querySelector('[data-id="p2"] .kit-marker-photo');
     expect(photo).toBeTruthy();
     expect(photo?.querySelector(".kit-marker-num-overlay")).toBeNull();
@@ -580,7 +580,7 @@ describe("kitMarkerHtml", () => {
       primaryColor: "#007A3D",
       textColor: "#ffffff",
     });
-    expect(html).toContain('class="num">8.<');
+    expect(html).toContain('class="num">8<');
     expect(html).toContain(">COOPER</span>");
     expect(html).not.toContain("kit-marker-photo");
   });

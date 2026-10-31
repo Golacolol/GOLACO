@@ -168,15 +168,15 @@ export function kitMarkerHtml(
   const tracking = surnameLetterSpacingEm(surname);
   const nameStyle = `font-size:${captionSize}px;letter-spacing:${tracking}em`;
   const surStyle = `font-size:${surSize}px;letter-spacing:${tracking}em`;
-  // Photo: "12. SURNAME" under the disc (no overlay on the PNG).
+  // Photo caption keeps "12. SURNAME"; disc-only badge uses bare number (no period).
   const caption = `<div class="kit-marker-caption" style="color:${escapePortrait(text)}"><span class="kit-marker-num">${shirtNumber}.</span><span class="kit-marker-name" style="${nameStyle}">${escapePortrait(surname)}</span></div>`;
-  const badge = `<div class="portrait-badge portrait-badge-kit" style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}.</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div>`;
+  const badge = `<div class="portrait-badge portrait-badge-kit" style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div>`;
 
   if (!src) {
     return `<div class="${wrapClass}"><div class="portrait">${badge}</div></div>`;
   }
 
-  return `<div class="${wrapClass} kit-marker-photo"><div class="portrait"><img alt="" src="${src}" onerror="this.closest('.kit-marker')?.classList.remove('kit-marker-photo'); this.style.display='none'; const b=this.nextElementSibling; if(b){b.hidden=false; const c=this.closest('.kit-marker')?.querySelector('.kit-marker-caption'); if(c) c.remove();}"/><div class="portrait-badge portrait-badge-kit" hidden style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}.</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div></div>${caption}</div>`;
+  return `<div class="${wrapClass} kit-marker-photo"><div class="portrait"><img alt="" src="${src}" onerror="this.closest('.kit-marker')?.classList.remove('kit-marker-photo'); this.style.display='none'; const b=this.nextElementSibling; if(b){b.hidden=false; const c=this.closest('.kit-marker')?.querySelector('.kit-marker-caption'); if(c) c.remove();}"/><div class="portrait-badge portrait-badge-kit" hidden style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div></div>${caption}</div>`;
 }
 
 export function portraitHtml(
