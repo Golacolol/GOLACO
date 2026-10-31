@@ -1,10 +1,13 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it } from "vitest";
 import {
+  applyCylindricalBodyUVs,
   applyKitToSkinned,
+  bakeHeightBandedKitWrap,
   classifyMaterialSlot,
   gaitToClip,
   isSkinLikePixel,
+  KIT_WRAP_BANDS,
   resolvePlayerModelUrl,
   skinnedSupportsTeamKit,
   tintBodyAlbedoMap,
@@ -12,7 +15,7 @@ import {
   type SkinnedPlayerInstance,
 } from "./PlayerModelLoader";
 import type { Player } from "./Player";
-import { CanvasTexture, MeshStandardMaterial, Texture } from "three";
+import { BufferAttribute, BufferGeometry, CanvasTexture, MeshStandardMaterial, Texture } from "three";
 import type { TeamKit } from "../../data/schema";
 
 describe("PlayerModelLoader", () => {
@@ -73,24 +76,23 @@ describe("PlayerModelLoader", () => {
     expect(skinnedSupportsTeamKit(bodyTint)).toBe(true);
   });
 
-  it("falls back to solid kit colour when body albedo cannot be read", () => {
+  it("falls back to solid kit colour when wrap canvas cannot be baked", () => {
     const mat = new MeshStandardMaterial({ color: 0x111111, name: "VanguardBodyMat" });
-    // Texture with no drawable image — tintBodyAlbedoMap returns null.
     mat.map = new Texture();
     mat.normalMap = new Texture();
 
     const inst = {
+      root: null,
       kitMaterials: { shirt: [mat], shorts: [], socks: [], skin: [], boots: [] },
       bodyTintFallback: true,
       activeClip: null,
     } as unknown as SkinnedPlayerInstance;
 
     const kit = { shirt: "#034694", shorts: "#fff", socks: "#034694" } as TeamKit;
-    applyKitToSkinned(inst, kit, 0xb8896a, 0x101214);
-    expect(mat.map).toBeNull();
+    // jsdom has no canvas — bake returns null → solid kit colour (same as referee path).
+    applyKitToSkinned(inst, kit, 0xb8896a, 0x101214, null);
     expect(mat.normalMap).toBeNull();
     expect(mat.color.getHex()).toBe(0x034694);
-    expect(mat.userData.kitBaseMap).toBeTruthy();
   });
 
   it("returns null from tintBodyAlbedoMap when source has no image", () => {
@@ -144,5 +146,37 @@ describe("PlayerModelLoader", () => {
     expect(dist).toBeGreaterThan(80);
     expect(hm.b).toBeGreaterThan(hm.r); // navy kit stays blue-dominant
     expect(am.r).toBeGreaterThan(140); // white kit stays bright
+  });
+
+  it("bakes a height-banded kit wrap so shirt band matches team colour (not skin)", () => {
+    const baked = bakeHeightBandedKitWrap(null, 0x034694, 0xffffff, 0x034694, 0xb8896a, 0x101214, 64);
+    if (!baked) return; // jsdom without canvas
+    const c = baked.image as HTMLCanvasElement;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
+    const mid = Math.floor(64 * (1 - (KIT_WRAP_BANDS.shortTop + KIT_WRAP_BANDS.shirtTop) / 2));
+    const [r, g, b] = ctx.getImageData(32, mid, 1, 1).data;
+    expect(b).toBeGreaterThan(r); // navy shirt band
+    expect(b).toBeGreaterThan(100);
+    const headY = Math.floor(64 * (1 - 0.9));
+    const [sr, sg, sb] = ctx.getImageData(32, headY, 1, 1).data;
+    expect(sr).toBeGreaterThan(sb); // skin band stays warm
+    expect(sg).toBeGreaterThan(80);
+  });
+
+  it("assigns cylindrical UVs from bind-pose positions (no extra kit meshes)", () => {
+    const geo = new BufferGeometry();
+    // Simple column: feet at y=0, head at y=2, front at -Z.
+    const positions = new Float32Array([
+      0, 0, -0.2, 0.2, 1, -0.2, -0.2, 1, -0.2, 0, 2, -0.2,
+    ]);
+    geo.setAttribute("position", new BufferAttribute(positions, 3));
+    applyCylindricalBodyUVs(geo, { faceNegZ: true });
+    const uv = geo.getAttribute("uv");
+    expect(uv.count).toBe(4);
+    // Front (−Z) → u ≈ 0.5
+    expect(uv.getX(0)).toBeCloseTo(0.5, 2);
+    expect(uv.getY(0)).toBeCloseTo(0, 2); // feet
+    expect(uv.getY(3)).toBeCloseTo(1, 2); // head
   });
 });

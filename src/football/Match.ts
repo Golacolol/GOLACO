@@ -73,6 +73,7 @@ import {
 import {
   applyFacingHints,
   idleBallFacingHint,
+  moveFacingHint,
   receiveFacingHint,
   turnFacingToward,
 } from "./players/FacingControl";
@@ -4786,15 +4787,20 @@ export class Match {
     const homeColor = hexColor(this.home.record.primaryColor || "#ffffff");
     const awayColor = hexColor(this.away.record.primaryColor || "#ffdd55");
     for (const p of this.allPlayers()) {
-      // Idle / receive facing — hips track the ball when not mid-sprint or celebration.
+      // Soft ball look — never override active run/jockey facing (MOVE beats BALL_IDLE).
       if (!p.celebrating && p.kickTimer <= 0 && !p.sliding) {
         const hints = [];
         if (this.passTargetId === p.id && !this.possessing) {
           const recv = receiveFacingHint(this.ball.vx, this.ball.vz);
           if (recv) hints.push(recv);
         }
-        const idle = idleBallFacingHint(p, this.ball.x, this.ball.z);
-        if (idle) hints.push(idle);
+        const steering = Math.hypot(p.vx, p.vz) > 0.45;
+        if (steering) {
+          hints.push(moveFacingHint(p.vx, p.vz));
+        } else {
+          const idle = idleBallFacingHint(p, this.ball.x, this.ball.z);
+          if (idle) hints.push(idle);
+        }
         if (hints.length) applyFacingHints(p, hints, dt);
       }
       updatePlayerAnimation(p, dt, this.time);

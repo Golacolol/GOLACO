@@ -71,4 +71,13 @@ describe("FacingControl", () => {
     applyFacingHints(p, [kickFacingHint(1, 0)], 0.2);
     expect(yawDelta(0, p.facing)).toBeGreaterThan(0.2);
   });
+
+  it("move facing wins over idle ball look in the same resolve", () => {
+    const best = resolveFacingHint([
+      idleBallFacingHint(stubPlayer(), 5, 0)!,
+      moveFacingHint(0, 1),
+    ]);
+    expect(best?.priority).toBe(FACING_PRIORITY.MOVE);
+    expect(best?.dirZ).toBe(1);
+  });
 });

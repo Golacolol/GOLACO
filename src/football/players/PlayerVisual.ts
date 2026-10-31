@@ -896,26 +896,16 @@ function attachSkinnedBody(
 ): void {
   try {
     const skinHex = skinColor(player.appearance.skinTone);
-    applyKitToSkinned(skinned, kit, skinHex, bootCol);
-    // GLB diffuse may still be decoding — re-tint once the atlas is drawable.
+    // Same kit colours / wrap texture as the procedural (referee) path — painted onto
+    // the existing skinned mesh only. Never parent kit cylinders/boxes onto the GLB.
+    const applyWrap = () =>
+      applyKitToSkinned(skinned, kit, skinHex, bootCol, skinned.bodyTintFallback ? shirtMap : null);
+    applyWrap();
     if (skinned.bodyTintFallback) {
-      for (const m of skinned.kitMaterials.shirt) {
-        const base = (m.userData.kitBaseMap as THREE.Texture | undefined) ?? null;
-        const img = base?.image as { width?: number; complete?: boolean } | undefined;
-        if (!base || (img && (img.width ?? 0) >= 2)) continue;
-        const retry = () => applyKitToSkinned(skinned, kit, skinHex, bootCol);
-        if (base && "addEventListener" in base && typeof (base as unknown as HTMLImageElement).addEventListener === "function") {
-          (base as unknown as HTMLImageElement).addEventListener("load", retry, { once: true });
-        } else {
-          // Texture.image may populate a frame later via GLTFLoader.
-          requestAnimationFrame(() => requestAnimationFrame(retry));
-        }
-        break;
-      }
-    }
-    // Only apply shirt map when we have a dedicated shirt material — otherwise the
-    // UV atlas on a full-body mesh goes white / invisible under a jersey texture.
-    if (kit.shirtAsset && skinned.kitMaterials.shirt.length > 0) {
+      const ud = shirtMap.userData as { kitBaseWaiters?: Array<(hex: string) => void>; kitBaseColor?: string };
+      if (ud.kitBaseColor) applyWrap();
+      else (ud.kitBaseWaiters ??= []).push(() => applyWrap());
+    } else if (kit.shirtAsset && skinned.kitMaterials.shirt.length > 0) {
       const hasDedicatedShirt = skinned.kitMaterials.shirt.some((m) =>
         /shirt|jersey|cloth|outfit|gear/i.test(m.name || ""),
       );
