@@ -119,6 +119,8 @@ describe("player portraits", () => {
     expect(portraitAsset({ id: "player_cooper", name: "M. Cooper" })).toBeNull();
     const html = portraitHtml({ name: "M. Cooper" }, 1);
     expect(html).toContain("portrait-badge");
+    expect(html).toContain(">COOPER</span>");
+    expect(html).not.toContain('class="ini"');
     expect(html).not.toContain("<img");
     expect(playerInitials("M. Cooper")).toBe("MC");
     expect(portraitFallback("M. Cooper", 1).number).toBe(1);

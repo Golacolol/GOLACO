@@ -181,6 +181,9 @@ describe("character select", () => {
     expect(view.current().player.id).toBe(target.player.player.id);
     expect(view.root.querySelector(".roster-row.on .roster-num")?.textContent).toBe(String(target.player.shirtNumber));
     expect(view.root.querySelector(".team-roster-card .char-num")).toBeNull();
+    expect(view.root.querySelector(".team-roster-card .kit-marker-roster")).toBeTruthy();
+    expect(view.root.querySelector(".team-roster-card .portrait-badge-kit .sur")?.textContent).toMatch(/[A-Z]{2,}/);
+    expect(view.root.querySelector(".team-roster-card .portrait-badge-kit .ini")).toBeNull();
     expect(view.root.querySelector(".team-roster-card h3")?.textContent).toBe(
       `${target.player.shirtNumber}. ${target.player.player.name}`,
     );

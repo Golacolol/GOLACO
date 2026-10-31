@@ -230,10 +230,18 @@ export class MatchHUD {
       const team = player.side === "home" ? match.home : match.away;
       el.innerHTML = `
         ${portraitHtml(
-          { name: player.displayName, appearance: { portraitAsset: player.appearance.portraitAsset } },
+          {
+            id: player.id,
+            name: player.displayName,
+            appearance: { portraitAsset: player.appearance.portraitAsset },
+          },
           player.shirtNumber,
           team.record.primaryColor,
-          { textColor: contrastingKitText(team.record.primaryColor, team.record.secondaryColor) },
+          {
+            surnameOnly: true,
+            className: "kit-marker-hud",
+            textColor: contrastingKitText(team.record.primaryColor, team.record.secondaryColor),
+          },
         )}
         <div>
           <div class="tag">${team.record.abbreviation}</div>
@@ -287,10 +295,18 @@ export class MatchHUD {
     const a = player.attrs;
     el.innerHTML = `
       ${portraitHtml(
-        { name: player.displayName, appearance: { portraitAsset: player.appearance.portraitAsset } },
+        {
+          id: player.id,
+          name: player.displayName,
+          appearance: { portraitAsset: player.appearance.portraitAsset },
+        },
         player.shirtNumber,
         team.record.primaryColor,
-        { textColor: contrastingKitText(team.record.primaryColor, team.record.secondaryColor) },
+        {
+          surnameOnly: true,
+          className: "kit-marker-hud-sheet",
+          textColor: contrastingKitText(team.record.primaryColor, team.record.secondaryColor),
+        },
       )}
       <div class="sheet-num">#${player.shirtNumber}</div>
       <div class="sheet-name">${escapeHtml(player.displayName.toUpperCase())}</div>
