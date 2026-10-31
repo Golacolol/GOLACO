@@ -180,7 +180,8 @@ describe("character select", () => {
     view.render();
     expect(view.current().player.id).toBe(target.player.player.id);
     expect(view.root.querySelector(".roster-row.on .roster-num")?.textContent).toBe(String(target.player.shirtNumber));
-    expect(view.root.querySelector(".team-roster-card .char-num")?.textContent).toBe(`#${target.player.shirtNumber}`);
+    expect(view.root.querySelector(".team-roster-card .char-num")).toBeNull();
+    expect(view.root.querySelector(".team-roster-card .profile-stats")).toBeTruthy();
     expect(view.root.querySelector(`.pitch-token.on[data-id="${target.player.player.id}"]`)).toBeTruthy();
   });
 
@@ -210,10 +211,13 @@ describe("character select", () => {
     expect(view.root.querySelector(".pitch-token img")).toBe(pitchImg);
     expect(view.root.textContent ?? "").not.toMatch(/Click for (shape|details)/i);
     view.toggleProfileView();
-    expect(view.root.querySelector(".profile-hex-value")).toBeTruthy();
+    expect(view.root.querySelector(".profile-detail-bars")).toBeTruthy();
     expect(view.root.querySelector(".profile-hex-shape")).toBeNull();
+    const detailBox = view.root.querySelector<HTMLElement>(".profile-stats");
+    expect(detailBox?.style.width).toBe(detailBox?.style.height);
     view.toggleProfileView();
     expect(view.root.querySelector(".profile-hex-shape")).toBeTruthy();
+    expect(view.root.querySelector(".profile-detail-bars")).toBeNull();
   });
 
   it("spot practice keeps the formation panel with a highlighted Select Player button", () => {
@@ -352,11 +356,11 @@ describe("character select", () => {
     const gkBadge = view.root.querySelector(".pitch-token .portrait-badge-kit") as HTMLElement | null;
     expect(gkBadge?.style.background.toLowerCase()).toBe("rgb(31, 174, 91)");
     expect(gkBadge?.style.color.toLowerCase()).toBe("rgb(255, 255, 255)");
-    expect(gkBadge?.querySelector(".num")?.textContent).toBe("1");
+    expect(gkBadge?.querySelector(".num")?.textContent).toBe("1.");
     const photo = view.root.querySelector('[data-id="p2"] .kit-marker-photo');
     expect(photo).toBeTruthy();
     expect(photo?.querySelector(".kit-marker-num-overlay")).toBeNull();
-    expect(photo?.querySelector(".kit-marker-caption .kit-marker-num")?.textContent).toBe("9");
+    expect(photo?.querySelector(".kit-marker-caption .kit-marker-num")?.textContent).toBe("9.");
     expect(photo?.querySelector(".kit-marker-caption .kit-marker-name")?.textContent).toBe("HARDIE");
     const stBadge = photo?.querySelector(".portrait-badge-kit") as HTMLElement | null;
     // Photo markers keep caption in secondary; hidden fallback badge still carries team colours.
@@ -528,7 +532,7 @@ describe("kitMarkerHtml", () => {
       primaryColor: "#007A3D",
       textColor: "#ffffff",
     });
-    expect(html).toContain('class="num">8<');
+    expect(html).toContain('class="num">8.<');
     expect(html).toContain(">COOPER</span>");
     expect(html).not.toContain("kit-marker-photo");
   });

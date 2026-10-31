@@ -1079,10 +1079,9 @@ export class CharacterSelect {
         ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
           textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
         })}
-        <div class="char-num">#${selected.shirtNumber}</div>
         <h3>${escapeHtml(selected.player.name)}</h3>
         <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
-        ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 148 })}
+        ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
       `;
     }
 
@@ -1099,7 +1098,7 @@ export class CharacterSelect {
       this.render();
       return;
     }
-    const size = Number(host.getAttribute("data-size") || (this.controlMode === "TEAM" ? 148 : 168));
+    const size = Number(host.getAttribute("data-size") || (this.controlMode === "TEAM" ? 168 : 188));
     const compact = host.classList.contains("profile-stats-compact");
     const next = profileStatsBlock(this.current().attrs, {
       compact,
@@ -1264,10 +1263,9 @@ export class CharacterSelect {
               ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
                 textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
               })}
-              <div class="char-num">#${selected.shirtNumber}</div>
               <h3>${escapeHtml(selected.player.name)}</h3>
               <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
-              ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 148 })}
+              ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
             </div>
             <div class="team-roster-title">SQUAD <span class="team-roster-hint">Right-click to edit</span></div>
             <div class="team-roster-list">
