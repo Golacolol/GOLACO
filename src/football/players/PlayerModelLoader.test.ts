@@ -77,6 +77,7 @@ describe("PlayerModelLoader", () => {
     const mat = new MeshStandardMaterial({ color: 0x111111, name: "VanguardBodyMat" });
     // Texture with no drawable image — tintBodyAlbedoMap returns null.
     mat.map = new Texture();
+    mat.normalMap = new Texture();
 
     const inst = {
       kitMaterials: { shirt: [mat], shorts: [], socks: [], skin: [], boots: [] },
@@ -87,6 +88,7 @@ describe("PlayerModelLoader", () => {
     const kit = { shirt: "#034694", shorts: "#fff", socks: "#034694" } as TeamKit;
     applyKitToSkinned(inst, kit, 0xb8896a, 0x101214);
     expect(mat.map).toBeNull();
+    expect(mat.normalMap).toBeNull();
     expect(mat.color.getHex()).toBe(0x034694);
     expect(mat.userData.kitBaseMap).toBeTruthy();
   });

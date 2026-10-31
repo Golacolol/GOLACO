@@ -1902,9 +1902,21 @@ export class Match {
       passer.runTargetX = decision.space.x;
       passer.runTargetZ = decision.space.z;
     }
+    const oppGkEarly = this.opponentsOf(passer).find((p) => p.isGK);
+    const inBoxEarly =
+      inOpponentPenaltyArea(passer) || (distGoal < PENALTY_AREA_LENGTH + 1.5 && Math.abs(passer.z) < 20);
+    const gkCloseEarly = !!oppGkEarly && passer.distTo(oppGkEarly.x, oppGkEarly.z) < 4.6;
+    const boxDeadlineEarly = boxFinishDeadline(this.pressure, gkCloseEarly);
+    // Closed-down in the box: stop lateral shuffle vs the keeper — plant / go goalward.
+    if (inBoxEarly && (gkCloseEarly || this.possessionTime >= boxDeadlineEarly * 0.6)) {
+      passer.runTargetX = passer.x + attackDir * (gkCloseEarly ? 1.2 : 2.4);
+      passer.runTargetZ = clamp(passer.z * 0.35, -8, 8);
+    }
     this.aiAct += dt;
     // Slower AI cadence in build-up so possession recirculates instead of forced shots.
-    if (this.aiAct < (building ? 0.22 : 0.2)) return;
+    // Box finish window ticks faster so we don't wait a full AI beat while oscillating.
+    const aiCadence = inBoxEarly && (gkCloseEarly || this.possessionTime >= boxDeadlineEarly) ? 0.1 : building ? 0.22 : 0.2;
+    if (this.aiAct < aiCadence) return;
     this.aiAct = 0;
     let action = decision.action;
     let passTarget = decision.passTarget;
@@ -1965,8 +1977,18 @@ export class Match {
       }
     }
     const stallStyle = (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined;
+    const oppGk = oppGkEarly;
+    const inBox = inBoxEarly;
+    const gkClose = gkCloseEarly;
+    const boxDeadline = boxDeadlineEarly;
+    const boxMustFinish = inBox && this.possessionTime >= boxDeadline;
     // First-touch plant — AI must settle before kicking (PES second-touch timing).
-    if (passer.firstTouchTimer > 0.1 && (passLike || action === "SHOT" || action === "LONG_SHOT")) {
+    // Past the box deadline, never demote a finish back into the shuffle.
+    if (
+      passer.firstTouchTimer > 0.1 &&
+      (passLike || action === "SHOT" || action === "LONG_SHOT") &&
+      !boxMustFinish
+    ) {
       action = decision.scores.runScore >= 0.08 ? "RUN" : "HOLD";
     }
     // Receive dwell — longer when there is grass to attack; shorter under pressure.
@@ -1980,10 +2002,17 @@ export class Match {
         : this.pressure > 0.55
           ? clamp(0.85 + (1 - composure) * 0.22 - patience * 0.02, 0.65, 1.2)
           : clamp(1.25 + (1 - composure) * 0.28 + (1 - vision) * 0.1 + patience * 0.28, 1.05, 2.05);
-      if (passLike && this.possessionTime < dwell) action = "RUN";
+      if (passLike && this.possessionTime < dwell && !boxMustFinish) action = "RUN";
     }
     // Marker on the ball + a cut lane = carry / shield, not a hopeful pass straight into him.
-    if (passLike && passTarget && action !== "LONG_PASS" && action !== "CROSS" && this.possessionTime < 3.0) {
+    if (
+      passLike &&
+      passTarget &&
+      action !== "LONG_PASS" &&
+      action !== "CROSS" &&
+      this.possessionTime < 3.0 &&
+      !boxMustFinish
+    ) {
       const opps = this.opponentsOf(passer);
       const marked = opps.some((o) => !o.isGK && o.distTo(this.ball.x, this.ball.z) < 1.7);
       if (marked && passingLaneQuality(passer, passTarget.x, passTarget.z, opps) < 0.62) {
@@ -1994,19 +2023,22 @@ export class Match {
     const stallAt =
       (stallStyle?.id === "possession" ? 4.2 : stallStyle?.id === "routeOne" || stallStyle?.id === "direct" ? 3.1 : 3.6) /
       Math.max(0.85, stallStyle?.tempo ?? 1);
-    const oppGk = this.opponentsOf(passer).find((p) => p.isGK);
-    const inBox = inOpponentPenaltyArea(passer) || (distGoal < PENALTY_AREA_LENGTH + 1.5 && Math.abs(passer.z) < 20);
-    const gkClose = !!oppGk && passer.distTo(oppGk.x, oppGk.z) < 4.6;
-    const boxDeadline = boxFinishDeadline(this.pressure, gkClose);
     // Box: force an end-product before the keeper-mirroring carry deadlock.
-    if ((action === "RUN" || action === "HOLD") && inBox && this.possessionTime >= boxDeadline) {
-      if (decision.scores.shotScore + 0.05 >= decision.scores.passScore) {
+    if ((action === "RUN" || action === "HOLD") && boxMustFinish) {
+      const cutbackOpen =
+        !!passTarget &&
+        !forbid.includes(passTarget.id) &&
+        !passTarget.isGK &&
+        passingLaneQuality(passer, passTarget.x, passTarget.z, this.opponentsOf(passer)) >= 0.55 &&
+        !gkClose;
+      // Keeper in the face → shoot; only pass when a clear cutback exists.
+      if (gkClose || decision.scores.shotScore + 0.02 >= decision.scores.passScore || !cutbackOpen) {
         action = "SHOT";
-      } else if (passTarget && !forbid.includes(passTarget.id) && !passTarget.isGK) {
-        action = "PASS";
       } else {
-        action = "SHOT";
+        action = "PASS";
       }
+      passer.runTargetX = passer.x + attackDir * 1.2;
+      passer.runTargetZ = clamp(passer.z * 0.3, -7, 7);
     }
     if ((action === "RUN" || action === "HOLD") && this.possessionTime >= stallAt) {
       const style = stallStyle;
@@ -2086,14 +2118,16 @@ export class Match {
       const minShotHold =
         action === "LONG_SHOT"
           ? 1.05
-          : inBox
-            ? gkClose
-              ? 0.32
-              : 0.42
-            : isStriker(passer)
-              ? 0.48
-              : 0.72;
-      if (this.possessionTime < minShotHold) {
+          : boxMustFinish
+            ? 0.28
+            : inBox
+              ? gkClose
+                ? 0.32
+                : 0.42
+              : isStriker(passer)
+                ? 0.48
+                : 0.72;
+      if (this.possessionTime < minShotHold && !boxMustFinish) {
         if (passTarget && decision.scores.passScore >= 0.28) action = "PASS";
         else {
           action = decision.scores.runScore >= 0.1 ? "RUN" : "HOLD";
@@ -2122,7 +2156,12 @@ export class Match {
       : { x: decision.space.dx, z: decision.space.dz };
     // Pre-turn toward the pass; only refuse when still badly squared under low pressure.
     turnFacingToward(passer, dir.x, dir.z, dt, { turnMul: 1.9 });
-    if (bodyAlignment(passer.facing, dir.x, dir.z) < facingKickFloor("pass") && this.pressure < 0.72) {
+    // Closed-down box finish: don't soft-refuse forever while still shuffling.
+    if (
+      bodyAlignment(passer.facing, dir.x, dir.z) < facingKickFloor("pass") &&
+      this.pressure < 0.72 &&
+      !(boxMustFinish && (gkClose || this.pressure > 0.5))
+    ) {
       return;
     }
     this.executePass(passer, passTarget, fakeBase, passType, dir);

@@ -719,8 +719,14 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   if (passTarget && forbid.has(passTarget.id)) {
     passTarget = shortT && !forbid.has(shortT.id) ? shortT : null;
   }
-  if (passTarget && carrier.distTo(passTarget.x, passTarget.z) < 7.5 && Math.abs(passTarget.z - carrier.z) < 6) {
+  if (
+    !inOppBox &&
+    passTarget &&
+    carrier.distTo(passTarget.x, passTarget.z) < 7.5 &&
+    Math.abs(passTarget.z - carrier.z) < 6
+  ) {
     // Too tight to keep recycling — force a carry instead when that was the only short option.
+    // Never do this inside the opp box — that recreates the keeper side-to-side deadlock.
     if (pick.action === "PASS" && runScore >= passScore - 0.2) {
       return {
         action: "RUN",

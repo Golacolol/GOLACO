@@ -332,8 +332,8 @@ export function tintBodyAlbedoMap(
       d[i + 1] = Math.min(255, Math.round(sg * shade));
       d[i + 2] = Math.min(255, Math.round(sb * shade));
     } else {
-      // Brightness floor (~0.42) keeps navy/green/white kits distinct at match camera distance.
-      const shade = 0.42 + 0.58 * lum;
+      // Strong kit chroma with mild fold shading — dark armor must not dominate the shirt colour.
+      const shade = 0.62 + 0.38 * lum;
       d[i] = Math.min(255, Math.round(kr * shade));
       d[i + 1] = Math.min(255, Math.round(kg * shade));
       d[i + 2] = Math.min(255, Math.round(kb * shade));
@@ -370,17 +370,32 @@ export function applyKitToSkinned(inst: SkinnedPlayerInstance, kit: TeamKit, ski
       seen.add(m);
       const baseMap = (m.userData.kitBaseMap as THREE.Texture | undefined) ?? m.map ?? null;
       if (baseMap && !m.userData.kitBaseMap) m.userData.kitBaseMap = baseMap;
+      // Drop baked military lighting maps — they wash every kit toward the same camo look.
+      m.normalMap = null;
+      m.roughnessMap = null;
+      m.metalnessMap = null;
+      m.aoMap = null;
+      m.emissiveMap = null;
+      if ("normalScale" in m && m.normalScale) m.normalScale.set(1, 1);
       const tinted = baseMap ? tintBodyAlbedoMap(baseMap, kitHex, skinToneHex) : null;
       if (tinted) {
         m.map = tinted;
-        m.color.setHex(0xffffff);
+        // Soft kit multiply on top of the recolored atlas — keeps skin from the map
+        // while pushing shirt/shorts regions firmly toward the team colour.
+        const [kr, kg, kb] = [(kitHex >> 16) & 255, (kitHex >> 8) & 255, kitHex & 255];
+        const lift = 0.55;
+        m.color.setRGB(
+          (kr / 255) * (1 - lift) + lift,
+          (kg / 255) * (1 - lift) + lift,
+          (kb / 255) * (1 - lift) + lift,
+        );
       } else {
         // No readable albedo — solid kit so teams stay distinguishable.
         m.map = null;
         m.color.setHex(kitHex);
       }
-      m.roughness = 0.45;
-      m.metalness = Math.min(m.metalness ?? 0.05, 0.12);
+      m.roughness = 0.52;
+      m.metalness = 0.04;
       m.needsUpdate = true;
     }
     paint(inst.kitMaterials.boots, bootHex, 0.3);
