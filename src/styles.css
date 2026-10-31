@@ -1280,7 +1280,7 @@ html.club-name-glow-off .club-line {
   margin: 0 auto 6px;
 }
 .team-roster-card h3 {
-  margin: 4px 0 2px;
+  margin: 4px 0 8px;
   font-size: 17px;
   letter-spacing: 0.04em;
   line-height: 1.2;
@@ -1290,11 +1290,11 @@ html.club-name-glow-off .club-line {
   opacity: 0.75;
   font-size: 11px;
   letter-spacing: 0.06em;
-  /* Match h3 top gap so ATT / axis tags sit clear of the OVR line. */
-  margin-bottom: 4px;
+  /* Same 8px as name → OVR; ATT sits at the SVG top so keep this clear. */
+  margin-bottom: 8px;
 }
 .team-roster-card .profile-stats-compact {
-  margin-top: 4px;
+  margin-top: 0;
 }
 .char-stats-compact {
   gap: 3px;

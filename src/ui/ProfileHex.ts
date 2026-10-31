@@ -51,8 +51,10 @@ export function profileHexSvg(axes: ProfileAxes, size = 132): string {
   }).join("");
   const labels = PROFILE_AXIS_IDS.map((id, i) => {
     const ang = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
-    const lx = cx + Math.cos(ang) * (maxR + size * 0.085);
-    const ly = cy + Math.sin(ang) * (maxR + size * 0.085);
+    // Sit close to the polygon edge (was 0.085 — left ATT/FIT floating off the shape).
+    const lr = maxR + size * 0.048;
+    const lx = cx + Math.cos(ang) * lr;
+    const ly = cy + Math.sin(ang) * lr;
     return `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" class="profile-hex-label">${PROFILE_AXIS_SHORT[id]}</text>`;
   }).join("");
   const shape = `<polygon points="${valuePolygon(axes, cx, cy, maxR)}" class="profile-hex-shape"/>`;
