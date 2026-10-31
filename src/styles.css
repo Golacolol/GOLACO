@@ -1287,8 +1287,8 @@ html.club-name-glow-off .club-line {
   color: inherit;
 }
 .team-roster-card .char-meta {
-  opacity: 0.8;
-  font-size: 13px;
+  opacity: 0.75;
+  font-size: 11px;
   letter-spacing: 0.06em;
   /* Match h3 top gap so ATT / axis tags sit clear of the OVR line. */
   margin-bottom: 4px;
