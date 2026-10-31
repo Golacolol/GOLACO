@@ -1284,12 +1284,17 @@ html.club-name-glow-off .club-line {
   font-size: 17px;
   letter-spacing: 0.04em;
   line-height: 1.2;
+  color: inherit;
 }
 .team-roster-card .char-meta {
-  opacity: 0.7;
-  font-size: 10px;
+  opacity: 0.8;
+  font-size: 13px;
   letter-spacing: 0.06em;
   margin-bottom: 4px;
+}
+/* Compact hex sits under OVR — hide axis tags (e.g. ATT) so they don't crowd the meta line. */
+.team-roster-card .profile-hex-label {
+  display: none;
 }
 .char-stats-compact {
   gap: 3px;

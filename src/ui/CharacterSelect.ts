@@ -1086,7 +1086,7 @@ export class CharacterSelect {
         ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
           textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
         })}
-        <h3>${escapeHtml(selected.player.name)}</h3>
+        <h3>${selected.shirtNumber}. ${escapeHtml(selected.player.name)}</h3>
         <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
         ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
       `;
@@ -1269,7 +1269,7 @@ export class CharacterSelect {
               ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
                 textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
               })}
-              <h3>${escapeHtml(selected.player.name)}</h3>
+              <h3>${selected.shirtNumber}. ${escapeHtml(selected.player.name)}</h3>
               <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
               ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
             </div>

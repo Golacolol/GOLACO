@@ -181,6 +181,10 @@ describe("character select", () => {
     expect(view.current().player.id).toBe(target.player.player.id);
     expect(view.root.querySelector(".roster-row.on .roster-num")?.textContent).toBe(String(target.player.shirtNumber));
     expect(view.root.querySelector(".team-roster-card .char-num")).toBeNull();
+    expect(view.root.querySelector(".team-roster-card h3")?.textContent).toBe(
+      `${target.player.shirtNumber}. ${target.player.player.name}`,
+    );
+    expect(view.root.querySelector(".team-roster-card .char-meta")?.textContent).toMatch(/OVR/);
     expect(view.root.querySelector(".team-roster-card .profile-stats")).toBeTruthy();
     expect(view.root.querySelector(`.pitch-token.on[data-id="${target.player.player.id}"]`)).toBeTruthy();
   });
