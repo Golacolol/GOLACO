@@ -307,6 +307,29 @@ describe("character select", () => {
     expect(rows.map((r) => r.num)).toEqual(["1", "2", "5", "6", "3", "7", "8", "4", "11", "9", "10", "13", "12", "14", "19"]);
   });
 
+  it("omits pitch/bench name tooltips unless formation overlays are on", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    const view = new CharacterSelect(host);
+    const starters = squad();
+    view.setSquad("Argyle", starters, "#007A3D", {
+      formation: "4-2-3-1",
+      roster: [...starters, makePlayer("b1", "B. Ench", "CM", 14)],
+      starterSlots: ["GK", "CAM", "ST"],
+    });
+    view.showOverlays = false;
+    view.render();
+    expect(view.root.querySelector(".pitch-token[title]")).toBeNull();
+    expect(view.root.querySelector(".bench-card[title]")).toBeNull();
+    expect(view.root.querySelector(".pitch-token")?.getAttribute("aria-label")).toBeTruthy();
+    view.showOverlays = true;
+    view.render();
+    expect(view.root.querySelector(".pitch-token[title]")?.getAttribute("title")).toBeTruthy();
+    expect(view.root.querySelector(".bench-card[title]")?.getAttribute("title")).toBe("B. Ench");
+    view.dispose();
+    host.remove();
+  });
+
   it("keeps substitute GK PNG markers (green badge stays hidden fallback)", () => {
     const host = document.createElement("div");
     document.body.appendChild(host);

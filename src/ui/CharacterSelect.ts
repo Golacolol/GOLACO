@@ -54,7 +54,6 @@ const EDIT_STAT_GROUPS: { title: string; fields: { key: EditStatKey; label: stri
       { key: "dribbling", label: "Dribble" },
       { key: "passing", label: "Pass" },
       { key: "longPassing", label: "Long pass" },
-      { key: "vision", label: "Vision" },
       { key: "crossing", label: "Crossing", optional: true },
     ],
   },
@@ -68,23 +67,26 @@ const EDIT_STAT_GROUPS: { title: string; fields: { key: EditStatKey; label: stri
       { key: "heading", label: "Heading", optional: true },
       { key: "penalties", label: "Pens", optional: true },
       { key: "setPieces", label: "Set piece", optional: true },
-      { key: "attackingAwareness", label: "Att awr", optional: true },
     ],
   },
   {
     title: "Defending",
     fields: [
       { key: "defending", label: "Defend" },
-      { key: "defensiveAwareness", label: "Def awr", optional: true },
       { key: "tackling", label: "Tackle", optional: true },
-      { key: "aggression", label: "Aggro", optional: true },
     ],
   },
   {
     title: "Mental",
     fields: [
+      { key: "form", label: "Form", optional: true },
+      { key: "vision", label: "Vision" },
       { key: "composure", label: "Composure" },
       { key: "reactions", label: "Reactions", optional: true },
+      { key: "concentration", label: "Focus", optional: true },
+      { key: "aggression", label: "Aggro", optional: true },
+      { key: "attackingAwareness", label: "Att awr", optional: true },
+      { key: "defensiveAwareness", label: "Def awr", optional: true },
     ],
   },
   {
@@ -489,6 +491,11 @@ export class CharacterSelect {
   onSquadPlayerSave: ((edit: SquadPlayerEdit) => void) | null = null;
   /** Hex shape vs six detail bars on the roster card / player panel. */
   private profileView: "hex" | "detail" = "hex";
+  /**
+   * When true, pitch/bench counters show native hover titles with the player name.
+   * Driven by Options → Display → Formation overlays (default off).
+   */
+  showOverlays = false;
   /** Formation chalk board — draw thick lines on the pitch under player counters. */
   private chalkMode = false;
   /** Normalized 0–1 stroke polylines relative to the pitch box. */
@@ -1314,8 +1321,10 @@ export class CharacterSelect {
                   }
                   const p = row.player;
                   const selected = p.player.id === selectedId ? "on" : "";
+                  const name = escapeHtml(p.player.name);
+                  const nameTip = this.showOverlays ? ` title="${name}"` : "";
                   return `<div class="pitch-slot ${selected}" data-slot="${slot.id}" data-player-id="${p.player.id}" style="left:${pos.left}%; bottom:${pos.bottom}%">
-                  <button type="button" class="pitch-token ${selected}" data-char="pick" data-id="${p.player.id}" data-player-id="${p.player.id}" data-from-slot="${slot.id}" title="${escapeHtml(p.player.name)}">
+                  <button type="button" class="pitch-token ${selected}" data-char="pick" data-id="${p.player.id}" data-player-id="${p.player.id}" data-from-slot="${slot.id}" aria-label="${name}"${nameTip}>
                     ${kitMarkerHtml(p.player, p.shirtNumber, {
                       ...kitMarkerColors(p.player.primaryPosition, this.teamColor, this.teamSecondaryColor),
                     })}
@@ -1331,7 +1340,9 @@ export class CharacterSelect {
               ${this.bench
                 .map((p) => {
                   const active = p.player.id === selectedId ? "on" : "";
-                  return `<button type="button" class="bench-card ${active}" draggable="true" data-player-id="${p.player.id}" data-from-slot="" data-char="pick" data-id="${p.player.id}" title="${escapeHtml(p.player.name)}">
+                  const name = escapeHtml(p.player.name);
+                  const nameTip = this.showOverlays ? ` title="${name}"` : "";
+                  return `<button type="button" class="bench-card ${active}" draggable="true" data-player-id="${p.player.id}" data-from-slot="" data-char="pick" data-id="${p.player.id}" aria-label="${name}"${nameTip}>
                     ${kitMarkerHtml(p.player, p.shirtNumber, {
                       ...kitMarkerColors(p.player.primaryPosition, this.teamColor, this.teamSecondaryColor),
                       className: "kit-marker-bench",

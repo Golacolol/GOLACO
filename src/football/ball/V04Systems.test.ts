@@ -92,6 +92,7 @@ describe("camera modes", () => {
     expect(DEFAULT_SETTINGS.awayShowDefLine).toBe(false);
     expect(DEFAULT_SETTINGS.homeDefLineColor).toBe("#3db7ff");
     expect(DEFAULT_SETTINGS.ballGoldRing).toBe(false);
+    expect(DEFAULT_SETTINGS.formationOverlays).toBe(false);
     expect(DEFAULT_SETTINGS.showPassTargetHighlight).toBe(false);
   });
 });

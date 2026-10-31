@@ -98,6 +98,10 @@ export interface PlayerAttributes {
   strength: number;
   stamina: number;
   composure: number;
+  /** Current match form / confidence (1–100). Soft-blends into mental play. */
+  form?: number;
+  /** Focus under pressure / set pieces (1–100). */
+  concentration?: number;
   /** Off-ball run / space selection (1–100). */
   attackingAwareness?: number;
   /** Response to loose balls, transitions, rebounds (1–100). */

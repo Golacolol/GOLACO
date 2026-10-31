@@ -216,6 +216,8 @@ export type InferredAttrKey =
   | "penalties"
   | "setPieces"
   | "aggression"
+  | "form"
+  | "concentration"
   | "attackingAwareness"
   | "reactions"
   | "defensiveAwareness"
@@ -300,6 +302,8 @@ export function resolveAttributesDetailed(
     penalties: take("penalties", blend(finishing, composure)),
     setPieces: take("setPieces", blend(passing, shooting)),
     aggression: take("aggression", blend(defending, strength)),
+    form: take("form", composure),
+    concentration: take("concentration", blend(composure, vision)),
     attackingAwareness: take(
       "attackingAwareness",
       isAttackingPos(pos) ? blend(vision, composure, finishing) : blend(vision, composure),
@@ -348,8 +352,17 @@ export function applyOverride(base: PlayerAttributes, override?: RatingOverride)
 function attr(source: PlayerAttributes, key: keyof PlayerAttributes): number {
   const value = source[key];
   if (typeof value === "number") return value;
+  if (key === "form" || key === "concentration") return source.composure;
   if (String(key).startsWith("gk")) return source.composure;
   return 60;
+}
+
+/** Composure blended with form + focus for pressure / decision feel. */
+export function effectiveComposure(attrs: PlayerAttributes): number {
+  const base = attrs.composure;
+  const form = attrs.form ?? base;
+  const focus = attrs.concentration ?? base;
+  return roundStat(base * 0.55 + form * 0.25 + focus * 0.2);
 }
 
 /** Six display axes for the formation hex / comparison chart (not gameplay multipliers). */
@@ -415,11 +428,13 @@ export function deriveProfileAxes(attrs: PlayerAttributes): ProfileAxes {
       { key: "jumping", w: 0.1 },
     ]),
     mental: weightedMean(attrs, [
-      { key: "composure", w: 0.34 },
-      { key: "reactions", w: 0.22 },
-      { key: "vision", w: 0.16 },
-      { key: "attackingAwareness", w: 0.14 },
-      { key: "defensiveAwareness", w: 0.14 },
+      { key: "composure", w: 0.22 },
+      { key: "form", w: 0.16 },
+      { key: "vision", w: 0.14 },
+      { key: "reactions", w: 0.14 },
+      { key: "concentration", w: 0.12 },
+      { key: "attackingAwareness", w: 0.11 },
+      { key: "defensiveAwareness", w: 0.11 },
     ]),
     technique: weightedMean(attrs, [
       { key: "control", w: 0.32 },
@@ -478,7 +493,7 @@ export function validatePlayerAttributes(
     "pace", "acceleration", "agility", "balance", "passing", "longPassing", "vision", "crossing",
     "control", "dribbling", "shooting", "finishing", "shotPower", "longShots", "heading", "penalties",
     "setPieces", "defending", "defensiveAwareness", "tackling", "jumping", "aggression", "strength",
-    "stamina", "composure", "attackingAwareness", "reactions",
+    "stamina", "composure", "form", "concentration", "attackingAwareness", "reactions",
     "gkDiving", "gkHandling", "gkPositioning", "gkReflexes", "gkKicking",
   ];
   for (const key of ratingKeys) {

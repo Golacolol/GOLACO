@@ -61,6 +61,8 @@ export interface SavedSettings {
   awayMidLineColor: string;
   awayAttLineColor: string;
   ballGoldRing: boolean;
+  /** Formation panel hover titles / name tooltips on pitch & bench. Default off. */
+  formationOverlays: boolean;
   /** Ring under the intended pass receiver while aiming. Default off. */
   showPassTargetHighlight: boolean;
   /** Visual football size: 1 = default, up to ~2.25. */
@@ -137,6 +139,7 @@ export const DEFAULT_SETTINGS: SavedSettings = {
   awayMidLineColor: "#ffc14d",
   awayAttLineColor: "#ff8a9a",
   ballGoldRing: false,
+  formationOverlays: false,
   showPassTargetHighlight: false,
   ballScale: 1,
   leagueProgression: false,

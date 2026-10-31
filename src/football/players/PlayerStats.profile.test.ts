@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { PlayerAttributes } from "../../data/schema";
-import { PROFILE_AXIS_IDS, deriveProfileAxes } from "./PlayerStats";
+import { PROFILE_AXIS_IDS, deriveProfileAxes, effectiveComposure, resolveAttributes } from "./PlayerStats";
 
 const attrs: PlayerAttributes = {
   pace: 80,
@@ -28,6 +28,8 @@ const attrs: PlayerAttributes = {
   strength: 68,
   stamina: 77,
   composure: 79,
+  form: 82,
+  concentration: 77,
   attackingAwareness: 81,
   reactions: 76,
 };
@@ -42,5 +44,29 @@ describe("deriveProfileAxes", () => {
     }
     expect(axes.attack).toBeGreaterThan(axes.defence);
     expect(axes.technique).toBeGreaterThan(50);
+  });
+
+  it("infers form and concentration and blends them into effective composure", () => {
+    const resolved = resolveAttributes({
+      pace: 70,
+      passing: 70,
+      longPassing: 70,
+      vision: 70,
+      control: 70,
+      dribbling: 70,
+      shooting: 70,
+      finishing: 70,
+      shotPower: 70,
+      longShots: 70,
+      defending: 70,
+      strength: 70,
+      stamina: 70,
+      composure: 80,
+      primaryPosition: "CM",
+    });
+    expect(resolved.form).toBe(80);
+    expect(resolved.concentration).toBe(75);
+    expect(effectiveComposure({ ...resolved, form: 40, concentration: 40 })).toBeLessThan(80);
+    expect(effectiveComposure({ ...resolved, form: 95, concentration: 95 })).toBeGreaterThan(80);
   });
 });

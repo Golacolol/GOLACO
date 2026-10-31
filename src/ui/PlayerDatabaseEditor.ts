@@ -82,7 +82,7 @@ export class PlayerDatabaseEditor {
     this.root.innerHTML = `
       <div class="editor-card wide">
         <h2>Player Database</h2>
-        <p class="hint">Canonical IDs. Attribute groups: Physical (pace/accel/height), Passing (pass/vision), Shooting (finishing), Mental (attacking/defensive awareness). Blank optional fields use compatibility defaults.</p>
+        <p class="hint">Canonical IDs. Full mental set (form, vision, composure, focus, awareness) is editable in Formation → right-click player. Blank optional fields use compatibility defaults.</p>
         <div class="player-db-toolbar">
           <label class="player-db-search">
             <span>Search</span>

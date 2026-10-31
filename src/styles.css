@@ -1613,12 +1613,12 @@ html.club-name-glow-off .club-line {
   border-top: 0;
   border-radius: 2px 2px 0 0;
 }
-/* Anchored to .team-pitch (siblings of markings) so they sit in the end padding, outside the box. */
+/* Anchored to .team-pitch; open edge meets .team-pitch-markings (inset 6%). */
 .pitch-goal-mouth {
   position: absolute;
   left: 50%;
   width: 14%;
-  /* Half the former depth; open edge still sits on the markings goal line. */
+  /* Half depth of the end padding; sit against the goal line, not the outer edge. */
   height: 3%;
   box-sizing: border-box;
   border: 2px solid rgba(244, 247, 242, 0.55);
@@ -1627,14 +1627,14 @@ html.club-name-glow-off .club-line {
   pointer-events: none;
   z-index: 1;
 }
-/* Open side faces the field; fills end padding flush to the markings box. */
+/* inset 6% − height 3% = 3% from the outer edge so the open side touches the pitch. */
 .pitch-goal-mouth-own {
-  bottom: 0;
+  bottom: 3%;
   border-top: 0;
   border-radius: 0 0 3px 3px;
 }
 .pitch-goal-mouth-opp {
-  top: 0;
+  top: 3%;
   border-bottom: 0;
   border-radius: 3px 3px 0 0;
 }

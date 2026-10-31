@@ -1,5 +1,6 @@
 import { clamp, stat01 } from "../../core/math";
 import type { Player } from "../players/Player";
+import { effectiveComposure } from "./PlayerStats";
 
 export interface PressureSample {
   value: number;
@@ -32,7 +33,7 @@ export function computePressure(carrier: Player, opponents: Player[]): PressureS
     const jockey = op.jockeying ? 1.28 : 1;
     weighted += prox * (0.55 + def * 0.3 + pace * 0.15) * jockey * (inFront > 0.1 ? 1.18 : 0.82);
   }
-  const composure = stat01(carrier.attrs.composure);
+  const composure = stat01(effectiveComposure(carrier.attrs));
   const control = stat01(carrier.attrs.control);
   const speedTerm = clamp(carrier.speed / 11, 0, 1) * 0.18;
   const fatigue = (1 - carrier.energy.value) * 0.16;

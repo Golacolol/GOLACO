@@ -526,6 +526,8 @@ export class Game {
         this.match.awayHidePlayers = this.save.data.settings.awayHidePlayers;
         this.match.ballGoldRing = this.save.data.settings.ballGoldRing;
         this.match.showPassTargetHighlight = this.save.data.settings.showPassTargetHighlight;
+        this.chars.showOverlays = this.save.data.settings.formationOverlays === true;
+        if (!this.chars.root.hidden) this.chars.render();
         this.unitLines.update(this.scene, this.match, this.unitLineSettings());
       }
       if (this.settings.isEmbedded && this.menu.optionsSection) {
@@ -1178,6 +1180,7 @@ export class Game {
 
   private openCharacterSelect(teamId: string): void {
     this.menu.hide();
+    this.chars.showOverlays = this.save.data.settings.formationOverlays === true;
     this.charTeamId = teamId;
     const team = this.db.getTeam(teamId);
     const f = this.pendingFixture;
@@ -1644,6 +1647,7 @@ export class Game {
   private openPauseFormation(): void {
     if (!this.match) return;
     const team = this.match.userTeam();
+    this.chars.showOverlays = this.save.data.settings.formationOverlays === true;
     this.charTeamId = team.record.id;
     const active: FormationSide = team.side;
     this.chars.setContext("pause", { subsRemaining: this.match.subsRemaining(team.side) });
