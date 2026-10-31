@@ -1,6 +1,6 @@
 import type { SquadPlayer } from "../core/Database";
 import { FORMATION_NAMES, getFormation, remapPlayersToFormation } from "../football/teams/Formation";
-import type { KitChoice, PositionCode, TeamKit, TeamRecord } from "../data/schema";
+import type { KitChoice, PlayerAttributes, PositionCode, TeamKit, TeamRecord } from "../data/schema";
 import {
   PLAY_STYLE_IDS,
   PLAY_STYLE_LABELS,
@@ -11,6 +11,7 @@ import {
 import { kitsClash, pickTeamKit, teamHomeKit, teamResolvedAwayKit } from "../football/teams/KitClash";
 import { fitKitSurnameElements, kitMarkerHtml, portraitHtml, teamBadgeHtml } from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
+import { imageLabel, listPlayerImages, uploadPlayerImage } from "./playerImages";
 
 const EDIT_POSITIONS: PositionCode[] = [
   "GK",
@@ -29,6 +30,73 @@ const EDIT_POSITIONS: PositionCode[] = [
   "ST",
 ];
 
+type EditStatKey = keyof PlayerAttributes;
+
+const EDIT_STAT_GROUPS: { title: string; fields: { key: EditStatKey; label: string; optional?: boolean }[] }[] = [
+  {
+    title: "Physical",
+    fields: [
+      { key: "pace", label: "Pace" },
+      { key: "acceleration", label: "Accel", optional: true },
+      { key: "agility", label: "Agility", optional: true },
+      { key: "balance", label: "Balance", optional: true },
+      { key: "strength", label: "Strength" },
+      { key: "stamina", label: "Stamina" },
+      { key: "jumping", label: "Jump", optional: true },
+    ],
+  },
+  {
+    title: "On the ball",
+    fields: [
+      { key: "control", label: "Control" },
+      { key: "dribbling", label: "Dribble" },
+      { key: "passing", label: "Pass" },
+      { key: "longPassing", label: "Long pass" },
+      { key: "vision", label: "Vision" },
+      { key: "crossing", label: "Crossing", optional: true },
+    ],
+  },
+  {
+    title: "Attacking",
+    fields: [
+      { key: "shooting", label: "Shooting" },
+      { key: "finishing", label: "Finishing" },
+      { key: "shotPower", label: "Shot pwr" },
+      { key: "longShots", label: "Long shot" },
+      { key: "heading", label: "Heading", optional: true },
+      { key: "penalties", label: "Pens", optional: true },
+      { key: "setPieces", label: "Set piece", optional: true },
+      { key: "attackingAwareness", label: "Att awr", optional: true },
+    ],
+  },
+  {
+    title: "Defending",
+    fields: [
+      { key: "defending", label: "Defend" },
+      { key: "defensiveAwareness", label: "Def awr", optional: true },
+      { key: "tackling", label: "Tackle", optional: true },
+      { key: "aggression", label: "Aggro", optional: true },
+    ],
+  },
+  {
+    title: "Mental",
+    fields: [
+      { key: "composure", label: "Composure" },
+      { key: "reactions", label: "Reactions", optional: true },
+    ],
+  },
+  {
+    title: "Goalkeeper",
+    fields: [
+      { key: "gkDiving", label: "GK dive", optional: true },
+      { key: "gkHandling", label: "GK hands", optional: true },
+      { key: "gkPositioning", label: "GK pos", optional: true },
+      { key: "gkReflexes", label: "GK ref", optional: true },
+      { key: "gkKicking", label: "GK kick", optional: true },
+    ],
+  },
+];
+
 /** Payload from Formation squad right-click edit → persist. */
 export type SquadPlayerEdit = {
   playerId: string;
@@ -37,12 +105,11 @@ export type SquadPlayerEdit = {
   displayName: string;
   shirtNumber: number;
   primaryPosition: PositionCode;
-  pace: number;
-  passing: number;
-  control: number;
-  shooting: number;
-  defending: number;
-  stamina: number;
+  portraitAsset: string | null;
+  heightCm: number | null;
+  weightKg: number | null;
+  /** Full attribute snapshot; `null` clears an optional field. */
+  stats: Partial<Record<EditStatKey, number | null>>;
 };
 
 type TeamBadgeSource = {
@@ -367,6 +434,8 @@ export class CharacterSelect {
   private nudge: NudgeState | null = null;
   /** Open squad-list right-click editor (null while closed). */
   private editingPlayerId: string | null = null;
+  private imagePaths: string[] = [];
+  private imagesLoaded = false;
   /** Persist edits from the Formation squad editor. */
   onSquadPlayerSave: ((edit: SquadPlayerEdit) => void) | null = null;
 
@@ -390,6 +459,7 @@ export class CharacterSelect {
     this.root.addEventListener("pointercancel", (e) => this.onPitchPointerUp(e));
     this.root.addEventListener("contextmenu", (e) => this.onRosterContextMenu(e));
     this.root.addEventListener("click", (e) => this.onEditDialogClick(e));
+    this.root.addEventListener("change", (e) => void this.onEditDialogChange(e));
   }
 
   setSquad(
@@ -837,7 +907,14 @@ export class CharacterSelect {
             </div>
           </aside>
           <div class="team-pitch" aria-label="Formation pitch">
-            <div class="team-pitch-markings" aria-hidden="true"></div>
+            <div class="team-pitch-markings" aria-hidden="true">
+              <span class="pitch-penalty pitch-penalty-own"></span>
+              <span class="pitch-penalty pitch-penalty-opp"></span>
+              <span class="pitch-six pitch-six-own"></span>
+              <span class="pitch-six pitch-six-opp"></span>
+              <span class="pitch-goal-mouth pitch-goal-mouth-own"></span>
+              <span class="pitch-goal-mouth pitch-goal-mouth-opp"></span>
+            </div>
             ${(() => {
               const raw = form.map((slot) => {
                 const off = this.slotOffsets.get(slot.id) ?? { dx: 0, dz: 0 };
@@ -908,25 +985,50 @@ export class CharacterSelect {
       (pos) =>
         `<option value="${pos}"${pos === p.primaryPosition ? " selected" : ""}>${pos}</option>`,
     ).join("");
+    const currentPortrait = p.appearance?.portraitAsset?.trim() || "";
+    const portraitOpts = this.portraitOptionsHtml(currentPortrait);
+    const groups = EDIT_STAT_GROUPS.map((group) => {
+      const fields = group.fields
+        .map((field) => {
+          const raw = a[field.key];
+          const stored = (p as PlayerAttributes)[field.key];
+          const value =
+            field.optional && (stored === undefined || stored === null)
+              ? ""
+              : String(typeof raw === "number" ? raw : stored ?? "");
+          const ph = field.optional ? ` placeholder="auto"` : "";
+          return `<label>${field.label} <input data-edit-stat="${field.key}" type="number" min="1" max="100" value="${escapeAttr(value)}"${ph} /></label>`;
+        })
+        .join("");
+      return `<div class="squad-edit-group"><div class="squad-edit-group-title">${group.title}</div><div class="squad-edit-attrs">${fields}</div></div>`;
+    }).join("");
     return `
       <div class="squad-edit-overlay" data-squad-edit="backdrop" role="presentation">
         <div class="squad-edit-dialog" role="dialog" aria-modal="true" aria-label="Edit player" data-squad-edit="dialog">
           <h3>Edit player</h3>
-          <p class="hint">Changes save to your local squad data.</p>
+          <p class="hint">Portrait + full attributes. Blank optional stats use game defaults. Saves to local squad data.</p>
+          <div class="squad-edit-portrait">
+            <div class="squad-edit-portrait-preview" data-edit-preview>${portraitHtml(p, sp.shirtNumber, this.teamColor)}</div>
+            <div class="squad-edit-portrait-controls">
+              <label>PNG portrait
+                <select data-edit-field="portraitAsset" title="Portrait from images/">${portraitOpts}</select>
+              </label>
+              <label class="portrait-upload-btn squad-edit-upload">Upload PNG
+                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-edit-upload hidden />
+              </label>
+            </div>
+          </div>
           <label>Name <input data-edit-field="name" type="text" value="${escapeAttr(p.name)}" /></label>
           <label>Display name <input data-edit-field="displayName" type="text" value="${escapeAttr(p.displayName || p.name)}" /></label>
           <div class="squad-edit-row">
             <label>Shirt # <input data-edit-field="shirtNumber" type="number" min="1" max="99" value="${sp.shirtNumber}" /></label>
             <label>Position <select data-edit-field="primaryPosition">${posOpts}</select></label>
           </div>
-          <div class="squad-edit-attrs">
-            <label>Pace <input data-edit-field="pace" type="number" min="1" max="100" value="${a.pace}" /></label>
-            <label>Pass <input data-edit-field="passing" type="number" min="1" max="100" value="${a.passing}" /></label>
-            <label>Ctrl <input data-edit-field="control" type="number" min="1" max="100" value="${a.control}" /></label>
-            <label>Shot <input data-edit-field="shooting" type="number" min="1" max="100" value="${a.shooting}" /></label>
-            <label>Def <input data-edit-field="defending" type="number" min="1" max="100" value="${a.defending}" /></label>
-            <label>Stm <input data-edit-field="stamina" type="number" min="1" max="100" value="${a.stamina}" /></label>
+          <div class="squad-edit-row">
+            <label>Height (cm) <input data-edit-field="heightCm" type="number" min="150" max="220" value="${p.heightCm ?? ""}" placeholder="auto" /></label>
+            <label>Weight (kg) <input data-edit-field="weightKg" type="number" min="50" max="120" value="${p.weightKg ?? ""}" placeholder="auto" /></label>
           </div>
+          ${groups}
           <div class="row-btns">
             <button type="button" data-squad-edit="cancel">Cancel</button>
             <button type="button" class="primary" data-squad-edit="save">Save</button>
@@ -936,6 +1038,17 @@ export class CharacterSelect {
     `;
   }
 
+  private portraitOptionsHtml(current: string): string {
+    const paths = [...this.imagePaths];
+    if (current && !paths.includes(current)) paths.unshift(current);
+    const opts = [`<option value="">(none)</option>`];
+    for (const path of paths) {
+      const selected = path === current ? " selected" : "";
+      opts.push(`<option value="${escapeAttr(path)}"${selected}>${escapeHtml(imageLabel(path))}</option>`);
+    }
+    return opts.join("");
+  }
+
   private onRosterContextMenu(e: MouseEvent): void {
     const row = (e.target as HTMLElement).closest<HTMLElement>(".roster-row[data-id]");
     if (!row || !this.root.contains(row)) return;
@@ -943,8 +1056,21 @@ export class CharacterSelect {
     const id = row.getAttribute("data-id");
     if (!id) return;
     this.selectPlayerId(id);
+    void this.openSquadEdit(id);
+  }
+
+  private async openSquadEdit(id: string): Promise<void> {
     this.editingPlayerId = id;
     this.render();
+    if (!this.imagesLoaded) {
+      try {
+        this.imagePaths = await listPlayerImages();
+      } catch {
+        this.imagePaths = [];
+      }
+      this.imagesLoaded = true;
+      if (this.editingPlayerId === id) this.render();
+    }
   }
 
   private onEditDialogClick(e: MouseEvent): void {
@@ -966,6 +1092,40 @@ export class CharacterSelect {
     this.commitSquadPlayerEdit();
   }
 
+  private async onEditDialogChange(e: Event): Promise<void> {
+    const target = e.target as HTMLElement | null;
+    if (!target || !this.editingPlayerId) return;
+    const upload = target.closest<HTMLInputElement>("input[data-edit-upload]");
+    if (upload?.files?.[0]) {
+      try {
+        const path = await uploadPlayerImage(upload.files[0]);
+        if (!this.imagePaths.includes(path)) this.imagePaths.push(path);
+        this.imagePaths.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+        const sp = this.players.find((p) => p.player.id === this.editingPlayerId);
+        if (sp) {
+          if (!sp.player.appearance) sp.player.appearance = {};
+          sp.player.appearance.portraitAsset = path;
+        }
+        this.render();
+      } catch (error) {
+        window.alert(error instanceof Error ? error.message : "Image upload failed");
+      } finally {
+        upload.value = "";
+      }
+      return;
+    }
+    const select = target.closest<HTMLSelectElement>("select[data-edit-field='portraitAsset']");
+    if (select) {
+      const sp = this.players.find((p) => p.player.id === this.editingPlayerId);
+      if (!sp) return;
+      if (!sp.player.appearance) sp.player.appearance = {};
+      const value = select.value.trim();
+      sp.player.appearance.portraitAsset = value || null;
+      const preview = this.root.querySelector("[data-edit-preview]");
+      if (preview) preview.innerHTML = portraitHtml(sp.player, sp.shirtNumber, this.teamColor);
+    }
+  }
+
   private commitSquadPlayerEdit(): void {
     const id = this.editingPlayerId;
     if (!id) return;
@@ -979,26 +1139,41 @@ export class CharacterSelect {
       const el = this.root.querySelector<HTMLInputElement | HTMLSelectElement>(`[data-edit-field="${field}"]`);
       return el?.value?.trim() ?? "";
     };
-    const num = (field: string, fallback: number): number => {
-      const v = Number(read(field));
-      return Number.isFinite(v) ? v : fallback;
+    const numOrNull = (raw: string): number | null => {
+      if (!raw) return null;
+      const v = Number(raw);
+      return Number.isFinite(v) ? v : null;
     };
     const clampAttr = (n: number) => Math.max(1, Math.min(100, Math.round(n)));
     const posRaw = read("primaryPosition") as PositionCode;
     const primaryPosition = EDIT_POSITIONS.includes(posRaw) ? posRaw : sp.player.primaryPosition;
+    const stats: SquadPlayerEdit["stats"] = {};
+    for (const group of EDIT_STAT_GROUPS) {
+      for (const field of group.fields) {
+        const el = this.root.querySelector<HTMLInputElement>(`[data-edit-stat="${field.key}"]`);
+        const raw = el?.value?.trim() ?? "";
+        if (!raw) {
+          if (field.optional) stats[field.key] = null;
+          continue;
+        }
+        const v = Number(raw);
+        if (!Number.isFinite(v)) continue;
+        stats[field.key] = clampAttr(v);
+      }
+    }
+    const heightRaw = numOrNull(read("heightCm"));
+    const weightRaw = numOrNull(read("weightKg"));
     const edit: SquadPlayerEdit = {
       playerId: id,
       teamId: this.teamId,
       name: read("name") || sp.player.name,
       displayName: read("displayName") || read("name") || sp.player.displayName,
-      shirtNumber: Math.max(1, Math.min(99, Math.round(num("shirtNumber", sp.shirtNumber)))),
+      shirtNumber: Math.max(1, Math.min(99, Math.round(numOrNull(read("shirtNumber")) ?? sp.shirtNumber))),
       primaryPosition,
-      pace: clampAttr(num("pace", sp.attrs.pace)),
-      passing: clampAttr(num("passing", sp.attrs.passing)),
-      control: clampAttr(num("control", sp.attrs.control)),
-      shooting: clampAttr(num("shooting", sp.attrs.shooting)),
-      defending: clampAttr(num("defending", sp.attrs.defending)),
-      stamina: clampAttr(num("stamina", sp.attrs.stamina)),
+      portraitAsset: read("portraitAsset") || null,
+      heightCm: heightRaw === null ? null : Math.max(150, Math.min(220, Math.round(heightRaw))),
+      weightKg: weightRaw === null ? null : Math.max(50, Math.min(120, Math.round(weightRaw))),
+      stats,
     };
     this.applySquadPlayerEditLocally(edit);
     this.onSquadPlayerSave?.(edit);
@@ -1012,24 +1187,19 @@ export class CharacterSelect {
       sp.player.name = edit.name;
       sp.player.displayName = edit.displayName;
       sp.player.primaryPosition = edit.primaryPosition;
-      sp.player.pace = edit.pace;
-      sp.player.passing = edit.passing;
-      sp.player.control = edit.control;
-      sp.player.shooting = edit.shooting;
-      sp.player.defending = edit.defending;
-      sp.player.stamina = edit.stamina;
+      if (!sp.player.appearance) sp.player.appearance = {};
+      sp.player.appearance.portraitAsset = edit.portraitAsset;
+      if (edit.heightCm == null) delete sp.player.heightCm;
+      else sp.player.heightCm = edit.heightCm;
+      if (edit.weightKg == null) delete sp.player.weightKg;
+      else sp.player.weightKg = edit.weightKg;
+      for (const [key, value] of Object.entries(edit.stats) as [EditStatKey, number | null][]) {
+        if (value == null) delete (sp.player as unknown as Record<string, unknown>)[key];
+        else (sp.player as unknown as Record<string, number>)[key] = value;
+      }
       sp.membership.shirtNumber = edit.shirtNumber;
       sp.shirtNumber = edit.shirtNumber;
-      sp.attrs = {
-        ...sp.attrs,
-        ...sp.player,
-        pace: edit.pace,
-        passing: edit.passing,
-        control: edit.control,
-        shooting: edit.shooting,
-        defending: edit.defending,
-        stamina: edit.stamina,
-      };
+      sp.attrs = { ...sp.attrs, ...sp.player };
     };
     for (const sp of this.players) patch(sp);
     for (const row of this.xi) patch(row.player);
@@ -1085,6 +1255,7 @@ export class CharacterSelect {
       <div class="char-nav">
         <button type="button" data-char="prev">PREVIOUS</button>
         <button type="button" data-char="start">${startLabel}</button>
+        <button type="button" data-char="back">BACK</button>
         <button type="button" data-char="simulate">SIMULATE</button>
         <button type="button" data-char="next">NEXT</button>
       </div>

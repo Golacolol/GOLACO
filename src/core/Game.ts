@@ -398,6 +398,10 @@ export class Game {
           }
         }
         if (char === "start") this.beginPreMatch();
+        if (char === "back") {
+          this.goMenu();
+          return;
+        }
         if (char === "simulate") this.simulatePendingFixture();
       }
       if (this.appState === AppState.MATCH_SETUP && btn.getAttribute("data-setup") === "go") {
@@ -1587,7 +1591,7 @@ export class Game {
         this.input.lastInputAt = performance.now();
       } else {
       this.handleMenuNav(intent.moveZ, () => {
-        this.menu.move(intent.moveZ > 0 ? -1 : 1);
+        this.menu.move(intent.moveZ < 0 ? -1 : 1);
       });
       if (intent.pass || intent.skip) this.menuAction(this.menu.currentId());
       const left = Math.max(0, AUTOPLAY_IDLE_SECONDS - this.input.idleSeconds());
@@ -1705,7 +1709,7 @@ export class Game {
         if (intent.pause) this.closePauseFormation(false);
       } else {
         this.handleMenuNav(intent.moveZ, () => {
-          this.pause.move(intent.moveZ > 0 ? -1 : 1);
+          this.pause.move(intent.moveZ < 0 ? -1 : 1);
           this.renderPause();
         });
         if (intent.pass || intent.skip) {

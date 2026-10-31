@@ -98,7 +98,11 @@ describe("character select", () => {
     expect(view.root.querySelector(".char-stats")).toBeTruthy();
     expect(view.root.querySelector(".team-pitch")).toBeNull();
     expect(view.root.textContent).toContain("START AS PLAYER");
+    expect(view.root.querySelector('[data-char="back"]')?.textContent).toBe("BACK");
     expect(view.root.textContent).toContain("SIMULATE");
+    const nav = [...view.root.querySelectorAll(".char-nav [data-char]")].map((el) => el.getAttribute("data-char"));
+    expect(nav.indexOf("start")).toBeLessThan(nav.indexOf("back"));
+    expect(nav.indexOf("back")).toBeLessThan(nav.indexOf("simulate"));
   });
 
   it("swaps a bench player onto a pitch slot", () => {

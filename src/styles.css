@@ -1412,6 +1412,62 @@ html.club-name-glow-off .club-line {
   border-radius: 50%;
   transform: translate(-50%, -50%);
 }
+/* Own goal at bottom, attack toward top — penalty + six-yard + mouth at both ends. */
+.pitch-penalty,
+.pitch-six,
+.pitch-goal-mouth {
+  position: absolute;
+  left: 50%;
+  box-sizing: border-box;
+  border: 2px solid rgba(244, 247, 242, 0.45);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.pitch-penalty {
+  width: 62%;
+  height: 16%;
+}
+.pitch-penalty-own {
+  bottom: 0;
+  border-bottom: 0;
+  border-radius: 0 0 2px 2px;
+}
+.pitch-penalty-opp {
+  top: 0;
+  border-top: 0;
+  border-radius: 2px 2px 0 0;
+}
+.pitch-six {
+  width: 36%;
+  height: 7%;
+}
+.pitch-six-own {
+  bottom: 0;
+  border-bottom: 0;
+  border-radius: 0 0 2px 2px;
+}
+.pitch-six-opp {
+  top: 0;
+  border-top: 0;
+  border-radius: 2px 2px 0 0;
+}
+.pitch-goal-mouth {
+  width: 18%;
+  height: 2.4%;
+  background: rgba(244, 247, 242, 0.12);
+}
+.pitch-goal-mouth-own {
+  bottom: 0;
+  border-bottom: 0;
+  transform: translate(-50%, 55%);
+  border-radius: 0 0 3px 3px;
+}
+.pitch-goal-mouth-opp {
+  top: 0;
+  border-top: 0;
+  transform: translate(-50%, -55%);
+  border-radius: 3px 3px 0 0;
+}
 .pitch-slot {
   position: absolute;
   transform: translate(-50%, 0);

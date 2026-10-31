@@ -32,9 +32,10 @@ export class GamepadControls {
     const rx = axis(gp.axes[2] ?? 0);
     const ry = axis(gp.axes[3] ?? 0);
     intent.moveX += lx;
-    intent.moveZ += -ly;
+    // Stick up is negative Y; map to −Z so screen-up matches the sideline camera.
+    intent.moveZ += ly;
     intent.aimX += rx !== 0 || ry !== 0 ? rx : lx;
-    intent.aimY += rx !== 0 || ry !== 0 ? -ry : -ly;
+    intent.aimY += rx !== 0 || ry !== 0 ? ry : ly;
 
     const buttons = gp.buttons;
     const a = buttons[0]?.pressed ?? false;

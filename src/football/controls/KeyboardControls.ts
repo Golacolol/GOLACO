@@ -55,9 +55,10 @@ export class KeyboardControls {
     const left = this.held(b.left) || this.keys.has("ArrowLeft");
     const right = this.held(b.right) || this.keys.has("ArrowRight");
     intent.moveX += (right ? 1 : 0) - (left ? 1 : 0);
-    intent.moveZ += (up ? 1 : 0) - (down ? 1 : 0);
+    // Screen-up (W / ↑) is −Z with the sideline camera on +Z looking toward −Z.
+    intent.moveZ += (down ? 1 : 0) - (up ? 1 : 0);
     intent.aimX += intent.moveX;
-    intent.aimY += (up ? 1 : 0) - (down ? 1 : 0);
+    intent.aimY += (down ? 1 : 0) - (up ? 1 : 0);
     intent.boost = intent.boost || this.held(b.boost);
     intent.sprint = intent.sprint || this.held(b.sprint) || intent.boost;
     intent.jockey = intent.jockey || this.held(b.jockey);
