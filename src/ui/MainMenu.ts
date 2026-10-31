@@ -139,7 +139,7 @@ export class MainMenu {
     this.root.innerHTML = `
       <div class="menu-shell ${embed ? "panel-open" : ""}">
         <div class="menu-hero">
-          <h1><span class="title-line">GOLAÇO SOCCER <span class="title-emoji" aria-hidden="true">⚽️</span></span></h1>
+          <h1><span class="title-line">GOLAÇO<span class="title-emoji" aria-hidden="true">⚽️</span>SOCCER</span></h1>
           <div class="club-wrap">
             <div class="club-meta" style="${clubBadgeStyle(club.team)}">
               ${teamBadgeHtml(club.team, { className: "club-crest", size: 52 })}

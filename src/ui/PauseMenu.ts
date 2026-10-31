@@ -40,7 +40,7 @@ export class PauseMenu {
     this.root.innerHTML = `
       <div class="pause-card">
         <div class="pause-brand" aria-label="GOLAÇO SOCCER">
-          <span class="title-line">GOLAÇO SOCCER <span class="title-emoji" aria-hidden="true">⚽️</span></span>
+          <span class="title-line">GOLAÇO<span class="title-emoji" aria-hidden="true">⚽️</span>SOCCER</span>
         </div>
         ${this.note ? `<p class="pause-note">${this.note}</p>` : ""}
         ${this.items

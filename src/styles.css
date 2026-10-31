@@ -533,7 +533,7 @@ html.club-name-glow-off .club-line {
 .pause-brand .title-line {
   display: flex;
   align-items: center;
-  gap: 0.12em;
+  gap: 0;
   white-space: nowrap;
   overflow: visible;
   max-width: 100%;
