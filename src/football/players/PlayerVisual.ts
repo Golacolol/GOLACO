@@ -23,7 +23,6 @@ import {
   cloneSkinnedPlayer,
   resolvePlayerModelUrl,
   setSkinnedShirtMap,
-  skinnedSupportsTeamKit,
   syncSkinnedAnimation,
   type SkinnedPlayerInstance,
 } from "./PlayerModelLoader";
@@ -862,11 +861,11 @@ export function createPlayerVisual(player: Player, kit: TeamKit, keeper: boolean
   };
   group.userData.rig = rig;
 
-  // Prefer skinned humanoid when tintable; procedural mannequin stays as fallback.
+  // Prefer skinned humanoid whenever the GLB is ready; procedural mannequin is fallback.
   const modelUrl = resolvePlayerModelUrl(player);
   try {
     const skinned = cloneSkinnedPlayer(modelUrl);
-    if (skinned && skinnedSupportsTeamKit(skinned)) {
+    if (skinned) {
       attachSkinnedBody(group, bodyRoot, skinned, player, kit, shirtMap, bootCol);
     } else {
       bodyRoot.visible = true;

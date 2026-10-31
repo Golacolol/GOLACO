@@ -3,9 +3,12 @@ import {
   classifyMaterialSlot,
   gaitToClip,
   resolvePlayerModelUrl,
+  skinnedSupportsTeamKit,
   DEFAULT_PLAYER_MODEL,
+  type SkinnedPlayerInstance,
 } from "./PlayerModelLoader";
 import type { Player } from "./Player";
+import type { MeshStandardMaterial } from "three";
 
 describe("PlayerModelLoader", () => {
   it("maps gait to clip keys", () => {
@@ -39,8 +42,27 @@ describe("PlayerModelLoader", () => {
     expect(classifyMaterialSlot("Shorts")).toBe("shorts");
     expect(classifyMaterialSlot("Socks_L")).toBe("socks");
     expect(classifyMaterialSlot("Skin_Face")).toBe("skin");
-    // Vanguard-style whole-character material must not become skin or shirt.
+    // Vanguard-style whole-character material must not become skin via classify —
+    // cloneSkinnedPlayer collects it into shirt as a tint fallback instead.
     expect(classifyMaterialSlot("VanguardBodyMat")).toBeNull();
     expect(classifyMaterialSlot("Vanguard_VisorMat")).toBeNull();
+  });
+
+  it("treats full-body shirt fallback as kit-capable", () => {
+    const empty = {
+      kitMaterials: { shirt: [], shorts: [], socks: [], skin: [], boots: [] },
+    } as unknown as SkinnedPlayerInstance;
+    expect(skinnedSupportsTeamKit(empty)).toBe(false);
+
+    const bodyTint = {
+      kitMaterials: {
+        shirt: [{} as MeshStandardMaterial],
+        shorts: [],
+        socks: [],
+        skin: [],
+        boots: [],
+      },
+    } as unknown as SkinnedPlayerInstance;
+    expect(skinnedSupportsTeamKit(bodyTint)).toBe(true);
   });
 });

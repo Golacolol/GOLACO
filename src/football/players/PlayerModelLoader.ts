@@ -100,9 +100,17 @@ export function classifyMaterialSlot(name: string): keyof SkinnedPlayerInstance[
   return null;
 }
 
-/** True when the clone has a dedicated shirt (or clothes) slot we can tint for team kits. */
+/**
+ * True when we can tint the clone for team identity.
+ * Dedicated shirt/clothes slots are ideal; full-body mats (Vanguard) also count once
+ * collected into the shirt list as a fallback tint target.
+ */
 export function skinnedSupportsTeamKit(inst: SkinnedPlayerInstance): boolean {
-  return inst.kitMaterials.shirt.length > 0;
+  return (
+    inst.kitMaterials.shirt.length > 0 ||
+    inst.kitMaterials.shorts.length > 0 ||
+    inst.kitMaterials.socks.length > 0
+  );
 }
 
 async function loadTemplate(url: string): Promise<Template | null> {
@@ -224,8 +232,23 @@ export function cloneSkinnedPlayer(url: string): SkinnedPlayerInstance | null {
 
   if (skinnedCount === 0) return null;
 
-  // Leave unclassified full-body mats out of shirt — Vanguard-style meshes have no kit
-  // slots; PlayerVisual keeps the procedural mannequin so team colours / wraps stay correct.
+  // Vanguard-style single-body mats have no shirt/shorts slots — collect them as shirt
+  // tint targets so teams stay distinguishable. Never put them in skin (that erased kits).
+  if (!kitMaterials.shirt.length) {
+    root.traverse((obj) => {
+      const mesh = obj as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      for (const m of mats) {
+        const std = m as THREE.MeshStandardMaterial;
+        if (!std.isMeshStandardMaterial) continue;
+        const name = `${std.name || ""} ${mesh.name || ""}`;
+        if (classifyMaterialSlot(name)) continue;
+        if (/visor|helmet|weapon|gun|mask|optic/i.test(name)) continue;
+        kitMaterials.shirt.push(std);
+      }
+    });
+  }
 
   const mixer = new THREE.AnimationMixer(root);
   const actions: SkinnedPlayerInstance["actions"] = {};
