@@ -283,25 +283,23 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 }
 .menu-shell {
   display: grid;
-  /* Left column hugs the title stack — no 1fr void between hero and menu list. */
-  grid-template-columns: max-content minmax(300px, 420px);
+  /* auto (not 1fr): hug the title stack so free space sits outside the pair, not between menus. */
+  grid-template-columns: auto minmax(300px, 420px);
   gap: 20px;
   align-items: center;
   justify-content: center;
-  width: max-content;
-  max-width: min(980px, 94vw);
+  width: min(980px, 94vw);
   padding: 18px;
   --menu-panel-height: 520px;
 }
 .menu-shell.panel-open {
   align-items: start;
-  /* Embedded panels can need the full frame; keep columns tight but allow grow. */
-  width: min(980px, 94vw);
-  grid-template-columns: max-content minmax(300px, 1fr);
+  grid-template-columns: auto minmax(300px, 1fr);
 }
 .menu-hero {
   text-align: left;
-  container-type: inline-size;
+  width: max-content;
+  max-width: 100%;
   min-width: 0;
 }
 /* Title sets the column width; club line + panels share that edge (no longer than GOLAÇO⚽SOCCER). */
@@ -313,6 +311,8 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
+  /* cqi for title/club type — keep off .menu-hero so grid max-content sizing still works. */
+  container-type: inline-size;
 }
 .menu-hero-stack > h1 {
   width: max-content;
