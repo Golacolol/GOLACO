@@ -1,6 +1,7 @@
 import {
   PROFILE_AXIS_IDS,
   PROFILE_AXIS_LABELS,
+  PROFILE_AXIS_SHORT,
   deriveProfileAxes,
   type ProfileAxes,
   type ProfileAxisId,
@@ -52,8 +53,7 @@ export function profileHexSvg(axes: ProfileAxes, size = 132): string {
     const ang = -Math.PI / 2 + (i * 2 * Math.PI) / 6;
     const lx = cx + Math.cos(ang) * (maxR + size * 0.085);
     const ly = cy + Math.sin(ang) * (maxR + size * 0.085);
-    const short = PROFILE_AXIS_LABELS[id].slice(0, 3).toUpperCase();
-    return `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" class="profile-hex-label">${short}</text>`;
+    return `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" class="profile-hex-label">${PROFILE_AXIS_SHORT[id]}</text>`;
   }).join("");
   const shape = `<polygon points="${valuePolygon(axes, cx, cy, maxR)}" class="profile-hex-shape"/>`;
   return `<svg class="profile-hex-svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">${rings}${spokes}${shape}${labels}</svg>`;

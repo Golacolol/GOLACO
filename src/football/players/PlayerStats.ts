@@ -379,6 +379,16 @@ export const PROFILE_AXIS_LABELS: Record<ProfileAxisId, string> = {
   technique: "Technique",
 };
 
+/** Compact hex tags — avoid awkward clips like MEN for Mental. */
+export const PROFILE_AXIS_SHORT: Record<ProfileAxisId, string> = {
+  attack: "ATT",
+  defence: "DEF",
+  passing: "PAS",
+  fitness: "FIT",
+  mental: "PSY",
+  technique: "TEC",
+};
+
 export type ProfileAxes = Record<ProfileAxisId, number>;
 
 function weightedMean(attrs: PlayerAttributes, parts: { key: keyof PlayerAttributes; w: number }[]): number {
