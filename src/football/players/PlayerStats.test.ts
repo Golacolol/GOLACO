@@ -78,7 +78,7 @@ describe("physical appearance", () => {
 
   it("syncs appearance fields from measured height and weight", () => {
     const next = applyPhysicalToAppearance(
-      { bodyType: "lean", heightScale: 1 },
+      { bodyType: "lean" as const, heightScale: 1, bodyWidth: 1 },
       191,
       96,
     );

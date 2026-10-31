@@ -224,8 +224,8 @@ export function cloneSkinnedPlayer(url: string): SkinnedPlayerInstance | null {
 
   if (skinnedCount === 0) return null;
 
-  // Do not dump unclassified body mats into shirt — that made Vanguard-style
-  // full-body meshes paint as kit then get overwritten as skin (all players same colour).
+  // Leave unclassified full-body mats out of shirt — Vanguard-style meshes have no kit
+  // slots; PlayerVisual keeps the procedural mannequin so team colours / wraps stay correct.
 
   const mixer = new THREE.AnimationMixer(root);
   const actions: SkinnedPlayerInstance["actions"] = {};

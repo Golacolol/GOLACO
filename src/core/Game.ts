@@ -27,7 +27,12 @@ import { Player } from "../football/players/Player";
 import { applyPhysicalToAppearance } from "../football/players/PlayerStats";
 import { applyClubNameAppearance, applyTitleFont } from "../ui/TitleFonts";
 import { MainMenu } from "../ui/MainMenu";
-import { CharacterSelect, type SquadPlayerEdit } from "../ui/CharacterSelect";
+import {
+  CharacterSelect,
+  type FormationSide,
+  type FormationSideConfig,
+  type SquadPlayerEdit,
+} from "../ui/CharacterSelect";
 import { KitPanelPreview } from "../ui/KitPanelPreview";
 import { PauseMenu } from "../ui/PauseMenu";
 import { SettingsMenu } from "../ui/Settings";
@@ -329,6 +334,14 @@ export class Game {
             this.closePauseFormation(true);
             return;
           }
+          if (char === "form-side") {
+            const side = btn.getAttribute("data-side");
+            if (side === "home" || side === "away") {
+              this.chars.setFormationSide(side);
+              this.chars.render();
+            }
+            return;
+          }
           if (char === "form") {
             const form = btn.getAttribute("data-form");
             if (form) {
@@ -383,6 +396,13 @@ export class Game {
           this.chars.setControlMode("KIT");
           this.chars.render();
           this.refreshCharacterPreview();
+        }
+        if (char === "form-side") {
+          const side = btn.getAttribute("data-side");
+          if (side === "home" || side === "away") {
+            this.chars.setFormationSide(side);
+            this.chars.render();
+          }
         }
         if (char === "form") {
           const form = btn.getAttribute("data-form");
@@ -1132,30 +1152,73 @@ export class Game {
     this.audio.ui();
   }
 
+  private formationSideConfig(
+    teamId: string,
+    lineupId: string | undefined,
+    pauseSubsRemaining?: number | null,
+  ): FormationSideConfig {
+    const team = this.db.getTeam(teamId);
+    const lineup = this.db.getLineup(lineupId, teamId);
+    return {
+      teamName: team.name,
+      starters: this.db.getStartingSquad(lineup),
+      teamColor: team.primaryColor,
+      formation: lineup.formation,
+      roster: this.db.getSquad(teamId),
+      starterSlots: lineup.starters.map((s) => s.slot),
+      secondaryColor: team.secondaryColor,
+      team,
+      playStyle: lineup.playStyle ?? null,
+      slotOffsets: lineup.starters
+        .filter((s) => s.offsetX || s.offsetZ)
+        .map((s) => ({ slot: s.slot, dx: s.offsetX ?? 0, dz: s.offsetZ ?? 0 })),
+      pauseSubsRemaining: pauseSubsRemaining ?? null,
+    };
+  }
+
   private openCharacterSelect(teamId: string): void {
     this.menu.hide();
     this.charTeamId = teamId;
     const team = this.db.getTeam(teamId);
     const f = this.pendingFixture;
     const lineupId = f && f.awayTeamId === teamId ? f.awayLineupId : f?.homeLineupId;
-    const lineup = this.db.getLineup(lineupId, teamId);
-    const starters = this.db.getStartingSquad(lineup);
     const opponentId = f ? (f.homeTeamId === teamId ? f.awayTeamId : f.homeTeamId) : null;
     const opponent = opponentId ? this.db.getTeam(opponentId) : null;
     const userIsAwaySide = !!f && f.awayTeamId === teamId;
+    const purpose = this.practice === "spot" ? "spot" : "match";
     this.chars.setContext("select");
-    this.chars.setSquad(team.name, starters, team.primaryColor, {
-      formation: lineup.formation,
-      roster: this.db.getSquad(teamId),
-      starterSlots: lineup.starters.map((s) => s.slot),
-      secondaryColor: team.secondaryColor,
-      purpose: this.practice === "spot" ? "spot" : "match",
-      team,
-      opponentHomeKit: opponent?.defaultKit ?? null,
-      userIsAwaySide,
-      kitChoice: "auto",
-      playStyle: lineup.playStyle ?? null,
-    });
+    if (f && purpose === "match") {
+      const active: FormationSide = userIsAwaySide ? "away" : "home";
+      this.chars.setDualFormationSides(
+        {
+          home: this.formationSideConfig(f.homeTeamId, f.homeLineupId),
+          away: this.formationSideConfig(f.awayTeamId, f.awayLineupId),
+        },
+        active,
+        {
+          purpose,
+          opponentHomeKit: opponent?.defaultKit ?? null,
+          userIsAwaySide,
+          kitChoice: "auto",
+          userMatchTeam: team,
+        },
+      );
+    } else {
+      const lineup = this.db.getLineup(lineupId, teamId);
+      this.chars.setSquad(team.name, this.db.getStartingSquad(lineup), team.primaryColor, {
+        formation: lineup.formation,
+        roster: this.db.getSquad(teamId),
+        starterSlots: lineup.starters.map((s) => s.slot),
+        secondaryColor: team.secondaryColor,
+        purpose,
+        team,
+        opponentHomeKit: opponent?.defaultKit ?? null,
+        userIsAwaySide,
+        kitChoice: "auto",
+        playStyle: lineup.playStyle ?? null,
+        formationSide: userIsAwaySide ? "away" : "home",
+      });
+    }
     this.chars.render();
     this.appState = AppState.CHARACTER_SELECT;
     this.refreshCharacterPreview();
@@ -1198,12 +1261,12 @@ export class Game {
     this.kitPreview.showPlayer(sp, kit, side);
   }
 
-  private applyCharacterLineupEdits(): void {
-    const edit = this.chars.getEditedLineup();
+  private writeLineupEdit(
+    teamId: string,
+    lineupId: string | undefined,
+    edit: ReturnType<CharacterSelect["getEditedLineup"]>,
+  ): void {
     if (!edit.starters.length) return;
-    const teamId = this.charTeamId;
-    const f = this.pendingFixture;
-    const lineupId = f && f.awayTeamId === teamId ? f.awayLineupId : f?.homeLineupId;
     const lineup = this.db.getLineup(lineupId, teamId);
     lineup.formation = edit.formation;
     lineup.starters = edit.starters.map((s) => ({
@@ -1213,6 +1276,20 @@ export class Game {
     }));
     if (edit.playStyle === "auto") delete lineup.playStyle;
     else lineup.playStyle = edit.playStyle;
+  }
+
+  private applyCharacterLineupEdits(): void {
+    const f = this.pendingFixture;
+    const edits = this.chars.getEditedLineups();
+    if (f && (edits.home || edits.away)) {
+      if (edits.home) this.writeLineupEdit(f.homeTeamId, f.homeLineupId, edits.home);
+      if (edits.away) this.writeLineupEdit(f.awayTeamId, f.awayLineupId, edits.away);
+      return;
+    }
+    const edit = this.chars.getEditedLineup();
+    const teamId = this.charTeamId;
+    const lineupId = f && f.awayTeamId === teamId ? f.awayLineupId : f?.homeLineupId;
+    this.writeLineupEdit(teamId, lineupId, edit);
   }
 
   private spawnPreview(): void {
@@ -1533,10 +1610,9 @@ export class Game {
     }
   }
 
-  private openPauseFormation(): void {
-    if (!this.match) return;
-    const team = this.match.userTeam();
-    this.charTeamId = team.record.id;
+  private pauseFormationSideConfig(side: "home" | "away"): FormationSideConfig {
+    const match = this.match!;
+    const team = side === "home" ? match.home : match.away;
     const byId = new Map(team.roster.map((s) => [s.player.id, s]));
     const starters = team.players
       .map((p) => byId.get(p.id))
@@ -1548,18 +1624,41 @@ export class Game {
         if (synth) starters.push(synth);
       }
     }
-    this.chars.setContext("pause", { subsRemaining: this.match.subsRemaining(team.side) });
-    this.chars.setSquad(team.record.name, starters, team.record.primaryColor, {
+    return {
+      teamName: team.record.name,
+      starters,
+      teamColor: team.record.primaryColor,
       formation: team.lineup.formation,
       roster: team.roster,
       starterSlots: team.players.map((p) => p.slot),
       secondaryColor: team.record.secondaryColor,
       team: team.record,
       playStyle: team.lineup.playStyle ?? null,
-    });
-    for (const row of team.lineup.starters) {
-      if (row.offsetX || row.offsetZ) this.chars.nudgeSlot(row.slot, row.offsetX ?? 0, row.offsetZ ?? 0);
-    }
+      slotOffsets: team.lineup.starters
+        .filter((row) => row.offsetX || row.offsetZ)
+        .map((row) => ({ slot: row.slot, dx: row.offsetX ?? 0, dz: row.offsetZ ?? 0 })),
+      pauseSubsRemaining: match.subsRemaining(side),
+    };
+  }
+
+  private openPauseFormation(): void {
+    if (!this.match) return;
+    const team = this.match.userTeam();
+    this.charTeamId = team.record.id;
+    const active: FormationSide = team.side;
+    this.chars.setContext("pause", { subsRemaining: this.match.subsRemaining(team.side) });
+    this.chars.setDualFormationSides(
+      {
+        home: this.pauseFormationSideConfig("home"),
+        away: this.pauseFormationSideConfig("away"),
+      },
+      active,
+      {
+        purpose: "match",
+        userMatchTeam: team.record,
+        userIsAwaySide: team.side === "away",
+      },
+    );
     this.chars.setControlMode("TEAM");
     this.pause.hide();
     this.hud?.hide();
@@ -1570,7 +1669,9 @@ export class Game {
   private closePauseFormation(apply: boolean): void {
     if (!this.pauseFormationOpen) return;
     if (apply && this.match) {
-      this.match.applyTacticalEdit(this.chars.getEditedLineup());
+      const edits = this.chars.getEditedLineups();
+      if (edits.home) this.match.applyTacticalEdit(edits.home, "home");
+      if (edits.away) this.match.applyTacticalEdit(edits.away, "away");
     }
     this.chars.setContext("select");
     this.chars.hide();

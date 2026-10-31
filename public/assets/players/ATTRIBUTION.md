@@ -2,8 +2,8 @@
 
 ## `base_outfield.glb`
 
-Starter shared humanoid from the [three.js](https://github.com/mrdoob/three.js) examples pack (`Soldier.glb`, r170).
+Shared skinned humanoid (Mixamo **Vanguard** mesh + Idle/Walk/Run clips), adapted for GOLACO.
 
-- License: MIT (three.js)
-- Used as the default skinned body + Idle/Walk/Run clips
-- Replace with a football-specific rig anytime — see `public/assets/README.md` (`modelId` / `fullBodyAsset`)
+- Forward axis in the file is **−Z**; `PlayerVisual.attachSkinnedBody` applies `rotation.y = Math.PI` so it matches gameplay facing (+Z, same as the procedural mannequin).
+- Materials: `VanguardBodyMat`, `Vanguard_VisorMat` (visor skipped for kit tint).
+- Replace with a football-specific rig anytime — see `public/assets/README.md` (`modelId` / `fullBodyAsset`).

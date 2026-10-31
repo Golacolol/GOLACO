@@ -370,16 +370,55 @@ function fromDisplayX(displayX: number): number {
 
 export type ControlMode = "PLAYER" | "TEAM" | "KIT";
 export type CharacterSelectContext = "select" | "pause";
+export type FormationSide = "home" | "away";
 
 export interface TeamSelectSlot {
   slot: string;
   player: SquadPlayer;
 }
 
+export type EditedLineup = {
+  formation: string;
+  playStyle: PlayStyleChoice;
+  starters: { playerId: string; slot: string; offsetX?: number; offsetZ?: number }[];
+};
+
 interface SlotOffset {
   dx: number;
   dz: number;
 }
+
+/** Snapshot of one fixture side while HOME/AWAY formation editing is open. */
+export type FormationSideDraft = {
+  teamId: string;
+  teamName: string;
+  teamColor: string;
+  secondaryColor: string;
+  team: TeamRecord | null;
+  teamBadge: TeamBadgeSource | null;
+  formation: string;
+  playStyle: PlayStyleChoice;
+  xi: TeamSelectSlot[];
+  bench: SquadPlayer[];
+  slotOffsets: Map<string, SlotOffset>;
+  pauseOriginalStarterIds: Set<string> | null;
+  pauseSubsRemaining: number | null;
+};
+
+/** Input for seeding one side of the dual formation editor. */
+export type FormationSideConfig = {
+  teamName: string;
+  starters: SquadPlayer[];
+  teamColor?: string;
+  formation?: string;
+  roster?: SquadPlayer[];
+  starterSlots?: string[];
+  secondaryColor?: string;
+  team?: TeamRecord | TeamBadgeSource | null;
+  playStyle?: PlayStyleId | null;
+  slotOffsets?: { slot: string; dx: number; dz: number }[];
+  pauseSubsRemaining?: number | null;
+};
 
 interface NudgeState {
   pointerId: number;
@@ -418,6 +457,8 @@ export class CharacterSelect {
   /** When true, AUTO wears away on colour clash (user is the away club). */
   private userIsAwaySide = false;
   private teamRecord: TeamRecord | null = null;
+  /** Club whose kit choice applies (fixed while switching HOME/AWAY drafts). */
+  private userMatchTeam: TeamRecord | null = null;
   formation = "4-2-3-1";
   /** Play-style override; Auto = derive at kick-off. */
   playStyle: PlayStyleChoice = "auto";
@@ -427,11 +468,17 @@ export class CharacterSelect {
   pauseOriginalStarterIds: Set<string> | null = null;
   /** Snapshot of lineup when pause editor opened — Apply highlights when this differs. */
   private pauseBaseline: string | null = null;
+  /** Per-side fingerprints when dual HOME/AWAY pause editing is active. */
+  private pauseBaselines: Partial<Record<FormationSide, string>> = {};
   private dirtyApply = false;
   xi: TeamSelectSlot[] = [];
   bench: SquadPlayer[] = [];
   /** Per-slot nudges from formation defaults. */
   slotOffsets = new Map<string, SlotOffset>();
+  /** Active fixture side on the formation board. */
+  formationSide: FormationSide = "home";
+  /** Drafts for HOME/AWAY when both sides are editable. */
+  private sideDrafts: Partial<Record<FormationSide, FormationSideDraft>> = {};
   private dragPlayerId: string | null = null;
   private nudge: NudgeState | null = null;
   /** Open squad-list right-click editor (null while closed). */
@@ -522,70 +569,250 @@ export class CharacterSelect {
       kitChoice?: KitChoice;
       /** Lineup play-style override; null/absent → Auto. */
       playStyle?: PlayStyleId | null;
+      /** Fixture side this squad represents when dual editing is not used. */
+      formationSide?: FormationSide;
     },
   ): void {
-    this.teamName = teamName;
-    this.teamId = options?.team?.id?.trim() || this.teamId;
-    this.editingPlayerId = null;
-    this.teamColor = teamColor;
-    this.teamSecondaryColor = options?.secondaryColor?.trim() || "#ffffff";
-    this.teamRecord = options?.team && "defaultKit" in options.team ? options.team : null;
+    this.sideDrafts = {};
+    this.pauseBaselines = {};
+    this.formationSide = options?.formationSide ?? "home";
     this.opponentHomeKit = options?.opponentHomeKit ?? null;
     this.userIsAwaySide = !!options?.userIsAwaySide;
     this.kitChoice = options?.kitChoice ?? "auto";
-    this.teamBadge = options?.team
+    this.purpose = options?.purpose ?? "match";
+    this.editingPlayerId = null;
+    const draft = this.buildSideDraft({
+      teamName,
+      starters,
+      teamColor,
+      formation: options?.formation,
+      roster: options?.roster,
+      starterSlots: options?.starterSlots,
+      secondaryColor: options?.secondaryColor,
+      team: options?.team,
+      playStyle: options?.playStyle,
+      pauseSubsRemaining: this.context === "pause" ? this.pauseSubsRemaining : null,
+    });
+    this.userMatchTeam = draft.team;
+    this.applySideDraft(draft);
+    this.controlMode = "TEAM";
+    if (this.context === "pause") {
+      this.pauseBaseline = this.lineupFingerprint();
+      this.pauseBaselines = { [this.formationSide]: this.pauseBaseline };
+      this.dirtyApply = false;
+    }
+  }
+
+  /**
+   * Seed HOME + AWAY formation drafts so the board can switch between both sides.
+   * `active` is the side shown first (normally the user's fixture side).
+   */
+  setDualFormationSides(
+    sides: { home: FormationSideConfig; away: FormationSideConfig },
+    active: FormationSide,
+    options?: {
+      purpose?: "match" | "spot";
+      opponentHomeKit?: TeamKit | null;
+      userIsAwaySide?: boolean;
+      kitChoice?: KitChoice;
+      /** Team whose kit choice / clash rules apply (user club). */
+      userMatchTeam?: TeamRecord | null;
+    },
+  ): void {
+    this.editingPlayerId = null;
+    this.purpose = options?.purpose ?? "match";
+    this.opponentHomeKit = options?.opponentHomeKit ?? null;
+    this.userIsAwaySide = !!options?.userIsAwaySide;
+    this.kitChoice = options?.kitChoice ?? "auto";
+    const home = this.buildSideDraft(sides.home);
+    const away = this.buildSideDraft(sides.away);
+    this.sideDrafts = { home, away };
+    this.formationSide = active;
+    const userTeam =
+      options?.userMatchTeam ??
+      (options?.userIsAwaySide ? away.team : home.team) ??
+      this.sideDrafts[active]?.team ??
+      null;
+    this.userMatchTeam = userTeam;
+    this.applySideDraft(this.sideDrafts[active]!);
+    this.controlMode = "TEAM";
+    if (this.context === "pause") {
+      this.pauseBaselines = {
+        home: this.fingerprintDraft(home),
+        away: this.fingerprintDraft(away),
+      };
+      this.pauseBaseline = this.pauseBaselines[active] ?? null;
+      this.dirtyApply = false;
+    } else {
+      this.pauseBaselines = {};
+      this.pauseBaseline = null;
+      this.dirtyApply = false;
+    }
+  }
+
+  canSwitchFormationSide(): boolean {
+    return !!(this.sideDrafts.home && this.sideDrafts.away) && this.purpose !== "spot";
+  }
+
+  setFormationSide(side: FormationSide): void {
+    if (!this.canSwitchFormationSide() || side === this.formationSide) return;
+    if (!this.sideDrafts[side]) return;
+    this.flushActiveDraft();
+    this.formationSide = side;
+    this.applySideDraft(this.sideDrafts[side]!);
+    this.clearChalk();
+    this.chalkMode = false;
+    this.markDirtyIfNeeded();
+  }
+
+  private buildSideDraft(config: FormationSideConfig): FormationSideDraft {
+    const teamName = config.teamName;
+    const teamColor = config.teamColor ?? "#007A3D";
+    const secondaryColor = config.secondaryColor?.trim() || "#ffffff";
+    const teamRecord = config.team && "defaultKit" in config.team ? config.team : null;
+    const teamBadge: TeamBadgeSource | null = config.team
       ? {
-          id: options.team.id,
-          name: options.team.name ?? teamName,
-          abbreviation: options.team.abbreviation,
-          badgeAsset: options.team.badgeAsset,
-          primaryColor: options.team.primaryColor ?? teamColor,
-          secondaryColor: options.team.secondaryColor ?? this.teamSecondaryColor,
+          id: config.team.id,
+          name: config.team.name ?? teamName,
+          abbreviation: config.team.abbreviation,
+          badgeAsset: config.team.badgeAsset,
+          primaryColor: config.team.primaryColor ?? teamColor,
+          secondaryColor: config.team.secondaryColor ?? secondaryColor,
         }
       : null;
-    this.formation = options?.formation ?? "4-2-3-1";
-    this.playStyle = isPlayStyleId(options?.playStyle ?? undefined) ? options!.playStyle! : "auto";
-    this.purpose = options?.purpose ?? "match";
-    this.slotOffsets.clear();
-    this.syncKitMarkerColors();
-    const form = getFormation(this.formation);
-    const slots = options?.starterSlots;
-    this.xi = starters.slice(0, 11).map((player, i) => ({
+    const formation = config.formation ?? "4-2-3-1";
+    const playStyle = isPlayStyleId(config.playStyle ?? undefined) ? config.playStyle! : "auto";
+    const form = getFormation(formation);
+    const slots = config.starterSlots;
+    let xi: TeamSelectSlot[] = config.starters.slice(0, 11).map((player, i) => ({
       slot: slots?.[i] ?? form[i]?.id ?? `S${i}`,
       player,
     }));
     const mapped = remapPlayersToFormation(
-      this.xi.map((row) => ({
+      xi.map((row) => ({
         id: row.player.player.id,
         slot: row.slot,
         isGK: row.player.player.primaryPosition === "GK",
       })),
-      this.formation,
-      this.formation,
+      formation,
+      formation,
     );
-    const byId = new Map(starters.map((s) => [s.player.id, s]));
-    this.xi = mapped
+    const byId = new Map(config.starters.map((s) => [s.player.id, s]));
+    xi = mapped
       .map((row) => {
         const player = byId.get(row.id);
         return player ? { slot: row.slot, player } : null;
       })
       .filter((row): row is TeamSelectSlot => !!row);
-    const onIds = new Set(this.xi.map((x) => x.player.player.id));
-    const roster = options?.roster?.length ? options.roster : starters;
-    this.bench = roster.filter((s) => !onIds.has(s.player.id));
+    const onIds = new Set(xi.map((x) => x.player.player.id));
+    const roster = config.roster?.length ? config.roster : config.starters;
+    const bench = roster.filter((s) => !onIds.has(s.player.id));
+    const slotOffsets = new Map<string, SlotOffset>();
+    for (const off of config.slotOffsets ?? []) {
+      if (!off.dx && !off.dz) continue;
+      slotOffsets.set(off.slot, {
+        dx: clamp(off.dx, -MAX_OFFSET_X, MAX_OFFSET_X),
+        dz: clamp(off.dz, -MAX_OFFSET_Z, MAX_OFFSET_Z),
+      });
+    }
+    const pauseOriginalStarterIds =
+      this.context === "pause" ? new Set(xi.map((row) => row.player.player.id)) : null;
+    return {
+      teamId: config.team?.id?.trim() || "",
+      teamName,
+      teamColor,
+      secondaryColor,
+      team: teamRecord,
+      teamBadge,
+      formation,
+      playStyle,
+      xi,
+      bench,
+      slotOffsets,
+      pauseOriginalStarterIds,
+      pauseSubsRemaining: config.pauseSubsRemaining ?? null,
+    };
+  }
+
+  private applySideDraft(draft: FormationSideDraft): void {
+    this.teamName = draft.teamName;
+    this.teamId = draft.teamId;
+    this.teamColor = draft.teamColor;
+    this.teamSecondaryColor = draft.secondaryColor;
+    this.teamRecord = draft.team;
+    this.teamBadge = draft.teamBadge;
+    this.formation = draft.formation;
+    this.playStyle = draft.playStyle;
+    this.xi = draft.xi.map((row) => ({ slot: row.slot, player: row.player }));
+    this.bench = [...draft.bench];
+    this.slotOffsets = new Map(draft.slotOffsets);
+    this.pauseOriginalStarterIds = draft.pauseOriginalStarterIds
+      ? new Set(draft.pauseOriginalStarterIds)
+      : null;
+    this.pauseSubsRemaining = draft.pauseSubsRemaining;
+    this.syncKitMarkerColors();
     this.syncPlayersList();
     this.index = Math.max(
       0,
       this.players.findIndex((p) => p.player.primaryPosition !== "GK"),
     );
     if (this.index < 0) this.index = 0;
-    // Spot practice stays on the formation panel so the taker can be picked from the pitch.
-    this.controlMode = "TEAM";
-    if (this.context === "pause") {
-      this.pauseOriginalStarterIds = new Set(this.xi.map((row) => row.player.player.id));
-      this.pauseBaseline = this.lineupFingerprint();
-      this.dirtyApply = false;
-    }
+  }
+
+  private snapshotLiveDraft(): FormationSideDraft {
+    return {
+      teamId: this.teamId,
+      teamName: this.teamName,
+      teamColor: this.teamColor,
+      secondaryColor: this.teamSecondaryColor,
+      team: this.teamRecord,
+      teamBadge: this.teamBadge,
+      formation: this.formation,
+      playStyle: this.playStyle,
+      xi: this.xi.map((row) => ({ slot: row.slot, player: row.player })),
+      bench: [...this.bench],
+      slotOffsets: new Map(this.slotOffsets),
+      pauseOriginalStarterIds: this.pauseOriginalStarterIds
+        ? new Set(this.pauseOriginalStarterIds)
+        : null,
+      pauseSubsRemaining: this.pauseSubsRemaining,
+    };
+  }
+
+  private flushActiveDraft(): void {
+    if (!this.sideDrafts.home && !this.sideDrafts.away) return;
+    this.sideDrafts[this.formationSide] = this.snapshotLiveDraft();
+  }
+
+  private fingerprintDraft(draft: FormationSideDraft): string {
+    return JSON.stringify({
+      formation: draft.formation,
+      playStyle: draft.playStyle,
+      starters: draft.xi.map((row) => {
+        const off = draft.slotOffsets.get(row.slot);
+        return {
+          id: row.player.player.id,
+          slot: row.slot,
+          dx: off?.dx ?? 0,
+          dz: off?.dz ?? 0,
+        };
+      }),
+    });
+  }
+
+  private editedLineupFromDraft(draft: FormationSideDraft): EditedLineup {
+    return {
+      formation: draft.formation,
+      playStyle: draft.playStyle,
+      starters: draft.xi.map((row) => {
+        const off = draft.slotOffsets.get(row.slot);
+        return {
+          playerId: row.player.player.id,
+          slot: row.slot,
+          ...(off && (off.dx || off.dz) ? { offsetX: off.dx, offsetZ: off.dz } : {}),
+        };
+      }),
+    };
   }
 
   setPurpose(purpose: "match" | "spot"): void {
@@ -615,7 +842,22 @@ export class CharacterSelect {
   }
 
   private markDirtyIfNeeded(): void {
-    if (this.context !== "pause" || !this.pauseBaseline) {
+    if (this.context !== "pause") {
+      this.dirtyApply = false;
+      return;
+    }
+    this.flushActiveDraft();
+    if (this.sideDrafts.home || this.sideDrafts.away) {
+      let dirty = false;
+      for (const side of ["home", "away"] as FormationSide[]) {
+        const draft = this.sideDrafts[side];
+        const base = this.pauseBaselines[side];
+        if (draft && base && this.fingerprintDraft(draft) !== base) dirty = true;
+      }
+      this.dirtyApply = dirty;
+      return;
+    }
+    if (!this.pauseBaseline) {
       this.dirtyApply = false;
       return;
     }
@@ -652,33 +894,45 @@ export class CharacterSelect {
 
   /** Kit the user side will wear for the upcoming match (respects AUTO clash). */
   selectedMatchKit(): TeamKit | null {
-    if (!this.teamRecord) return null;
-    const clash =
-      !!this.opponentHomeKit && kitsClash(this.opponentHomeKit, this.teamRecord.defaultKit);
+    const kitTeam = this.userMatchTeam ?? this.teamRecord;
+    if (!kitTeam) return null;
+    const clash = !!this.opponentHomeKit && kitsClash(this.opponentHomeKit, kitTeam.defaultKit);
     const forceAway = this.userIsAwaySide && clash;
-    return pickTeamKit(this.teamRecord, this.kitChoice, forceAway);
+    return pickTeamKit(kitTeam, this.kitChoice, forceAway);
   }
 
   private syncKitMarkerColors(): void {
-    const kit = this.selectedMatchKit();
-    if (!kit) return;
-    this.teamColor = kit.shirt;
-    this.teamSecondaryColor = kit.trim || kit.numberColor || this.teamSecondaryColor;
+    // Pitch markers follow the side on screen. Only the user's club uses kit-choice clash rules.
+    const viewingUserClub =
+      !!this.userMatchTeam && this.teamRecord?.id === this.userMatchTeam.id;
+    if (viewingUserClub) {
+      const kit = this.selectedMatchKit();
+      if (kit) {
+        this.teamColor = kit.shirt;
+        this.teamSecondaryColor = kit.trim || kit.numberColor || this.teamSecondaryColor;
+        return;
+      }
+    }
+    const sideKit = this.teamRecord?.defaultKit;
+    if (sideKit) {
+      this.teamColor = sideKit.shirt;
+      this.teamSecondaryColor = sideKit.trim || sideKit.numberColor || this.teamSecondaryColor;
+    }
   }
 
   private showKitUi(): boolean {
-    return this.context === "select" && this.purpose === "match" && !!this.teamRecord;
+    return this.context === "select" && this.purpose === "match" && !!(this.userMatchTeam ?? this.teamRecord);
   }
 
   /** HOME / AWAY / AUTO — shown on the kit panel team-name line. */
   private kitChoiceChipsHtml(): string {
-    if (!this.showKitUi() || !this.teamRecord) return "";
-    const home = teamHomeKit(this.teamRecord);
-    const away = teamResolvedAwayKit(this.teamRecord);
-    const clash =
-      !!this.opponentHomeKit && kitsClash(this.opponentHomeKit, this.teamRecord.defaultKit);
+    const kitTeam = this.userMatchTeam ?? this.teamRecord;
+    if (!this.showKitUi() || !kitTeam) return "";
+    const home = teamHomeKit(kitTeam);
+    const away = teamResolvedAwayKit(kitTeam);
+    const clash = !!this.opponentHomeKit && kitsClash(this.opponentHomeKit, kitTeam.defaultKit);
     const forceAway = this.userIsAwaySide && clash;
-    const autoKit = pickTeamKit(this.teamRecord, "auto", forceAway);
+    const autoKit = pickTeamKit(kitTeam, "auto", forceAway);
     const chip = (id: KitChoice, label: string, kit: TeamKit) => {
       const on = this.kitChoice === id ? "on" : "";
       const src = kit.shirtAsset?.trim() || "";
@@ -724,6 +978,8 @@ export class CharacterSelect {
     else {
       this.pauseOriginalStarterIds = null;
       this.pauseSubsRemaining = null;
+      this.pauseBaselines = {};
+      this.sideDrafts = {};
     }
   }
 
@@ -748,23 +1004,22 @@ export class CharacterSelect {
     this.markDirtyIfNeeded();
   }
 
-  getEditedLineup(): {
-    formation: string;
-    playStyle: PlayStyleChoice;
-    starters: { playerId: string; slot: string; offsetX?: number; offsetZ?: number }[];
-  } {
-    return {
-      formation: this.formation,
-      playStyle: this.playStyle,
-      starters: this.xi.map((row) => {
-        const off = this.slotOffsets.get(row.slot);
-        return {
-          playerId: row.player.player.id,
-          slot: row.slot,
-          ...(off && (off.dx || off.dz) ? { offsetX: off.dx, offsetZ: off.dz } : {}),
-        };
-      }),
-    };
+  getEditedLineup(): EditedLineup {
+    return this.editedLineupFromDraft(this.snapshotLiveDraft());
+  }
+
+  /** Flush the active board and return edits for every seeded fixture side. */
+  getEditedLineups(): Partial<Record<FormationSide, EditedLineup>> {
+    this.flushActiveDraft();
+    if (!this.sideDrafts.home && !this.sideDrafts.away) {
+      return { [this.formationSide]: this.getEditedLineup() };
+    }
+    const out: Partial<Record<FormationSide, EditedLineup>> = {};
+    for (const side of ["home", "away"] as FormationSide[]) {
+      const draft = this.sideDrafts[side];
+      if (draft) out[side] = this.editedLineupFromDraft(draft);
+    }
+    return out;
   }
 
   /** Test/helper: set a clamped offset from the formation default for a slot. */
@@ -912,26 +1167,27 @@ export class CharacterSelect {
   }
 
   private renderKit(): void {
-    if (!this.teamRecord) {
+    const kitTeam = this.userMatchTeam ?? this.teamRecord;
+    if (!kitTeam) {
       this.renderTeam();
       return;
     }
-    const home = teamHomeKit(this.teamRecord);
-    const away = teamResolvedAwayKit(this.teamRecord);
-    const clash =
-      !!this.opponentHomeKit && kitsClash(this.opponentHomeKit, this.teamRecord.defaultKit);
+    const home = teamHomeKit(kitTeam);
+    const away = teamResolvedAwayKit(kitTeam);
+    const clash = !!this.opponentHomeKit && kitsClash(this.opponentHomeKit, kitTeam.defaultKit);
     const forceAway = this.userIsAwaySide && clash;
-    const autoKit = pickTeamKit(this.teamRecord, "auto", forceAway);
+    const autoKit = pickTeamKit(kitTeam, "auto", forceAway);
     const hint = forceAway
       ? "Colour clash — AUTO wears your away strip for this fixture."
       : clash && !this.userIsAwaySide
         ? "Colour clash — the opposition will wear their away strip."
         : "Pick HOME or AWAY, or leave AUTO to switch only when colours clash.";
     const selected = this.selectedMatchKit() ?? autoKit;
+    const kitTitle = kitTeam.name || this.teamName;
     this.root.innerHTML = `
       <div class="char-panel char-panel-kit">
         <div class="kit-select-head">
-          ${this.teamTitleHtml(this.teamName, { withKitChips: true })}
+          ${this.teamTitleHtml(kitTitle, { withKitChips: true })}
         </div>
         <div class="kit-select-body">
           <div class="kit-select-main">
@@ -978,6 +1234,14 @@ export class CharacterSelect {
         <div class="team-select-head">
           ${this.teamTitleHtml(titleLabel)}
           <div class="play-style-chips" role="group" aria-label="Play style">
+            ${
+              this.canSwitchFormationSide()
+                ? `<div class="form-side-chips" role="group" aria-label="Fixture side">
+              <button type="button" class="formation-chip form-side-chip ${this.formationSide === "home" ? "on" : ""}" data-char="form-side" data-side="home" aria-pressed="${this.formationSide === "home" ? "true" : "false"}">HOME</button>
+              <button type="button" class="formation-chip form-side-chip ${this.formationSide === "away" ? "on" : ""}" data-char="form-side" data-side="away" aria-pressed="${this.formationSide === "away" ? "true" : "false"}">AWAY</button>
+            </div>`
+                : ""
+            }
             <button type="button" class="formation-chip chalk-chip ${this.chalkMode ? "on" : ""}" data-char="chalk" title="Chalk — draw on the pitch. Right-click to wipe." aria-pressed="${this.chalkMode ? "true" : "false"}">Chalk</button>
             ${(["auto", ...PLAY_STYLE_IDS] as PlayStyleChoice[])
               .map(

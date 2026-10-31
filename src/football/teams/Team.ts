@@ -115,7 +115,10 @@ export class Team {
   /** Swap this team's pitch end (called for both teams at half-time). */
   flipEnds(): void {
     this.endsFlipped = !this.endsFlipped;
-    for (const p of this.players) p.attackSign = -p.attackSign;
+    for (const p of this.players) {
+      p.attackSign = -p.attackSign;
+      p.facing += Math.PI;
+    }
   }
 
   resetKickoff(kicking: boolean): void {

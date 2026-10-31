@@ -475,12 +475,15 @@ export class Match {
   }
 
   /** Apply pause-menu formation edits: substitutions, shape, slot nudges, play-style. */
-  applyTacticalEdit(edit: {
-    formation: string;
-    starters: { playerId: string; slot: string; offsetX?: number; offsetZ?: number }[];
-    playStyle?: PlayStyleId | "auto" | null;
-  }): { subsMade: number; formationChanged: boolean; subsQueued: number } {
-    const team = this.userTeam();
+  applyTacticalEdit(
+    edit: {
+      formation: string;
+      starters: { playerId: string; slot: string; offsetX?: number; offsetZ?: number }[];
+      playStyle?: PlayStyleId | "auto" | null;
+    },
+    side: "home" | "away" = this.userTeam().side,
+  ): { subsMade: number; formationChanged: boolean; subsQueued: number } {
+    const team = side === "home" ? this.home : this.away;
     const formationChanged = edit.formation !== team.lineup.formation;
     const currentIds = team.players.map((p) => p.id);
     const nextIds = edit.starters.map((s) => s.playerId);

@@ -554,16 +554,15 @@ export function bodyWidthFromPhysical(
 }
 
 /** Sync appearance heightScale / bodyType / bodyWidth from measured physical facts. */
-export function applyPhysicalToAppearance(
-  appearance: {
-    heightScale?: number;
-    bodyType?: "lean" | "standard" | "stocky" | string;
-    bodyWidth?: number;
-    [key: string]: unknown;
-  },
+export function applyPhysicalToAppearance<T extends {
+  heightScale?: number;
+  bodyType?: "lean" | "standard" | "stocky" | string;
+  bodyWidth?: number;
+}>(
+  appearance: T,
   heightCm?: number | null,
   weightKg?: number | null,
-): typeof appearance {
+): T {
   const next = { ...appearance };
   const h = heightCm == null || !Number.isFinite(heightCm) ? undefined : heightCm;
   const w = weightKg == null || !Number.isFinite(weightKg) ? undefined : weightKg;

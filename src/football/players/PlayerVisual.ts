@@ -862,8 +862,7 @@ export function createPlayerVisual(player: Player, kit: TeamKit, keeper: boolean
   };
   group.userData.rig = rig;
 
-  // Skinned humanoid only when the GLB has kit-tintable shirt slots; otherwise keep
-  // the procedural mannequin so team colours / kit wraps remain visible.
+  // Prefer skinned humanoid when tintable; procedural mannequin stays as fallback.
   const modelUrl = resolvePlayerModelUrl(player);
   try {
     const skinned = cloneSkinnedPlayer(modelUrl);
@@ -907,6 +906,8 @@ function attachSkinnedBody(
       if (hasDedicatedShirt) setSkinnedShirtMap(skinned, shirtMap);
     }
     skinned.root.name = "skinnedBody";
+    // Mixamo Vanguard faces −Z; gameplay yaw assumes mannequin forward = +Z.
+    skinned.root.rotation.y = Math.PI;
     skinned.root.visible = true;
     bodyRoot.visible = false;
     group.add(skinned.root);

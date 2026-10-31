@@ -64,12 +64,15 @@ export function applyKickOffShape(players: Player[], kicking: boolean): void {
   if (first) {
     first.x = 0;
     first.z = 0;
+    // Face own half for the tap-back; hips square to the receiver once they are placed.
     first.facing = first.attackSign > 0 ? -Math.PI / 2 : Math.PI / 2;
   }
   if (second) {
     second.x = own * 1.9;
     second.z = first && first.z >= 0 ? -2.1 : 2.1;
-    second.facing = first?.facing ?? 0;
+    // Receiver faces the ball / taker, not the same way as the tap-back.
+    if (first) second.facing = Math.atan2(first.x - second.x, first.z - second.z);
+    else second.facing = second.attackSign > 0 ? Math.PI / 2 : -Math.PI / 2;
   }
 }
 

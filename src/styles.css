@@ -1500,6 +1500,16 @@ html.club-name-glow-off .club-line {
 .team-pitch.chalking .pitch-token {
   pointer-events: none;
 }
+.form-side-chips {
+  display: inline-flex;
+  gap: 4px;
+  margin-right: 4px;
+}
+.formation-chip.form-side-chip {
+  min-width: 3.6em;
+  padding-left: 8px;
+  padding-right: 8px;
+}
 .formation-chip.chalk-chip.on {
   border-color: #e8efe4;
   background: linear-gradient(90deg, rgba(232, 239, 228, 0.28), rgba(232, 239, 228, 0.08));

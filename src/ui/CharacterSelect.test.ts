@@ -80,6 +80,7 @@ describe("character select", () => {
     expect(view.root.textContent).toContain("SUBSTITUTES");
     expect(view.root.textContent).toContain("SQUAD");
     expect(view.root.querySelector(".play-style-chips")).toBeTruthy();
+    expect(view.root.querySelector('[data-char="form-side"]')).toBeNull();
     expect(view.root.querySelector('[data-char="chalk"]')).toBeTruthy();
     expect(view.root.querySelector(".team-pitch-chalk")).toBeTruthy();
     const chalk = view.root.querySelector('[data-char="chalk"]');
@@ -426,6 +427,98 @@ describe("character select", () => {
     view.render();
     expect(view.root.querySelector(".char-panel-kit")).toBeNull();
     expect(view.root.textContent).not.toContain("KIT SELECT");
+  });
+
+  it("switches HOME/AWAY formation drafts and returns both edited lineups", () => {
+    const host = document.createElement("div");
+    const view = new CharacterSelect(host);
+    const homeTeam = {
+      id: "home_fc",
+      name: "Home FC",
+      abbreviation: "HOM",
+      teamType: "CURRENT_TEAM" as const,
+      primaryColor: "#007A3D",
+      secondaryColor: "#C5A572",
+      defaultKit: { shirt: "#007A3D", shorts: "#ffffff", socks: "#007A3D" },
+      goalkeeperKit: { shirt: "#111111", shorts: "#111111", socks: "#111111" },
+      defaultStadiumId: "home_park",
+      defaultFormation: "4-2-3-1",
+    };
+    const awayTeam = {
+      id: "away_fc",
+      name: "Away FC",
+      abbreviation: "AWY",
+      teamType: "CURRENT_TEAM" as const,
+      primaryColor: "#1a3a7a",
+      secondaryColor: "#ffffff",
+      defaultKit: { shirt: "#1a3a7a", shorts: "#ffffff", socks: "#1a3a7a" },
+      goalkeeperKit: { shirt: "#222222", shorts: "#222222", socks: "#222222" },
+      defaultStadiumId: "away_park",
+      defaultFormation: "4-4-2",
+    };
+    const homeSquad = [
+      makePlayer("h_gk", "H. Keep", "GK", 1),
+      makePlayer("h_cm", "H. Mid", "CM", 8),
+      makePlayer("h_st", "H. Striker", "ST", 9),
+    ];
+    const awaySquad = [
+      makePlayer("a_gk", "A. Keep", "GK", 1),
+      makePlayer("a_cm", "A. Mid", "CM", 6),
+      makePlayer("a_st", "A. Striker", "ST", 10),
+    ];
+    view.setContext("select");
+    view.setDualFormationSides(
+      {
+        home: {
+          teamName: "Home FC",
+          starters: homeSquad,
+          teamColor: "#007A3D",
+          formation: "4-2-3-1",
+          roster: homeSquad,
+          starterSlots: ["GK", "CAM", "ST"],
+          team: homeTeam,
+        },
+        away: {
+          teamName: "Away FC",
+          starters: awaySquad,
+          teamColor: "#1a3a7a",
+          formation: "4-4-2",
+          roster: awaySquad,
+          starterSlots: ["GK", "LCM", "ST"],
+          team: awayTeam,
+          playStyle: "counter",
+        },
+      },
+      "home",
+      { purpose: "match", userMatchTeam: homeTeam },
+    );
+    view.render();
+    expect(view.canSwitchFormationSide()).toBe(true);
+    expect(view.formationSide).toBe("home");
+    expect(view.root.querySelector('[data-char="form-side"][data-side="home"]')?.classList.contains("on")).toBe(true);
+    const chalk = view.root.querySelector('[data-char="chalk"]');
+    const homeChip = view.root.querySelector('[data-char="form-side"][data-side="home"]');
+    expect(
+      homeChip && chalk && !!(homeChip.compareDocumentPosition(chalk) & Node.DOCUMENT_POSITION_FOLLOWING),
+    ).toBe(true);
+    expect(view.root.querySelector(".char-team-title")?.textContent).toContain("Home FC");
+    view.setFormation("4-3-3");
+    view.setFormationSide("away");
+    view.render();
+    expect(view.formationSide).toBe("away");
+    expect(view.formation).toBe("4-4-2");
+    expect(view.playStyle).toBe("counter");
+    expect(view.root.querySelector(".char-team-title")?.textContent).toContain("Away FC");
+    expect(view.root.querySelector('[data-char="form-side"][data-side="away"]')?.classList.contains("on")).toBe(true);
+    expect(view.xi.some((row) => row.player.player.id === "a_st")).toBe(true);
+    view.setPlayStyle("direct");
+    const edits = view.getEditedLineups();
+    expect(edits.home?.formation).toBe("4-3-3");
+    expect(edits.away?.playStyle).toBe("direct");
+    expect(edits.away?.starters.some((s) => s.playerId === "a_st")).toBe(true);
+    expect(edits.home?.starters.some((s) => s.playerId === "h_st")).toBe(true);
+    view.dispose();
+    host.remove();
   });
 });
 
