@@ -79,6 +79,8 @@ export class MainMenu {
   private teamGroup: MenuTeamGroup = "LEAGUE_ONE";
   private pendingTeamId: string | null = null;
   private clubCommitTimer: ReturnType<typeof setTimeout> | null = null;
+  /** When true, league/team/era dials ignore input (match launching / left menu). */
+  private teamSelectLocked = false;
   onHalf: ((seconds: number) => void) | null = null;
   onClubChange: ((teamId: string) => void) | null = null;
   onPredictionsChange: ((state: PredictionsState) => void) | null = null;
@@ -137,7 +139,7 @@ export class MainMenu {
     this.root.innerHTML = `
       <div class="menu-shell ${embed ? "panel-open" : ""}">
         <div class="menu-hero">
-          <h1><span class="title-line">GOLAÇO SOCCER ⚽️</span></h1>
+          <h1><span class="title-line">GOLAÇO SOCCER <span class="title-emoji" aria-hidden="true">⚽️</span></span></h1>
           <div class="club-wrap">
             <div class="club-meta" style="${clubBadgeStyle(club.team)}">
               ${teamBadgeHtml(club.team, { className: "club-crest", size: 52 })}
@@ -218,6 +220,9 @@ export class MainMenu {
     this.bindPointer();
     this.bindDurationSpin();
     this.bindTeamSelectSpin();
+    if (this.teamSelectLocked) {
+      this.root.querySelector(".team-dials")?.classList.add("team-dials-locked");
+    }
     if (this.panel === "predictions") this.bindPredictions(db, predState);
     scheduleFitMenuLabels(this.root);
   }
@@ -309,6 +314,7 @@ export class MainMenu {
   }
 
   hide(): void {
+    this.lockTeamSelect();
     this.root.hidden = true;
     this.panel = "menu";
     this.optionsSection = null;
@@ -615,7 +621,24 @@ export class MainMenu {
     });
   }
 
+  /** Freeze dials and drop any pending club commit (call when leaving the menu / starting a match). */
+  lockTeamSelect(): void {
+    this.teamSelectLocked = true;
+    if (this.clubCommitTimer) {
+      clearTimeout(this.clubCommitTimer);
+      this.clubCommitTimer = null;
+    }
+    this.pendingTeamId = null;
+    this.root.querySelector(".team-dials")?.classList.add("team-dials-locked");
+  }
+
+  unlockTeamSelect(): void {
+    this.teamSelectLocked = false;
+    this.root.querySelector(".team-dials")?.classList.remove("team-dials-locked");
+  }
+
   private stepTeam(delta: number): void {
+    if (this.teamSelectLocked) return;
     const clubs = uniqueClubsInGroup(this.teamOptions, this.teamGroup);
     if (!clubs.length) return;
     const el = this.root.querySelector<HTMLElement>("[data-team-spin]");
@@ -630,6 +653,7 @@ export class MainMenu {
   }
 
   private stepEra(delta: number): void {
+    if (this.teamSelectLocked) return;
     if (this.teamGroup !== "CLASSIC") return;
     const eraEl = this.root.querySelector<HTMLElement>("[data-era-spin]");
     const clubKey = eraEl?.getAttribute("data-club-key");
@@ -647,6 +671,7 @@ export class MainMenu {
   }
 
   private stepLeague(delta: number): void {
+    if (this.teamSelectLocked) return;
     const curIdx = MENU_TEAM_GROUPS.indexOf(this.teamGroup);
     const nextIdx = (curIdx + delta + MENU_TEAM_GROUPS.length * 8) % MENU_TEAM_GROUPS.length;
     const nextGroup = MENU_TEAM_GROUPS[nextIdx]!;
@@ -724,9 +749,11 @@ export class MainMenu {
   }
 
   private scheduleClubCommit(teamId: string): void {
+    if (this.teamSelectLocked) return;
     if (this.clubCommitTimer) clearTimeout(this.clubCommitTimer);
     this.clubCommitTimer = setTimeout(() => {
       this.clubCommitTimer = null;
+      if (this.teamSelectLocked) return;
       this.pendingTeamId = null;
       this.onClubChange?.(teamId);
     }, 140);

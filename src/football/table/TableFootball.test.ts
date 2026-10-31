@@ -6,9 +6,11 @@ import {
   layoutById,
   maxSlideForRod,
   manLocalZs,
+  manClearGap,
+  manCenterSpacing,
 } from "./TableLayouts";
 import { createRodState, stepRodKick, stepRodSlide, TABLE_SPIN_ENGAGE_SECONDS } from "./TableRod";
-import { createTableBall, serveTableBall } from "./TableBall";
+import { createTableBall, serveTableBall, stepGoalSink } from "./TableBall";
 import { stepTableBall } from "./TablePhysics";
 import { rodsFromAwayDigits, rodsFromHomeDigits } from "./TableInput";
 import { TABLE_AI_PROFILES, TableAI } from "./TableAI";
@@ -38,6 +40,32 @@ describe("table layouts", () => {
     expect(maxSlideForRod(5, dims)).toBeGreaterThan(0);
     expect(manLocalZs(3, dims)).toHaveLength(3);
     expect(manLocalZs(1, dims)).toEqual([0]);
+  });
+
+  it("keeps clear gaps between men smaller than the ball so it cannot settle untouchable", () => {
+    const dims = frenchClassicLayout().dims;
+    expect(manClearGap(dims)).toBeLessThanOrEqual(dims.ballRadius * 2);
+    const zs = manLocalZs(5, dims);
+    for (let i = 1; i < zs.length; i++) {
+      expect(zs[i]! - zs[i - 1]!).toBeCloseTo(manCenterSpacing(dims), 5);
+    }
+    // With slide range, outermost man can still cover near the wall.
+    const outer = Math.abs(zs[0]!);
+    expect(outer + maxSlideForRod(5, dims) + dims.manRadius).toBeGreaterThan(dims.width / 2 - 0.35);
+  });
+});
+
+describe("table goal sink", () => {
+  it("drives a scored ball past the goal line into the abyss and drops it", () => {
+    const dims = frenchClassicLayout().dims;
+    const ball = createTableBall(dims);
+    ball.x = dims.length / 2 - dims.ballRadius;
+    ball.z = 0;
+    ball.vx = 2;
+    const startY = ball.y;
+    for (let i = 0; i < 40; i++) stepGoalSink(ball, dims, "home", 1 / 60);
+    expect(ball.x).toBeGreaterThan(dims.length / 2 + dims.goalDepth * 0.4);
+    expect(ball.y).toBeLessThan(startY - 0.05);
   });
 });
 

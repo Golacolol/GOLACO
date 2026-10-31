@@ -58,7 +58,7 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
   // Sharp cut at pace — classic over-turn spill (rare unless heavily pressured).
   const turnRate = Math.abs(facingDelta(player.prevFacing, player.facing)) / Math.max(dt, 1 / 120);
   const spill = overTurnLooseChance(player, turnRate, pressure, turnLooseMul);
-  if (spill > 0 && rng() < spill * 0.55) {
+  if (spill > 0 && rng() < spill * 0.35) {
     const away = normalize2(ball.x - player.x + fx * 0.2, ball.z - player.z + fz * 0.2);
     const kick = 1.6 + player.speed * 0.28 + pressure * 1.1;
     ball.vx = ball.vx * 0.45 + away.x * kick + (rng() - 0.5) * 0.9;
@@ -82,9 +82,9 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
       ((1 - drib) * 0.18 + pressure * 0.28 + (1 - player.energy.value) * 0.12) * (close ? 0.5 : 1);
     const ox = (rng() - 0.5) * scatter;
     const oz = (rng() - 0.5) * scatter;
-    const magnet = lerp(0.55, 0.82, control) * magnetMul * (close ? 1.1 : 1);
-    ball.x += (tx + ox - ball.x) * clamp(magnet, 0.35, 0.92);
-    ball.z += (tz + oz - ball.z) * clamp(magnet, 0.35, 0.92);
+    const magnet = lerp(0.62, 0.9, control) * magnetMul * (close ? 1.12 : 1);
+    ball.x += (tx + ox - ball.x) * clamp(magnet, 0.42, 0.95);
+    ball.z += (tz + oz - ball.z) * clamp(magnet, 0.42, 0.95);
     if (ball.y < BALL_RADIUS + 0.35) ball.y = BALL_RADIUS;
 
     const intent = 0.85 + player.speed * 0.62;
@@ -93,30 +93,30 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
     ball.vz = ball.vz * keep + player.vz * 0.62 + fz * intent * (0.22 + control * 0.1);
     ball.vy *= 0.28;
 
-    const pressSoft = pressure > 0.55 ? 0.85 : 0.62;
+    const pressSoft = pressure > 0.55 ? 0.7 : 0.45;
     const looseChance = clamp(
-      pressure * 0.14 * pressSoft * (1.15 - drib) * (1.1 - player.energy.value * 0.35) * (close ? 0.35 : 1) *
-        (1.05 - magnetMul * 0.35),
+      pressure * 0.09 * pressSoft * (1.1 - drib) * (1.05 - player.energy.value * 0.3) * (close ? 0.28 : 1) *
+        (1.0 - magnetMul * 0.4),
       0,
-      0.18,
+      0.1,
     );
-    if (pressure > 0.55 && rng() < looseChance) return "loose";
+    if (pressure > 0.65 && rng() < looseChance) return "loose";
   } else {
     // Between touches: keep the ball glued under the stride while running.
-    const follow = lerp(0.22, 0.55, control) * magnetMul * (close ? 1.2 : 1);
+    const follow = lerp(0.32, 0.68, control) * magnetMul * (close ? 1.25 : 1);
     const dist = player.distTo(ball.x, ball.z);
-    if (follow > 0.01 && dist < reach + 0.55) {
-      const pull = Math.min(1, follow * dt * 10);
+    if (follow > 0.01 && dist < reach + 0.75) {
+      const pull = Math.min(1, follow * dt * 12);
       ball.x += (tx - ball.x) * pull;
       ball.z += (tz - ball.z) * pull;
-      ball.vx = lerp(ball.vx, player.vx + fx * player.speed * 0.15, pull * 0.65);
-      ball.vz = lerp(ball.vz, player.vz + fz * player.speed * 0.15, pull * 0.65);
+      ball.vx = lerp(ball.vx, player.vx + fx * player.speed * 0.2, pull * 0.75);
+      ball.vz = lerp(ball.vz, player.vz + fz * player.speed * 0.2, pull * 0.75);
     }
     if (ball.y < BALL_RADIUS + 0.08) ball.y = BALL_RADIUS;
   }
 
   // Retain beyond collect reach so a take cannot instantly drop (hysteresis).
-  if (player.distTo(ball.x, ball.z) > 2.55 + (1 - control) * 0.3) return "loose";
+  if (player.distTo(ball.x, ball.z) > 2.85 + (1 - control) * 0.25) return "loose";
   return "keep";
 }
 

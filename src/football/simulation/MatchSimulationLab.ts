@@ -83,6 +83,8 @@ export interface SimulatedMatchRecord {
     meanPassLengthM: number;
     progressiveShare: number;
     meanPossessionDuration: number;
+    /** Mean team-side possession spell (teammate passes keep the clock running). */
+    meanTeamPossessionDuration?: number;
     medianPassApex?: number;
     medianShotApex?: number;
     meanTeamWidth?: number;
@@ -440,6 +442,10 @@ export async function simulateOneMatch(
           progressiveShare: match.stats.progressivePasses / passes,
           meanPossessionDuration:
             possDurs.length > 0 ? possDurs.reduce((a, b) => a + b, 0) / possDurs.length : 0,
+          meanTeamPossessionDuration: (() => {
+            const team = match.stats.teamPossessionDurations;
+            return team.length > 0 ? team.reduce((a, b) => a + b, 0) / team.length : 0;
+          })(),
           medianPassApex: medianOf(match.stats.passApexSamples),
           medianShotApex: medianOf(match.stats.shotApexSamples),
           meanTeamWidth:

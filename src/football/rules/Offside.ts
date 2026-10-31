@@ -18,20 +18,27 @@ export function offsideLineX(opponents: Player[], attackSign: number): number {
   return xs[1];
 }
 
+/** Metres beyond the offside line in the attack direction (0 if onside / N/A). */
+export function offsideDepthM(
+  attacker: Player,
+  ballX: number,
+  opponents: Player[],
+): number {
+  if (attacker.isGK) return 0;
+  const dir = attacker.attackSign;
+  if (attacker.x * dir <= 0.25) return 0;
+  if ((attacker.x - ballX) * dir <= 0.15) return 0;
+  const line = offsideLineX(opponents, dir);
+  return Math.max(0, (attacker.x - line) * dir);
+}
+
 /** True if the attacker is in an offside position relative to the ball and defenders. */
 export function isInOffsidePosition(
   attacker: Player,
   ballX: number,
   opponents: Player[],
 ): boolean {
-  if (attacker.isGK) return false;
-  const dir = attacker.attackSign;
-  // Only in the opponents' half (past halfway in the attack direction).
-  if (attacker.x * dir <= 0.25) return false;
-  // Must be ahead of the ball.
-  if ((attacker.x - ballX) * dir <= 0.15) return false;
-  const line = offsideLineX(opponents, dir);
-  return (attacker.x - line) * dir > 0.22;
+  return offsideDepthM(attacker, ballX, opponents) > 0.22;
 }
 
 export function playersOffsideAtPass(
@@ -55,6 +62,6 @@ export function offsideRetreatTarget(
 ): { x: number; z: number } {
   const dir = attacker.attackSign;
   const line = offsideLineX(opponents, dir);
-  const x = clamp(line - dir * 2.4, -HALF_LENGTH + 2, HALF_LENGTH - 2);
+  const x = clamp(line - dir * 1.05, -HALF_LENGTH + 2, HALF_LENGTH - 2);
   return { x, z: attacker.z * 0.92 };
 }

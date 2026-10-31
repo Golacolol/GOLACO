@@ -75,7 +75,7 @@ import {
   restartLabel,
   type RestartPlan,
 } from "./Restarts";
-import { isInOffsidePosition, offsideLineX, offsideRetreatTarget, playersOffsideAtPass } from "./rules/Offside";
+import { offsideDepthM, offsideLineX, offsideRetreatTarget, playersOffsideAtPass } from "./rules/Offside";
 import { teamMatchPhase, type MatchPhase } from "./ai/MatchBrain";
 import { createGoalEvent, type GoalEvent } from "./GoalEvent";
 import { defaultSpotKick, resolveSpotKick, type SpotKickPlacement } from "./practice/SpotKick";
@@ -246,6 +246,8 @@ export class Match {
     longShots: 0,
     offsides: 0,
     possessionDurations: [] as number[],
+    /** Team-side possession spells (survives teammate-to-teammate passes; ends on turnover / long loose). */
+    teamPossessionDurations: [] as number[],
     /** Sum of progressive pass distances (metres ahead of passer). */
     progressivePassDistance: 0,
     progressivePasses: 0,
@@ -287,6 +289,9 @@ export class Match {
   private readonly ballActor = new PossessionActor();
   /** Seconds since possession last changed side (or became owned from loose). */
   private possessionChangeAge = 99;
+  /** Open-play clock for the current team-side possession spell. */
+  private teamPossessionSpellT = 0;
+  private teamPossessionLooseT = 0;
   private lastPossessingSide: "home" | "away" | null = null;
   /** Post-kick curve window — stick bends flight without resetting the kick. */
   private aftertouch: AftertouchState | null = null;
@@ -796,11 +801,32 @@ export class Match {
       // Ignore null flicker (take→loose→take) so phase is not stuck on "transition".
       const side = this.possessing?.side ?? null;
       if (side != null && side !== this.lastPossessingSide) {
+        if (this.lastPossessingSide != null && this.teamPossessionSpellT > 0.35) {
+          this.stats.teamPossessionDurations.push(this.teamPossessionSpellT);
+        }
         this.possessionChangeAge = 0;
         this.lastPossessingSide = side;
+        this.teamPossessionSpellT = 0;
+        this.teamPossessionLooseT = 0;
       } else {
         this.possessionChangeAge += dt;
-        if (side != null) this.lastPossessingSide = side;
+        if (side != null) {
+          this.lastPossessingSide = side;
+          this.teamPossessionSpellT += dt;
+          this.teamPossessionLooseT = 0;
+        } else if (this.lastPossessingSide != null) {
+          // Brief in-flight / 50-50 stays the same spell; extended loose ends it.
+          this.teamPossessionLooseT += dt;
+          this.teamPossessionSpellT += dt;
+          if (this.teamPossessionLooseT > 2.2) {
+            if (this.teamPossessionSpellT > 0.35) {
+              this.stats.teamPossessionDurations.push(this.teamPossessionSpellT);
+            }
+            this.teamPossessionSpellT = 0;
+            this.teamPossessionLooseT = 0;
+            this.lastPossessingSide = null;
+          }
+        }
       }
     }
     if (this.teamControl && !this.autoplay && this.switchLock <= 0) {
@@ -1014,7 +1040,7 @@ export class Match {
       this.possessing &&
       !this.possessing.isGK &&
       this.possessionSecureT <= 0 &&
-      this.possessionTime > 0.55 &&
+      this.possessionTime > 2.15 &&
       this.state !== FootballState.KICK_OFF &&
       !isRestartState(this.state) &&
       !this.ballActor.resolved
@@ -1023,7 +1049,7 @@ export class Match {
         this.ball,
         this.possessing,
         this.opponentsOf(this.possessing),
-        this.tuning.defenderDisturbMultiplier * 0.82,
+        this.tuning.defenderDisturbMultiplier * 0.4,
         Math.random,
         dt,
       );
@@ -1085,11 +1111,11 @@ export class Match {
         turnLooseMul: this.tuning.turnLooseMultiplier * 0.7,
       });
       if (soft === "loose") {
-        if (this.possessing.distTo(this.ball.x, this.ball.z) > 2.35) {
+        if (this.possessing.distTo(this.ball.x, this.ball.z) > 2.75) {
           this.makeLoose(this.possessing);
         } else {
-          this.ball.vx *= 0.45;
-          this.ball.vz *= 0.45;
+          this.ball.vx *= 0.4;
+          this.ball.vz *= 0.4;
         }
       }
     } else {
@@ -1099,7 +1125,7 @@ export class Match {
         // Still owned on paper, but ball flies free — lose if it runs away.
         if (
           !this.possessing.isGK &&
-          this.possessing.distTo(this.ball.x, this.ball.z) > 2.05
+          this.possessing.distTo(this.ball.x, this.ball.z) > 2.65
         ) {
           this.makeLoose(this.possessing);
         }
@@ -1148,7 +1174,7 @@ export class Match {
 
   private updatePossession(): void {
     // Retain radius > collect radius — prevents take/drop flicker (plan Phase 2).
-    const retainRadius = 2.05;
+    const retainRadius = 2.65;
     if (this.possessing && !this.possessing.isGK && this.possessing.distTo(this.ball.x, this.ball.z) > retainRadius) {
       this.makeLoose(this.possessing);
     }
@@ -1489,7 +1515,7 @@ export class Match {
     this.ballState = "owned";
     this.possessionTime = 0;
     // Let the first touch settle before pokes start another midfield flip-flop.
-    this.possessionSecureT = Math.max(this.possessionSecureT, aerial ? 0.45 : 0.72);
+    this.possessionSecureT = Math.max(this.possessionSecureT, aerial ? 0.95 : 1.65);
     this.stats.possessionChanges += 1;
     this.passTargetId = null;
     this.longPassLanding = null;
@@ -1510,7 +1536,8 @@ export class Match {
     const opponents = this.opponentsOf(passer);
     for (const mate of this.teamOf(passer).players) {
       if (mate.id === passer.id || mate.isGK) continue;
-      if (isInOffsidePosition(mate, passer.x, opponents) && !ids.includes(mate.id)) ids.push(mate.id);
+      // Only hard-block deeply offside mates — stretchers stay passable (risk → flag).
+      if (offsideDepthM(mate, passer.x, opponents) > 2.8 && !ids.includes(mate.id)) ids.push(mate.id);
     }
     return [...new Set(ids)];
   }
@@ -1796,11 +1823,11 @@ export class Match {
     // never a forced hoof through midfield after two seconds of possession.
     if (
       (action === "PASS" || action === "HOLD") &&
-      this.possessionTime > 2.4 &&
-      this.pressure > 0.28 &&
-      decision.scores.throughBallScore >= 0.32 &&
-      decision.scores.throughBallScore + 0.05 >= decision.scores.passScore &&
-      decision.scores.throughBallScore >= decision.scores.runScore + 0.12
+      this.possessionTime > 1.25 &&
+      this.pressure > 0.22 &&
+      decision.scores.throughBallScore >= 0.28 &&
+      decision.scores.throughBallScore + 0.02 >= decision.scores.passScore &&
+      decision.scores.throughBallScore >= decision.scores.runScore + 0.08
     ) {
       const thru = choosePassTarget(
         passer,
@@ -1860,10 +1887,10 @@ export class Match {
       const patience = stallStyle?.receivePatience ?? 0.45;
       const openGrass = this.pressure < 0.34 && decision.space.score > 1.3 && decision.space.kind !== "back";
       const dwell = openGrass
-        ? clamp(0.85 + (1 - composure) * 0.22 + stat01(passer.attrs.pace) * 0.15 + patience * 0.2, 0.75, 1.45)
+        ? clamp(1.55 + (1 - composure) * 0.28 + stat01(passer.attrs.pace) * 0.22 + patience * 0.35, 1.35, 2.35)
         : this.pressure > 0.55
-          ? clamp(0.42 + (1 - composure) * 0.16 - patience * 0.05, 0.38, 0.62)
-          : clamp(0.55 + (1 - composure) * 0.2 + (1 - vision) * 0.12 + patience * 0.12, 0.5, 1.05);
+          ? clamp(0.72 + (1 - composure) * 0.2 - patience * 0.03, 0.58, 1.05)
+          : clamp(1.05 + (1 - composure) * 0.25 + (1 - vision) * 0.12 + patience * 0.22, 0.9, 1.75);
       if (passLike && this.possessionTime < dwell) action = "RUN";
     }
     // Marker on the ball + a cut lane = carry / shield, not a hopeful pass straight into him.
@@ -1944,9 +1971,19 @@ export class Match {
         action = decision.scores.runScore >= 0.1 ? "RUN" : "HOLD";
         return;
       }
-      fakeBase.shootHold = action === "LONG_SHOT" ? 1.15 : isStriker(passer) ? 0.95 : 0.78;
-      this.executeShot(passer, fakeBase, action === "LONG_SHOT", false, aiAim.bodyAlignment);
-      return;
+      // Realism: need a settled touch before shooting — kills early spam from receives.
+      const minShotHold = action === "LONG_SHOT" ? 1.45 : isStriker(passer) ? 0.78 : 1.05;
+      if (this.possessionTime < minShotHold) {
+        if (passTarget && decision.scores.passScore >= 0.22) action = "PASS";
+        else {
+          action = decision.scores.runScore >= 0.1 ? "RUN" : "HOLD";
+          return;
+        }
+      } else {
+        fakeBase.shootHold = action === "LONG_SHOT" ? 1.15 : isStriker(passer) ? 0.95 : 0.78;
+        this.executeShot(passer, fakeBase, action === "LONG_SHOT", false, aiAim.bodyAlignment);
+        return;
+      }
     }
     const passType: PassType =
       action === "THROUGH" ? "through" : action === "LONG_PASS" ? "long" : action === "CROSS" ? "cross" : "short";
@@ -2225,8 +2262,11 @@ export class Match {
         delivery = "chip";
       }
     }
-    const distance =
+    let distance =
       target ? passer.distTo(target.x, target.z) : delivery === "long" || delivery === "cross" ? 28 : 14;
+    // Distance-based long: ground "shorts" beyond ~22m should loft and count as long outlets.
+    if (delivery === "short" && distance >= 22) delivery = "long";
+    else if (delivery === "through" && distance >= 28) delivery = "long";
     const align = bodyAlignment(passer.facing, dir.x, dir.z);
     const touchScale = firstTouchKickScale(passer.firstTouchTimer);
     const result = computePassError({
@@ -2348,7 +2388,7 @@ export class Match {
     } else {
       const flagged = playersOffsideAtPass(passer, this.teamOf(passer).players, this.opponentsOf(passer), passer.x);
       this.offsidePassIds = new Set(flagged);
-      if (target && this.offsidePassIds.has(target.id)) this.passTargetId = null;
+      // Keep passTargetId even when the target is offside — they must chase/interfere to award the flag.
     }
     if (
       target &&
@@ -2887,17 +2927,23 @@ export class Match {
   private offsidePlayerInReceiveRange(collectSpeed: number, speed: number): Player | null {
     if (!this.offsidePassIds.size) return null;
     const aerial = this.ball.y > 1.35 || this.incomingAerial;
-    for (const id of this.offsidePassIds) {
+    // Prefer the designated receiver so through balls into stretchers actually flag.
+    const ordered = [
+      ...(this.passTargetId && this.offsidePassIds.has(this.passTargetId) ? [this.passTargetId] : []),
+      ...[...this.offsidePassIds].filter((id) => id !== this.passTargetId),
+    ];
+    for (const id of ordered) {
       const p = this.playerById(id);
       if (!p || p.kickTimer > 0) continue;
       const heightM = p.height || 1.82;
-      const yCap = aerial ? Math.min(3.4, 1.55 + heightM * 0.85) : Math.min(1.78, 0.55 + heightM * 0.58);
+      const yCap = aerial ? Math.min(3.4, 1.55 + heightM * 0.85) : Math.min(1.85, 0.55 + heightM * 0.62);
+      const designated = id === this.passTargetId;
       const reach = aerial
-        ? collectSpeed * 1.15
-        : collectSpeed * (0.94 + Math.min(0.14, (heightM - 1.7) * 0.35));
+        ? collectSpeed * (designated ? 1.45 : 1.22)
+        : collectSpeed * (designated ? 1.35 : 1.08) * (0.94 + Math.min(0.14, (heightM - 1.7) * 0.35));
       const speedCap = aerial
-        ? 14 + (p.attrs.jumping ?? p.attrs.heading ?? 50) * 0.045
-        : 10 + p.attrs.control * 0.06;
+        ? 16 + (p.attrs.jumping ?? p.attrs.heading ?? 50) * 0.05
+        : 12 + p.attrs.control * 0.08;
       if (p.distTo(this.ball.x, this.ball.z) < reach && speed < speedCap && this.ball.y < yCap) {
         return p;
       }
@@ -2907,7 +2953,14 @@ export class Match {
 
   /** Lab / fidelity: phase time shares + ST–offside-line gap while attacking. */
   private sampleFidelityMetrics(dt: number, possessingSide: "home" | "away" | null): void {
-    if (this.state !== FootballState.PLAYING && this.state !== FootballState.KICK_OFF) return;
+    // Autoplay uses AUTOPLAY state — still sample open-play fidelity (phases / width).
+    if (
+      this.state !== FootballState.PLAYING &&
+      this.state !== FootballState.KICK_OFF &&
+      this.state !== FootballState.AUTOPLAY
+    ) {
+      return;
+    }
     const side = possessingSide ?? (this.ball.lastTouchSide as "home" | "away" | null);
     if (!side) {
       this.stats.phaseSeconds.loose += dt;
@@ -3089,16 +3142,19 @@ export class Match {
 
   private steerPassReceiver(dt: number): void {
     if (this.possessing || !this.passTargetId) return;
-    if (this.offsidePassIds.has(this.passTargetId)) return;
-    // Aerial / lofted: guideReceivers owns the landing run.
-    if (receiveIsAerialOwned(this.ball, this.incomingAerial, !!this.longPassLanding)) return;
+    // Aerial / lofted: guideReceivers owns the landing run (onside only — see below).
+    const offsideTarget = this.offsidePassIds.has(this.passTargetId);
+    if (!offsideTarget && receiveIsAerialOwned(this.ball, this.incomingAerial, !!this.longPassLanding)) return;
     const target = this.playerById(this.passTargetId);
     if (!target || target.kickTimer > 0) return;
     const moveEx = this.moveExtras();
-    const plan = planReceiveRun(target, this.ball, { speedMul: moveEx.speedMul ?? 1 });
+    // Offside designated receiver still chases so interference can award the flag.
+    const plan = planReceiveRun(target, this.ball, {
+      speedMul: (moveEx.speedMul ?? 1) * (offsideTarget ? 1.08 : 1),
+    });
     target.desiredX = plan.x;
     target.desiredZ = plan.z;
-    movePlayer(target, dt, plan.x - target.x, plan.z - target.z, plan.sprint, false, {
+    movePlayer(target, dt, plan.x - target.x, plan.z - target.z, plan.sprint || offsideTarget, false, {
       ...moveEx,
       speedMul: plan.speedMul,
       accelMul: (moveEx.accelMul ?? 1) * plan.accelMul,
@@ -3107,13 +3163,15 @@ export class Match {
 
   private steerOffsideRetreat(dt: number): void {
     if (!this.offsidePassIds.size || this.possessing) return;
+    // Non-target offsides drop softly onside; the pass target keeps chasing (steerPassReceiver).
     for (const id of this.offsidePassIds) {
+      if (id === this.passTargetId) continue;
       const p = this.playerById(id);
       if (!p) continue;
       const t = offsideRetreatTarget(p, this.opponentsOf(p));
-      p.desiredX = t.x;
-      p.desiredZ = t.z;
-      movePlayer(p, dt, t.x - p.x, t.z - p.z, true, false, this.moveExtras());
+      p.desiredX = lerp(p.x, t.x, 0.28);
+      p.desiredZ = lerp(p.z, t.z, 0.22);
+      movePlayer(p, dt, p.desiredX - p.x, p.desiredZ - p.z, false, false, this.moveExtras());
     }
   }
 

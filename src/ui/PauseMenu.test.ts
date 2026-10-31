@@ -7,6 +7,7 @@ describe("pause menu", () => {
     const host = document.createElement("div");
     const menu = new PauseMenu(host);
     menu.render(null);
+    expect(menu.root.querySelector(".pause-brand .title-line")?.textContent).toContain("⚽️");
     const labels = [...menu.root.querySelectorAll(".menu-item")].map((el) => el.textContent);
     expect(labels).toContain("Formation");
     expect(labels).not.toContain("Substitutions");

@@ -81,13 +81,14 @@ export class TableVisual {
       this.group.add(m);
     }
 
-    const goalMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.05 });
+    // Deep black mouths so a scored ball can vanish into the abyss.
+    const goalMat = new THREE.MeshStandardMaterial({ color: 0x050505, roughness: 0.02 });
     for (const sign of [-1, 1] as const) {
       const g = new THREE.Mesh(
-        new THREE.BoxGeometry(dims.goalDepth, dims.wallHeight * 0.9, dims.goalWidth),
+        new THREE.BoxGeometry(dims.goalDepth * 1.15, dims.wallHeight * 1.05, dims.goalWidth * 1.05),
         goalMat,
       );
-      g.position.set(sign * (dims.length / 2 + dims.goalDepth * 0.3), dims.playY + 0.1, 0);
+      g.position.set(sign * (dims.length / 2 + dims.goalDepth * 0.42), dims.playY + 0.02, 0);
       this.group.add(g);
     }
   }
@@ -134,6 +135,12 @@ export class TableVisual {
 
   sync(rods: TableRodState[], ball: TableBallState, selectedHome: number[], selectedAway: number[]): void {
     this.ballMesh.position.set(ball.x, ball.y, ball.z);
+    // Hide once the ball is deep inside either goal mouth.
+    const half = this.layout.dims.length / 2;
+    const inAbyss =
+      Math.abs(ball.x) > half + this.layout.dims.goalDepth * 0.35 &&
+      Math.abs(ball.z) < this.layout.dims.goalWidth * 0.55;
+    this.ballMesh.visible = !inAbyss || ball.y > this.layout.dims.playY - 0.05;
     const hang = -this.layout.dims.manHeight * 0.28;
 
     for (let i = 0; i < rods.length; i++) {

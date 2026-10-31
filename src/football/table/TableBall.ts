@@ -36,3 +36,32 @@ export function resetTableBallIdle(ball: TableBallState, dims: TableDims): void 
   ball.vx = 0;
   ball.vz = 0;
 }
+
+/**
+ * Animate a scored ball into the black goal mouth (past the goal line, drop into abyss).
+ * `scoredBy` is the side that scored (home attacks +x).
+ */
+export function stepGoalSink(
+  ball: TableBallState,
+  dims: TableDims,
+  scoredBy: "home" | "away",
+  dt: number,
+): void {
+  const sign = scoredBy === "home" ? 1 : -1;
+  const mouthX = sign * (dims.length / 2);
+  const abyssX = sign * (dims.length / 2 + dims.goalDepth * 0.92);
+  // Keep driving past the line into the dark box.
+  if ((ball.x - mouthX) * sign < dims.goalDepth * 0.15) {
+    ball.vx = sign * Math.max(Math.abs(ball.vx), 4.2);
+  } else {
+    ball.vx = sign * Math.max(Math.abs(ball.vx) * 0.92, 2.4);
+  }
+  ball.x += ball.vx * dt;
+  if ((ball.x - abyssX) * sign > 0) ball.x = abyssX;
+  ball.vz *= Math.exp(-2.8 * dt);
+  ball.z = Math.max(-dims.goalWidth * 0.42, Math.min(dims.goalWidth * 0.42, ball.z));
+  // Drop into the abyss once inside the mouth.
+  const depth = Math.max(0, (ball.x - mouthX) * sign);
+  const drop = Math.min(1, depth / Math.max(0.12, dims.goalDepth * 0.55));
+  ball.y = dims.playY + dims.ballRadius * (1 - drop) - drop * 0.22;
+}

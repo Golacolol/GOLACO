@@ -64,11 +64,11 @@ const PROFILES: Record<FootballRole, Omit<RoleProfile, "role">> = {
     lineDiscipline: 0.92,
   },
   FB: {
-    defendBallPull: 0.3,
-    attackPush: 8,
-    channelZ: 16,
+    defendBallPull: 0.28,
+    attackPush: 9,
+    channelZ: 26,
     buildupBias: 0.55,
-    progressiveBias: 0.45,
+    progressiveBias: 0.48,
     pressWeight: 0.55,
     lineDiscipline: 0.7,
   },
@@ -84,16 +84,16 @@ const PROFILES: Record<FootballRole, Omit<RoleProfile, "role">> = {
   CM: {
     defendBallPull: 0.38,
     attackPush: 8,
-    channelZ: 7,
+    channelZ: 9,
     buildupBias: 0.62,
     progressiveBias: 0.55,
     pressWeight: 0.55,
     lineDiscipline: 0.45,
   },
   WM: {
-    defendBallPull: 0.32,
-    attackPush: 9,
-    channelZ: 15,
+    defendBallPull: 0.3,
+    attackPush: 9.5,
+    channelZ: 24,
     buildupBias: 0.48,
     progressiveBias: 0.58,
     pressWeight: 0.5,
@@ -102,25 +102,25 @@ const PROFILES: Record<FootballRole, Omit<RoleProfile, "role">> = {
   AM: {
     defendBallPull: 0.28,
     attackPush: 11,
-    channelZ: 6,
+    channelZ: 7,
     buildupBias: 0.4,
     progressiveBias: 0.72,
     pressWeight: 0.42,
     lineDiscipline: 0.25,
   },
   W: {
-    defendBallPull: 0.25,
-    attackPush: 12,
-    channelZ: 16,
+    defendBallPull: 0.22,
+    attackPush: 12.5,
+    channelZ: 27,
     buildupBias: 0.35,
-    progressiveBias: 0.7,
+    progressiveBias: 0.72,
     pressWeight: 0.4,
     lineDiscipline: 0.2,
   },
   CF: {
     defendBallPull: 0.2,
     attackPush: 13,
-    channelZ: 5,
+    channelZ: 6,
     buildupBias: 0.28,
     progressiveBias: 0.78,
     pressWeight: 0.35,
@@ -168,7 +168,8 @@ export function matchPhase(
     return "defend";
   }
   const transitionAge = opts?.transitionAge ?? 99;
-  if (transitionAge < 3.2) return "transition";
+  // Short window so settled build/attack can emerge once possession sticks.
+  if (transitionAge < 1.45) return "transition";
   const progress = clamp((ball.x * player.attackSign + HALF_LENGTH) / PITCH_LENGTH, 0, 1);
   const distGoal = opts?.distGoal ?? 40;
   const chanceQ = opts?.chanceQuality ?? 0;
@@ -187,7 +188,7 @@ export function teamMatchPhase(
   if (possessingSide == null) return "loose";
   if (possessingSide !== side) return "defend";
   const transitionAge = opts?.transitionAge ?? 99;
-  if (transitionAge < 3.2) return "transition";
+  if (transitionAge < 1.45) return "transition";
   const progress = clamp((ball.x * attackSign + HALF_LENGTH) / PITCH_LENGTH, 0, 1);
   const distGoal = opts?.distGoal ?? 40;
   const chanceQ = opts?.chanceQuality ?? 0;
@@ -242,7 +243,11 @@ export function roleShapeTarget(
     // Counter: attackers push channels; midfield advances; back line holds a higher line.
     const push = profile.attackPush * (0.7 + attAw * 0.4);
     x = player.anchorX + attack * push * 0.85 + (ball.x - player.anchorX) * 0.22;
-    z = player.anchorZ * 0.4 + ball.z * 0.35 + sideSign * profile.channelZ * 0.35;
+    // Hold channel width — ball pull was collapsing the team to ~20m.
+    z = player.anchorZ * 0.7 + ball.z * 0.12 + sideSign * profile.channelZ * 0.48;
+    if (profile.role === "W" || profile.role === "WM" || profile.role === "FB") {
+      z = sideSign * clamp(Math.abs(z), profile.channelZ * 0.88, HALF_WIDTH - 2.6);
+    }
     if (profile.role === "CB" || profile.role === "DM") {
       x = player.anchorX + attack * (profile.role === "DM" ? 6 : 3.5) + (ball.x - player.anchorX) * 0.12;
     }
@@ -264,15 +269,15 @@ export function roleShapeTarget(
     x = player.anchorX + attack * push + (ball.x - player.anchorX) * (0.12 + attAw * 0.1);
     if (profile.channelZ > 0.5) {
       const channel = sideSign * profile.channelZ;
-      z = channel * 0.55 + player.anchorZ * 0.25 + ball.z * 0.2;
+      z = channel * 0.72 + player.anchorZ * 0.22 + ball.z * 0.08;
       // Wingers / FB stay high and wide; CF / AM stay more central.
       if (profile.role === "W" || profile.role === "WM" || profile.role === "FB") {
-        z = sideSign * clamp(Math.abs(z), profile.channelZ * 0.7, HALF_WIDTH - 3.2);
+        z = sideSign * clamp(Math.abs(z), profile.channelZ * 0.9, HALF_WIDTH - 2.6);
       } else if (profile.role === "CF" || profile.role === "AM") {
-        z = clamp(ball.z * 0.35 + player.anchorZ * 0.4, -10, 10);
+        z = clamp(ball.z * 0.28 + player.anchorZ * 0.48, -11, 11);
       }
     } else {
-      z = player.anchorZ * 0.6 + ball.z * 0.25;
+      z = player.anchorZ * 0.75 + ball.z * 0.14;
     }
     // Build phase: CBs / DM stay deeper as recycle options.
     if (phase === "build" && (profile.role === "CB" || profile.role === "DM")) {

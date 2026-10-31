@@ -2,7 +2,7 @@ import { clamp, dist2, dot2, normalize2, stat01 } from "../../core/math";
 import { scorePassCandidate, type PassType } from "../ball/PassModel";
 import { HALF_LENGTH } from "../constants";
 import { inPenaltyArea } from "../pitch/PitchZones";
-import { isInOffsidePosition, offsideLineX } from "../rules/Offside";
+import { offsideDepthM, offsideLineX } from "../rules/Offside";
 import type { Ball } from "../ball/Ball";
 import type { Player } from "../players/Player";
 import { setPieceRole } from "./SetPieceAI";
@@ -40,9 +40,9 @@ export function canShoot(
 ): boolean {
   const goalX = carrier.oppGoalX();
   const dist = carrier.distTo(goalX, 0);
-  const maxDist = opts?.maxDist ?? 18;
-  if (dist > maxDist || Math.abs(carrier.z) > 14) return false;
-  return passingLaneQuality(carrier, goalX, 0, opponents) >= (opts?.minLane ?? 0.38);
+  const maxDist = opts?.maxDist ?? 14;
+  if (dist > maxDist || Math.abs(carrier.z) > 10) return false;
+  return passingLaneQuality(carrier, goalX, 0, opponents) >= (opts?.minLane ?? 0.52);
 }
 
 /** Best pass-safe teammate for a type, or null (hard filter before soft scores). */
@@ -216,9 +216,11 @@ export function choosePassTarget(
     if (mate.isGK) continue;
     if (forbid.has(mate.id)) continue;
     // Need a real defensive line (2+ opponents) before offside filtering applies.
-    const offside = opponents.length >= 2 && isInOffsidePosition(mate, passer.x, opponents);
-    // Never pick an offside runner — through balls especially must stay legal.
-    if (offside) continue;
+    const offDepth = opponents.length >= 2 ? offsideDepthM(mate, passer.x, opponents) : 0;
+    const offside = offDepth > 0.22;
+    // Short/cross stay legal; through/long may target a barely-offside stretcher (risk).
+    if (offside && passType !== "through" && passType !== "long") continue;
+    if (offside && offDepth > 3.6) continue;
     // Score lanes / alignment to the same lead point executePass aims at.
     const lead =
       passType === "through" || passType === "chip"
@@ -346,17 +348,23 @@ export function choosePassTarget(
       (forward < -3 && !buildup ? -0.65 : forward < -3 && buildup ? -0.35 : 0) +
       (passType === "short" && forward < 1 && width > 10 ? -0.55 : 0) +
       (passType === "long"
-        ? clamp(space / 10, 0, 0.14) - clamp(width / 14, 0, 1.35) - (oppositeWing ? 0.75 : 0) - (forward < 8 ? 0.55 : 0)
+        ? clamp(space / 10, 0, 0.22) +
+          clamp(forward / 28, 0, 0.35) -
+          clamp(width / 18, 0, 0.95) -
+          (oppositeWing && forward < 10 ? 0.55 : 0) -
+          (forward < 8 ? 0.35 : 0)
         : 0) +
       (passType === "through" ? -clamp((width - 12) / 14, 0, 0.85) : 0) +
-      (shortBuild ? 0.32 : 0) +
-      (buildup && passType === "short" && distance < 16 && width < 11 && forward >= 0 ? 0.22 : 0) +
-      (passType === "short" && distance < 12 && width < 9 && forward > 1 ? 0.16 : 0) +
+      (shortBuild ? 0.28 : 0) +
+      (buildup && passType === "short" && distance < 16 && width < 11 && forward >= 0 ? 0.18 : 0) +
+      (passType === "short" && distance < 12 && width < 9 && forward > 1 ? 0.14 : 0) +
       (passType === "through" && aheadSpace && laneClear >= 0.5 && width < 14 ? (buildup ? 0.22 : 0.38) : 0) +
       (buildup && passType === "through" && wing && forward > 5 && !oppositeWing ? 0.1 : 0) +
-      (buildup && passType === "long" ? -0.65 : 0) +
-      (passType === "long" && !buildup ? -0.28 : 0) +
+      (buildup && passType === "long" && forward > 10 ? 0.08 : buildup && passType === "long" ? -0.28 : 0) +
+      (passType === "long" && !buildup ? 0.06 : 0) +
       (passType === "through" && role === "wide" && forward > 6 && !oppositeWing ? (buildup ? 0.1 : 0.18) : 0) +
+      // Risky through/long into a barely-offside stretcher — playable but heavily discounted.
+      (offside ? -1.15 - offDepth * 0.55 : 0) +
       // Support pocket + striker layoff (Buckland Simple Soccer ideas).
       supportDistanceScore(distance, buildup) +
       layoffOptionBonus(passer, mate, distance, forward, width) +

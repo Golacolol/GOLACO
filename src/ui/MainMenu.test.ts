@@ -145,7 +145,8 @@ describe("MainMenu LEAGUE mode button", () => {
     const club = hero.querySelector(".club-wrap");
     const teamSelect = hero.querySelector(".team-select-fixture");
     const gameplay = [...hero.querySelectorAll(".menu-fixture")].find((el) => el.querySelector(".meta")?.textContent === "Gameplay");
-    expect(title?.textContent).toBe("GOLAÇO SOCCER ⚽️");
+    expect(title?.textContent?.replace(/\s+/g, " ").trim()).toBe("GOLAÇO SOCCER ⚽️");
+    expect(title?.querySelector(".title-emoji")?.textContent).toBe("⚽️");
     expect(title!.compareDocumentPosition(club!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(club!.compareDocumentPosition(teamSelect!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(teamSelect!.compareDocumentPosition(gameplay!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -160,6 +161,23 @@ describe("MainMenu LEAGUE mode button", () => {
     const dials = [...teamSelect!.querySelectorAll(".time-spin")];
     expect(dials[0]?.hasAttribute("data-league-spin")).toBe(true);
     expect(dials[1]?.hasAttribute("data-team-spin")).toBe(true);
+  });
+
+  it("locks team dials and drops pending club commits", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    const menu = paint(false);
+    let commits = 0;
+    menu.onClubChange = () => {
+      commits += 1;
+    };
+    menu.unlockTeamSelect();
+    menu.lockTeamSelect();
+    expect(menu.root.querySelector(".team-dials")?.classList.contains("team-dials-locked")).toBe(true);
+    menu.root.querySelector<HTMLElement>("[data-team-spin]")?.click();
+    expect(commits).toBe(0);
+    menu.hide();
+    host.remove();
   });
 
   it("shows Classic Era date roll after Team, without nicknames on the dials", () => {

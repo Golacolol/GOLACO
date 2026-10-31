@@ -547,6 +547,7 @@ export class Game {
     applyClubNameAppearance(this.save.data.settings);
     this.menu.selected = 0;
     this.menu.setPanel("menu", false);
+    this.menu.unlockTeamSelect();
     this.paintMainMenu();
     this.matchCard.hide();
   }
@@ -565,6 +566,8 @@ export class Game {
   }
 
   private setDefaultClub(teamId: string): void {
+    // Ignore late dial commits once a match / pre-match flow has begun.
+    if (this.appState !== AppState.MAIN_MENU) return;
     if (!this.db.teams.has(teamId)) return;
     this.save.data.settings.defaultTeamId = teamId;
     this.db.userTeamId = teamId;
@@ -814,6 +817,10 @@ export class Game {
 
   private menuAction(id: string): void {
     const f = this.listedFixture();
+    // Lock dials before any leave-menu action so a late spin cannot rewrite the club mid-launch.
+    if (id === "sim" || id === "next" || id === "quick" || id === "spot") {
+      this.menu.lockTeamSelect();
+    }
     if (id === "sim") {
       this.practice = "none";
       this.leagueFixtureId = null;

@@ -10,6 +10,7 @@ import type { PassType } from "../ball/PassModel";
 import type { Ball } from "../ball/Ball";
 import { playStylePassWeights, playStyleProfile, type PlayStyleProfile } from "./PlayStyle";
 import { positionArchetype } from "./PositionArchetype";
+import { offsideLineX } from "../rules/Offside";
 
 export type AttackAction = "PASS" | "THROUGH" | "LONG_PASS" | "CROSS" | "RUN" | "SHOT" | "LONG_SHOT" | "HOLD";
 
@@ -55,7 +56,7 @@ export function possessionUrgency(possessionTime: number): number {
 export function longShotOpportunity(carrier: Player, opponents: Player[]): { open: boolean; distance: number; blocked: boolean; inZone: boolean } {
   const goalX = carrier.oppGoalX();
   const distance = carrier.distTo(goalX, 0);
-  const inZone = distance >= 16 && distance <= 34 && Math.abs(carrier.z) < 16;
+  const inZone = distance >= 18 && distance <= 26 && Math.abs(carrier.z) < 11;
   const toward = carrier.attackSign;
   const backToGoal = Math.sin(carrier.facing) * toward < -0.35;
   let blocked = false;
@@ -80,7 +81,7 @@ export function clearChanceOpportunity(
 ): { quality: number; close: boolean; laneClear: boolean; gkExposed: boolean } {
   const goalX = carrier.oppGoalX();
   const distance = carrier.distTo(goalX, 0);
-  const close = distance < 16.5 && Math.abs(carrier.z) < 13;
+  const close = distance < 14 && Math.abs(carrier.z) < 10;
   if (!close) return { quality: 0, close: false, laneClear: false, gkExposed: false };
 
   let outfieldBlock = false;
@@ -114,7 +115,7 @@ export function clearChanceOpportunity(
 
   let quality = 0;
   if (laneClear) {
-    quality = 0.32 + (1 - distance / 16.5) * 0.38 + (gkExposed ? 0.28 : 0.08);
+    quality = 0.32 + (1 - distance / 14) * 0.38 + (gkExposed ? 0.28 : 0.08);
     if (distance < 11) quality += 0.18;
     if (Math.abs(carrier.z) < 5.5) quality += 0.1;
     if (gk && Math.abs(gk.z - carrier.z) > 2.8) quality += 0.12;
@@ -272,8 +273,9 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
 
   let shotScore = 0;
   if (distGoal < PENALTY_AREA_LENGTH + 0.5 && Math.abs(carrier.z) < 12) {
-    shotScore = 0.08 + shoot * 0.38 + (1 - pressure) * 0.14 - (shortT && forwardMate > 6 ? 0.42 : 0);
-    if (shortT && lane > 0.55 && forwardMate > 4 && clearChance.quality < 0.45) shotScore *= 0.55;
+    // Box strikes should finish — keep spam gated by clearChance / canShoot floors below.
+    shotScore = 0.22 + shoot * 0.42 + (1 - pressure) * 0.16 - (shortT && forwardMate > 6 ? 0.28 : 0);
+    if (shortT && lane > 0.55 && forwardMate > 4 && clearChance.quality < 0.45) shotScore *= 0.62;
   }
 
   let longShotScore = 0;
@@ -308,6 +310,12 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     if (thruAhead > 4 && thruSpace > 4.5 && thruLane >= 0.5) {
       throughBallScore += 0.22 + vision * 0.12 + Math.min(0.18, (thruSpace - 4) * 0.04);
     }
+    // Reward playing into a stretcher sitting on / beyond the line (risk → offside).
+    const line = offsideLineX(opponents, carrier.attackSign);
+    const depth = (throughT.x - line) * carrier.attackSign;
+    if (depth > -0.4 && depth < 2.8 && thruAhead > 5) {
+      throughBallScore += 0.16 + vision * 0.08;
+    }
   }
   throughBallScore += styleW.throughBonus + arch.progressiveRisk * 0.12;
   if (throughT && isWideAttacker(throughT) && (throughT.x - carrier.x) * carrier.attackSign > 5) {
@@ -315,23 +323,24 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   }
   if (throughT && Math.abs(throughT.z) > 18) throughBallScore *= 0.55;
   let longPassScore = longT
-    ? (pressure > 0.62 || directTeam || (Math.abs(carrier.z) > 18 && progress < 0.3)
-        ? 0.08 +
-          stat01(carrier.attrs.longPassing) * 0.14 +
-          vision * 0.06 +
+    ? (pressure > 0.55 || directTeam || (Math.abs(carrier.z) > 16 && progress < 0.4)
+        ? 0.16 +
+          stat01(carrier.attrs.longPassing) * 0.2 +
+          vision * 0.1 +
           styleW.longBonus +
-          (directTeam ? 0.22 : 0)
-        : 0.02 + vision * 0.02 + styleW.longBonus * 0.5)
+          (directTeam ? 0.28 : 0.08)
+        : 0.08 + vision * 0.06 + styleW.longBonus * 0.85 + style.longBias * 0.12)
     : 0.01;
   if (longT) {
     const longWidth = Math.abs(longT.z - carrier.z);
     const longAhead = (longT.x - carrier.x) * carrier.attackSign;
     // Route-one: reward vertical long; still punish flat switches.
-    if (directTeam && longAhead > 12 && longWidth < 14) longPassScore += 0.28 + style.longBias * 0.2;
-    else if (longWidth > 14 && longAhead < 10) longPassScore *= 0.42;
-    else if (longWidth > 18) longPassScore *= 0.48;
-    else if (longWidth > 12) longPassScore *= 0.78;
-    if (longAhead > 10 && longWidth < 16) longPassScore += 0.12 + vision * 0.06;
+    if (directTeam && longAhead > 12 && longWidth < 14) longPassScore += 0.32 + style.longBias * 0.22;
+    else if (longWidth > 16 && longAhead < 8) longPassScore *= 0.48;
+    else if (longWidth > 20) longPassScore *= 0.55;
+    else if (longWidth > 14) longPassScore *= 0.85;
+    if (longAhead > 10 && longWidth < 16) longPassScore += 0.18 + vision * 0.08;
+    else if (longAhead > 14 && longWidth < 20) longPassScore += 0.12;
   }
   const boxMate = teammates.some(
     (t) =>
@@ -385,7 +394,7 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   }
 
   // Gilt-edged / near-open-goal: shoot — keeper may still dive, but pass is wrong.
-  if (clearChance.quality > 0.35) {
+  if (clearChance.quality > 0.55) {
     shotScore = Math.max(
       shotScore,
       0.62 + clearChance.quality * 0.95 + shoot * 0.28 + (clearChance.gkExposed ? 0.22 : 0.08),
@@ -397,12 +406,12 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     longPassScore *= 0.2;
     crossScore *= 0.35;
   }
-  // Buckland CanShoot hard gate — force the finish when the lane is open.
-  if (canShoot(carrier, opponents) && clearChance.quality >= 0.28) {
-    shotScore = Math.max(shotScore, 0.88 + shoot * 0.2);
-    passScore *= 0.45;
-    holdScore *= 0.15;
-    throughBallScore *= 0.3;
+  // CanShoot hard gate — only force the finish on a genuine clear chance.
+  if (canShoot(carrier, opponents) && clearChance.quality >= 0.42 && possessionTime > 0.45) {
+    shotScore = Math.max(shotScore, 0.82 + shoot * 0.2);
+    passScore *= 0.48;
+    holdScore *= 0.18;
+    throughBallScore *= 0.35;
   }
   // Phase weights: transition = progressive; chance = shoot/through; build = recycle.
   const phase = matchPhase(carrier, ball, carrier.side, {
@@ -433,21 +442,25 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     runScore *= closeSupport ? 1.05 : 0.72;
     // Style-aware crush: possession kills long; direct keeps progressive alive.
     const phaseW = playStylePassWeights(style, { phase });
-    throughBallScore *= throughT && throughBallScore > 0.35 ? Math.max(0.72, phaseW.buildupCrush + 0.15) : phaseW.buildupCrush;
-    longPassScore *= pressure > 0.55 ? 0.55 : directTeam ? 0.72 : counterTeam ? 0.4 : 0.38;
+    throughBallScore *= throughT && throughBallScore > 0.28 ? Math.max(0.78, phaseW.buildupCrush + 0.22) : Math.max(0.55, phaseW.buildupCrush);
+    // Keep progressive long outlets alive — was crushed to near-zero in sims.
+    longPassScore *= pressure > 0.55 ? 0.88 : directTeam ? 1.05 : counterTeam ? 0.78 : 0.85;
+    if (longT && !wantBuildup) longPassScore += 0.12;
+    if (longT && pressure > 0.4) longPassScore += 0.16;
     // Don't suppress finishing when the chance is already there.
     if (clearChance.quality < 0.4) {
       shotScore *= 0.35;
       longShotScore *= 0.25;
     }
     if (progress < 0.5 && clearChance.quality < 0.4) {
-      passScore += 0.28;
+      passScore += 0.22;
       runScore *= 0.62;
       holdScore += 0.12;
-      longPassScore *= 0.45;
+      longPassScore *= directTeam ? 0.85 : 0.72;
       shotScore *= 0.2;
     } else if (progress < 0.5) {
-      passScore += 0.12;
+      passScore += 0.1;
+      if (longT && longPassScore > 0.12) longPassScore += 0.06;
     }
     if (recycleTarget && pressure > 0.5 && possessionTime > 0.9 && !closeSupport && !openCarry) {
       passScore += 0.1;
@@ -525,16 +538,17 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   }
 
   if (midfield && progress < 0.78) {
-    passScore += 0.28;
+    passScore += 0.22;
     holdScore *= 0.7;
-    throughBallScore *= 1.05;
-    longPassScore *= 0.22;
+    throughBallScore *= 1.08;
+    // Midfielders must keep long / switch outlets — 0.22 crush killed ~all long passes.
+    longPassScore *= directTeam ? 0.95 : 0.72;
     if (Math.abs(carrier.z) < 14) runScore += 0.08;
     if (shortT && Math.abs(shortT.z - carrier.z) > 9) {
       const ahead = (shortT.x - carrier.x) * carrier.attackSign;
-      passScore += ahead > 5 ? 0.16 : ahead > 2 ? 0.04 : -0.22;
+      passScore += ahead > 5 ? 0.14 : ahead > 2 ? 0.04 : -0.22;
     }
-    if (recycleTarget && !closeSupport && !openCarry && pressure > 0.4) passScore += 0.14;
+    if (recycleTarget && !closeSupport && !openCarry && pressure > 0.4) passScore += 0.12;
   }
 
   // Prefer a progressive switch; flat midfield switches are weak.
@@ -557,14 +571,20 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     passScore *= 0.88;
     throughBallScore += 0.12;
   }
-  longPassScoreAdj *= wantBuildup ? (pressure > 0.5 ? 0.85 : 0.78) : 0.95;
+  longPassScoreAdj *= wantBuildup ? (pressure > 0.5 ? 0.95 : 0.9) : 1.05;
+  // When short lanes are clogged, elevate progressive long / through.
+  if (shortT && lane < 0.42 && longT && longPassScoreAdj > 0.1) {
+    longPassScoreAdj += 0.14;
+    passScore *= 0.88;
+  }
+  if (!shortT && longT) longPassScoreAdj += 0.18;
 
-  // Final floor: clear chances must outrank recycle/pass after all modifiers.
-  if (clearChance.quality > 0.4) {
-    shotScore = Math.max(shotScore, 0.88 + clearChance.quality * 0.75 + shoot * 0.18);
-    passScore = Math.min(passScore, shotScore - 0.12);
-    runScore = Math.min(runScore, shotScore - 0.2);
-    holdScore = Math.min(holdScore, 0.08);
+  // Final floor: only gilt-edged chances must outrank recycle/pass.
+  if (clearChance.quality > 0.62 && possessionTime > 0.5) {
+    shotScore = Math.max(shotScore, 0.82 + clearChance.quality * 0.65 + shoot * 0.15);
+    passScore = Math.min(passScore, shotScore - 0.08);
+    runScore = Math.min(runScore, shotScore - 0.15);
+    holdScore = Math.min(holdScore, 0.1);
   }
 
   const scores: AttackScores = {

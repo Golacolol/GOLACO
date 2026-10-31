@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { layoutById } from "./TableLayouts";
 import type { TableLayout } from "./TableLayouts";
 import { createRodState, stepRodKick, stepRodSlide, type TableRodState } from "./TableRod";
-import { createTableBall, serveTableBall, type TableBallState } from "./TableBall";
+import { createTableBall, serveTableBall, stepGoalSink, type TableBallState } from "./TableBall";
 import { stepTableBall } from "./TablePhysics";
 import { TableCamera } from "./TableCamera";
 import { TableInput, createTableIntent, type TableIntent } from "./TableInput";
@@ -32,6 +32,8 @@ export class TableMatch {
   private serveT = 0;
   private goalT = 0;
   private stuckT = 0;
+  /** Side that just scored — drives the ball into the goal abyss during `goal` phase. */
+  private lastScorer: "home" | "away" | null = null;
   private nextServeToward: "home" | "away" = "away";
   private light: THREE.DirectionalLight;
   private amb: THREE.AmbientLight;
@@ -124,8 +126,10 @@ export class TableMatch {
       this.serveT -= dt;
       if (this.serveT <= 0) this.phase = "play";
     } else if (this.phase === "goal") {
+      if (this.lastScorer) stepGoalSink(this.ball, this.layout.dims, this.lastScorer, dt);
       this.goalT -= dt;
       if (this.goalT <= 0) {
+        this.lastScorer = null;
         if (this.winner) this.phase = "over";
         else this.beginServe(this.nextServeToward);
       }
@@ -167,8 +171,12 @@ export class TableMatch {
         if (goal === "home") this.homeScore += 1;
         else this.awayScore += 1;
         this.phase = "goal";
-        this.goalT = 1.1;
+        this.lastScorer = goal;
+        this.goalT = 1.35;
         this.stuckT = 0;
+        // Keep residual pace into the mouth so the sink reads immediately.
+        const sign = goal === "home" ? 1 : -1;
+        this.ball.vx = sign * Math.max(Math.abs(this.ball.vx), 5.5);
         this.nextServeToward = goal === "home" ? "away" : "home";
         if (this.homeScore >= this.config.firstTo) this.winner = "home";
         if (this.awayScore >= this.config.firstTo) this.winner = "away";

@@ -907,13 +907,13 @@ export class CharacterSelect {
             </div>
           </aside>
           <div class="team-pitch" aria-label="Formation pitch">
+            <span class="pitch-goal-mouth pitch-goal-mouth-own" aria-hidden="true"></span>
+            <span class="pitch-goal-mouth pitch-goal-mouth-opp" aria-hidden="true"></span>
             <div class="team-pitch-markings" aria-hidden="true">
               <span class="pitch-penalty pitch-penalty-own"></span>
               <span class="pitch-penalty pitch-penalty-opp"></span>
               <span class="pitch-six pitch-six-own"></span>
               <span class="pitch-six pitch-six-opp"></span>
-              <span class="pitch-goal-mouth pitch-goal-mouth-own"></span>
-              <span class="pitch-goal-mouth pitch-goal-mouth-opp"></span>
             </div>
             ${(() => {
               const raw = form.map((slot) => {

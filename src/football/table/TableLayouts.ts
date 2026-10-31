@@ -50,7 +50,8 @@ const BASE_DIMS: TableDims = {
   wallHeight: 0.55,
   playY: 0.42,
   goalWidth: 2.1,
-  goalDepth: 0.35,
+  /** Deep enough that the ball can vanish into the black mouth. */
+  goalDepth: 0.72,
   ballRadius: 0.11,
   manRadius: 0.16,
   manHeight: 0.55,
@@ -137,13 +138,23 @@ export function layoutById(
   return frenchClassicLayout();
 }
 
-/** Max slide offset so outermost men stay inside side walls with margin. */
+/**
+ * Centre-to-centre spacing along a rod.
+ * Clear gap between man surfaces ≤ ~ball diameter so the ball cannot settle
+ * in a channel where a slide/strike cannot reach it (real-table behaviour).
+ */
+export function manCenterSpacing(dims: TableDims): number {
+  const maxClearGap = dims.ballRadius * 2 * 0.88;
+  return 2 * dims.manRadius + maxClearGap;
+}
+
+/** Max slide offset so outermost men can cover the side walls. */
 export function maxSlideForRod(men: number, dims: TableDims): number {
   if (men <= 0) return 0;
-  const span = dims.width * 0.78;
-  const spacing = men === 1 ? 0 : span / (men + 1);
+  if (men === 1) return Math.max(0, dims.width / 2 - dims.manRadius - 0.14);
+  const spacing = manCenterSpacing(dims);
   const outer = spacing * ((men - 1) / 2);
-  const margin = dims.manRadius + 0.12;
+  const margin = dims.manRadius + 0.1;
   return Math.max(0, dims.width / 2 - outer - margin);
 }
 
@@ -151,13 +162,16 @@ export function maxSlideForRod(men: number, dims: TableDims): number {
 export function manLocalZs(men: number, dims: TableDims): number[] {
   if (men <= 0) return [];
   if (men === 1) return [0];
-  const span = dims.width * 0.78;
-  const step = span / (men + 1);
+  const spacing = manCenterSpacing(dims);
   const zs: number[] = [];
-  for (let i = 1; i <= men; i++) {
-    zs.push(-span / 2 + step * i);
+  const half = ((men - 1) / 2) * spacing;
+  for (let i = 0; i < men; i++) {
+    zs.push(-half + i * spacing);
   }
-  // Re-center
-  const mid = (zs[0] + zs[zs.length - 1]) / 2;
-  return zs.map((z) => z - mid);
+  return zs;
+}
+
+/** Clear gap between adjacent man surfaces (must stay ≤ ball diameter). */
+export function manClearGap(dims: TableDims): number {
+  return manCenterSpacing(dims) - 2 * dims.manRadius;
 }

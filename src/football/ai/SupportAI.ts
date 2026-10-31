@@ -174,18 +174,30 @@ function keepOnside(
   const stretchBias = playStyle?.stretchBias ?? 0.55;
   if (opponents.length > 0) {
     const line = offsideLineX(opponents, player.attackSign);
-    // Clearer onside buffer — still allow a legal channel ahead of midfield.
-    const margin = isSt ? 1.35 : 0.95;
-    const onsideX = line - dir * margin;
-    if ((x - onsideX) * dir > 0) x = onsideX;
+    // Stretch runs: pin just beyond the line so mistimed throughs can flag.
+    // Other roles: soft onside buffer.
+    const stretchRole = role === "FORWARD_RUN" || role === "PENALTY_AREA_RUN";
+    if (stretchRole && stretchBias > 0.4) {
+      const beyond = (isSt ? 0.55 : 0.35) + stretchBias * 0.85;
+      const stretchX = line + dir * beyond;
+      // Pull onto the offside pocket when the natural spot is short of it.
+      if ((stretchX - x) * dir > 0) x = stretchX;
+      // Cap how far beyond so it's "barely" offside, not a free run.
+      const maxOff = line + dir * (1.6 + stretchBias * 0.8);
+      if ((x - maxOff) * dir > 0) x = maxOff;
+    } else {
+      const margin = isSt ? 0.12 : 0.08;
+      const onsideX = line - dir * margin;
+      if ((x - onsideX) * dir > 0) x = onsideX;
+    }
   }
   if (carrier && isSt) {
     const stretch =
       role === "FORWARD_RUN" || role === "PENALTY_AREA_RUN"
-        ? 7.2 + stretchBias * 3.2 + (player.attrs.pace / 100) * 2.2
+        ? 8.5 + stretchBias * 4.0 + (player.attrs.pace / 100) * 2.8
         : role === "CHECK_TO_BALL"
           ? 4.2
-          : 6.5 + stretchBias * 1.5;
+          : 7.0 + stretchBias * 2.0;
     const maxAhead = carrier.x + dir * stretch;
     if ((x - maxAhead) * dir > 0) x = maxAhead;
     // Only hard-hold deep in true build-up — mid-third must allow breaking runs.

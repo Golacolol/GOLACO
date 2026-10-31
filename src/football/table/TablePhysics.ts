@@ -62,14 +62,15 @@ function collideRod(ball: TableBallState, rod: TableRodState, dims: TableDims): 
   const attackDir = rod.spec.side === "home" ? 1 : -1;
   const striking = rod.strikeArc > 0.02 || Math.abs(rod.spinVel) > 3;
   const footPhase = Math.sin(rod.angle);
-  // Slightly larger hitbox while swinging so a near miss still connects.
-  const rad = dims.manRadius + ball.radius + (striking ? 0.06 : 0);
+  const still = Math.hypot(ball.vx, ball.vz) < 0.35;
+  // Slightly larger hitbox while swinging / when the ball is dead so gaps stay coverable.
+  const rad = dims.manRadius + ball.radius + (striking ? 0.07 : still ? 0.04 : 0.01);
 
   for (const man of men) {
     const dx = ball.x - man.x;
     const dz = ball.z - man.z;
     const dist = Math.hypot(dx, dz);
-    if (dist > rad + 0.03 || dist < 1e-6) continue;
+    if (dist > rad + 0.04 || dist < 1e-6) continue;
 
     const nx = dx / dist;
     const nz = dz / dist;
@@ -86,8 +87,8 @@ function collideRod(ball: TableBallState, rod: TableRodState, dims: TableDims): 
       continue;
     }
 
-    // Passive block / soft bump when feet are roughly down in the play plane.
-    const active = Math.abs(footPhase) > 0.2;
+    // Passive block / soft bump — feet down, or ball nearly still next to a man (no dead settle).
+    const active = Math.abs(footPhase) > 0.15 || still;
     const rvx = ball.vx;
     const rvz = ball.vz;
     const vn = rvx * nx + rvz * nz;
@@ -97,7 +98,8 @@ function collideRod(ball: TableBallState, rod: TableRodState, dims: TableDims): 
     ball.vx += j * nx;
     ball.vz += j * nz;
     if (active) {
-      ball.vx += attackDir * 0.35;
+      ball.vx += attackDir * (still ? 0.85 : 0.35);
+      if (still) ball.vz += nz * 0.55;
     }
   }
 }
