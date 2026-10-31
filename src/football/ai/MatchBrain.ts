@@ -135,7 +135,9 @@ export function classifyFootballRole(player: Player): FootballRole {
   if (s.includes("CB") || s === "CB") return "CB";
   if (s === "LB" || s === "RB" || s === "LWB" || s === "RWB") return "FB";
   if (s.includes("DM")) return "DM";
-  if (s === "CAM" || s.includes("AM") || s === "LAM" || s === "RAM") return "AM";
+  // Wide AMs hold the half-space / flank — treat as WM so they keep channel floors.
+  if (s === "LAM" || s === "RAM") return "WM";
+  if (s === "CAM" || s === "AM" || s.includes("AM")) return "AM";
   if (s === "LW" || s === "RW") return "W";
   if (s === "LM" || s === "RM") return "WM";
   if (s.includes("ST") || player.position === "ST") return "CF";

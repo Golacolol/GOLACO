@@ -175,6 +175,9 @@ export function updateTeamAI(
     if (p.isGK) continue;
     p.giveAndGoTimer = Math.max(0, p.giveAndGoTimer - dt);
     if (extras?.kickOff) {
+      // Hold kick-off shape desires so the first PLAYING frame doesn't read (0,0).
+      p.desiredX = p.anchorX;
+      p.desiredZ = p.anchorZ;
       movePlayer(p, dt, 0, 0, false, false, { hasBall: p.hasBall, pressure: 0, ...moveEx });
       continue;
     }
@@ -366,11 +369,13 @@ export function updateTeamAI(
       let shapeW =
         shape.role === "CB" || shape.role === "DM"
           ? 0.55
-          : shape.role === "W" || shape.role === "WM"
-            ? 0.94
+          : shape.role === "W" || shape.role === "WM" || shape.role === "FB"
+            ? 0.9
             : shape.role === "CF" || shape.role === "AM"
               ? 0.82
-              : 0.4;
+              : shape.role === "CM"
+                ? 0.52
+                : 0.4;
       const widthW =
         shape.role === "W" || shape.role === "WM" || shape.role === "FB" ? Math.min(0.96, shapeW + 0.12) : shapeW;
       target = {
@@ -388,6 +393,12 @@ export function updateTeamAI(
         const side = Math.sign(p.anchorZ || 1) || 1;
         const floorZ = side * (shape.role === "FB" ? 22 : 20);
         if (Math.abs(target.z) < Math.abs(floorZ)) target.z = floorZ;
+      }
+      // Central mids keep a soft lane floor so cover doesn't squash them onto the ball.
+      if (shape.role === "CM" && Math.abs(p.anchorZ) > 8) {
+        const side = Math.sign(p.anchorZ || 1) || 1;
+        const floorZ = side * Math.min(14, Math.abs(p.anchorZ) * 0.68);
+        if (Math.abs(target.z) < Math.abs(floorZ)) target.z = target.z * 0.4 + floorZ * 0.6;
       }
       // Cover shadow: CB sits behind the lead presser.
       if (shape.role === "CB" && presser && closerIds.has(presser.id)) {
@@ -424,11 +435,21 @@ export function updateTeamAI(
                 ? attackPhase === "attack" || attackPhase === "chance" || attackPhase === "transition"
                   ? 0.58
                   : 0.36
-                : inFlightAttack
-                  ? 0.22
-                  : 0.3;
+                : shape.role === "CM" || shape.role === "DM"
+                  ? inFlightAttack
+                    ? 0.48
+                    : attackPhase === "build"
+                      ? 0.62
+                      : 0.55
+                  : inFlightAttack
+                    ? 0.22
+                    : 0.3;
       const widthW =
-        shape.role === "FB" || shape.role === "W" || shape.role === "WM" ? Math.min(0.97, shapeW + 0.22) : shapeW;
+        shape.role === "FB" || shape.role === "W" || shape.role === "WM"
+          ? Math.min(0.97, shapeW + 0.22)
+          : shape.role === "CM" || shape.role === "DM"
+            ? Math.min(0.78, shapeW + 0.12)
+            : shapeW;
       target = {
         x: support.x * (1 - shapeW) + shape.x * shapeW,
         z: support.z * (1 - widthW) + shape.z * widthW,
@@ -520,10 +541,14 @@ export function updateTeamAI(
       // Wide roles: only take lateral pull if it stays/goes wider.
       if (supportSpot && (shape.role === "CM" || shape.role === "AM")) {
         const sameSide = Math.sign(p.anchorZ || 1) === Math.sign(supportSpot.z || 1) || Math.abs(supportSpot.z) < 7;
-        const pull = sameSide ? (inFlightAttack ? 0.4 : 0.34) : 0.16;
+        const pull = sameSide ? (inFlightAttack ? 0.22 : 0.16) : 0.08;
+        const nextZ = target.z * (1 - pull) + supportSpot.z * pull;
+        // Don't drag a wide-anchored mid onto a central Buckland spot.
+        const collapse =
+          Math.abs(p.anchorZ) > 8 && Math.abs(supportSpot.z) < Math.abs(p.anchorZ) * 0.55;
         target = {
           x: target.x * (1 - pull) + supportSpot.x * pull,
-          z: target.z * (1 - pull) + supportSpot.z * pull,
+          z: collapse ? target.z : nextZ,
         };
       } else if (supportSpot && (shape.role === "WM" || shape.role === "W")) {
         const side = Math.sign(p.anchorZ || 1) || 1;
@@ -538,6 +563,12 @@ export function updateTeamAI(
           x: target.x,
           z: target.z * (1 - pull) + supportSpot.z * pull,
         };
+      }
+      // Midfield lanes last — re-assert after support-spot pull so kick-off shape survives.
+      if ((shape.role === "CM" || shape.role === "DM") && Math.abs(p.anchorZ) > 8) {
+        const side = Math.sign(p.anchorZ || 1) || 1;
+        const floorZ = side * Math.min(14, Math.max(9, Math.abs(p.anchorZ) * 0.75));
+        if (Math.abs(target.z) < Math.abs(floorZ)) target.z = target.z * 0.25 + floorZ * 0.75;
       }
     }
     target = pitchClamp(target.x, target.z, 2.2);

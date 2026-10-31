@@ -124,9 +124,16 @@ export function supportTarget(
 
   const aheadMul = 0.7 + awareness * 0.55;
   if (role === "SUPPORT_SIDE") {
-    // Pocket receive option ~10–14m — always a passable outlet beside the carrier.
+    // Pocket beside the carrier, but keep the player's formation lane —
+    // both CMs parking at carrier.z ± 8.5 collapses the whole midfield.
     x = carrier.x + dir * (2.2 + awareness * 1.2) * aheadMul;
-    z = carrier.z + (player.anchorZ >= 0 ? 8.5 : -8.5);
+    const lane = Math.sign(player.anchorZ || 1) || 1;
+    const pocket = 8.5 + awareness * 1.2;
+    z = player.anchorZ * 0.64 + (carrier.z + lane * pocket) * 0.36;
+    if (Math.abs(player.anchorZ) > 9) {
+      const floor = lane * Math.max(10, Math.abs(player.anchorZ) * 0.7);
+      if (Math.abs(z) < Math.abs(floor)) z = z * 0.35 + floor * 0.65;
+    }
   } else if (role === "OVERLAP") {
     // Track the furthest of carrier/ball so overlaps reach the final third.
     const refX = dir > 0 ? Math.max(carrier.x, ballX) : Math.min(carrier.x, ballX);

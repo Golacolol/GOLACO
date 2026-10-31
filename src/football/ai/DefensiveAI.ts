@@ -156,7 +156,10 @@ export function coverTarget(
       ? 0.28 + aw * 0.42
       : 0.12 + aw * 0.14;
   let x = player.anchorX + (ballX - player.anchorX) * compact;
-  let z = player.anchorZ + (ballZ - player.anchorZ) * (0.12 + aw * 0.14);
+  // Wide anchors keep channel — ball Z pull was collapsing the block after kick-off.
+  const lateral =
+    Math.abs(player.anchorZ) > 14 ? 0.05 + aw * 0.05 : Math.abs(player.anchorZ) > 8 ? 0.08 + aw * 0.08 : 0.12 + aw * 0.14;
+  let z = player.anchorZ + (ballZ - player.anchorZ) * lateral;
   const ownGoal = player.ownGoalX();
   const isCb = player.slot.includes("CB");
   const isScreen = player.slot.includes("DM") || (player.slot.includes("CM") && !player.slot.includes("CAM"));
@@ -186,7 +189,7 @@ export function coverTarget(
     const len = Math.hypot(toBallX, toBallZ) || 1;
     const depth = 10 + aw * 6;
     const screenX = ownGoal + (toBallX / len) * depth;
-    const screenZ = (toBallZ / len) * depth * 0.55 + player.anchorZ * 0.35;
+    const screenZ = (toBallZ / len) * depth * 0.35 + player.anchorZ * 0.55;
     const blend = 0.4 + aw * 0.35;
     x = x * (1 - blend) + screenX * blend;
     z = z * (1 - blend) + screenZ * blend;

@@ -70,3 +70,36 @@ describe("team shape when the keeper has the ball", () => {
     expect(Math.hypot(st.desiredX - ball.x, st.desiredZ - ball.z)).toBeGreaterThan(15);
   });
 });
+
+describe("team width after kick-off", () => {
+  it("does not collapse both CMs onto the ball after the opening pass", () => {
+    const carrier = make("cm", 2, 0, "RCM");
+    carrier.hasBall = true;
+    carrier.anchorX = 0;
+    carrier.anchorZ = 6;
+    const lcm = make("lcm", -2, -12, "LCM");
+    lcm.anchorX = 0;
+    lcm.anchorZ = -12;
+    const rcm = make("rcm", -1, 12, "RCM");
+    rcm.anchorX = 0;
+    rcm.anchorZ = 12;
+    const ball = new Ball();
+    ball.x = carrier.x;
+    ball.z = carrier.z;
+    ball.ownerId = carrier.id;
+    updateTeamAI([carrier, lcm, rcm], "home", ball, "home", 0.2, new Set());
+    expect(Math.abs(lcm.desiredZ)).toBeGreaterThan(7);
+    expect(Math.abs(rcm.desiredZ)).toBeGreaterThan(7);
+    expect(Math.abs(lcm.desiredZ - rcm.desiredZ)).toBeGreaterThan(12);
+  });
+
+  it("stores kick-off desires on formation anchors", () => {
+    const st = make("st", 8, 4, "LST");
+    st.anchorX = 12;
+    st.anchorZ = 6;
+    const ball = new Ball();
+    updateTeamAI([st], "home", ball, null, 0.16, new Set(), { kickOff: true });
+    expect(st.desiredX).toBe(st.anchorX);
+    expect(st.desiredZ).toBe(st.anchorZ);
+  });
+});

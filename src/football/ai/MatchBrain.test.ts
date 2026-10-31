@@ -61,8 +61,22 @@ describe("MatchBrain position model", () => {
     expect(classifyFootballRole(make("cm", 0, 2, "LCM"))).toBe("CM");
     expect(classifyFootballRole(make("rm", 4, 18, "RM"))).toBe("WM");
     expect(classifyFootballRole(make("am", 10, 0, "CAM"))).toBe("AM");
+    expect(classifyFootballRole(make("lam", 10, -22, "LAM"))).toBe("WM");
+    expect(classifyFootballRole(make("ram", 10, 22, "RAM"))).toBe("WM");
     expect(classifyFootballRole(make("rw", 16, 20, "RW"))).toBe("W");
     expect(classifyFootballRole(make("st", 22, 0, "RST"))).toBe("CF");
+  });
+
+  it("keeps wide AMs in their channel after kick-off build with ball central", () => {
+    const ball = new Ball();
+    ball.x = 0;
+    ball.z = 0;
+    const ram = make("ram", 8, 22, "RAM");
+    ram.anchorX = 8;
+    ram.anchorZ = 22;
+    const t = roleShapeTarget(ram, ball, "home");
+    expect(t.role).toBe("WM");
+    expect(Math.abs(t.z)).toBeGreaterThanOrEqual(18);
   });
 
   it("keeps CBs deeper than CFs when attacking", () => {
