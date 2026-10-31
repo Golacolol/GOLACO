@@ -529,23 +529,27 @@ html.club-name-glow-off .club-line {
     0 2px 0 rgba(90, 48, 0, 0.45),
     0 8px 22px rgba(0, 0, 0, 0.5);
 }
-.menu-hero h1 .title-line {
-  display: block;
+.menu-hero h1 .title-line,
+.pause-brand .title-line {
+  display: flex;
+  align-items: center;
+  gap: 0.12em;
   white-space: nowrap;
   overflow: visible;
   max-width: 100%;
 }
 .title-emoji {
   display: inline-block;
-  font-size: 1em;
+  /* Match capital height of the title face (emoji glyphs overshoot 1em). */
+  font-size: 1cap;
   line-height: 1;
-  vertical-align: -0.05em;
-  margin-left: 0.08em;
+  margin-left: 0;
+  transform: translateY(0.02em);
   filter: drop-shadow(0 2px 0 rgba(90, 48, 0, 0.35));
 }
 .pause-brand .title-emoji {
-  font-size: 1em;
-  vertical-align: -0.05em;
+  font-size: 1cap;
+  transform: translateY(0.02em);
 }
 .eyebrow { color: var(--gold); letter-spacing: 0.08em; font-size: 12px; }
 .menu-hero .sub { opacity: 0.78; margin: 12px 0 18px; max-width: 28ch; }
@@ -2101,7 +2105,9 @@ td, th { border-bottom: 1px solid #234; padding: 6px; }
   margin: 0 0 14px;
 }
 .pause-brand .title-line {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.12em;
   white-space: nowrap;
 }
 .pause-card h2 {
