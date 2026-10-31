@@ -1281,7 +1281,7 @@ html.club-name-glow-off .club-line {
 }
 .team-roster-card h3 {
   margin: 4px 0 2px;
-  font-size: 13px;
+  font-size: 17px;
   letter-spacing: 0.04em;
   line-height: 1.2;
 }
@@ -1486,13 +1486,21 @@ html.club-name-glow-off .club-line {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.roster-pos,
-.roster-role {
+.roster-pos {
   font-size: 9px;
   letter-spacing: 0.06em;
   opacity: 0.55;
 }
-.roster-row.on .roster-role { color: var(--gold); opacity: 0.9; }
+.roster-role {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+  min-width: 1.6em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.roster-row.on .roster-role { color: var(--gold); opacity: 0.95; }
 .team-pitch {
   position: relative;
   width: 100%;
@@ -1610,8 +1618,8 @@ html.club-name-glow-off .club-line {
   position: absolute;
   left: 50%;
   width: 14%;
-  /* Match .team-pitch-markings vertical inset (6%) so the open mouth sits on the goal line. */
-  height: 6%;
+  /* Half the former depth; open edge still sits on the markings goal line. */
+  height: 3%;
   box-sizing: border-box;
   border: 2px solid rgba(244, 247, 242, 0.55);
   background: rgba(244, 247, 242, 0.14);
@@ -2398,6 +2406,12 @@ td, th { border-bottom: 1px solid #234; padding: 6px; }
   justify-content: center;
   color: #fff;
   letter-spacing: 0.08em;
+}
+/* Author `display:flex` above (and .bench-card .portrait-badge-kit) must not beat [hidden]
+   or GK green fallback discs paint over loaded substitute PNGs. */
+.portrait-badge[hidden],
+.portrait-badge-kit[hidden] {
+  display: none !important;
 }
 .portrait-badge .num { font-size: 1.35em; font-weight: 800; line-height: 1; }
 .portrait-badge .ini { font-size: 0.72em; opacity: 0.9; margin-top: 4px; }

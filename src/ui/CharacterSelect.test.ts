@@ -299,15 +299,36 @@ describe("character select", () => {
     view.render();
     const rows = [...view.root.querySelectorAll(".roster-row")].map((row) => ({
       num: row.querySelector(".roster-num")?.textContent ?? "",
-      role: row.querySelector(".roster-role")?.textContent ?? "",
+      ovr: row.querySelector(".roster-role")?.textContent ?? "",
     }));
-    const xi = rows.filter((r) => r.role === "XI");
-    const sub = rows.filter((r) => r.role === "SUB");
-    expect(xi.length).toBe(11);
-    expect(rows.slice(0, 11).every((r) => r.role === "XI")).toBe(true);
-    expect(rows.slice(11).every((r) => r.role === "SUB")).toBe(true);
-    expect(xi.map((r) => r.num)).toEqual(["1", "2", "5", "6", "3", "7", "8", "4", "11", "9", "10"]);
-    expect(sub.map((r) => r.num)).toEqual(["13", "12", "14", "19"]);
+    expect(rows).toHaveLength(15);
+    expect(rows.every((r) => /^\d+$/.test(r.ovr))).toBe(true);
+    expect(rows[0]?.ovr).toBe("74");
+    expect(rows.map((r) => r.num)).toEqual(["1", "2", "5", "6", "3", "7", "8", "4", "11", "9", "10", "13", "12", "14", "19"]);
+  });
+
+  it("keeps substitute GK PNG markers (green badge stays hidden fallback)", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    const view = new CharacterSelect(host);
+    const starters = squad();
+    const petey = makePlayer("bgk", "P. Petey", "GK", 13);
+    petey.player.appearance = { portraitAsset: "/images/l13.png" };
+    view.setSquad("Argyle Fans XI", starters, "#007A3D", {
+      formation: "4-4-2",
+      roster: [...starters, petey],
+      starterSlots: ["GK", "LB", "RB", "RCB", "LCB", "LM", "RM", "RCM", "LCM", "LST", "RST"],
+      secondaryColor: "#FFFFFF",
+    });
+    view.render();
+    const marker = view.root.querySelector('.bench-card[data-id="bgk"] .kit-marker');
+    expect(marker?.classList.contains("kit-marker-photo")).toBe(true);
+    expect(marker?.querySelector("img")?.getAttribute("src")).toContain("l13.png");
+    const badge = marker?.querySelector(".portrait-badge-kit") as HTMLElement | null;
+    expect(badge?.hasAttribute("hidden")).toBe(true);
+    expect(badge?.style.background.toLowerCase()).toBe("rgb(31, 174, 91)");
+    view.dispose();
+    host.remove();
   });
 
   it("shows pause formation nav with Apply/Back and hides player/team mode toggles", () => {

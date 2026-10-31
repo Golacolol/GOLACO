@@ -1273,12 +1273,12 @@ export class CharacterSelect {
                 .map((p) => {
                   const name = kitSurname(p.player.displayName || p.player.name);
                   const active = p.player.id === selectedId ? "on" : "";
-                  const role = onPitch.has(p.player.id) ? "XI" : "SUB";
+                  const ovr = Math.round(p.overall);
                   return `<button type="button" class="roster-row ${active}" data-char="pick" data-id="${p.player.id}" title="Left-click select · Right-click edit">
                     <span class="roster-num">${p.shirtNumber}</span>
                     <span class="roster-name">${escapeHtml(name)}</span>
                     <span class="roster-pos">${p.player.primaryPosition}</span>
-                    <span class="roster-role">${role}</span>
+                    <span class="roster-role">${ovr}</span>
                   </button>`;
                 })
                 .join("")}
