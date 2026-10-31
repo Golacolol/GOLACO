@@ -115,6 +115,8 @@ describe("player portraits", () => {
   it("treats a missing portrait as optional and returns a safe fallback", () => {
     expect(portraitAsset({ name: "M. Cooper", appearance: { portraitAsset: null } })).toBeNull();
     expect(portraitAsset({ name: "M. Cooper" })).toBeNull();
+    // Id alone must not invent a PNG URL — that caused formation under-caption flash.
+    expect(portraitAsset({ id: "player_cooper", name: "M. Cooper" })).toBeNull();
     const html = portraitHtml({ name: "M. Cooper" }, 1);
     expect(html).toContain("portrait-badge");
     expect(html).not.toContain("<img");

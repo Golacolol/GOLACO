@@ -2127,26 +2127,129 @@ html.club-name-glow-off .club-line {
   line-height: 1.35;
   text-align: center;
 }
-@media (max-width: 980px) {
+/* Mid widths: keep the desktop triad (roster | pitch | bench), just tighter. */
+@media (max-width: 1180px) {
   .char-panel-team {
-    height: auto;
-    max-height: min(94vh, 980px);
-    overflow: auto;
+    min-width: min(98vw, 1180px);
+    max-width: 98vw;
   }
   .team-select-body {
-    grid-template-columns: 1fr;
-    flex: 0 0 auto;
+    grid-template-columns: minmax(150px, 180px) minmax(0, 1fr) minmax(150px, 190px);
+    gap: 8px;
   }
-  .team-roster,
-  .team-bench {
+  .team-roster-card .portrait {
+    width: 56px;
+    height: 56px;
+  }
+  .team-roster-card .profile-stats,
+  .team-roster-card .profile-stats-compact {
+    transform-origin: top center;
+  }
+}
+
+/*
+ * Phones / narrow: pitch first (formation is the job), then player card + hex, then bench.
+ * Avoid roster overflow painting under the opaque pitch (that hid the hex).
+ */
+@media (max-width: 760px) {
+  .char-panel-team {
+    min-width: 0;
+    width: min(100vw - 12px, 98vw);
+    max-width: 98vw;
     height: auto;
-    max-height: 280px;
+    max-height: min(96vh, 980px);
+    overflow: auto;
+    padding: 10px 8px 8px;
+  }
+  .team-select-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "pitch"
+      "roster"
+      "bench";
+    gap: 10px;
+    flex: 0 0 auto;
+    min-height: 0;
+    align-items: start;
   }
   .team-pitch {
-    height: min(48vh, 420px);
+    grid-area: pitch;
+    width: 100%;
+    height: auto;
     min-height: 260px;
+    max-height: min(58vh, 520px);
+    aspect-ratio: 68 / 105;
   }
-  .char-panel-team { min-width: min(98vw, 960px); max-width: 98vw; }
+  .pitch-slot {
+    width: 84px;
+    min-height: 96px;
+  }
+  .char-panel-team .pitch-token .portrait,
+  .char-panel-team .kit-marker .portrait,
+  .team-pitch .pitch-token .portrait,
+  .team-pitch .kit-marker .portrait {
+    width: 64px;
+    height: 64px;
+  }
+  .char-panel-team .kit-marker,
+  .team-pitch .kit-marker {
+    max-width: 84px;
+  }
+  .char-panel-team .kit-marker-caption,
+  .team-pitch .kit-marker-caption {
+    max-width: 84px;
+    width: 84px;
+  }
+  .char-panel-team .portrait-badge-kit .num,
+  .team-pitch .portrait-badge-kit .num {
+    font-size: 16px;
+  }
+  .char-panel-team .portrait-badge-kit .sur,
+  .team-pitch .portrait-badge-kit .sur {
+    font-size: 12px;
+  }
+  .team-roster {
+    grid-area: roster;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+  .team-bench {
+    grid-area: bench;
+    height: auto;
+    max-height: min(42vh, 360px);
+    overflow: hidden;
+  }
+  .team-roster-card {
+    flex: 0 0 auto;
+    overflow: visible;
+  }
+  .team-roster-card .portrait {
+    width: 56px;
+    height: 56px;
+  }
+  .team-roster-card .profile-stats,
+  .team-roster-card .profile-stats-compact {
+    /* Keep the hex fully visible — never clipped under the pitch above. */
+    position: relative;
+    z-index: 1;
+    margin: 4px auto 0;
+  }
+  .team-roster-list {
+    max-height: min(28vh, 220px);
+  }
+  .team-bench-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: auto;
+  }
+  .bench-card {
+    width: auto;
+    min-width: 72px;
+    flex: 0 0 auto;
+  }
 }
 .char-panel-team .char-modes,
 .char-panel-team .char-nav {

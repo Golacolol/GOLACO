@@ -24,11 +24,14 @@ export interface KitMarkerOptions {
   className?: string;
 }
 
+/**
+ * Known portrait URL only (explicit appearance path).
+ * Do not speculative-resolve convention `/assets/players/{id}.png` here — missing files
+ * would flash number/name under the formation disc until img.onerror.
+ */
 export function portraitAsset(player: PortraitSource | undefined): string | null {
   const explicit = player?.appearance?.portraitAsset;
   if (explicit && typeof explicit === "string" && explicit.trim()) return assetUrl(explicit.trim());
-  // Convention / manifest: /assets/players/{id}.png — img onerror covers missing files.
-  if (player?.id) return resolvePlayerPortraitUrl(player.id, null);
   return null;
 }
 
@@ -148,7 +151,7 @@ export function fitKitSurnameElements(root: ParentNode): void {
 
 /**
  * Formation / substitute marker: circle badge with number above surname,
- * or PNG circle with shirt number overlaid on top and surname under the image.
+ * or PNG disc with number + surname under the image (only after the PNG loads).
  */
 export function kitMarkerHtml(
   player: PortraitSource,
@@ -160,7 +163,11 @@ export function kitMarkerHtml(
   const wrapClass = ["kit-marker", options.className].filter(Boolean).join(" ");
   const label = player.displayName ?? player.name ?? "?";
   const surname = kitSurnameFromName(label);
-  const src = portraitAsset(player);
+  // Trusted = explicit appearance path. Speculative convention paths only promote on load.
+  const trustedSrc = portraitAsset(player);
+  const speculativeSrc =
+    !trustedSrc && player.id ? resolvePlayerPortraitUrl(player.id, null) : null;
+  const src = trustedSrc ?? speculativeSrc;
   const bench = (options.className ?? "").includes("kit-marker-bench");
   const surSize = surnameFitPx(surname, bench ? 15 : 17);
   // Match shirt number size under PNG counters.
@@ -171,12 +178,25 @@ export function kitMarkerHtml(
   // Photo caption keeps "12. SURNAME"; disc-only badge uses bare number (no period).
   const caption = `<div class="kit-marker-caption" style="color:${escapePortrait(text)}"><span class="kit-marker-num">${shirtNumber}.</span><span class="kit-marker-name" style="${nameStyle}">${escapePortrait(surname)}</span></div>`;
   const badge = `<div class="portrait-badge portrait-badge-kit" style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div>`;
+  const badgeHidden = `<div class="portrait-badge portrait-badge-kit" hidden style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div>`;
 
   if (!src) {
     return `<div class="${wrapClass}"><div class="portrait">${badge}</div></div>`;
   }
 
-  return `<div class="${wrapClass} kit-marker-photo"><div class="portrait"><img alt="" src="${src}" onerror="this.closest('.kit-marker')?.classList.remove('kit-marker-photo'); this.style.display='none'; const b=this.nextElementSibling; if(b){b.hidden=false; const c=this.closest('.kit-marker')?.querySelector('.kit-marker-caption'); if(c) c.remove();}"/><div class="portrait-badge portrait-badge-kit" hidden style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div></div>${caption}</div>`;
+  // Caption is CSS-hidden until `.kit-marker-photo` is set — only after a real PNG load
+  // (or immediately for trusted explicit assets). Missing files never sit under the disc.
+  const onLoad =
+    "const m=this.closest('.kit-marker');if(!m)return;m.classList.add('kit-marker-photo');this.style.display='block';const b=this.nextElementSibling;if(b)b.hidden=true;";
+  const onError =
+    "const m=this.closest('.kit-marker');if(!m)return;m.classList.remove('kit-marker-photo');this.style.display='none';const b=this.nextElementSibling;if(b)b.hidden=false;const c=m.querySelector('.kit-marker-caption');if(c)c.remove();";
+
+  if (trustedSrc) {
+    return `<div class="${wrapClass} kit-marker-photo"><div class="portrait"><img alt="" src="${escapePortrait(trustedSrc)}" onerror="${onError}"/>${badgeHidden}</div>${caption}</div>`;
+  }
+
+  // Speculative path: start as in-disc badge; promote to photo+under-caption only onload.
+  return `<div class="${wrapClass}"><div class="portrait"><img alt="" src="${escapePortrait(src)}" style="display:none" onload="${onLoad}" onerror="${onError}"/>${badge}</div>${caption}</div>`;
 }
 
 export function portraitHtml(
