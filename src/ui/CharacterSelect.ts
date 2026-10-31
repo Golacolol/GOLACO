@@ -1221,7 +1221,6 @@ export class CharacterSelect {
     const selected = this.current();
     const a = selected.attrs;
     const selectedId = selected.player.id;
-    const onPitch = new Set(this.xi.map((row) => row.player.player.id));
     const spotHint =
       this.purpose === "spot"
         ? `<p class="hint spot-pick-hint">Select the taker on the pitch or squad list, then confirm with the highlighted button.</p>`
