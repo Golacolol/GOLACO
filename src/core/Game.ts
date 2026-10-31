@@ -1074,12 +1074,16 @@ export class Game {
     player.name = edit.name;
     player.displayName = edit.displayName;
     player.primaryPosition = edit.primaryPosition;
-    player.pace = edit.pace;
-    player.passing = edit.passing;
-    player.control = edit.control;
-    player.shooting = edit.shooting;
-    player.defending = edit.defending;
-    player.stamina = edit.stamina;
+    if (!player.appearance) player.appearance = {};
+    player.appearance.portraitAsset = edit.portraitAsset;
+    if (edit.heightCm == null) delete player.heightCm;
+    else player.heightCm = edit.heightCm;
+    if (edit.weightKg == null) delete player.weightKg;
+    else player.weightKg = edit.weightKg;
+    for (const [key, value] of Object.entries(edit.stats)) {
+      if (value == null) delete (player as unknown as Record<string, unknown>)[key];
+      else (player as unknown as Record<string, number>)[key] = value;
+    }
     const teamId = edit.teamId || this.charTeamId;
     for (const m of this.db.memberships) {
       if (m.playerId === edit.playerId && (!teamId || m.teamId === teamId)) {
