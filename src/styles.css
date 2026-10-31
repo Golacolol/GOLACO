@@ -137,7 +137,7 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   padding: 6px 8px 7px;
   border-radius: 8px;
   display: grid;
-  grid-template-columns: 36px 1fr;
+  grid-template-columns: 48px 1fr;
   gap: 8px;
   align-items: center;
   min-width: 0;
@@ -173,12 +173,91 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   pointer-events: none;
 }
 .hud-player-sheet .portrait { width: 72px; height: 72px; margin: 0 auto 8px; overflow: hidden; }
+.hud-player-sheet .kit-marker-hud-sheet {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin: 0 auto 8px;
+  max-width: 96px;
+}
+.hud-player-sheet .kit-marker-hud-sheet .portrait {
+  width: 72px;
+  height: 72px;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+.hud-player-sheet .kit-marker-hud-sheet .portrait-badge-kit .num {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+.hud-player-sheet .kit-marker-hud-sheet .portrait-badge-kit .sur {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 4px;
+}
+.hud-player-sheet .kit-marker-hud-sheet .kit-marker-caption {
+  max-width: 96px;
+  width: 96px;
+  font-size: 12px;
+}
 .hud-player-sheet .sheet-num { color: var(--gold); font-size: 22px; font-weight: 800; text-align: center; }
 .hud-player-sheet .sheet-name { text-align: center; font-weight: 800; letter-spacing: 0.06em; margin-top: 2px; }
 .hud-player-sheet .sheet-meta { text-align: center; font-size: 11px; opacity: 0.78; margin: 4px 0 10px; }
 .hud-player-sheet .char-stats { margin: 0; }
 .hud-card .tag { font-size: 9px; letter-spacing: 0.14em; color: var(--gold); margin-bottom: 2px; }
 .hud-card .portrait { width: 36px; height: 36px; margin: 0; overflow: hidden; }
+.hud-card .kit-marker-hud {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  max-width: 48px;
+  min-width: 48px;
+}
+.hud-card .kit-marker-hud .portrait {
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.hud-card .kit-marker-hud .portrait-badge-kit {
+  padding: 3px 2px;
+  gap: 1px;
+  justify-content: center;
+}
+.hud-card .kit-marker-hud .portrait-badge-kit .num {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+}
+.hud-card .kit-marker-hud .portrait-badge-kit .sur {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 2px;
+  text-align: center;
+}
+/* HUD strip is tight — keep surname on the disc; hide under-photo caption. */
+.hud-card .kit-marker-hud .kit-marker-caption {
+  display: none !important;
+}
 .hud-card .portrait img {
   width: 100%;
   height: 100%;
@@ -186,8 +265,18 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   object-position: center;
   display: block;
 }
-.hud-card .portrait-badge { justify-content: flex-start; padding-top: 5px; }
+.hud-card .portrait-badge { justify-content: center; padding-top: 2px; }
 .hud-card .portrait-badge .num { font-size: 13px; line-height: 1; }
+.hud-card .portrait-badge .sur {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 7px;
+  font-weight: 700;
+  margin-top: 1px;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 1px;
+}
 .hud-card .portrait-badge .ini { font-size: 8px; margin-top: 1px; }
 .hud-card .row { display: flex; gap: 8px; align-items: baseline; font-size: 12px; }
 .hud-card .num { color: var(--gold); font-weight: 800; }
@@ -242,13 +331,23 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   .hud-card {
     padding: 5px 6px 6px;
     gap: 6px;
-    grid-template-columns: 28px 1fr;
+    grid-template-columns: 40px 1fr;
   }
   .hud-card .portrait { width: 28px; height: 28px; }
+  .hud-card .kit-marker-hud,
+  .hud-card .kit-marker-hud .portrait {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    max-width: 40px;
+  }
+  .hud-card .kit-marker-hud .portrait-badge-kit .num { font-size: 12px; }
+  .hud-card .kit-marker-hud .portrait-badge-kit .sur { font-size: 7px; }
   .hud-card .row { font-size: 11px; }
   .hud-card .stats { font-size: 9px; }
   .hud-player-sheet { padding: 8px 8px 8px; }
   .hud-player-sheet .portrait { width: 56px; height: 56px; }
+  .hud-player-sheet .kit-marker-hud-sheet .portrait { width: 56px; height: 56px; }
 }
 @media (max-width: 640px) {
   .hud-bottom {
@@ -1450,6 +1549,43 @@ html.club-name-glow-off .club-line {
   width: 72px;
   height: 72px;
   margin: 0 auto 6px;
+}
+.team-roster-card .kit-marker-roster {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin: 0 auto 6px;
+  max-width: 96px;
+}
+.team-roster-card .kit-marker-roster .portrait {
+  width: 72px;
+  height: 72px;
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+.team-roster-card .kit-marker-roster .portrait-badge-kit .num {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+.team-roster-card .kit-marker-roster .portrait-badge-kit .sur {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 4px;
+  text-align: center;
+}
+.team-roster-card .kit-marker-roster .kit-marker-caption {
+  max-width: 96px;
+  width: 96px;
 }
 .team-roster-card h3 {
   margin: 4px 0 8px;
@@ -2694,6 +2830,20 @@ td, th { border-bottom: 1px solid #234; padding: 6px; }
   display: none !important;
 }
 .portrait-badge .num { font-size: 1.35em; font-weight: 800; line-height: 1; }
+.portrait-badge .sur {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 0.58em;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+  margin-top: 3px;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 4px;
+  text-align: center;
+  box-sizing: border-box;
+}
 .portrait-badge .ini { font-size: 0.72em; opacity: 0.9; margin-top: 4px; }
 .char-panel .portrait { width: 120px; height: 120px; }
 .squad-chip { display: inline-flex; align-items: center; gap: 6px; }

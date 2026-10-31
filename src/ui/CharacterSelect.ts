@@ -1084,6 +1084,8 @@ export class CharacterSelect {
       const a = selected.attrs;
       card.innerHTML = `
         ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
+          surnameOnly: true,
+          className: "kit-marker-roster",
           textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
         })}
         <h3>${selected.shirtNumber}. ${escapeHtml(selected.player.name)}</h3>
@@ -1267,6 +1269,8 @@ export class CharacterSelect {
           <aside class="team-roster">
             <div class="team-roster-card">
               ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
+                surnameOnly: true,
+                className: "kit-marker-roster",
                 textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
               })}
               <h3>${selected.shirtNumber}. ${escapeHtml(selected.player.name)}</h3>

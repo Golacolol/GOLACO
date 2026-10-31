@@ -203,21 +203,27 @@ export function portraitHtml(
   player: PortraitSource,
   shirtNumber: number,
   color = "#007A3D",
-  options?: { surnameOnly?: boolean; textColor?: string },
+  options?: { surnameOnly?: boolean; textColor?: string; className?: string },
 ): string {
   if (options?.surnameOnly) {
     return kitMarkerHtml(player, shirtNumber, {
       primaryColor: color,
       textColor: options.textColor ?? "#ffffff",
+      className: options.className,
     });
   }
   const src = portraitAsset(player);
   const label = player.displayName ?? player.name ?? "?";
   const fb = portraitFallback(label, shirtNumber, color);
+  const surname = kitSurnameFromName(label);
+  const surSize = surnameFitPx(surname, 11);
+  const tracking = surnameLetterSpacingEm(surname);
   const text = options?.textColor?.trim() || "#ffffff";
-  const badge = `<div class="portrait-badge" style="background:${fb.color};color:${escapePortrait(text)}"><span class="num">${fb.number}</span><span class="ini">${fb.initials}</span></div>`;
+  // Full surname under the number (not two-letter initials).
+  const badgeInner = `<span class="num">${fb.number}</span><span class="sur" style="font-size:${surSize}px;letter-spacing:${tracking}em">${escapePortrait(surname)}</span>`;
+  const badge = `<div class="portrait-badge" style="background:${fb.color};color:${escapePortrait(text)}">${badgeInner}</div>`;
   if (!src) return `<div class="portrait">${badge}</div>`;
-  return `<div class="portrait"><img alt="" src="${src}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.hidden=false"/><div class="portrait-badge" hidden style="background:${fb.color};color:${escapePortrait(text)}"><span class="num">${fb.number}</span><span class="ini">${fb.initials}</span></div></div>`;
+  return `<div class="portrait"><img alt="" src="${src}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.hidden=false"/><div class="portrait-badge" hidden style="background:${fb.color};color:${escapePortrait(text)}">${badgeInner}</div></div>`;
 }
 
 function escapePortrait(s: string): string {
