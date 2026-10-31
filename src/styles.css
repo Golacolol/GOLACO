@@ -298,6 +298,29 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   container-type: inline-size;
   min-width: 0;
 }
+/* Title sets the column width; club line + panels share that edge (no longer than GOLAÇO⚽SOCCER). */
+.menu-hero-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.menu-hero-stack > h1 {
+  width: max-content;
+  max-width: 100%;
+  margin-bottom: 10px;
+}
+.menu-hero-stack > .club-wrap,
+.menu-hero-stack > .menu-fixture {
+  /* Don't let wide dials/fixture copy expand past the title. */
+  width: 0;
+  min-width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
 .club-wrap {
   position: relative;
   display: flex;
@@ -416,17 +439,17 @@ html.club-name-glow-off .club-line {
   padding-bottom: 8px;
 }
 .team-dials {
-  /* League is short; Team takes the wide column so names stay readable. */
+  /* League is short; Team takes the wide column — min 0 so the stack can match title width. */
   display: grid;
-  grid-template-columns: minmax(8.5rem, 0.34fr) minmax(12rem, 1fr);
-  gap: 18px 22px;
+  grid-template-columns: minmax(0, 0.34fr) minmax(0, 1fr);
+  gap: 12px 14px;
   align-items: end;
   width: 100%;
   margin-top: auto;
 }
 .team-dials.has-era {
   /* Classic: League · Team · Era (compact date roll e.g. 04-05). */
-  grid-template-columns: minmax(7.5rem, 0.28fr) minmax(10rem, 1fr) minmax(4.25rem, 0.2fr);
+  grid-template-columns: minmax(0, 0.28fr) minmax(0, 1fr) minmax(0, 0.2fr);
 }
 .team-dial-field {
   min-width: 0;
@@ -515,14 +538,14 @@ html.club-name-glow-off .club-line {
 }
 .menu-hero h1, .menu-brand h1 {
   margin: 0 0 10px;
-  width: 100%;
+  width: max-content;
+  max-width: 100%;
   font-family: var(--title-font, "Righteous", Impact, sans-serif);
   font-weight: 400;
-  /* Scale to the hero column so "GOLAÇO SOCCER" stays one full line (no ellipsis). */
+  /* Scale to the hero column so "GOLAÇO⚽SOCCER" stays one full line (no ellipsis). */
   font-size: clamp(22px, min(9.6cqi, 9.2vw), 58px);
   letter-spacing: 0.015em;
   line-height: 0.94;
-  max-width: 100%;
   color: rgba(255, 214, 92, 0.82);
   text-shadow:
     0 0 14px rgba(255, 186, 40, 0.45),
@@ -568,16 +591,17 @@ html.club-name-glow-off .club-line {
 .menu-fixture .vs { opacity: 0.55; font-size: 12px; letter-spacing: 0.2em; }
 .menu-fixture.fixture-match {
   display: grid;
-  grid-template-columns: max-content 4.4em;
+  grid-template-columns: minmax(0, 1fr) 4.4em;
   grid-template-rows: 1fr 1fr;
-  justify-content: start;
-  justify-items: start;
+  justify-content: stretch;
+  justify-items: stretch;
   align-items: stretch;
   column-gap: 8px;
   row-gap: 0;
   min-height: 62px;
   height: auto;
   padding: 4px 10px 4px 12px;
+  overflow: hidden;
 }
 .fixture-copy {
   display: grid;
@@ -586,8 +610,9 @@ html.club-name-glow-off .club-line {
   grid-row: 1 / -1;
   align-items: stretch;
   justify-items: start;
-  width: max-content;
-  max-width: none;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   margin: 0;
   padding: 0;
   border: 0;
@@ -597,6 +622,7 @@ html.club-name-glow-off .club-line {
   text-align: left;
   cursor: pointer;
   border-radius: 4px;
+  overflow: hidden;
 }
 .fixture-copy:hover,
 .fixture-copy:focus-visible {
@@ -609,7 +635,10 @@ html.club-name-glow-off .club-line {
   gap: 8px 10px;
   align-items: center;
   justify-content: flex-start;
-  width: max-content;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   align-self: end;
 }
 .fixture-teams .kick-countdown {
@@ -618,11 +647,12 @@ html.club-name-glow-off .club-line {
 }
 .menu-fixture .meta { width: 100%; opacity: 0.7; font-size: 12px; letter-spacing: 0.08em; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; }
 .menu-fixture.fixture-match .meta {
-  width: max-content;
-  min-width: 100%;
-  max-width: none;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   display: block;
-  overflow: visible;
+  overflow: hidden;
+  text-overflow: clip;
   white-space: nowrap;
   align-self: start;
   padding-top: 2px;
@@ -2437,6 +2467,7 @@ td, th { border-bottom: 1px solid #234; padding: 6px; }
     max-height: min(var(--menu-panel-height), 58vh);
   }
   .menu-hero { text-align: center; }
+  .menu-hero-stack { margin-inline: auto; }
   .club-wrap {
     display: flex;
     justify-content: center;

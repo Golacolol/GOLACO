@@ -141,10 +141,15 @@ describe("MainMenu LEAGUE mode button", () => {
   it("places the title above club text and keeps Team + League dials", () => {
     const menu = paint(false);
     const hero = menu.root.querySelector(".menu-hero")!;
+    const stack = hero.querySelector(".menu-hero-stack");
     const title = hero.querySelector("h1");
     const club = hero.querySelector(".club-wrap");
     const teamSelect = hero.querySelector(".team-select-fixture");
     const gameplay = [...hero.querySelectorAll(".menu-fixture")].find((el) => el.querySelector(".meta")?.textContent === "Gameplay");
+    expect(stack).toBeTruthy();
+    expect(stack?.contains(title!)).toBe(true);
+    expect(stack?.contains(club!)).toBe(true);
+    expect(stack?.contains(teamSelect!)).toBe(true);
     expect(title?.textContent?.replace(/\s+/g, "").trim()).toBe("GOLAÇO⚽️SOCCER");
     expect(title?.querySelector(".title-emoji")?.textContent).toBe("⚽️");
     expect(title!.compareDocumentPosition(club!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

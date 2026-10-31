@@ -139,73 +139,75 @@ export class MainMenu {
     this.root.innerHTML = `
       <div class="menu-shell ${embed ? "panel-open" : ""}">
         <div class="menu-hero">
-          <h1><span class="title-line">GOLAÇO<span class="title-emoji" aria-hidden="true">⚽️</span>SOCCER</span></h1>
-          <div class="club-wrap">
-            <div class="club-meta" style="${clubBadgeStyle(club.team)}">
-              ${teamBadgeHtml(club.team, { className: "club-crest", size: 52 })}
-              <span class="club-line"><span class="club-ground">${escapeHtml(club.homeGround.name)}</span><span class="club-sep">·</span><span class="club-team">${escapeHtml(club.team.name)}</span></span>
-            </div>
-          </div>
-          <div class="menu-fixture team-select-fixture">
-            <span class="tod-row team-dials${showEra ? " has-era" : ""}">
-              <span class="team-dial-field">
-                <span class="team-dial-label">League</span>
-                ${leagueSpinHtml(leagueIdx, leagueDialLabel)}
-              </span>
-              <span class="team-dial-field">
-                <span class="team-dial-label">Club</span>
-                ${teamSpinHtml(clubs, teamIdx)}
-              </span>
-              ${
-                showEra
-                  ? `<span class="team-dial-field" data-era-field>
-                <span class="team-dial-label">Team</span>
-                ${eraSpinHtml(eras, eraIdx)}
-              </span>`
-                  : ""
-              }
-            </span>
-          </div>
-          <div class="menu-fixture">
-            <span class="tod-row">
-              ${mode("REAL", "REAL")}
-              <span class="vs">·</span>
-              ${mode("ARCADE", "ARCADE")}
-              <span class="vs">·</span>
-              ${mode("TABLE", "Foosball")}
-              ${
-                view.showLeague === true
-                  ? `<span class="vs">·</span>
-              ${mode("LEAGUE", "LEAGUE")}`
-                  : ""
-              }
-            </span>
-            <span class="meta">Gameplay</span>
-          </div>
-          <div class="menu-fixture">
-            <span class="tod-row">
-              ${tod("DAY", "DAY")}
-              <span class="vs">·</span>
-              ${tod("EVENING", "EVENING")}
-              <span class="vs">·</span>
-              ${tod("NIGHT", "NIGHT")}
-            </span>
-            <span class="meta">Lighting</span>
-          </div>
-          <div class="menu-fixture fixture-match">
-            <button type="button" class="fixture-copy" data-id="next" aria-label="Play next fixture ${home.abbreviation} vs ${away.abbreviation}">
-              <div class="fixture-teams">
-                ${teamBadgeHtml(home, { className: "fixture-crest", size: 28 })}
-                <strong>${home.abbreviation}</strong>
-                <span class="vs">vs</span>
-                ${teamBadgeHtml(away, { className: "fixture-crest", size: 28 })}
-                <strong>${away.abbreviation}</strong>
-                <span class="vs">·</span>
-                ${kickCountdownHtml(fixture.date, view.kickOffTime || DEFAULT_KICK_OFF_TIME)}
+          <div class="menu-hero-stack">
+            <h1><span class="title-line">GOLAÇO<span class="title-emoji" aria-hidden="true">⚽️</span>SOCCER</span></h1>
+            <div class="club-wrap">
+              <div class="club-meta" style="${clubBadgeStyle(club.team)}">
+                ${teamBadgeHtml(club.team, { className: "club-crest", size: 52 })}
+                <span class="club-line"><span class="club-ground">${escapeHtml(club.homeGround.name)}</span><span class="club-sep">·</span><span class="club-team">${escapeHtml(club.team.name)}</span></span>
               </div>
-              <span class="meta">${fixture.competition} · ${view.kickOffTime || DEFAULT_KICK_OFF_TIME} · ${club.matchGround.name}</span>
-            </button>
-            ${halfSpinHtml(this.matchDuration)}
+            </div>
+            <div class="menu-fixture team-select-fixture">
+              <span class="tod-row team-dials${showEra ? " has-era" : ""}">
+                <span class="team-dial-field">
+                  <span class="team-dial-label">League</span>
+                  ${leagueSpinHtml(leagueIdx, leagueDialLabel)}
+                </span>
+                <span class="team-dial-field">
+                  <span class="team-dial-label">Club</span>
+                  ${teamSpinHtml(clubs, teamIdx)}
+                </span>
+                ${
+                  showEra
+                    ? `<span class="team-dial-field" data-era-field>
+                  <span class="team-dial-label">Team</span>
+                  ${eraSpinHtml(eras, eraIdx)}
+                </span>`
+                    : ""
+                }
+              </span>
+            </div>
+            <div class="menu-fixture">
+              <span class="tod-row">
+                ${mode("REAL", "REAL")}
+                <span class="vs">·</span>
+                ${mode("ARCADE", "ARCADE")}
+                <span class="vs">·</span>
+                ${mode("TABLE", "Foosball")}
+                ${
+                  view.showLeague === true
+                    ? `<span class="vs">·</span>
+                ${mode("LEAGUE", "LEAGUE")}`
+                    : ""
+                }
+              </span>
+              <span class="meta">Gameplay</span>
+            </div>
+            <div class="menu-fixture">
+              <span class="tod-row">
+                ${tod("DAY", "DAY")}
+                <span class="vs">·</span>
+                ${tod("EVENING", "EVENING")}
+                <span class="vs">·</span>
+                ${tod("NIGHT", "NIGHT")}
+              </span>
+              <span class="meta">Lighting</span>
+            </div>
+            <div class="menu-fixture fixture-match">
+              <button type="button" class="fixture-copy" data-id="next" aria-label="Play next fixture ${home.abbreviation} vs ${away.abbreviation}">
+                <div class="fixture-teams">
+                  ${teamBadgeHtml(home, { className: "fixture-crest", size: 28 })}
+                  <strong>${home.abbreviation}</strong>
+                  <span class="vs">vs</span>
+                  ${teamBadgeHtml(away, { className: "fixture-crest", size: 28 })}
+                  <strong>${away.abbreviation}</strong>
+                  <span class="vs">·</span>
+                  ${kickCountdownHtml(fixture.date, view.kickOffTime || DEFAULT_KICK_OFF_TIME)}
+                </div>
+                <span class="meta">${fixture.competition} · ${view.kickOffTime || DEFAULT_KICK_OFF_TIME} · ${club.matchGround.name}</span>
+              </button>
+              ${halfSpinHtml(this.matchDuration)}
+            </div>
           </div>
           <button type="button" class="sim-timer" data-id="sim">
             Simulator auto-starts in <strong data-sim-count>${secs}</strong>s
@@ -945,12 +947,17 @@ export function fitMenuLabels(root: HTMLElement): void {
   if (!line) return;
   const meta = line.closest<HTMLElement>(".club-meta");
   const crest = meta?.querySelector<HTMLElement>(".club-crest");
+  const title = root.querySelector<HTMLElement>(".menu-hero-stack > h1 .title-line, .menu-hero-stack > h1");
   const gap = 12;
-  const avail =
-    meta && crest
-      ? Math.max(24, meta.clientWidth - crest.offsetWidth - gap)
-      : line.clientWidth || meta?.clientWidth || 0;
-  fitNowrapToWidth(line, avail, { minPx: 10, basePx: parseFloat(getComputedStyle(line).fontSize) || 20 });
+  // Prefer the title column width so stadium·team never runs past GOLAÇO⚽SOCCER.
+  const titleW = title?.getBoundingClientRect().width ?? 0;
+  const metaBudget =
+    titleW > 0 && crest
+      ? Math.max(24, titleW - crest.offsetWidth - gap)
+      : meta && crest
+        ? Math.max(24, meta.clientWidth - crest.offsetWidth - gap)
+        : line.clientWidth || meta?.clientWidth || 0;
+  fitNowrapToWidth(line, metaBudget, { minPx: 10, basePx: parseFloat(getComputedStyle(line).fontSize) || 20 });
 }
 
 function fitNowrapToWidth(
