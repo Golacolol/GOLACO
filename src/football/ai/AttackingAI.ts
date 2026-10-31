@@ -24,6 +24,11 @@ export function attackingSupport(
     const dir = player.attackSign;
     // Don't drive into the byline — recycle or cut inside near the end.
     const room = HALF_LENGTH - 2.5 - Math.abs(player.x);
+    // Inside the attacking box: drive toward goal centre, not a side-to-side shuffle.
+    if (room < 18 && Math.abs(player.z) < 20) {
+      const goalX = player.oppGoalX();
+      return pitchClamp(goalX - dir * 2.4, player.z * 0.35, 2.2);
+    }
     if (room < 4) {
       return pitchClamp(player.x - dir * 3.5, player.z * 0.55, 2.5);
     }
