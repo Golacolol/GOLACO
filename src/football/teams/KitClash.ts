@@ -105,8 +105,10 @@ export interface ResolveMatchKitsOptions {
 }
 
 /**
- * Home defaults to home kit. Away wears away kit when shirts clash (AUTO),
- * unless Kit Select forces HOME / AWAY on either side.
+ * Prefer each side's home kit. AUTO on a side means: wear home unless that
+ * clashes with the other side's resolved shirt, then switch to away.
+ * Explicit HOME / AWAY on either side is honoured; the other side (if AUTO)
+ * still defaults to home and only changes when unmatched colours are needed.
  */
 export function resolveMatchKits(
   home: TeamRecord,
@@ -115,10 +117,31 @@ export function resolveMatchKits(
 ): { home: TeamKit; away: TeamKit; clash: boolean } {
   const homeChoice = opts?.homeChoice ?? "auto";
   const awayChoice = opts?.awayChoice ?? "auto";
+  const homeHome = teamHomeKit(home);
+  const awayHome = teamHomeKit(away);
   const clash = kitsClash(home.defaultKit, away.defaultKit);
-  return {
-    home: pickTeamKit(home, homeChoice, false),
-    away: pickTeamKit(away, awayChoice, clash),
-    clash,
-  };
+
+  const forcedHome =
+    homeChoice === "home" ? homeHome : homeChoice === "away" ? teamResolvedAwayKit(home) : null;
+  const forcedAway =
+    awayChoice === "home" ? awayHome : awayChoice === "away" ? teamResolvedAwayKit(away) : null;
+
+  let homeKit: TeamKit;
+  let awayKit: TeamKit;
+
+  if (forcedHome && forcedAway) {
+    homeKit = forcedHome;
+    awayKit = forcedAway;
+  } else if (forcedHome) {
+    homeKit = forcedHome;
+    awayKit = kitsClash(homeKit, awayHome) ? teamResolvedAwayKit(away) : awayHome;
+  } else if (forcedAway) {
+    awayKit = forcedAway;
+    homeKit = kitsClash(homeHome, awayKit) ? teamResolvedAwayKit(home) : homeHome;
+  } else {
+    homeKit = homeHome;
+    awayKit = kitsClash(homeKit, awayHome) ? teamResolvedAwayKit(away) : awayHome;
+  }
+
+  return { home: homeKit, away: awayKit, clash };
 }

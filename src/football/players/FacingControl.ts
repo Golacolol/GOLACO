@@ -8,8 +8,9 @@ import type { Player } from "./Player";
 /** Local copy — avoid circular import with PlayerMovement. */
 function turnRateFromAttrs(agility: number, speed: number, jockeying: boolean): number {
   const ag = stat01(agility);
-  const base = jockeying ? 2.85 : speed < 1.25 ? 1.55 : 2.15;
-  return base + ag * 1.15;
+  // Idle/jog turns a bit sharper so hips square to ball or run direction promptly.
+  const base = jockeying ? 3.15 : speed < 1.25 ? 2.05 : 2.55;
+  return base + ag * 1.25;
 }
 
 export type FacingHint = {
@@ -91,8 +92,8 @@ export function idleBallFacingHint(
   ballZ: number,
   opts?: { maxDist?: number; minSpeed?: number },
 ): FacingHint | null {
-  const maxDist = opts?.maxDist ?? 18;
-  const minSpeed = opts?.minSpeed ?? 0.85;
+  const maxDist = opts?.maxDist ?? 22;
+  const minSpeed = opts?.minSpeed ?? 0.7;
   if (player.speed > minSpeed) return null;
   const dx = ballX - player.x;
   const dz = ballZ - player.z;
@@ -131,9 +132,18 @@ export function applyFacingHints(
 ): boolean {
   const best = resolveFacingHint(hints);
   if (!best) return false;
-  const kickBoost = best.priority >= FACING_PRIORITY.KICK ? 1.65 : best.priority >= FACING_PRIORITY.RECEIVE ? 1.25 : 1;
+  // Kick/receive snap hardest; move & ball-idle still get a light boost so skinned
+  // hips track run direction and the ball without feeling laggy.
+  const prioBoost =
+    best.priority >= FACING_PRIORITY.KICK
+      ? 1.75
+      : best.priority >= FACING_PRIORITY.RECEIVE
+        ? 1.35
+        : best.priority >= FACING_PRIORITY.MOVE
+          ? 1.2
+          : 1.15;
   turnFacingToward(player, best.dirX, best.dirZ, dt, {
-    turnMul: (opts?.turnMul ?? 1) * kickBoost,
+    turnMul: (opts?.turnMul ?? 1) * prioBoost,
     jockeying: opts?.jockeying,
   });
   return true;

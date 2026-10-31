@@ -42,7 +42,9 @@ import { MatchSetup } from "../ui/MatchSetup";
 import { MatchCard, shouldFadeMatchCard } from "../ui/MatchCard";
 import { MatchSimulationLabMenu } from "../ui/MatchSimulationLabMenu";
 import { TableSetupMenu } from "../ui/TableSetupMenu";
+import { FlickSetupMenu } from "../ui/FlickSetupMenu";
 import { TableMatch, type TableMatchConfig } from "../football/table";
+import { FlickMatch, type FlickMatchConfig } from "../football/flick";
 import {
   runSimulationLab,
   exportReportJson,
@@ -69,6 +71,7 @@ export class Game {
   appState: AppState = AppState.BOOT;
   match: Match | null = null;
   tableMatch: TableMatch | null = null;
+  flickMatch: FlickMatch | null = null;
   preferredPlayerId: string | null = null;
   private teamControl = false;
   /** Listed fixture started via SIMULATE (AI watch); do not chain attract matches. */
@@ -91,6 +94,7 @@ export class Game {
   private setup!: MatchSetup;
   private simLab!: MatchSimulationLabMenu;
   private tableSetup!: TableSetupMenu;
+  private flickSetup!: FlickSetupMenu;
   private matchCard!: MatchCard;
   private hud: MatchHUD | null = null;
   private debug!: DebugOverlay;
@@ -140,6 +144,10 @@ export class Game {
     await preloadPlayerModels([DEFAULT_PLAYER_MODEL]);
     this.menu = new MainMenu(this.ui);
     this.menu.onHalf = (seconds) => this.setMenuHalfLength(seconds);
+    this.menu.onKitChange = (choice) => {
+      this.save.data.settings.menuKitChoice = choice;
+      this.save.save();
+    };
     this.menu.onClubChange = (teamId) => this.setDefaultClub(teamId);
     this.menu.onPredictionsChange = (state) => {
       this.save.data.predictions = state;
@@ -162,6 +170,13 @@ export class Game {
     this.tableSetup.onStart = (cfg) => this.beginTableMatch(cfg);
     this.tableSetup.onCancel = () => {
       this.tableSetup.hide();
+      this.appState = AppState.MAIN_MENU;
+      this.paintMainMenu();
+    };
+    this.flickSetup = new FlickSetupMenu(this.ui);
+    this.flickSetup.onStart = (cfg) => this.beginFlickMatch(cfg);
+    this.flickSetup.onCancel = () => {
+      this.flickSetup.hide();
       this.appState = AppState.MAIN_MENU;
       this.paintMainMenu();
     };
@@ -194,6 +209,13 @@ export class Game {
       } else if (this.appState === AppState.MATCH && this.tableMatch) {
         this.appState = AppState.PAUSED;
         this.tableMatch.paused = true;
+        this.pause.reset();
+        this.renderPause();
+        this.escapeClosedOverlay = true;
+        e.preventDefault();
+      } else if (this.appState === AppState.MATCH && this.flickMatch) {
+        this.appState = AppState.PAUSED;
+        this.flickMatch.paused = true;
         this.pause.reset();
         this.renderPause();
         this.escapeClosedOverlay = true;
@@ -256,7 +278,7 @@ export class Game {
       }
       if (
         this.appState === AppState.MAIN_MENU &&
-        (mode === "REAL" || mode === "ARCADE" || mode === "LEAGUE" || mode === "TABLE")
+        (mode === "REAL" || mode === "ARCADE" || mode === "LEAGUE" || mode === "TABLE" || mode === "FLICK")
       ) {
         this.setMenuPlayMode(mode);
         return;
@@ -584,6 +606,7 @@ export class Game {
     this.setup.hide();
     this.simLab.hide();
     this.tableSetup.hide();
+    this.flickSetup.hide();
     this.pause.hide();
     this.scenes.mode = GameMode.FOOTBALL;
     this.appState = AppState.MAIN_MENU;
@@ -644,6 +667,7 @@ export class Game {
       showLeague: this.hasUserLeagueProgress(),
       kickOffTime: saved.kickOffTime,
       matchDuration: clampMatchDuration(saved.matchDuration),
+      kitChoice: saved.menuKitChoice === "away" ? "away" : "home",
     }, {
       team: club,
       homeGround: this.db.getStadium(club.defaultStadiumId),
@@ -684,7 +708,7 @@ export class Game {
     this.paintMainMenu();
   }
 
-  private setMenuPlayMode(mode: "REAL" | "ARCADE" | "LEAGUE" | "TABLE"): void {
+  private setMenuPlayMode(mode: "REAL" | "ARCADE" | "LEAGUE" | "TABLE" | "FLICK"): void {
     if (mode === "LEAGUE" && !this.hasUserLeagueProgress()) {
       this.paintMainMenu();
       return;
@@ -696,6 +720,15 @@ export class Game {
       this.save.data.settings.gameplayMode = "TABLE";
       this.save.save();
       this.openTableSetup();
+      return;
+    }
+    if (mode === "FLICK") {
+      const wasLeague = this.save.data.settings.leagueProgression;
+      if (wasLeague && this.hasUserLeagueProgress()) this.snapshotCareerFixtures();
+      this.save.data.settings.leagueProgression = false;
+      this.save.data.settings.gameplayMode = "FLICK";
+      this.save.save();
+      this.openFlickSetup();
       return;
     }
     const wasLeague = this.save.data.settings.leagueProgression;
@@ -717,6 +750,7 @@ export class Game {
 
   private openTableSetup(): void {
     this.menu.hide();
+    this.flickSetup.hide();
     this.tableSetup.open({
       layoutId: this.save.data.settings.tableLayoutId,
       opponent: this.save.data.settings.tableOpponent,
@@ -740,6 +774,34 @@ export class Game {
     this.clearWorld();
     this.scenes.mode = GameMode.TABLE;
     this.tableMatch = new TableMatch(this.scene, innerWidth / innerHeight, this.ui, cfg);
+    this.appState = AppState.MATCH;
+    this.audio.ui();
+  }
+
+  private openFlickSetup(): void {
+    this.menu.hide();
+    this.tableSetup.hide();
+    this.flickSetup.open({
+      opponent: this.save.data.settings.flickOpponent,
+      difficulty: this.save.data.settings.flickDifficulty,
+      firstTo: this.save.data.settings.flickFirstTo,
+      humanSide: "home",
+    });
+    this.appState = AppState.MATCH_SETUP;
+  }
+
+  private beginFlickMatch(cfg: FlickMatchConfig): void {
+    this.save.data.settings.flickOpponent = cfg.opponent;
+    this.save.data.settings.flickDifficulty = cfg.difficulty;
+    this.save.data.settings.flickFirstTo = cfg.firstTo;
+    this.save.data.settings.gameplayMode = "FLICK";
+    this.save.save();
+    this.flickSetup.hide();
+    this.clearMatch();
+    this.clearWorld();
+    this.scenes.mode = GameMode.FLICK;
+    this.flickMatch = new FlickMatch(this.scene, innerWidth / innerHeight, this.ui, cfg);
+    this.flickMatch.attachCanvas(this.canvas);
     this.appState = AppState.MATCH;
     this.audio.ui();
   }
@@ -888,6 +950,10 @@ export class Game {
       this.leagueFixtureId = null;
       if (this.save.data.settings.gameplayMode === "TABLE") {
         this.openTableSetup();
+        return;
+      }
+      if (this.save.data.settings.gameplayMode === "FLICK") {
+        this.openFlickSetup();
         return;
       }
       this.openMatchSetup("quick");
@@ -1113,7 +1179,9 @@ export class Game {
     const q = new URLSearchParams(location.search);
     if (q.get("debug") === "1") this.save.data.settings.debug = true;
     const mode = q.get("mode");
-    if (mode === "ARCADE" || mode === "REAL" || mode === "LEAGUE" || mode === "TABLE") this.setMenuPlayMode(mode);
+    if (mode === "ARCADE" || mode === "REAL" || mode === "LEAGUE" || mode === "TABLE" || mode === "FLICK") {
+      this.setMenuPlayMode(mode);
+    }
     const time = q.get("time") as TimeOfDay | null;
     if (time === "DAY" || time === "EVENING" || time === "NIGHT") this.save.data.settings.timeOfDay = time;
     const weather = q.get("weather") as Weather | null;
@@ -1202,7 +1270,7 @@ export class Game {
           purpose,
           opponentHomeKit: opponent?.defaultKit ?? null,
           userIsAwaySide,
-          kitChoice: "auto",
+          kitChoice: this.save.data.settings.menuKitChoice === "away" ? "away" : "home",
           userMatchTeam: team,
         },
       );
@@ -1217,7 +1285,7 @@ export class Game {
         team,
         opponentHomeKit: opponent?.defaultKit ?? null,
         userIsAwaySide,
-        kitChoice: "auto",
+        kitChoice: this.save.data.settings.menuKitChoice === "away" ? "away" : "home",
         playStyle: lineup.playStyle ?? null,
         formationSide: userIsAwaySide ? "away" : "home",
       });
@@ -1343,7 +1411,14 @@ export class Game {
     const fixture = this.pendingFixture ?? this.listedFixture();
     const saved = this.save.data.settings;
     const userSide = this.userSideFor(fixture);
-    const userKitChoice = this.practice === "spot" ? "auto" : this.chars.kitChoice;
+    const userKitChoice =
+      this.practice === "spot"
+        ? "auto"
+        : this.chars.kitChoice === "auto"
+          ? this.save.data.settings.menuKitChoice === "away"
+            ? "away"
+            : "home"
+          : this.chars.kitChoice;
     this.match = new Match(
       this.scene,
       this.camera,
@@ -1358,7 +1433,7 @@ export class Game {
         userSide,
         autoplay,
         invertShotY: saved.invertShotY,
-        gameplayMode: saved.gameplayMode === "TABLE" ? "REAL" : saved.gameplayMode,
+        gameplayMode: saved.gameplayMode === "TABLE" || saved.gameplayMode === "FLICK" ? "REAL" : saved.gameplayMode,
         timeOfDay: saved.timeOfDay,
         weather: saved.weather,
         graphicsPreset: saved.graphicsPreset,
@@ -1494,6 +1569,9 @@ export class Game {
     this.tableMatch?.dispose();
     this.tableMatch = null;
     this.tableSetup.hide();
+    this.flickMatch?.dispose();
+    this.flickMatch = null;
+    this.flickSetup.hide();
     this.hud?.dispose();
     this.hud = null;
     this.clearWorld();
@@ -1596,6 +1674,7 @@ export class Game {
     this.pause.audioEnabled = this.save.data.settings.audioEnabled !== false;
     this.hud?.hide();
     this.tableMatch?.hud.hide();
+    this.flickMatch?.hud.hide();
     this.pause.render(this.match);
   }
 
@@ -1605,7 +1684,7 @@ export class Game {
     else if (action === "audio") this.togglePauseAudio();
     else if (action === "settings") this.openSettings();
     else if (action === "formation") {
-      if (this.tableMatch) return;
+      if (this.tableMatch || this.flickMatch) return;
       this.openPauseFormation();
     } else if (action === "back") {
       this.pause.back();
@@ -1707,6 +1786,10 @@ export class Game {
       this.tableMatch.paused = false;
       this.tableMatch.hud.show();
     }
+    if (this.flickMatch) {
+      this.flickMatch.paused = false;
+      this.flickMatch.hud.show();
+    }
     void this.audio.resumeStadiumAmbience();
   }
 
@@ -1757,6 +1840,11 @@ export class Game {
           this.tableSetup.hide();
           this.goMenu();
         }
+      } else if (this.flickSetup.isOpen) {
+        if (intent.pause) {
+          this.flickSetup.hide();
+          this.goMenu();
+        }
       } else {
         if (intent.pause) this.goMenu();
         if (intent.pass || intent.skip) this.confirmMatchSetup();
@@ -1787,6 +1875,17 @@ export class Game {
         return;
       }
       if (this.preMatchT > PRE_MATCH_CARD_SECONDS || intent.skip || intent.anyGameplay) this.launchMatch();
+    }
+
+    if (this.appState === AppState.MATCH && this.flickMatch) {
+      const { pauseRequested } = this.flickMatch.update(dt);
+      if (pauseRequested || intent.pause) {
+        this.appState = AppState.PAUSED;
+        this.flickMatch.paused = true;
+        this.pause.reset();
+        this.renderPause();
+        return;
+      }
     }
 
     if (this.appState === AppState.MATCH && this.tableMatch) {
@@ -1936,7 +2035,7 @@ export class Game {
         fixture,
         userSide: "home",
         autoplay: true,
-        gameplayMode: saved.gameplayMode === "TABLE" ? "REAL" : saved.gameplayMode,
+        gameplayMode: saved.gameplayMode === "TABLE" || saved.gameplayMode === "FLICK" ? "REAL" : saved.gameplayMode,
         timeOfDay: saved.timeOfDay ?? fixture.timeOfDay,
         weather: saved.weather ?? fixture.weather,
         graphicsPreset: saved.graphicsPreset,
@@ -2006,7 +2105,11 @@ export class Game {
       this.lastExposure = exposure;
       this.renderer.toneMappingExposure = exposure;
     }
-    const cam = this.tableMatch ? this.tableMatch.camera.camera : this.camera.camera;
+    const cam = this.flickMatch
+      ? this.flickMatch.camera.camera
+      : this.tableMatch
+        ? this.tableMatch.camera.camera
+        : this.camera.camera;
     this.renderer.render(this.scene, cam);
   };
 
@@ -2014,5 +2117,6 @@ export class Game {
     this.renderer.setSize(innerWidth, innerHeight);
     this.camera.setAspect(innerWidth / innerHeight);
     this.tableMatch?.setAspect(innerWidth / innerHeight);
+    this.flickMatch?.setAspect(innerWidth / innerHeight);
   };
 }

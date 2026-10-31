@@ -72,6 +72,11 @@ export function bestAvailableSpace(
   distances = [5.5, 11],
 ): SpaceSample {
   const fwdSign = carrier.attackSign;
+  const goalX = carrier.oppGoalX();
+  const distGoal = carrier.distTo(goalX, 0);
+  const inBox = distGoal < 18 && Math.abs(carrier.z) < 22;
+  const gk = opponents.find((o) => o.isGK) ?? null;
+  const gkClose = !!gk && carrier.distTo(gk.x, gk.z) < 5.2;
   let best: SpaceSample = {
     x: carrier.x + fwdSign * 8,
     z: carrier.z,
@@ -82,11 +87,15 @@ export function bestAvailableSpace(
   };
   for (const dist of distances) {
     for (const dir of DIRS) {
+      // Closed-down in the box: lateral grass is the keeper-mirror trap.
+      if (inBox && gkClose && dir.kind === "lateral") continue;
+      if (inBox && gkClose && dir.kind === "back") continue;
       const dx = dir.dx * fwdSign;
       const dz = dir.dz;
       const x = clamp(carrier.x + dx * dist, -HALF_LENGTH + 2, HALF_LENGTH - 2);
       const z = clamp(carrier.z + dz * dist, -HALF_WIDTH + 1.5, HALF_WIDTH - 1.5);
-      const score = spaceScoreAt(x, z, carrier, opponents, teammates);
+      let score = spaceScoreAt(x, z, carrier, opponents, teammates);
+      if (inBox && dir.kind === "lateral") score *= 0.45;
       if (score > best.score) best = { x, z, dx, dz, score, kind: dir.kind };
     }
   }

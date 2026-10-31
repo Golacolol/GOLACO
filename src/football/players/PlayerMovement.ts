@@ -126,8 +126,12 @@ export function movePlayer(
 
   {
     const hints: FacingHint[] = [...(extras?.facingHints ?? [])];
-    if (hasIntent && (player.speed > 0.55 || travel > 1.6 || extras?.hasBall)) {
+    // Face run intent as soon as the stick/AI asks — don't wait for speed to build.
+    if (hasIntent) {
       hints.push(moveFacingHint(intent.x, intent.z));
+    } else if (player.speed > 1.1) {
+      // Coasting: keep hips on travel so skinned run clips don't skate sideways.
+      hints.push(moveFacingHint(player.vx, player.vz));
     }
     const facingBefore = player.facing;
     if (hints.length) {

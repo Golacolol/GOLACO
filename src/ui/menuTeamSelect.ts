@@ -41,7 +41,7 @@ export const MENU_TEAM_GROUP_LABEL: Record<MenuTeamGroup, string> = {
   LEAGUE_ONE: "League One",
   LA_LIGA: "La Liga",
   SERIE_A: "Serie A",
-  CLASSIC: "Classic Teams",
+  CLASSIC: "Classics",
 };
 
 /** Strip era / em-dash suffixes: "Arsenal — 2003/04" → "Arsenal". */

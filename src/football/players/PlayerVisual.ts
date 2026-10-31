@@ -895,10 +895,17 @@ function attachSkinnedBody(
   bootCol: number,
 ): void {
   try {
-    applyKitToSkinned(skinned, kit, skinColor(player.appearance.skinTone), bootCol);
-    // Only apply shirt map when we have a dedicated shirt material — otherwise the
-    // UV atlas on a full-body mesh goes white / invisible under a jersey texture.
-    if (kit.shirtAsset && skinned.kitMaterials.shirt.length > 0) {
+    const skinHex = skinColor(player.appearance.skinTone);
+    // Same kit colours / wrap texture as the procedural (referee) path — painted onto
+    // the existing skinned mesh only. Never parent kit cylinders/boxes onto the GLB.
+    const applyWrap = () =>
+      applyKitToSkinned(skinned, kit, skinHex, bootCol, skinned.bodyTintFallback ? shirtMap : null);
+    applyWrap();
+    if (skinned.bodyTintFallback) {
+      const ud = shirtMap.userData as { kitBaseWaiters?: Array<(hex: string) => void>; kitBaseColor?: string };
+      if (ud.kitBaseColor) applyWrap();
+      else (ud.kitBaseWaiters ??= []).push(() => applyWrap());
+    } else if (kit.shirtAsset && skinned.kitMaterials.shirt.length > 0) {
       const hasDedicatedShirt = skinned.kitMaterials.shirt.some((m) =>
         /shirt|jersey|cloth|outfit|gear/i.test(m.name || ""),
       );

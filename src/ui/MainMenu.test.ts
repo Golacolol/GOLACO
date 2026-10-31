@@ -52,6 +52,7 @@ describe("MainMenu LEAGUE mode button", () => {
       showLeague,
       kickOffTime: "15:00",
       matchDuration: 600,
+      kitChoice: "home",
     };
     menu.render(fixture, home, away, view, { team: home, homeGround: ground, matchGround: ground, teams: [home, away] }, db);
     return menu;
@@ -63,6 +64,17 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector('[data-mode="REAL"]')).toBeTruthy();
     expect(menu.root.querySelector('[data-mode="ARCADE"]')).toBeTruthy();
     expect(menu.root.querySelector('[data-mode="TABLE"]')?.textContent).toMatch(/Foosball/i);
+    expect(menu.root.querySelector('[data-mode="FLICK"]')?.textContent).toMatch(/Flickball/i);
+  });
+
+  it("shows KIT dial after Team Select and GAMEPLAY / LIGHTING section labels", () => {
+    const menu = paint(false);
+    expect(menu.root.querySelector("[data-kit-spin]")?.textContent).toMatch(/Home/);
+    expect(menu.root.querySelector(".fixture-section-label")?.textContent).toBe("GAMEPLAY");
+    const labels = [...menu.root.querySelectorAll(".fixture-section-label")].map((el) => el.textContent);
+    expect(labels).toEqual(["GAMEPLAY", "LIGHTING"]);
+    expect(menu.root.querySelector(".fixture-teams-row [data-half-spin]")).toBeTruthy();
+    expect(menu.root.querySelector(".fixture-detail-row .meta")?.textContent).toContain("League One");
   });
 
   it("shows LEAGUE after career progress is unlocked", () => {
@@ -110,7 +122,7 @@ describe("MainMenu LEAGUE mode button", () => {
         <div class="club-crest"></div>
         <span class="club-line">Very Long Stadium Name · Very Long United Football Club</span>
       </div>
-      <span class="time-spin team-spin">
+      <span class="time-spin team-spin" data-team-spin>
         <span class="spin-ghost">Prev</span>
         <strong>Current Extremely Long Team Name</strong>
         <span class="spin-ghost">Next</span>
@@ -119,20 +131,26 @@ describe("MainMenu LEAGUE mode button", () => {
     const meta = host.querySelector<HTMLElement>(".club-meta")!;
     const crest = host.querySelector<HTMLElement>(".club-crest")!;
     const line = host.querySelector<HTMLElement>(".club-line")!;
-    const strong = host.querySelector<HTMLElement>("strong")!;
+    const spin = host.querySelector<HTMLElement>("[data-team-spin]")!;
+    const strong = spin.querySelector<HTMLElement>("strong")!;
     Object.defineProperty(meta, "clientWidth", { configurable: true, get: () => 200 });
     Object.defineProperty(crest, "offsetWidth", { configurable: true, get: () => 52 });
+    Object.defineProperty(spin, "clientWidth", { configurable: true, get: () => 140 });
     vi.spyOn(line, "scrollWidth", "get").mockImplementation(() => {
       const px = parseFloat(line.style.fontSize) || 16;
       return Math.max(120, 340 * (px / 16));
+    });
+    vi.spyOn(strong, "scrollWidth", "get").mockImplementation(() => {
+      const px = parseFloat(strong.style.fontSize) || 15;
+      return Math.max(80, 280 * (px / 15));
     });
 
     fitMenuLabels(host);
 
     expect(parseFloat(line.style.fontSize)).toBeLessThan(16);
     expect(line.style.textOverflow).toBe("clip");
-    // Dial type is CSS-only — fitMenuLabels must not rewrite it.
-    expect(strong.style.fontSize).toBe("");
+    // Long club dial names shrink to the dial width.
+    expect(parseFloat(strong.style.fontSize)).toBeLessThan(15);
 
     host.remove();
     vi.restoreAllMocks();
@@ -145,7 +163,9 @@ describe("MainMenu LEAGUE mode button", () => {
     const title = hero.querySelector("h1");
     const club = hero.querySelector(".club-wrap");
     const teamSelect = hero.querySelector(".team-select-fixture");
-    const gameplay = [...hero.querySelectorAll(".menu-fixture")].find((el) => el.querySelector(".meta")?.textContent === "Gameplay");
+    const gameplay = [...hero.querySelectorAll(".menu-fixture")].find((el) =>
+      el.querySelector(".fixture-section-label")?.textContent === "GAMEPLAY",
+    );
     expect(stack).toBeTruthy();
     expect(stack?.contains(title!)).toBe(true);
     expect(stack?.contains(club!)).toBe(true);
@@ -154,15 +174,18 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(title?.querySelector(".title-emoji")?.textContent).toBe("⚽️");
     expect(title!.compareDocumentPosition(club!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(club!.compareDocumentPosition(teamSelect!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(gameplay).toBeTruthy();
     expect(teamSelect!.compareDocumentPosition(gameplay!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(menu.root.querySelector("[data-team-spin]")).toBeTruthy();
     expect(menu.root.querySelector("[data-league-spin]")).toBeTruthy();
+    expect(menu.root.querySelector("[data-kit-spin]")).toBeTruthy();
     expect(menu.root.querySelector("[data-era-spin]")).toBeNull();
     expect(teamSelect?.querySelector(".meta")).toBeNull();
     const fields = [...teamSelect!.querySelectorAll(".team-dial-field")];
-    expect(fields).toHaveLength(2);
+    expect(fields).toHaveLength(3);
     expect(fields[0]?.querySelector(".team-dial-label")?.textContent).toBe("League");
     expect(fields[1]?.querySelector(".team-dial-label")?.textContent).toBe("Club");
+    expect(fields[2]?.querySelector(".team-dial-label")?.textContent).toBe("Kit");
     const dials = [...teamSelect!.querySelectorAll(".time-spin")];
     expect(dials[0]?.hasAttribute("data-league-spin")).toBe(true);
     expect(dials[1]?.hasAttribute("data-team-spin")).toBe(true);
@@ -227,6 +250,7 @@ describe("MainMenu LEAGUE mode button", () => {
         showLeague: false,
         kickOffTime: "15:00",
         matchDuration: 600,
+        kitChoice: "home",
       },
       {
         team: chelsea0405 as never,
@@ -240,11 +264,13 @@ describe("MainMenu LEAGUE mode button", () => {
     const teamSelect = menu.root.querySelector(".team-select-fixture")!;
     expect(teamSelect.querySelector(".team-dials")?.classList.contains("has-era")).toBe(true);
     const fields = [...teamSelect.querySelectorAll(".team-dial-field")];
-    expect(fields).toHaveLength(3);
+    expect(fields).toHaveLength(4);
     expect(fields[1]?.querySelector(".team-dial-label")?.textContent).toBe("Club");
     expect(fields[2]?.querySelector(".team-dial-label")?.textContent).toBe("Team");
+    expect(fields[3]?.querySelector(".team-dial-label")?.textContent).toBe("Kit");
     expect(menu.root.querySelector("[data-team-spin] strong")?.textContent).toBe("Chelsea");
     expect(menu.root.querySelector("[data-era-spin] strong")?.textContent).toBe("04-05");
+    expect(menu.root.querySelector("[data-kit-spin] strong")?.textContent).toBe("Home");
     expect(menu.root.querySelector("[data-team-spin]")?.textContent).not.toContain("Mourinho");
     expect(menu.root.querySelector("[data-era-spin]")?.textContent).not.toContain("Mourinho");
     // Full display name stays on the club line / Formation title source.
@@ -285,6 +311,7 @@ describe("MainMenu LEAGUE mode button", () => {
         showLeague: false,
         kickOffTime: "15:00",
         matchDuration: 600,
+        kitChoice: "home",
       },
       {
         team: team("home", "Home", "HOM"),
@@ -342,6 +369,7 @@ describe("MainMenu LEAGUE mode button", () => {
         showLeague: false,
         kickOffTime: "15:00",
         matchDuration: 600,
+        kitChoice: "home",
       },
       {
         team: team("home", "Home", "HOM"),
@@ -383,6 +411,7 @@ describe("MainMenu LEAGUE mode button", () => {
         showLeague: false,
         kickOffTime: "15:00",
         matchDuration: 600,
+        kitChoice: "home",
       },
       {
         team: team("home", "Home", "HOM"),

@@ -79,6 +79,38 @@ describe("Kit clash", () => {
     expect(resolveMatchKits(home, away, { homeChoice: "away" }).home.shirt).not.toBe("#007A3D");
   });
 
+  it("keeps opposition on home kit when user forces away and colours still differ", () => {
+    const home = team({
+      id: "green",
+      defaultKit: { shirt: "#007A3D", shorts: "#ffffff", socks: "#007A3D" },
+      awayKit: { shirt: "#ffffff", shorts: "#007A3D", socks: "#ffffff" },
+    });
+    const away = team({
+      id: "red",
+      defaultKit: { shirt: "#C8102E", shorts: "#ffffff", socks: "#C8102E" },
+      awayKit: { shirt: "#111111", shorts: "#111111", socks: "#111111" },
+    });
+    const kits = resolveMatchKits(home, away, { homeChoice: "away" });
+    expect(kits.home.shirt.toLowerCase()).toBe("#ffffff");
+    expect(kits.away.shirt).toBe("#C8102E");
+  });
+
+  it("switches opposition off home when user away kit would clash", () => {
+    const home = team({
+      id: "green",
+      defaultKit: { shirt: "#007A3D", shorts: "#ffffff", socks: "#007A3D" },
+      awayKit: { shirt: "#C8102E", shorts: "#ffffff", socks: "#C8102E" },
+    });
+    const away = team({
+      id: "red",
+      defaultKit: { shirt: "#C8102E", shorts: "#ffffff", socks: "#C8102E" },
+      awayKit: { shirt: "#111111", shorts: "#111111", socks: "#111111" },
+    });
+    const kits = resolveMatchKits(home, away, { homeChoice: "away" });
+    expect(kits.home.shirt).toBe("#C8102E");
+    expect(kits.away.shirt).toBe("#111111");
+  });
+
   it("derives an away kit when none is authored", () => {
     const t = team({
       id: "x",

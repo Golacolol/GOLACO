@@ -1,5 +1,5 @@
 import { clamp, stat01 } from "../../core/math";
-import { GOAL_WIDTH, HALF_LENGTH, PENALTY_AREA_LENGTH } from "../constants";
+import { GOAL_WIDTH, HALF_LENGTH, PENALTY_AREA_LENGTH, PENALTY_AREA_WIDTH } from "../constants";
 import type { Player } from "../players/Player";
 import type { GameplayTuning } from "../gameplay/GameplayTuning";
 import { canShoot, choosePassTarget, isBackwardPass, passingLaneQuality } from "./PassingAI";
@@ -51,6 +51,23 @@ export function possessionUrgency(possessionTime: number): number {
   if (possessionTime < 2.8) return 0.36;
   if (possessionTime < 5.5) return 0.62;
   return clamp(0.88 + (possessionTime - 5.5) * 0.08, 0.88, 1.18);
+}
+
+/** True when the carrier is inside the opponent's penalty area (uses attack goal). */
+export function inOpponentPenaltyArea(carrier: Player): boolean {
+  const distGoal = carrier.distTo(carrier.oppGoalX(), 0);
+  return distGoal < PENALTY_AREA_LENGTH + 0.5 && Math.abs(carrier.z) <= PENALTY_AREA_WIDTH / 2;
+}
+
+/**
+ * Box finish clock — attackers must pass or shoot before endless side-to-side vs the keeper.
+ * Closed-down / GK-rush situations force the end-product sooner.
+ */
+export function boxFinishDeadline(pressure: number, gkClose: boolean): number {
+  if (gkClose) return 0.55;
+  if (pressure > 0.62) return 0.7;
+  if (pressure > 0.4) return 0.95;
+  return 1.25;
 }
 
 export function longShotOpportunity(carrier: Player, opponents: Player[]): { open: boolean; distance: number; blocked: boolean; inZone: boolean } {
@@ -616,6 +633,47 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     throughBallScore = Math.min(throughBallScore, shotScore - 0.12);
   }
 
+  // Penalty-box deadlock breaker: never oscillate with the keeper.
+  // Once inside the area (esp. closed down), finish or release within a short window.
+  const inOppBox =
+    inOpponentPenaltyArea(carrier) ||
+    (distGoal < PENALTY_AREA_LENGTH + 1.5 && Math.abs(carrier.z) < PENALTY_AREA_WIDTH * 0.5);
+  if (inOppBox) {
+    const gk = opponents.find((o) => o.isGK) ?? null;
+    const gkClose = !!gk && carrier.distTo(gk.x, gk.z) < 4.6;
+    const deadline = boxFinishDeadline(pressure, gkClose);
+    // Lateral grass next to a rushed keeper is a trap — crush side-to-side carries.
+    if (space.kind === "lateral" || space.kind === "back") {
+      runScore *= gkClose || pressure > 0.48 ? 0.28 : 0.55;
+    }
+    if (possessionTime >= deadline * 0.45) {
+      runScore *= 0.55;
+      holdScore *= 0.4;
+      if (distGoal < 18 && Math.abs(carrier.z) < 14) {
+        shotScore = Math.max(shotScore, 0.62 + shoot * 0.22 + (gkClose ? 0.12 : 0));
+      }
+      if (shortT && lane > 0.35) passScore = Math.max(passScore, 0.58 + lane * 0.22);
+    }
+    if (possessionTime >= deadline) {
+      runScore *= 0.18;
+      holdScore *= 0.08;
+      const centralEnough = Math.abs(carrier.z) < 14 && distGoal < PENALTY_AREA_LENGTH + 3;
+      if (centralEnough || canShoot(carrier, opponents) || clearChance.quality >= 0.22) {
+        shotScore = Math.max(shotScore, 1.05 + shoot * 0.22 + pressure * 0.12 + (gkClose ? 0.1 : 0));
+        passScore = Math.min(passScore, shotScore - 0.08);
+      } else if (shortT && lane > 0.32) {
+        passScore = Math.max(passScore, 1.0 + lane * 0.18 + pressure * 0.1);
+        shotScore = Math.max(shotScore, 0.72 + shoot * 0.16);
+      } else {
+        // No clean outlet — still shoot rather than dribble into the keeper forever.
+        shotScore = Math.max(shotScore, 0.98 + shoot * 0.18);
+      }
+      throughBallScore *= 0.45;
+      longPassScoreAdj *= 0.35;
+      crossScore = Math.max(crossScore, shortT && Math.abs(carrier.z) > 10 ? 0.55 : 0);
+    }
+  }
+
   const scores: AttackScores = {
     passScore,
     runScore,
@@ -661,8 +719,14 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   if (passTarget && forbid.has(passTarget.id)) {
     passTarget = shortT && !forbid.has(shortT.id) ? shortT : null;
   }
-  if (passTarget && carrier.distTo(passTarget.x, passTarget.z) < 7.5 && Math.abs(passTarget.z - carrier.z) < 6) {
+  if (
+    !inOppBox &&
+    passTarget &&
+    carrier.distTo(passTarget.x, passTarget.z) < 7.5 &&
+    Math.abs(passTarget.z - carrier.z) < 6
+  ) {
     // Too tight to keep recycling — force a carry instead when that was the only short option.
+    // Never do this inside the opp box — that recreates the keeper side-to-side deadlock.
     if (pick.action === "PASS" && runScore >= passScore - 0.2) {
       return {
         action: "RUN",

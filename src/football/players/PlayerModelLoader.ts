@@ -272,19 +272,23 @@ function hexToRgb(hex: number): [number, number, number] {
   return [(hex >> 16) & 255, (hex >> 8) & 255, hex & 255];
 }
 
-/** Warm mid-tone pixels on military/full-body atlases ≈ exposed skin. */
-function isSkinLikePixel(r: number, g: number, b: number): boolean {
+/**
+ * Face/skin only — military khaki/armor on Vanguard atlases must NOT count as skin,
+ * or home/away kits wash out to the same flesh-colored silhouette.
+ */
+export function isSkinLikePixel(r: number, g: number, b: number): boolean {
   const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const sat = max === 0 ? 0 : (max - min) / max;
-  const warm = r >= g - 10 && r > b + 10;
-  return warm && lum > 0.2 && lum < 0.92 && sat > 0.04 && sat < 0.72;
+  const warm = r >= g && r > b + 18 && g > b;
+  // Peach/tan face range — exclude gray-green armor and desaturated cloth.
+  return warm && lum > 0.28 && lum < 0.82 && sat > 0.12 && sat < 0.55 && r - b > 25;
 }
 
 /**
  * Recolor a full-body diffuse: skin-like texels → skinTone, everything else → kit.
- * Preserves source luminosity so folds/armor shading survive.
+ * Kept for tests / optional mask helpers — primary skinned kits use cylindrical wrap.
  */
 export function tintBodyAlbedoMap(
   source: THREE.Texture,
@@ -311,8 +315,6 @@ export function tintBodyAlbedoMap(
   const d = imageData.data;
   const [kr, kg, kb] = hexToRgb(kitHex);
   const [sr, sg, sb] = hexToRgb(skinHex);
-  const kitLum = Math.max(0.08, (0.2126 * kr + 0.7152 * kg + 0.0722 * kb) / 255);
-  const skinLum = Math.max(0.08, (0.2126 * sr + 0.7152 * sg + 0.0722 * sb) / 255);
 
   for (let i = 0; i < d.length; i += 4) {
     const r = d[i]!;
@@ -322,14 +324,17 @@ export function tintBodyAlbedoMap(
     if (a < 8) continue;
     const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
     const skin = isSkinLikePixel(r, g, b);
-    const tr = skin ? sr : kr;
-    const tg = skin ? sg : kg;
-    const tb = skin ? sb : kb;
-    const tLum = skin ? skinLum : kitLum;
-    const f = lum / tLum;
-    d[i] = Math.min(255, Math.round(tr * f));
-    d[i + 1] = Math.min(255, Math.round(tg * f));
-    d[i + 2] = Math.min(255, Math.round(tb * f));
+    if (skin) {
+      const shade = 0.55 + 0.55 * lum;
+      d[i] = Math.min(255, Math.round(sr * shade));
+      d[i + 1] = Math.min(255, Math.round(sg * shade));
+      d[i + 2] = Math.min(255, Math.round(sb * shade));
+    } else {
+      const shade = 0.62 + 0.38 * lum;
+      d[i] = Math.min(255, Math.round(kr * shade));
+      d[i + 1] = Math.min(255, Math.round(kg * shade));
+      d[i + 2] = Math.min(255, Math.round(kb * shade));
+    }
   }
   ctx.putImageData(imageData, 0, 0);
 
@@ -342,7 +347,207 @@ export function tintBodyAlbedoMap(
   return tex;
 }
 
-export function applyKitToSkinned(inst: SkinnedPlayerInstance, kit: TeamKit, skinToneHex: number, bootHex: number): void {
+/** Mixamo-style humanoid height bands (feet → head) for kit wrap atlases. */
+export const KIT_WRAP_BANDS = {
+  bootTop: 0.09,
+  sockTop: 0.24,
+  shortTop: 0.4,
+  shirtTop: 0.74,
+} as const;
+
+/**
+ * Cylindrical body UVs from bind-pose positions — model-agnostic jersey wrap.
+ * faceNegZ: Mixamo Vanguard faces −Z in local space (before root π yaw).
+ */
+export function applyCylindricalBodyUVs(
+  geometry: THREE.BufferGeometry,
+  opts?: { faceNegZ?: boolean },
+): void {
+  const pos = geometry.getAttribute("position");
+  if (!pos || pos.count < 3) return;
+  let minY = Infinity;
+  let maxY = -Infinity;
+  for (let i = 0; i < pos.count; i++) {
+    const y = pos.getY(i);
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  }
+  const span = Math.max(1e-4, maxY - minY);
+  const faceNegZ = opts?.faceNegZ ?? true;
+  const uv = new Float32Array(pos.count * 2);
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i);
+    const y = pos.getY(i);
+    const z = pos.getZ(i);
+    const ang = faceNegZ ? Math.atan2(x, -z) : Math.atan2(x, z);
+    let u = ang / (Math.PI * 2) + 0.5;
+    u = ((u % 1) + 1) % 1;
+    const v = (y - minY) / span;
+    uv[i * 2] = u;
+    uv[i * 2 + 1] = v;
+  }
+  geometry.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+}
+
+/**
+ * Bake a cylindrical jersey wrap atlas: shirt wrap (or solid) on the torso band,
+ * solid shorts/socks/boots below, skin on the head. Works for any full-body mesh
+ * once {@link applyCylindricalBodyUVs} is applied — no material-slot naming required.
+ */
+export function bakeHeightBandedKitWrap(
+  wrapMap: THREE.Texture | null,
+  shirtHex: number,
+  shortsHex: number,
+  socksHex: number,
+  skinHex: number,
+  bootHex: number,
+  size = 512,
+): THREE.CanvasTexture | null {
+  if (typeof document === "undefined") return null;
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  let ctx: CanvasRenderingContext2D | null = null;
+  try {
+    ctx = canvas.getContext("2d");
+  } catch {
+    return null;
+  }
+  if (!ctx) return null;
+
+  const rgb = (hex: number) => {
+    const [r, g, b] = hexToRgb(hex);
+    return `rgb(${r},${g},${b})`;
+  };
+  /** Paint a v-band; v=0 feet at canvas bottom (flipY textures). */
+  const fillVBand = (hex: number, v0: number, v1: number) => {
+    const top = (1 - v1) * size;
+    const bot = (1 - v0) * size;
+    ctx.fillStyle = rgb(hex);
+    ctx.fillRect(0, top, size, Math.max(1, bot - top));
+  };
+
+  const { bootTop, sockTop, shortTop, shirtTop } = KIT_WRAP_BANDS;
+  // feet→head: boot | sock | shorts | shirt | skin
+  fillVBand(bootHex, 0, bootTop);
+  fillVBand(socksHex, bootTop, sockTop);
+  fillVBand(shortsHex, sockTop, shortTop);
+  fillVBand(shirtHex, shortTop, shirtTop);
+  fillVBand(skinHex, shirtTop, 1);
+
+  const wrapImg = wrapMap?.image as CanvasImageSource | undefined;
+  const wrapReady =
+    wrapImg &&
+    "width" in (wrapImg as { width?: number }) &&
+    Number((wrapImg as { width: number }).width) >= 2;
+  if (wrapReady && wrapImg) {
+    const ox = Math.floor(((((wrapMap!.offset?.x ?? 0) % 1) + 1) % 1) * size);
+    const shirtCanvasTop = (1 - shirtTop) * size;
+    const shirtCanvasBot = (1 - shortTop) * size;
+    const bandH = Math.max(1, shirtCanvasBot - shirtCanvasTop);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, shirtCanvasTop, size, bandH);
+    ctx.clip();
+    // Horizontal wrap with texture.offset — draw twice so the seam stays covered.
+    try {
+      ctx.drawImage(wrapImg, -ox, shirtCanvasTop, size, bandH);
+      ctx.drawImage(wrapImg, size - ox, shirtCanvasTop, size, bandH);
+    } catch {
+      /* tainted / missing — keep solid shirt */
+    }
+    ctx.restore();
+  }
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.flipY = true;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.ClampToEdgeWrapping;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+function ensureCylindricalWrapUVs(inst: SkinnedPlayerInstance): void {
+  if (!inst.root) return;
+  const shirtSet = new Set(inst.kitMaterials.shirt);
+  inst.root.traverse((obj) => {
+    const mesh = obj as THREE.Mesh;
+    if (!mesh.isMesh || !mesh.geometry) return;
+    const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    if (!mats.some((m) => shirtSet.has(m as THREE.MeshStandardMaterial))) return;
+    if (mesh.userData.kitWrapUvReady) return;
+    mesh.geometry = mesh.geometry.clone();
+    applyCylindricalBodyUVs(mesh.geometry, { faceNegZ: true });
+    mesh.userData.kitWrapUvReady = true;
+  });
+}
+
+/**
+ * Kit colours + jersey wrap texture on the existing full-body mesh (same idea as the
+ * procedural/referee kit path). Remaps UVs cylindrically — does not add kit meshes.
+ */
+export function applyFullBodyKitWrap(
+  inst: SkinnedPlayerInstance,
+  kit: TeamKit,
+  skinToneHex: number,
+  bootHex: number,
+  wrapMap: THREE.Texture | null,
+): void {
+  ensureCylindricalWrapUVs(inst);
+  const baked = bakeHeightBandedKitWrap(
+    wrapMap,
+    hexColor(kit.shirt),
+    hexColor(kit.shorts),
+    hexColor(kit.socks),
+    skinToneHex,
+    bootHex,
+  );
+  const seen = new Set<THREE.MeshStandardMaterial>();
+  for (const m of inst.kitMaterials.shirt) {
+    if (seen.has(m)) continue;
+    seen.add(m);
+    const prev = m.userData.kitWrapMap as THREE.Texture | undefined;
+    if (prev && prev !== baked && prev !== wrapMap) {
+      prev.dispose?.();
+    }
+    // Keep original atlas around only for diagnostics; wrap replaces display map.
+    if (m.map && !m.userData.kitBaseMap) m.userData.kitBaseMap = m.map;
+    m.normalMap = null;
+    m.roughnessMap = null;
+    m.metalnessMap = null;
+    m.aoMap = null;
+    m.emissiveMap = null;
+    if ("normalScale" in m && m.normalScale) m.normalScale.set(1, 1);
+    if (baked) {
+      m.map = baked;
+      m.userData.kitWrapMap = baked;
+      m.color.setHex(0xffffff);
+    } else {
+      m.map = null;
+      m.color.setHex(hexColor(kit.shirt));
+    }
+    m.roughness = 0.48;
+    m.metalness = 0.04;
+    m.needsUpdate = true;
+  }
+  for (const m of inst.kitMaterials.boots) {
+    if (seen.has(m)) continue;
+    seen.add(m);
+    m.color.setHex(bootHex);
+    m.roughness = 0.3;
+    m.metalness = Math.min(m.metalness ?? 0.05, 0.15);
+    m.needsUpdate = true;
+  }
+}
+
+export function applyKitToSkinned(
+  inst: SkinnedPlayerInstance,
+  kit: TeamKit,
+  skinToneHex: number,
+  bootHex: number,
+  wrapMap?: THREE.Texture | null,
+): void {
   const seen = new Set<THREE.MeshStandardMaterial>();
   const paint = (mats: THREE.MeshStandardMaterial[], hex: number, roughness = 0.55) => {
     for (const m of mats) {
@@ -356,26 +561,7 @@ export function applyKitToSkinned(inst: SkinnedPlayerInstance, kit: TeamKit, ski
   };
 
   if (inst.bodyTintFallback) {
-    const kitHex = hexColor(kit.shirt);
-    for (const m of inst.kitMaterials.shirt) {
-      if (seen.has(m)) continue;
-      seen.add(m);
-      const baseMap = (m.userData.kitBaseMap as THREE.Texture | undefined) ?? m.map ?? null;
-      if (baseMap && !m.userData.kitBaseMap) m.userData.kitBaseMap = baseMap;
-      const tinted = baseMap ? tintBodyAlbedoMap(baseMap, kitHex, skinToneHex) : null;
-      if (tinted) {
-        m.map = tinted;
-        m.color.setHex(0xffffff);
-      } else {
-        // No readable albedo — solid kit so teams stay distinguishable.
-        m.map = null;
-        m.color.setHex(kitHex);
-      }
-      m.roughness = 0.45;
-      m.metalness = Math.min(m.metalness ?? 0.05, 0.12);
-      m.needsUpdate = true;
-    }
-    paint(inst.kitMaterials.boots, bootHex, 0.3);
+    applyFullBodyKitWrap(inst, kit, skinToneHex, bootHex, wrapMap ?? null);
     return;
   }
 

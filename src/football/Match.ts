@@ -21,7 +21,14 @@ import {
 import { tickStillPossession } from "./ai/StillPossession";
 import { updateTeamAI } from "./ai/TeamAI";
 import { containTarget, nearestPressTargets, pressTarget, jockeyTarget } from "./ai/DefensiveAI";
-import { decideAttack, isStriker, isWideAttacker, type AttackDecision } from "./ai/AttackingDecision";
+import {
+  boxFinishDeadline,
+  decideAttack,
+  inOpponentPenaltyArea,
+  isStriker,
+  isWideAttacker,
+  type AttackDecision,
+} from "./ai/AttackingDecision";
 import { isPlayStyleId, resolvePlayStyle, type PlayStyleId, type PlayStyleProfile } from "./ai/PlayStyle";
 import { decisionTelemetry } from "./ai/DecisionTelemetry";
 import { decideFreeKick } from "./ai/FreeKickDecision";
@@ -66,13 +73,23 @@ import {
 import {
   applyFacingHints,
   idleBallFacingHint,
+  moveFacingHint,
   receiveFacingHint,
   turnFacingToward,
 } from "./players/FacingControl";
 import { ballSpeed, isLegalStationary, isOutOfWorld, predictLanding } from "./ball/StuckBall";
 import { aimOnGoal, aiShotAimIntent, computeShot } from "./ball/ShotModel";
 import { MatchCamera, isPlayerView, nextTrack, nextView, supportsViewZoom, viewLabel } from "./camera/MatchCamera";
-import { BALL_GRAVITY, BALL_RADIUS, GOAL_WIDTH, HALF_LENGTH, HALF_TIME_PAUSE, HALF_WIDTH, SPEED_BURST_SHOT_MUL } from "./constants";
+import {
+  BALL_GRAVITY,
+  BALL_RADIUS,
+  GOAL_WIDTH,
+  HALF_LENGTH,
+  HALF_TIME_PAUSE,
+  HALF_WIDTH,
+  PENALTY_AREA_LENGTH,
+  SPEED_BURST_SHOT_MUL,
+} from "./constants";
 import type { InputIntent } from "./controls/InputIntent";
 import { FootballState } from "./FootballState";
 import { defendGoalX, scorerForWorldGoal } from "./pitch/PitchEnds";
@@ -834,8 +851,9 @@ export class Match {
       return;
     }
 
-    if (this.state === FootballState.KICK_OFF) {
-      if (intent.skip) this.state = FootballState.PLAYING;
+    if (this.state === FootballState.KICK_OFF && intent.skip) {
+      // Never abandon kick-off without a pass — that left the ball for the opponent.
+      intent.skip = false;
     }
 
     if (intent.cycleView) {
@@ -1695,7 +1713,8 @@ export class Match {
             )
           : back;
         this.executePass(passer, target, intent, "short", dir);
-      } else if (this.possessionTime > 1.75) {
+      } else if (this.possessionTime > 0.95) {
+        // Idle user on the spot — auto-open rather than leave the ball for opponents.
         this.thinkKickOff(passer, dt);
       }
       return;
@@ -1886,9 +1905,21 @@ export class Match {
       passer.runTargetX = decision.space.x;
       passer.runTargetZ = decision.space.z;
     }
+    const oppGkEarly = this.opponentsOf(passer).find((p) => p.isGK);
+    const inBoxEarly =
+      inOpponentPenaltyArea(passer) || (distGoal < PENALTY_AREA_LENGTH + 1.5 && Math.abs(passer.z) < 20);
+    const gkCloseEarly = !!oppGkEarly && passer.distTo(oppGkEarly.x, oppGkEarly.z) < 4.6;
+    const boxDeadlineEarly = boxFinishDeadline(this.pressure, gkCloseEarly);
+    // Closed-down in the box: stop lateral shuffle vs the keeper — plant / go goalward.
+    if (inBoxEarly && (gkCloseEarly || this.possessionTime >= boxDeadlineEarly * 0.6)) {
+      passer.runTargetX = passer.x + attackDir * (gkCloseEarly ? 1.2 : 2.4);
+      passer.runTargetZ = clamp(passer.z * 0.35, -8, 8);
+    }
     this.aiAct += dt;
     // Slower AI cadence in build-up so possession recirculates instead of forced shots.
-    if (this.aiAct < (building ? 0.22 : 0.2)) return;
+    // Box finish window ticks faster so we don't wait a full AI beat while oscillating.
+    const aiCadence = inBoxEarly && (gkCloseEarly || this.possessionTime >= boxDeadlineEarly) ? 0.1 : building ? 0.22 : 0.2;
+    if (this.aiAct < aiCadence) return;
     this.aiAct = 0;
     let action = decision.action;
     let passTarget = decision.passTarget;
@@ -1949,8 +1980,18 @@ export class Match {
       }
     }
     const stallStyle = (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined;
+    void oppGkEarly;
+    const inBox = inBoxEarly;
+    const gkClose = gkCloseEarly;
+    const boxDeadline = boxDeadlineEarly;
+    const boxMustFinish = inBox && this.possessionTime >= boxDeadline;
     // First-touch plant — AI must settle before kicking (PES second-touch timing).
-    if (passer.firstTouchTimer > 0.1 && (passLike || action === "SHOT" || action === "LONG_SHOT")) {
+    // Past the box deadline, never demote a finish back into the shuffle.
+    if (
+      passer.firstTouchTimer > 0.1 &&
+      (passLike || action === "SHOT" || action === "LONG_SHOT") &&
+      !boxMustFinish
+    ) {
       action = decision.scores.runScore >= 0.08 ? "RUN" : "HOLD";
     }
     // Receive dwell — longer when there is grass to attack; shorter under pressure.
@@ -1964,10 +2005,17 @@ export class Match {
         : this.pressure > 0.55
           ? clamp(0.85 + (1 - composure) * 0.22 - patience * 0.02, 0.65, 1.2)
           : clamp(1.25 + (1 - composure) * 0.28 + (1 - vision) * 0.1 + patience * 0.28, 1.05, 2.05);
-      if (passLike && this.possessionTime < dwell) action = "RUN";
+      if (passLike && this.possessionTime < dwell && !boxMustFinish) action = "RUN";
     }
     // Marker on the ball + a cut lane = carry / shield, not a hopeful pass straight into him.
-    if (passLike && passTarget && action !== "LONG_PASS" && action !== "CROSS" && this.possessionTime < 3.0) {
+    if (
+      passLike &&
+      passTarget &&
+      action !== "LONG_PASS" &&
+      action !== "CROSS" &&
+      this.possessionTime < 3.0 &&
+      !boxMustFinish
+    ) {
       const opps = this.opponentsOf(passer);
       const marked = opps.some((o) => !o.isGK && o.distTo(this.ball.x, this.ball.z) < 1.7);
       if (marked && passingLaneQuality(passer, passTarget.x, passTarget.z, opps) < 0.62) {
@@ -1978,6 +2026,23 @@ export class Match {
     const stallAt =
       (stallStyle?.id === "possession" ? 4.2 : stallStyle?.id === "routeOne" || stallStyle?.id === "direct" ? 3.1 : 3.6) /
       Math.max(0.85, stallStyle?.tempo ?? 1);
+    // Box: force an end-product before the keeper-mirroring carry deadlock.
+    if ((action === "RUN" || action === "HOLD") && boxMustFinish) {
+      const cutbackOpen =
+        !!passTarget &&
+        !forbid.includes(passTarget.id) &&
+        !passTarget.isGK &&
+        passingLaneQuality(passer, passTarget.x, passTarget.z, this.opponentsOf(passer)) >= 0.55 &&
+        !gkClose;
+      // Keeper in the face → shoot; only pass when a clear cutback exists.
+      if (gkClose || decision.scores.shotScore + 0.02 >= decision.scores.passScore || !cutbackOpen) {
+        action = "SHOT";
+      } else {
+        action = "PASS";
+      }
+      passer.runTargetX = passer.x + attackDir * 1.2;
+      passer.runTargetZ = clamp(passer.z * 0.3, -7, 7);
+    }
     if ((action === "RUN" || action === "HOLD") && this.possessionTime >= stallAt) {
       const style = stallStyle;
       if (passTarget && !forbid.includes(passTarget.id) && !passTarget.isGK) {
@@ -2013,6 +2078,8 @@ export class Match {
         if (alt && passingLaneQuality(passer, alt.x, alt.z, this.opponentsOf(passer)) >= 0.42) {
           action = direct && (alt.x - passer.x) * attackDir > 6 ? "THROUGH" : "PASS";
           passTarget = alt;
+        } else if (inBox) {
+          action = "SHOT";
         }
       }
     }
@@ -2051,8 +2118,19 @@ export class Match {
         return;
       }
       // Settled enough to shoot — box can fire earlier; long shots need a short plant.
-      const minShotHold = action === "LONG_SHOT" ? 1.05 : isStriker(passer) ? 0.48 : 0.72;
-      if (this.possessionTime < minShotHold) {
+      const minShotHold =
+        action === "LONG_SHOT"
+          ? 1.05
+          : boxMustFinish
+            ? 0.28
+            : inBox
+              ? gkClose
+                ? 0.32
+                : 0.42
+              : isStriker(passer)
+                ? 0.48
+                : 0.72;
+      if (this.possessionTime < minShotHold && !boxMustFinish) {
         if (passTarget && decision.scores.passScore >= 0.28) action = "PASS";
         else {
           action = decision.scores.runScore >= 0.1 ? "RUN" : "HOLD";
@@ -2081,7 +2159,12 @@ export class Match {
       : { x: decision.space.dx, z: decision.space.dz };
     // Pre-turn toward the pass; only refuse when still badly squared under low pressure.
     turnFacingToward(passer, dir.x, dir.z, dt, { turnMul: 1.9 });
-    if (bodyAlignment(passer.facing, dir.x, dir.z) < facingKickFloor("pass") && this.pressure < 0.72) {
+    // Closed-down box finish: don't soft-refuse forever while still shuffling.
+    if (
+      bodyAlignment(passer.facing, dir.x, dir.z) < facingKickFloor("pass") &&
+      this.pressure < 0.72 &&
+      !(boxMustFinish && (gkClose || this.pressure > 0.5))
+    ) {
       return;
     }
     this.executePass(passer, passTarget, fakeBase, passType, dir);
@@ -2117,7 +2200,13 @@ export class Match {
       ? normalize2(target.x - kicker.x, target.z - kicker.z)
       : { x: -kicker.attackSign, z: 0 };
     kicker.facing = Math.atan2(dir.x, dir.z);
-    const fake = { moveX: dir.x, moveZ: dir.z, aimX: dir.x, aimY: 0, passHold: 0.28, pass: true, shootHold: 0 } as InputIntent;
+    const dist = target ? kicker.distTo(target.x, target.z) : 12;
+    // Weight the ritual pass for distance — the old fixed 0.28 hold underhit 8–16 m taps.
+    const passHold = Math.min(
+      1,
+      idealPassHold01("short", dist, { composure: kicker.attrs.composure ?? 70, tempo: 1 }) + 0.08,
+    );
+    const fake = { moveX: dir.x, moveZ: dir.z, aimX: dir.x, aimY: 0, passHold, pass: true, shootHold: 0 } as InputIntent;
     this.executePass(kicker, target, fake, "short", dir);
   }
 
@@ -2353,7 +2442,6 @@ export class Match {
 
   private executePass(passer: Player, target: Player | null, intent: InputIntent, passType: PassType, dir: { x: number; z: number }): void {
     const openingKick = this.state === FootballState.KICK_OFF;
-    if (openingKick) this.state = FootballState.PLAYING;
     if (target?.isGK && !passer.isGK) target = null;
     const hold01 = clamp(holdPowerCurve(intent.passHold, 1.1), 0.12, 1);
     let delivery: PassType = passType;
@@ -2427,6 +2515,8 @@ export class Match {
     destX = safe.x;
     destZ = safe.z;
     if (!this.ballActor.tryClaim("kick", passer.id)) return;
+    // Enter PLAYING only after the kick is claimed — never abandon a silent kick-off.
+    if (openingKick) this.state = FootballState.PLAYING;
     const kick = passKickVector(this.ball.x, this.ball.z, destX, destZ, delivery);
     const strengthScale = strengthKickScale(passer.attrs.strength);
     // Kick is already calibrated to stepBall — only apply small error/strength, not mode speed mul
@@ -4706,15 +4796,20 @@ export class Match {
     const homeColor = hexColor(this.home.record.primaryColor || "#ffffff");
     const awayColor = hexColor(this.away.record.primaryColor || "#ffdd55");
     for (const p of this.allPlayers()) {
-      // Idle / receive facing — hips track the ball when not mid-sprint or celebration.
+      // Soft ball look — never override active run/jockey facing (MOVE beats BALL_IDLE).
       if (!p.celebrating && p.kickTimer <= 0 && !p.sliding) {
         const hints = [];
         if (this.passTargetId === p.id && !this.possessing) {
           const recv = receiveFacingHint(this.ball.vx, this.ball.vz);
           if (recv) hints.push(recv);
         }
-        const idle = idleBallFacingHint(p, this.ball.x, this.ball.z);
-        if (idle) hints.push(idle);
+        const steering = Math.hypot(p.vx, p.vz) > 0.45;
+        if (steering) {
+          hints.push(moveFacingHint(p.vx, p.vz));
+        } else {
+          const idle = idleBallFacingHint(p, this.ball.x, this.ball.z);
+          if (idle) hints.push(idle);
+        }
         if (hints.length) applyFacingHints(p, hints, dt);
       }
       updatePlayerAnimation(p, dt, this.time);

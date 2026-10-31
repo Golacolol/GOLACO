@@ -1,8 +1,9 @@
 /**
  * REAL / ARCADE share Match AI (ARCADE = multipliers only).
  * TABLE is a separate foosball engine (`src/football/table/`) — no Match AI path.
+ * FLICK is Subbuteo-style Flickball (`src/football/flick/`) — no Match AI path.
  */
-export type GameplayMode = "REAL" | "ARCADE" | "TABLE";
+export type GameplayMode = "REAL" | "ARCADE" | "TABLE" | "FLICK";
 
 export interface GameplayTuning {
   id: GameplayMode;
@@ -117,4 +118,5 @@ export const MODE_BLURBS: Record<GameplayMode, string> = {
   REAL: "Tactical, ratings-driven, measured football.",
   ARCADE: "Faster, freer, more chaos — same AI, expressive multipliers only.",
   TABLE: "Foosball rods — twist, slide, spin. AI or hotseat 2P.",
+  FLICK: "Subbuteo Flickball — pull back and flick. You keep your GK vs AI.",
 };
