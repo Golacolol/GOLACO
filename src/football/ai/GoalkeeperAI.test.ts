@@ -2,12 +2,13 @@ import { describe, expect, it } from "vitest";
 import { Player } from "../players/Player";
 import { Ball } from "../ball/Ball";
 import type { PlayerAttributes } from "../../data/schema";
-import { GOAL_WIDTH, HALF_LENGTH } from "../constants";
+import { GOAL_WIDTH, HALF_LENGTH, HALF_WIDTH } from "../constants";
 import {
   chooseKeeperOutlet,
   decideKeeperDistribution,
   goalkeeperTarget,
   keeperAngleStand,
+  keeperOutletAimPoint,
   keeperPassDelivery,
   keeperRestartReady,
   keeperDiveReach,
@@ -17,6 +18,7 @@ import {
 } from "../ai/GoalkeeperAI";
 import { inPenaltyArea, inSixYardArea } from "../pitch/PitchZones";
 import { movePlayer } from "../players/PlayerMovement";
+import { TOUCHLINE_SAFE_MARGIN } from "../ThrowIn";
 
 const attrs: PlayerAttributes = {
   pace: 50, passing: 55, longPassing: 60, vision: 58, control: 50, dribbling: 30,
@@ -246,6 +248,20 @@ describe("goalkeeper distribution", () => {
     expect(keeperPassDelivery(10, 0.2)).toBe("roll");
     expect(keeperPassDelivery(20, 0.3)).toBe("throw");
     expect(keeperPassDelivery(32, 0.4)).toBe("kick");
+  });
+
+  it("aims outlet releases inbound of the touchline", () => {
+    const fb = outfield("rb", "home", -HALF_LENGTH + 22, HALF_WIDTH - 1.5, "RB");
+    const aim = keeperOutletAimPoint(fb);
+    expect(Math.abs(aim.z)).toBeLessThanOrEqual(HALF_WIDTH - TOUCHLINE_SAFE_MARGIN - 1);
+  });
+
+  it("prefers a safer CB over a full-back hugging the touchline", () => {
+    const keeper = gk("home");
+    const cb = outfield("cb", "home", -HALF_LENGTH + 18, 6, "CB");
+    const rb = outfield("rb", "home", -HALF_LENGTH + 22, HALF_WIDTH - 1.2, "RB");
+    const chosen = chooseKeeperOutlet(keeper, [keeper, cb, rb], []);
+    expect(chosen?.id).toBe("cb");
   });
 
   it("passes to an available teammate instead of holding forever", () => {

@@ -4,7 +4,12 @@ import type { EventBus } from "../core/EventBus";
 import { hexColor, clamp, lerp, lerpAngle, normalize2, rotate2, stat01 } from "../core/math";
 import type { FixtureRecord, KitChoice } from "../data/schema";
 import { celebrateAI, celebrationStaysPut, clearCelebration, concedeReaction, type CelebrationRoutine } from "./ai/CelebrationAI";
-import { updateGoalkeeper, decideKeeperDistribution, keeperPassDelivery } from "./ai/GoalkeeperAI";
+import {
+  updateGoalkeeper,
+  decideKeeperDistribution,
+  keeperOutletAimPoint,
+  keeperPassDelivery,
+} from "./ai/GoalkeeperAI";
 import {
   choosePassTarget,
   interceptCandidate,
@@ -86,7 +91,14 @@ import { teamMatchPhase, type MatchPhase } from "./ai/MatchBrain";
 import { createGoalEvent, type GoalEvent } from "./GoalEvent";
 import { defaultSpotKick, resolveSpotKick, type SpotKickPlacement } from "./practice/SpotKick";
 import { MatchClock } from "./MatchClock";
-import { throwInKickVector, throwInLanding, throwInMaxDistance, throwInReceiveSpot } from "./ThrowIn";
+import {
+  clampInboundZ,
+  TOUCHLINE_SAFE_MARGIN,
+  throwInKickVector,
+  throwInLanding,
+  throwInMaxDistance,
+  throwInReceiveSpot,
+} from "./ThrowIn";
 import {
   isSubstitutionWindow,
   subAnnounceDone,
@@ -2232,8 +2244,9 @@ export class Match {
 
   /** Roll or throw from the hands after a claim. */
   private executeKeeperHandRelease(gk: Player, target: Player, delivery: "throw" | "roll"): void {
-    const dx = target.x - this.ball.x;
-    const dz = target.z - this.ball.z;
+    const aim = keeperOutletAimPoint(target);
+    const dx = aim.x - this.ball.x;
+    const dz = aim.z - this.ball.z;
     const dist = Math.hypot(dx, dz) || 1;
     const kicking = stat01(gk.attrs.gkKicking ?? gk.attrs.passing);
     if (delivery === "roll") {
@@ -2253,7 +2266,7 @@ export class Match {
     this.ball.lastTouchSide = gk.side;
     this.ballState = "loose";
     this.passTargetId = target.id;
-    this.longPassLanding = { x: target.x, z: target.z };
+    this.longPassLanding = { x: aim.x, z: aim.z };
     this.pendingPassFrom = gk.id;
     this.assistCandidate = gk.id;
     this.stats.passes += 1;
@@ -2372,6 +2385,8 @@ export class Match {
     });
     result.angleError *= this.tuning.passErrorMultiplier / Math.max(0.55, touchScale);
     result.powerError *= this.tuning.passErrorMultiplier / Math.max(0.55, touchScale);
+    // Keepers distributing to wide FBs: cut aim scatter so releases don't go for a throw-in.
+    if (passer.isGK) result.angleError *= 0.32;
     // Hips-off forced pass: inflate weight error so it underhits or skids wide.
     if (align < facingKickFloor("pass")) {
       result.angleError *= 1.55;
@@ -2388,6 +2403,11 @@ export class Match {
         (target.desiredZ !== 0 ? (target.desiredZ - target.z) * 0.35 : target.vz * 0.45) +
         target.vz * 0.25
       : passer.z + dir.z * distance;
+    if (passer.isGK && target) {
+      const aim = keeperOutletAimPoint(target);
+      destX = aim.x;
+      destZ = aim.z;
+    }
     if ((delivery === "through" || delivery === "chip") && target) {
       const space = throughBallAim(passer, target, this.opponentsOf(passer));
       destX = space.x;
@@ -2396,6 +2416,7 @@ export class Match {
     const offset = rotate2(destX - passer.x, destZ - passer.z, result.angleError);
     destX = passer.x + offset.x;
     destZ = passer.z + offset.z;
+    if (passer.isGK) destZ = clampInboundZ(destZ, TOUCHLINE_SAFE_MARGIN + 1);
     const aimed = Math.hypot(intent.moveX, intent.moveZ, intent.aimX, intent.aimY) > 0.22;
     const aiPass = this.autoplay || passer.id !== this.controlled.id || !aimed || !target;
     // Only force-remap untargeted long/cross dumps; short/through keep chosen teammates.
@@ -3164,7 +3185,7 @@ export class Match {
     const maxR = throwInMaxDistance(taker.attrs.strength);
     const deep = maxR > HALF_WIDTH * 0.72;
     const x = deep ? lerp(spot.x, taker.oppGoalX() - taker.attackSign * 14, 0.22) : spot.x;
-    const z = clamp(spot.z, -HALF_WIDTH + 2, HALF_WIDTH - 2);
+    const z = clampInboundZ(spot.z, TOUCHLINE_SAFE_MARGIN);
     target.desiredX = x;
     target.desiredZ = z;
     movePlayer(target, dt, x - target.x, z - target.z, true, false, this.moveExtras());
@@ -4100,14 +4121,14 @@ export class Match {
         choosePassTarget(taker, this.teamOf(taker).players, this.opponentsOf(taker), this.ball, dir.x, inwardAim, passType, {
           style: "buildup",
         });
-      const aimX = target ? target.x : taker.x + (dir.x || forward) * Math.min(14, maxR * 0.55);
-      const aimZ = target ? target.z : this.ball.z + inward * Math.min(12, maxR * 0.45);
+      const receive = throwInReceiveSpot(this.ball.x, this.ball.z, forward);
+      // Blend teammate feet with inbound receive spot — never aim raw feet on the touchline.
+      const aimX = target ? target.x * 0.55 + receive.x * 0.45 : taker.x + (dir.x || forward) * Math.min(14, maxR * 0.55);
+      const aimZ = target
+        ? clampInboundZ(target.z * 0.35 + receive.z * 0.65, TOUCHLINE_SAFE_MARGIN)
+        : this.ball.z + inward * Math.min(12, maxR * 0.45);
       const land = throwInLanding(this.ball.x, this.ball.z, aimX, aimZ, taker.attrs.strength, hold01);
-      let dz = land.z - this.ball.z;
-      if (Math.sign(this.ball.z) === Math.sign(dz) && Math.abs(this.ball.z) > 30) {
-        dz = inward * Math.abs(dz);
-      }
-      const landZ = this.ball.z + dz;
+      const landZ = clampInboundZ(land.z, TOUCHLINE_SAFE_MARGIN);
       const kick = throwInKickVector(this.ball.x, this.ball.z, land.x, landZ, taker.attrs.strength, hold01);
       // Start the overhead throw from chest height so it reads as a hand release.
       this.ball.y = Math.max(this.ball.y, 1.55);
@@ -4286,15 +4307,15 @@ export class Match {
       });
     } else {
       const target = choosePassTarget(taker, this.teamOf(taker).players, this.opponentsOf(taker), this.ball, forward, 0, "long");
-      const tx = target?.x ?? taker.x + forward * 28;
-      const tz = target?.z ?? 0;
-      const dx = tx - this.ball.x;
-      const dz = tz - this.ball.z;
-      const dist = Math.hypot(dx, dz) || 1;
-      kickBall(this.ball, (dx / dist) * 18.5, (dz / dist) * 18.5, 4.8);
+      const aim = target ? keeperOutletAimPoint(target) : { x: taker.x + forward * 28, z: 0 };
+      const tx = aim.x;
+      const tz = clampInboundZ(aim.z, TOUCHLINE_SAFE_MARGIN + 2);
+      const kick = passKickVector(this.ball.x, this.ball.z, tx, tz, "long");
+      kickBall(this.ball, kick.vx, kick.vz, kick.vy);
       this.stats.longPasses += 1;
       this.incomingAerial = true;
       this.passTargetId = target?.id ?? null;
+      this.longPassLanding = { x: tx, z: tz };
     }
     this.clearOwner();
     // Throw-ins use throwTimer / arms — don't flash a foot-kick pose.

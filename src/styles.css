@@ -283,10 +283,10 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 }
 .menu-shell {
   display: grid;
-  /* auto (not 1fr): hug the title stack so free space sits outside the pair, not between menus. */
-  grid-template-columns: auto minmax(300px, 420px);
-  gap: 20px;
-  align-items: center;
+  /* Equal columns stay put when embeds open — no width jump into League Fixtures etc. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 36px;
+  align-items: start;
   justify-content: center;
   width: min(980px, 94vw);
   padding: 18px;
@@ -294,36 +294,33 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 }
 .menu-shell.panel-open {
   align-items: start;
-  grid-template-columns: auto minmax(300px, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 .menu-hero {
   text-align: left;
-  width: max-content;
-  max-width: 100%;
   min-width: 0;
+  width: 100%;
 }
-/* Title sets the column width; club line + panels share that edge (no longer than GOLAÇO⚽SOCCER). */
+/* Stack fills the left column (same width as the menu list when closed). */
 .menu-hero-stack {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: max-content;
+  width: 100%;
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  /* cqi for title/club type — keep off .menu-hero so grid max-content sizing still works. */
-  container-type: inline-size;
+  --menu-fixture-height: 72px;
 }
 .menu-hero-stack > h1 {
-  width: max-content;
+  width: 100%;
   max-width: 100%;
   margin-bottom: 10px;
 }
 .menu-hero-stack > .club-wrap,
 .menu-hero-stack > .menu-fixture {
-  /* Don't let wide dials/fixture copy expand past the title. */
-  width: 0;
-  min-width: 100%;
+  width: 100%;
+  min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
 }
@@ -396,7 +393,7 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   max-width: 100%;
   font-family: var(--club-name-font, "Oswald", "Arial Narrow", sans-serif);
   font-weight: 500;
-  font-size: clamp(18px, 4.4cqi, 34px);
+  font-size: clamp(18px, 4.4vw, 34px);
   letter-spacing: 0.045em;
   line-height: 1.12;
   text-transform: uppercase;
@@ -435,23 +432,29 @@ html.club-name-glow-off .club-line {
 }
 .menu-brand { text-align: center; margin-bottom: 18px; }
 .menu-fixture.team-select-fixture {
-  /* Same footprint as Gameplay / Lighting; dials sit where the meta row usually is. */
+  /* Same footprint as Gameplay / Lighting / Match — dials centered in the shared height. */
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: stretch;
-  min-height: 72px;
   padding-top: 8px;
   padding-bottom: 8px;
+}
+.menu-hero-stack > .menu-fixture {
+  height: var(--menu-fixture-height);
+  min-height: var(--menu-fixture-height);
+  max-height: var(--menu-fixture-height);
+  box-sizing: border-box;
+  margin-bottom: 12px;
 }
 .team-dials {
   /* League is short; Team takes the wide column — min 0 so the stack can match title width. */
   display: grid;
   grid-template-columns: minmax(0, 0.34fr) minmax(0, 1fr);
   gap: 12px 14px;
-  align-items: end;
+  align-items: center;
   width: 100%;
-  margin-top: auto;
+  margin-top: 0;
 }
 .team-dials.has-era {
   /* Classic: League · Team · Era (compact date roll e.g. 04-05). */
@@ -544,12 +547,12 @@ html.club-name-glow-off .club-line {
 }
 .menu-hero h1, .menu-brand h1 {
   margin: 0 0 10px;
-  width: max-content;
+  width: 100%;
   max-width: 100%;
   font-family: var(--title-font, "Righteous", Impact, sans-serif);
   font-weight: 400;
-  /* Scale to the hero column so "GOLAÇO⚽SOCCER" stays one full line (no ellipsis). */
-  font-size: clamp(22px, min(9.6cqi, 9.2vw), 58px);
+  /* Sized to the equal column; fitMenuLabels fine-tunes to exact column width. */
+  font-size: clamp(22px, 5.2vw, 52px);
   letter-spacing: 0.015em;
   line-height: 0.94;
   color: rgba(255, 214, 92, 0.82);
@@ -586,36 +589,51 @@ html.club-name-glow-off .club-line {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 12px;
-  align-items: baseline;
+  align-items: center;
+  align-content: center;
   margin-bottom: 16px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   min-height: 62px;
   width: 100%;
   border-left: 3px solid var(--gold);
   background: rgba(7,20,13,0.45);
 }
 .menu-fixture .vs { opacity: 0.55; font-size: 12px; letter-spacing: 0.2em; }
+.menu-fixture.menu-fixture-labeled {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+}
+.menu-fixture.menu-fixture-labeled .meta {
+  width: 100%;
+  margin: 0;
+}
+.menu-fixture.menu-fixture-labeled .tod-row {
+  width: 100%;
+}
 .menu-fixture.fixture-match {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 4.4em;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 1fr;
   justify-content: stretch;
   justify-items: stretch;
-  align-items: stretch;
+  align-items: center;
   column-gap: 8px;
   row-gap: 0;
-  min-height: 62px;
-  height: auto;
-  padding: 4px 10px 4px 12px;
+  padding: 6px 10px 6px 12px;
   overflow: hidden;
 }
 .fixture-copy {
   display: grid;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: auto auto;
   grid-column: 1;
-  grid-row: 1 / -1;
-  align-items: stretch;
+  grid-row: 1;
+  align-content: center;
+  align-items: center;
   justify-items: start;
+  gap: 4px;
   width: 100%;
   min-width: 0;
   max-width: 100%;
@@ -629,6 +647,7 @@ html.club-name-glow-off .club-line {
   cursor: pointer;
   border-radius: 4px;
   overflow: hidden;
+  align-self: center;
 }
 .fixture-copy:hover,
 .fixture-copy:focus-visible {
@@ -645,7 +664,7 @@ html.club-name-glow-off .club-line {
   min-width: 0;
   max-width: 100%;
   overflow: hidden;
-  align-self: end;
+  align-self: center;
 }
 .fixture-teams .kick-countdown {
   margin-left: 0;
@@ -660,8 +679,8 @@ html.club-name-glow-off .club-line {
   overflow: hidden;
   text-overflow: clip;
   white-space: nowrap;
-  align-self: start;
-  padding-top: 2px;
+  align-self: center;
+  padding-top: 0;
   padding-right: 0.35em;
   box-decoration-break: clone;
 }
@@ -682,12 +701,13 @@ html.club-name-glow-off .club-line {
 }
 .duration-spin.time-spin {
   grid-column: 2;
-  grid-row: 1 / -1;
+  grid-row: 1;
   height: auto;
-  align-self: stretch;
+  align-self: center;
   justify-content: space-between;
   min-width: 4.4em;
   width: 4.4em;
+  max-height: 100%;
   flex: none;
   min-height: 0;
   margin: 0;
@@ -803,8 +823,23 @@ html.club-name-glow-off .club-line {
   min-width: 0;
   width: 100%;
   box-sizing: border-box;
+  /* Same box closed or open (League Fixtures / Options / …). */
   height: var(--menu-panel-height);
+  max-height: var(--menu-panel-height);
   overflow-y: auto;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.menu-shell .menu-list:not(.menu-embed) {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0;
+}
+.menu-shell .menu-list:not(.menu-embed) > .menu-item {
+  margin: 0;
+  padding: 8px 12px;
+  flex: 0 0 auto;
 }
 .menu-list.menu-embed {
   min-width: 0;
@@ -2463,8 +2498,8 @@ td, th { border-bottom: 1px solid #234; padding: 6px; }
 .squad-chip .portrait-badge .ini { display: none; }
 @media (max-width: 820px) {
   .menu-shell { grid-template-columns: 1fr; gap: 16px; }
-  .menu-list.menu-embed.panel-league,
   .menu-shell .menu-list,
+  .menu-list.menu-embed.panel-league,
   .menu-list.menu-embed.panel-options,
   .menu-list.menu-embed.panel-database,
   .menu-list.menu-embed.panel-fixtures,

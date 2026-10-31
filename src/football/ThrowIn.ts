@@ -1,6 +1,14 @@
 import { clamp, normalize2, stat01 } from "../core/math";
 import { HALF_WIDTH } from "./constants";
 
+/** Keep throw / GK landings clear of the touchline (metres inside HALF_WIDTH). */
+export const TOUCHLINE_SAFE_MARGIN = 5;
+
+export function clampInboundZ(z: number, margin = TOUCHLINE_SAFE_MARGIN): number {
+  const lim = HALF_WIDTH - margin;
+  return clamp(z, -lim, lim);
+}
+
 /** Max throw distance: weak ~0.42× half-width, strongest = half pitch width (~34m). */
 export function throwInMaxDistance(strength: number): number {
   const t = clamp(stat01(strength) / 0.99, 0, 1);
@@ -16,15 +24,24 @@ export function throwInLanding(
   hold01: number,
 ): { x: number; z: number; dist: number } {
   const maxD = throwInMaxDistance(strength);
+  const inward = -Math.sign(fromZ || 1) || -1;
+  // Always aim at an inbound point — never along the touchline toward |z|≈HALF_WIDTH.
+  const safeToZ = clampInboundZ(toZ, TOUCHLINE_SAFE_MARGIN);
   let dx = toX - fromX;
-  let dz = toZ - fromZ;
+  let dz = safeToZ - fromZ;
+  // Guarantee a clear inward component so shallow aims don't skim out.
+  if (Math.sign(dz) !== inward || Math.abs(dz) < 3.2) {
+    dz = inward * Math.max(3.2, Math.abs(dz));
+  }
   const raw = Math.hypot(dx, dz) || 1;
   const desired = clamp(raw * (0.5 + 0.5 * clamp(hold01, 0, 1)), 5.5, maxD);
   const n = normalize2(dx, dz);
+  const x = fromX + n.x * desired;
+  const z = clampInboundZ(fromZ + n.z * desired, TOUCHLINE_SAFE_MARGIN);
   return {
-    x: fromX + n.x * desired,
-    z: fromZ + n.z * desired,
-    dist: desired,
+    x,
+    z,
+    dist: Math.hypot(x - fromX, z - fromZ) || desired,
   };
 }
 
@@ -51,6 +68,6 @@ export function throwInReceiveSpot(ballX: number, ballZ: number, attackSign: num
   const zSign = Math.sign(ballZ || 1);
   return {
     x: ballX + attackSign * 2.8,
-    z: zSign * (HALF_WIDTH - 3.2),
+    z: zSign * (HALF_WIDTH - TOUCHLINE_SAFE_MARGIN),
   };
 }

@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { HALF_WIDTH } from "./constants";
-import { throwInKickVector, throwInLanding, throwInMaxDistance, throwInReceiveSpot } from "./ThrowIn";
+import {
+  TOUCHLINE_SAFE_MARGIN,
+  throwInKickVector,
+  throwInLanding,
+  throwInMaxDistance,
+  throwInReceiveSpot,
+} from "./ThrowIn";
 
 describe("throw-in delivery", () => {
   it("caps the strongest throws at about half the pitch width", () => {
@@ -15,6 +21,12 @@ describe("throw-in delivery", () => {
     expect(strong.dist).toBeLessThanOrEqual(HALF_WIDTH + 0.01);
   });
 
+  it("never lands a throw along the touchline", () => {
+    const along = throwInLanding(0, HALF_WIDTH - 0.32, 12, HALF_WIDTH - 0.5, 80, 0.8);
+    expect(Math.abs(along.z)).toBeLessThanOrEqual(HALF_WIDTH - TOUCHLINE_SAFE_MARGIN + 0.01);
+    expect(Math.sign(along.z - (HALF_WIDTH - 0.32))).toBe(-1);
+  });
+
   it("builds a faster kick for longer charged throws", () => {
     const soft = throwInKickVector(0, 34, 0, 20, 70, 0.1);
     const hard = throwInKickVector(0, 34, 0, 10, 90, 1);
@@ -25,6 +37,6 @@ describe("throw-in delivery", () => {
 
   it("places the receive spot inside the touchline", () => {
     const spot = throwInReceiveSpot(10, HALF_WIDTH - 0.32, 1);
-    expect(Math.abs(spot.z)).toBeLessThan(HALF_WIDTH);
+    expect(Math.abs(spot.z)).toBeLessThanOrEqual(HALF_WIDTH - TOUCHLINE_SAFE_MARGIN + 0.01);
   });
 });

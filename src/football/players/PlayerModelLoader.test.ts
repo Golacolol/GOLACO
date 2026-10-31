@@ -1,14 +1,18 @@
+/** @vitest-environment jsdom */
 import { describe, expect, it } from "vitest";
 import {
+  applyKitToSkinned,
   classifyMaterialSlot,
   gaitToClip,
   resolvePlayerModelUrl,
   skinnedSupportsTeamKit,
+  tintBodyAlbedoMap,
   DEFAULT_PLAYER_MODEL,
   type SkinnedPlayerInstance,
 } from "./PlayerModelLoader";
 import type { Player } from "./Player";
-import type { MeshStandardMaterial } from "three";
+import { MeshStandardMaterial, Texture } from "three";
+import type { TeamKit } from "../../data/schema";
 
 describe("PlayerModelLoader", () => {
   it("maps gait to clip keys", () => {
@@ -51,6 +55,7 @@ describe("PlayerModelLoader", () => {
   it("treats full-body shirt fallback as kit-capable", () => {
     const empty = {
       kitMaterials: { shirt: [], shorts: [], socks: [], skin: [], boots: [] },
+      bodyTintFallback: false,
     } as unknown as SkinnedPlayerInstance;
     expect(skinnedSupportsTeamKit(empty)).toBe(false);
 
@@ -62,7 +67,30 @@ describe("PlayerModelLoader", () => {
         skin: [],
         boots: [],
       },
+      bodyTintFallback: true,
     } as unknown as SkinnedPlayerInstance;
     expect(skinnedSupportsTeamKit(bodyTint)).toBe(true);
+  });
+
+  it("falls back to solid kit colour when body albedo cannot be read", () => {
+    const mat = new MeshStandardMaterial({ color: 0x111111, name: "VanguardBodyMat" });
+    // Texture with no drawable image — tintBodyAlbedoMap returns null.
+    mat.map = new Texture();
+
+    const inst = {
+      kitMaterials: { shirt: [mat], shorts: [], socks: [], skin: [], boots: [] },
+      bodyTintFallback: true,
+      activeClip: null,
+    } as unknown as SkinnedPlayerInstance;
+
+    const kit = { shirt: "#034694", shorts: "#fff", socks: "#034694" } as TeamKit;
+    applyKitToSkinned(inst, kit, 0xb8896a, 0x101214);
+    expect(mat.map).toBeNull();
+    expect(mat.color.getHex()).toBe(0x034694);
+    expect(mat.userData.kitBaseMap).toBeTruthy();
+  });
+
+  it("returns null from tintBodyAlbedoMap when source has no image", () => {
+    expect(tintBodyAlbedoMap(new Texture(), 0x007a3d, 0xc48a6e)).toBeNull();
   });
 });

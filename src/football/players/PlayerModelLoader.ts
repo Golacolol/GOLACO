@@ -36,6 +36,11 @@ export interface SkinnedPlayerInstance {
     skin: THREE.MeshStandardMaterial[];
     boots: THREE.MeshStandardMaterial[];
   };
+  /**
+   * True when shirt mats are a full-body fallback (e.g. VanguardBodyMat) with no
+   * dedicated skin/shorts/socks slots — albedo must be recolored for kit + skin.
+   */
+  bodyTintFallback: boolean;
   activeClip: PlayerAnimClipKey | null;
 }
 
@@ -234,6 +239,7 @@ export function cloneSkinnedPlayer(url: string): SkinnedPlayerInstance | null {
 
   // Vanguard-style single-body mats have no shirt/shorts slots — collect them as shirt
   // tint targets so teams stay distinguishable. Never put them in skin (that erased kits).
+  let bodyTintFallback = false;
   if (!kitMaterials.shirt.length) {
     root.traverse((obj) => {
       const mesh = obj as THREE.Mesh;
@@ -248,6 +254,7 @@ export function cloneSkinnedPlayer(url: string): SkinnedPlayerInstance | null {
         kitMaterials.shirt.push(std);
       }
     });
+    bodyTintFallback = kitMaterials.shirt.length > 0;
   }
 
   const mixer = new THREE.AnimationMixer(root);
@@ -258,7 +265,81 @@ export function cloneSkinnedPlayer(url: string): SkinnedPlayerInstance | null {
     actions[key] = mixer.clipAction(clip);
   }
 
-  return { root, mixer, actions, kitMaterials, activeClip: null };
+  return { root, mixer, actions, kitMaterials, bodyTintFallback, activeClip: null };
+}
+
+function hexToRgb(hex: number): [number, number, number] {
+  return [(hex >> 16) & 255, (hex >> 8) & 255, hex & 255];
+}
+
+/** Warm mid-tone pixels on military/full-body atlases ≈ exposed skin. */
+function isSkinLikePixel(r: number, g: number, b: number): boolean {
+  const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const sat = max === 0 ? 0 : (max - min) / max;
+  const warm = r >= g - 10 && r > b + 10;
+  return warm && lum > 0.2 && lum < 0.92 && sat > 0.04 && sat < 0.72;
+}
+
+/**
+ * Recolor a full-body diffuse: skin-like texels → skinTone, everything else → kit.
+ * Preserves source luminosity so folds/armor shading survive.
+ */
+export function tintBodyAlbedoMap(
+  source: THREE.Texture,
+  kitHex: number,
+  skinHex: number,
+): THREE.CanvasTexture | null {
+  const img = source.image as CanvasImageSource | { width: number; height: number } | undefined;
+  if (!img || typeof document === "undefined") return null;
+  const w = "width" in img ? Number(img.width) || 0 : 0;
+  const h = "height" in img ? Number(img.height) || 0 : 0;
+  if (w < 2 || h < 2) return null;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return null;
+  try {
+    ctx.drawImage(img as CanvasImageSource, 0, 0, w, h);
+  } catch {
+    return null;
+  }
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const d = imageData.data;
+  const [kr, kg, kb] = hexToRgb(kitHex);
+  const [sr, sg, sb] = hexToRgb(skinHex);
+  const kitLum = Math.max(0.08, (0.2126 * kr + 0.7152 * kg + 0.0722 * kb) / 255);
+  const skinLum = Math.max(0.08, (0.2126 * sr + 0.7152 * sg + 0.0722 * sb) / 255);
+
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i]!;
+    const g = d[i + 1]!;
+    const b = d[i + 2]!;
+    const a = d[i + 3]!;
+    if (a < 8) continue;
+    const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    const skin = isSkinLikePixel(r, g, b);
+    const tr = skin ? sr : kr;
+    const tg = skin ? sg : kg;
+    const tb = skin ? sb : kb;
+    const tLum = skin ? skinLum : kitLum;
+    const f = lum / tLum;
+    d[i] = Math.min(255, Math.round(tr * f));
+    d[i + 1] = Math.min(255, Math.round(tg * f));
+    d[i + 2] = Math.min(255, Math.round(tb * f));
+  }
+  ctx.putImageData(imageData, 0, 0);
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = source.colorSpace;
+  tex.flipY = source.flipY;
+  tex.wrapS = source.wrapS;
+  tex.wrapT = source.wrapT;
+  tex.needsUpdate = true;
+  return tex;
 }
 
 export function applyKitToSkinned(inst: SkinnedPlayerInstance, kit: TeamKit, skinToneHex: number, bootHex: number): void {
@@ -273,6 +354,31 @@ export function applyKitToSkinned(inst: SkinnedPlayerInstance, kit: TeamKit, ski
       m.needsUpdate = true;
     }
   };
+
+  if (inst.bodyTintFallback) {
+    const kitHex = hexColor(kit.shirt);
+    for (const m of inst.kitMaterials.shirt) {
+      if (seen.has(m)) continue;
+      seen.add(m);
+      const baseMap = (m.userData.kitBaseMap as THREE.Texture | undefined) ?? m.map ?? null;
+      if (baseMap && !m.userData.kitBaseMap) m.userData.kitBaseMap = baseMap;
+      const tinted = baseMap ? tintBodyAlbedoMap(baseMap, kitHex, skinToneHex) : null;
+      if (tinted) {
+        m.map = tinted;
+        m.color.setHex(0xffffff);
+      } else {
+        // No readable albedo — solid kit so teams stay distinguishable.
+        m.map = null;
+        m.color.setHex(kitHex);
+      }
+      m.roughness = 0.45;
+      m.metalness = Math.min(m.metalness ?? 0.05, 0.12);
+      m.needsUpdate = true;
+    }
+    paint(inst.kitMaterials.boots, bootHex, 0.3);
+    return;
+  }
+
   // Shirt/shorts/socks first so a shared mat is never overwritten by skin.
   paint(inst.kitMaterials.shirt, hexColor(kit.shirt), 0.42);
   paint(inst.kitMaterials.shorts, hexColor(kit.shorts), 0.58);

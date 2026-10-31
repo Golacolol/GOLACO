@@ -1,5 +1,5 @@
 import { clamp } from "../../core/math";
-import { GOAL_WIDTH, HALF_LENGTH } from "../constants";
+import { GOAL_WIDTH, HALF_LENGTH, HALF_WIDTH } from "../constants";
 import { inPenaltyArea, inSixYardArea } from "../pitch/PitchZones";
 import type { Ball } from "../ball/Ball";
 import { preferKeeperPunch } from "../ball/AerialContest";
@@ -7,6 +7,7 @@ import type { Player } from "../players/Player";
 import { movePlayer } from "../players/PlayerMovement";
 import { DIVE_DURATION_CLAIM, DIVE_DURATION_FULL, startDive } from "../players/PoseMotion";
 import { passingLaneQuality } from "./PassingAI";
+import { TOUCHLINE_SAFE_MARGIN, clampInboundZ } from "../ThrowIn";
 
 export interface KeeperTarget {
   x: number;
@@ -327,9 +328,13 @@ export function chooseKeeperOutlet(gk: Player, teammates: Player[], opponents: P
     const crowd = crowding(mate, teammates);
     if (crowd >= 2 && !isFullBackOutlet(mate)) continue;
     if (crowd >= 3) continue;
-    const fb = isFullBackOutlet(mate) ? 0.85 : mate.slot.includes("CB") ? 0.12 : 0.2;
-    const wideLane = Math.abs(mate.z) > 10 ? 0.22 : -0.08;
-    const score = marked * 0.62 + lane * 1.15 + fb + wideLane - crowd * 0.55 + clamp(dist / 28, 0, 1) * 0.12;
+    // Prefer FBs, but not when they hug the touchline — those releases go out constantly.
+    const tooWide = Math.abs(mate.z) > HALF_WIDTH - TOUCHLINE_SAFE_MARGIN - 1;
+    const fb = isFullBackOutlet(mate) ? (tooWide ? 0.18 : 0.7) : mate.slot.includes("CB") ? 0.28 : 0.2;
+    const wideLane = Math.abs(mate.z) > 10 && Math.abs(mate.z) < HALF_WIDTH - 10 ? 0.18 : -0.12;
+    const touchlineRisk = Math.max(0, Math.abs(mate.z) - (HALF_WIDTH - 8)) * 0.45;
+    const score =
+      marked * 0.62 + lane * 1.15 + fb + wideLane - crowd * 0.55 + clamp(dist / 28, 0, 1) * 0.12 - touchlineRisk;
     if (score > bestScore) {
       bestScore = score;
       best = mate;
@@ -338,15 +343,27 @@ export function chooseKeeperOutlet(gk: Player, teammates: Player[], opponents: P
   return best;
 }
 
+/** Aim at the outlet's feet, pulled inbound so wide FB throws/kicks stay on the pitch. */
+export function keeperOutletAimPoint(target: Player): { x: number; z: number } {
+  return {
+    x: target.x,
+    z: clampInboundZ(target.z, TOUCHLINE_SAFE_MARGIN + 1.5),
+  };
+}
+
 /** Safer long clearance: aim into a wide channel, not the crowded centre. */
 export function keeperPuntAim(gk: Player, teammates: Player[], rng: () => number): { x: number; z: number } {
   const fwd = gk.attackSign;
   const fb = teammates.find((p) => isFullBackOutlet(p) && p.id !== gk.id);
-  const wideZ = fb ? Math.sign(fb.z || 1) * Math.max(14, Math.abs(fb.z)) : rng() > 0.5 ? 16 : -16;
+  const wideZ = fb
+    ? Math.sign(fb.z || 1) * Math.min(18, Math.max(12, Math.abs(fb.z) * 0.55))
+    : rng() > 0.5
+      ? 16
+      : -16;
   const depth = 52 + rng() * 14;
   return {
     x: clamp(gk.x + fwd * depth, -HALF_LENGTH + 14, HALF_LENGTH - 14),
-    z: clamp(wideZ + (rng() - 0.5) * 6, -24, 24),
+    z: clampInboundZ(wideZ + (rng() - 0.5) * 5, 8),
   };
 }
 

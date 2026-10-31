@@ -7,6 +7,7 @@ import type { Ball } from "../ball/Ball";
 import type { Player } from "../players/Player";
 import { setPieceRole } from "./SetPieceAI";
 import { playStylePassWeights, type PlayStyleProfile } from "./PlayStyle";
+import { TOUCHLINE_SAFE_MARGIN, clampInboundZ } from "../ThrowIn";
 
 /** Buckland-style optimal support pocket (~12–18m). */
 export function supportDistanceScore(distance: number, buildup = false): number {
@@ -167,7 +168,7 @@ export function towardOwnKeeper(passer: Player, toX: number, toZ: number, teamma
   return closerToGk || (inPenaltyArea(toX, toZ, passer.side, endsFlipped) && isBackwardPass(passer, toX, toZ));
 }
 
-/** Keep outfield kicks from rolling back onto the goalkeeper. */
+/** Keep outfield kicks from rolling back onto the goalkeeper; keep GK outlets on the pitch. */
 export function safePassDestination(
   passer: Player,
   destX: number,
@@ -175,7 +176,10 @@ export function safePassDestination(
   teammates: Player[],
   opts?: { forceForward?: boolean; allowBackward?: boolean },
 ): { x: number; z: number } {
-  if (passer.isGK || opts?.allowBackward) return { x: destX, z: destZ };
+  if (passer.isGK) {
+    return { x: destX, z: clampInboundZ(destZ, TOUCHLINE_SAFE_MARGIN + 1) };
+  }
+  if (opts?.allowBackward) return { x: destX, z: destZ };
   const fwd = passer.attackSign;
   const own = passer.ownGoalX();
   const backward = isBackwardPass(passer, destX, destZ);

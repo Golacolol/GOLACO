@@ -167,7 +167,8 @@ export class MainMenu {
                 }
               </span>
             </div>
-            <div class="menu-fixture">
+            <div class="menu-fixture menu-fixture-labeled">
+              <span class="meta">Gameplay</span>
               <span class="tod-row">
                 ${mode("REAL", "REAL")}
                 <span class="vs">·</span>
@@ -181,9 +182,9 @@ export class MainMenu {
                     : ""
                 }
               </span>
-              <span class="meta">Gameplay</span>
             </div>
-            <div class="menu-fixture">
+            <div class="menu-fixture menu-fixture-labeled">
+              <span class="meta">Lighting</span>
               <span class="tod-row">
                 ${tod("DAY", "DAY")}
                 <span class="vs">·</span>
@@ -191,7 +192,6 @@ export class MainMenu {
                 <span class="vs">·</span>
                 ${tod("NIGHT", "NIGHT")}
               </span>
-              <span class="meta">Lighting</span>
             </div>
             <div class="menu-fixture fixture-match">
               <button type="button" class="fixture-copy" data-id="next" aria-label="Play next fixture ${home.abbreviation} vs ${away.abbreviation}">
@@ -939,21 +939,29 @@ function scheduleFitMenuLabels(root: HTMLElement): void {
 }
 
 /**
- * Shrink stadium·team club line to width — never ellipsize with "…".
+ * Fit title to the equal menu column, then shrink stadium·team club line to that width.
  * Team/league dials use a fixed CSS size (no JS resize).
  */
 export function fitMenuLabels(root: HTMLElement): void {
+  const stack = root.querySelector<HTMLElement>(".menu-hero-stack");
+  const h1 = root.querySelector<HTMLElement>(".menu-hero-stack > h1");
+  const colW = stack?.clientWidth || 0;
+  if (h1 && colW > 8) {
+    h1.style.fontSize = "";
+    h1.style.letterSpacing = "";
+    const basePx = parseFloat(getComputedStyle(h1).fontSize) || 52;
+    fitNowrapToWidth(h1, colW, { minPx: 18, basePx });
+  }
+
   const line = root.querySelector<HTMLElement>(".club-line");
   if (!line) return;
   const meta = line.closest<HTMLElement>(".club-meta");
   const crest = meta?.querySelector<HTMLElement>(".club-crest");
-  const title = root.querySelector<HTMLElement>(".menu-hero-stack > h1 .title-line, .menu-hero-stack > h1");
   const gap = 12;
-  // Prefer the title column width so stadium·team never runs past GOLAÇO⚽SOCCER.
-  const titleW = title?.getBoundingClientRect().width ?? 0;
+  const stackW = stack?.clientWidth ?? 0;
   const metaBudget =
-    titleW > 0 && crest
-      ? Math.max(24, titleW - crest.offsetWidth - gap)
+    stackW > 0 && crest
+      ? Math.max(24, stackW - crest.offsetWidth - gap)
       : meta && crest
         ? Math.max(24, meta.clientWidth - crest.offsetWidth - gap)
         : line.clientWidth || meta?.clientWidth || 0;
