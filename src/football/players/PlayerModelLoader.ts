@@ -272,19 +272,24 @@ function hexToRgb(hex: number): [number, number, number] {
   return [(hex >> 16) & 255, (hex >> 8) & 255, hex & 255];
 }
 
-/** Warm mid-tone pixels on military/full-body atlases ≈ exposed skin. */
-function isSkinLikePixel(r: number, g: number, b: number): boolean {
+/**
+ * Face/skin only — military khaki/armor on Vanguard atlases must NOT count as skin,
+ * or home/away kits wash out to the same flesh-colored silhouette.
+ */
+export function isSkinLikePixel(r: number, g: number, b: number): boolean {
   const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const sat = max === 0 ? 0 : (max - min) / max;
-  const warm = r >= g - 10 && r > b + 10;
-  return warm && lum > 0.2 && lum < 0.92 && sat > 0.04 && sat < 0.72;
+  const warm = r >= g && r > b + 18 && g > b;
+  // Peach/tan face range — exclude gray-green armor and desaturated cloth.
+  return warm && lum > 0.28 && lum < 0.82 && sat > 0.12 && sat < 0.55 && r - b > 25;
 }
 
 /**
  * Recolor a full-body diffuse: skin-like texels → skinTone, everything else → kit.
- * Preserves source luminosity so folds/armor shading survive.
+ * Kit pixels keep a brightness floor so dark armor still reads as the team colour
+ * (raw luminosity preservation made green/white/black kits look nearly identical).
  */
 export function tintBodyAlbedoMap(
   source: THREE.Texture,
@@ -311,8 +316,6 @@ export function tintBodyAlbedoMap(
   const d = imageData.data;
   const [kr, kg, kb] = hexToRgb(kitHex);
   const [sr, sg, sb] = hexToRgb(skinHex);
-  const kitLum = Math.max(0.08, (0.2126 * kr + 0.7152 * kg + 0.0722 * kb) / 255);
-  const skinLum = Math.max(0.08, (0.2126 * sr + 0.7152 * sg + 0.0722 * sb) / 255);
 
   for (let i = 0; i < d.length; i += 4) {
     const r = d[i]!;
@@ -322,14 +325,19 @@ export function tintBodyAlbedoMap(
     if (a < 8) continue;
     const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
     const skin = isSkinLikePixel(r, g, b);
-    const tr = skin ? sr : kr;
-    const tg = skin ? sg : kg;
-    const tb = skin ? sb : kb;
-    const tLum = skin ? skinLum : kitLum;
-    const f = lum / tLum;
-    d[i] = Math.min(255, Math.round(tr * f));
-    d[i + 1] = Math.min(255, Math.round(tg * f));
-    d[i + 2] = Math.min(255, Math.round(tb * f));
+    if (skin) {
+      // Mild shade on skin so faces keep volume.
+      const shade = 0.55 + 0.55 * lum;
+      d[i] = Math.min(255, Math.round(sr * shade));
+      d[i + 1] = Math.min(255, Math.round(sg * shade));
+      d[i + 2] = Math.min(255, Math.round(sb * shade));
+    } else {
+      // Brightness floor (~0.42) keeps navy/green/white kits distinct at match camera distance.
+      const shade = 0.42 + 0.58 * lum;
+      d[i] = Math.min(255, Math.round(kr * shade));
+      d[i + 1] = Math.min(255, Math.round(kg * shade));
+      d[i + 2] = Math.min(255, Math.round(kb * shade));
+    }
   }
   ctx.putImageData(imageData, 0, 0);
 

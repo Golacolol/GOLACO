@@ -11,7 +11,6 @@ import type { Ball } from "../ball/Ball";
 import { playStylePassWeights, playStyleProfile, type PlayStyleProfile } from "./PlayStyle";
 import { positionArchetype } from "./PositionArchetype";
 import { offsideLineX } from "../rules/Offside";
-import { inPenaltyArea } from "../pitch/PitchZones";
 
 export type AttackAction = "PASS" | "THROUGH" | "LONG_PASS" | "CROSS" | "RUN" | "SHOT" | "LONG_SHOT" | "HOLD";
 
@@ -54,10 +53,10 @@ export function possessionUrgency(possessionTime: number): number {
   return clamp(0.88 + (possessionTime - 5.5) * 0.08, 0.88, 1.18);
 }
 
-/** True when the carrier is inside the opponent's penalty area. */
+/** True when the carrier is inside the opponent's penalty area (uses attack goal). */
 export function inOpponentPenaltyArea(carrier: Player): boolean {
-  const opp: Player["side"] = carrier.side === "home" ? "away" : "home";
-  return inPenaltyArea(carrier.x, carrier.z, opp, carrier.endsFlipped);
+  const distGoal = carrier.distTo(carrier.oppGoalX(), 0);
+  return distGoal < PENALTY_AREA_LENGTH + 0.5 && Math.abs(carrier.z) <= PENALTY_AREA_WIDTH / 2;
 }
 
 /**

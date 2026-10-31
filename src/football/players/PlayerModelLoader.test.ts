@@ -4,6 +4,7 @@ import {
   applyKitToSkinned,
   classifyMaterialSlot,
   gaitToClip,
+  isSkinLikePixel,
   resolvePlayerModelUrl,
   skinnedSupportsTeamKit,
   tintBodyAlbedoMap,
@@ -11,7 +12,7 @@ import {
   type SkinnedPlayerInstance,
 } from "./PlayerModelLoader";
 import type { Player } from "./Player";
-import { MeshStandardMaterial, Texture } from "three";
+import { CanvasTexture, MeshStandardMaterial, Texture } from "three";
 import type { TeamKit } from "../../data/schema";
 
 describe("PlayerModelLoader", () => {
@@ -92,5 +93,54 @@ describe("PlayerModelLoader", () => {
 
   it("returns null from tintBodyAlbedoMap when source has no image", () => {
     expect(tintBodyAlbedoMap(new Texture(), 0x007a3d, 0xc48a6e)).toBeNull();
+  });
+
+  it("treats face tones as skin but not khaki armor / gray cloth", () => {
+    expect(isSkinLikePixel(198, 148, 112)).toBe(true);
+    expect(isSkinLikePixel(90, 95, 70)).toBe(false); // khaki armor
+    expect(isSkinLikePixel(60, 62, 65)).toBe(false); // gray metal
+    expect(isSkinLikePixel(40, 80, 40)).toBe(false); // olive cloth
+  });
+
+  it("tints full-body albedo so home and away kit colours stay far apart", () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 16;
+    canvas.height = 16;
+    const ctx = canvas.getContext("2d");
+    // jsdom without the canvas package cannot rasterise — solid-kit fallback covers that path.
+    if (!ctx) return;
+    // Half khaki armor, half peach skin — mirrors Vanguard atlas mix.
+    ctx.fillStyle = "rgb(90,95,70)";
+    ctx.fillRect(0, 0, 16, 8);
+    ctx.fillStyle = "rgb(198,148,112)";
+    ctx.fillRect(0, 8, 16, 8);
+    const src = new CanvasTexture(canvas);
+
+    const home = tintBodyAlbedoMap(src, 0x034694, 0xb8896a)!;
+    const away = tintBodyAlbedoMap(src, 0xffffff, 0xb8896a)!;
+    expect(home).toBeTruthy();
+    expect(away).toBeTruthy();
+
+    const readMean = (tex: CanvasTexture) => {
+      const c = tex.image as HTMLCanvasElement;
+      const data = c.getContext("2d")!.getImageData(0, 0, 16, 8).data; // armor band only
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let n = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i]!;
+        g += data[i + 1]!;
+        b += data[i + 2]!;
+        n += 1;
+      }
+      return { r: r / n, g: g / n, b: b / n };
+    };
+    const hm = readMean(home);
+    const am = readMean(away);
+    const dist = Math.hypot(hm.r - am.r, hm.g - am.g, hm.b - am.b);
+    expect(dist).toBeGreaterThan(80);
+    expect(hm.b).toBeGreaterThan(hm.r); // navy kit stays blue-dominant
+    expect(am.r).toBeGreaterThan(140); // white kit stays bright
   });
 });

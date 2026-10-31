@@ -9,8 +9,10 @@ import { portraitAsset, portraitFallback, portraitHtml, playerInitials } from ".
 import { REAL_TUNING, ARCADE_TUNING, tuningFor } from "../gameplay/GameplayTuning";
 import { applyWeatherToTuning, clampWeatherForTime, resolveEnvironment } from "../environment/Environment";
 import {
+  boxFinishDeadline,
   clearChanceOpportunity,
   decideAttack,
+  inOpponentPenaltyArea,
   isStriker,
   longShotOpportunity,
   possessionUrgency,
@@ -24,7 +26,15 @@ import { isLegalStationary } from "../ball/StuckBall";
 import { FootballState } from "../FootballState";
 import { DEFAULT_SETTINGS, SaveManager } from "../../core/SaveManager";
 import { remapPlayersToFormation } from "../teams/Formation";
-import { HALF_LENGTH_CHOICES, kickOffTimeChoices, normalizeKickOffTime, formatKickCountdown, kickOffRemainingSeconds } from "../constants";
+import {
+  HALF_LENGTH,
+  HALF_LENGTH_CHOICES,
+  PENALTY_AREA_LENGTH,
+  kickOffTimeChoices,
+  normalizeKickOffTime,
+  formatKickCountdown,
+  kickOffRemainingSeconds,
+} from "../constants";
 import type { PlayerAttributes } from "../../data/schema";
 import type { GameplayTuning } from "../gameplay/GameplayTuning";
 
@@ -248,6 +258,46 @@ describe("attacking decisions", () => {
     });
     expect(dec.action).toBe("SHOT");
     expect(dec.scores.shotScore).toBeGreaterThan(dec.scores.passScore);
+  });
+
+  it("breaks penalty-box deadlock: closed-down attacker shoots or passes instead of endless RUN", () => {
+    const ball = new Ball();
+    // Inside the away penalty area, GK rushing the carrier — classic side-to-side deadlock.
+    const st = make("st", HALF_LENGTH - 8, 3.5, "home", { shooting: 72, finishing: 74, composure: 60 }, "RST");
+    const mate = make("m", HALF_LENGTH - 18, 10, "home", {}, "LCM");
+    const gk = make("gk", HALF_LENGTH - 5.5, 3.2, "away", {}, "GK");
+    expect(inOpponentPenaltyArea(st)).toBe(true);
+    expect(st.distTo(gk.x, gk.z)).toBeLessThan(4.6);
+    const deadline = boxFinishDeadline(0.72, true);
+    expect(deadline).toBeLessThanOrEqual(0.7);
+
+    const early = decideAttack({
+      carrier: st,
+      teammates: [st, mate],
+      opponents: [gk],
+      ball,
+      possessionTime: 0.2,
+      pressure: 0.72,
+      tuning: real,
+      rng: () => 0,
+    });
+    // May still settle briefly, but must not stay on RUN past the box deadline.
+    const late = decideAttack({
+      carrier: st,
+      teammates: [st, mate],
+      opponents: [gk],
+      ball,
+      possessionTime: deadline + 0.15,
+      pressure: 0.72,
+      tuning: real,
+      rng: () => 0,
+    });
+    expect(["SHOT", "PASS", "CROSS"]).toContain(late.action);
+    expect(late.action).not.toBe("RUN");
+    expect(late.action).not.toBe("HOLD");
+    expect(late.scores.shotScore + late.scores.passScore).toBeGreaterThan(late.scores.runScore);
+    expect(late.scores.runScore).toBeLessThan(early.scores.runScore + 0.05);
+    expect(st.distTo(st.oppGoalX(), 0)).toBeLessThan(PENALTY_AREA_LENGTH + 2);
   });
 
   it("gives strikers a stronger run and shot urge than a midfielder in the same spot", () => {
