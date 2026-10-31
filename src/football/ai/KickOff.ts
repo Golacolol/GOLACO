@@ -19,7 +19,8 @@ export function chooseKickOffReceiver(
   for (const mate of teammates) {
     if (mate.id === kicker.id || mate.isGK) continue;
     const distance = mate.distTo(kicker.x, kicker.z);
-    if (distance < 4.5 || distance > 26) continue;
+    // Allow the partner striker (~3–6 m) — old 4.5 m floor excluded them and forced a long soft tap.
+    if (distance < 2.15 || distance > 26) continue;
     const behind = (mate.x - kicker.x) * back;
     if (behind > 18) continue;
     const role = setPieceRole(mate);
@@ -68,8 +69,9 @@ export function applyKickOffShape(players: Player[], kicking: boolean): void {
     first.facing = first.attackSign > 0 ? -Math.PI / 2 : Math.PI / 2;
   }
   if (second) {
-    second.x = own * 1.9;
-    second.z = first && first.z >= 0 ? -2.1 : 2.1;
+    // Sit ~5.5 m from the spot so chooseKickOffReceiver can pick the partner ST.
+    second.x = own * 4.2;
+    second.z = first && first.z >= 0 ? -3.6 : 3.6;
     // Receiver faces the ball / taker, not the same way as the tap-back.
     if (first) second.facing = Math.atan2(first.x - second.x, first.z - second.z);
     else second.facing = second.attackSign > 0 ? Math.PI / 2 : -Math.PI / 2;

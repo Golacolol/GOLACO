@@ -19,13 +19,19 @@ export interface SavedSettings {
   formationDebug: boolean;
   masterVolume: number;
   invertShotY: boolean;
-  gameplayMode: "REAL" | "ARCADE" | "TABLE";
+  gameplayMode: "REAL" | "ARCADE" | "TABLE" | "FLICK";
   /** TABLE foosball defaults. */
   tableLayoutId: "FRENCH_CLASSIC" | "TOURNAMENT_MODERN" | "OPEN_CUSTOM";
   tableOpponent: "AI" | "HUMAN";
   tableDifficulty: "EASY" | "NORMAL" | "HARD" | "EXPERT";
   tableFirstTo: number;
   tableCustomMen: [number, number, number, number];
+  /** FLICK Flickball defaults. */
+  flickOpponent: "AI" | "HUMAN";
+  flickDifficulty: "EASY" | "NORMAL" | "HARD" | "EXPERT";
+  flickFirstTo: number;
+  /** Main menu Team Select kit dial — HOME or AWAY for the user club. */
+  menuKitChoice: "home" | "away";
   timeOfDay: "DAY" | "EVENING" | "NIGHT";
   weather: "SUNNY" | "MILD" | "RAINY" | "SNOWY";
   kickOffTime: string;
@@ -104,6 +110,10 @@ export const DEFAULT_SETTINGS: SavedSettings = {
   tableDifficulty: "NORMAL",
   tableFirstTo: 5,
   tableCustomMen: [1, 2, 5, 3],
+  flickOpponent: "AI",
+  flickDifficulty: "NORMAL",
+  flickFirstTo: 5,
+  menuKitChoice: "home",
   timeOfDay: "EVENING",
   weather: "MILD",
   kickOffTime: DEFAULT_KICK_OFF_TIME,
@@ -180,8 +190,26 @@ export class SaveManager {
       settings.awayDefLineColor = clampHex(settings.awayDefLineColor, DEFAULT_SETTINGS.awayDefLineColor);
       settings.awayMidLineColor = clampHex(settings.awayMidLineColor, DEFAULT_SETTINGS.awayMidLineColor);
       settings.awayAttLineColor = clampHex(settings.awayAttLineColor, DEFAULT_SETTINGS.awayAttLineColor);
-      if (settings.gameplayMode !== "REAL" && settings.gameplayMode !== "ARCADE" && settings.gameplayMode !== "TABLE") {
+      if (
+        settings.gameplayMode !== "REAL" &&
+        settings.gameplayMode !== "ARCADE" &&
+        settings.gameplayMode !== "TABLE" &&
+        settings.gameplayMode !== "FLICK"
+      ) {
         settings.gameplayMode = "REAL";
+      }
+      if (settings.flickOpponent !== "AI" && settings.flickOpponent !== "HUMAN") settings.flickOpponent = "AI";
+      if (
+        settings.flickDifficulty !== "EASY" &&
+        settings.flickDifficulty !== "NORMAL" &&
+        settings.flickDifficulty !== "HARD" &&
+        settings.flickDifficulty !== "EXPERT"
+      ) {
+        settings.flickDifficulty = "NORMAL";
+      }
+      settings.flickFirstTo = Math.max(1, Math.min(21, Number(settings.flickFirstTo) || 5));
+      if (settings.menuKitChoice !== "home" && settings.menuKitChoice !== "away") {
+        settings.menuKitChoice = "home";
       }
       if (
         settings.tableLayoutId !== "FRENCH_CLASSIC" &&

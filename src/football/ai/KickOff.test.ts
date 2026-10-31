@@ -72,6 +72,24 @@ describe("kick-off shape", () => {
       expect(chooseKickOffReceiver(kicker, [kicker, cm, cb, winger], () => rng)?.id).not.toBe("cb");
     }
   });
+
+  it("can pick the partner striker after kick-off shape", () => {
+    const players = [
+      make("gk", -50, 0, "GK"),
+      make("cm", -10, 4, "LCM"),
+      make("st1", 22, 2, "LST"),
+      make("st2", 22, -2, "RST"),
+    ];
+    applyKickOffShape(players, true);
+    const st1 = players.find((p) => p.id === "st1")!;
+    const st2 = players.find((p) => p.id === "st2")!;
+    expect(st1.distTo(st2.x, st2.z)).toBeGreaterThan(4.5);
+    expect(st1.distTo(st2.x, st2.z)).toBeLessThan(8);
+    const ids = [0, 0.35, 0.7, 0.95].map(
+      (rng) => chooseKickOffReceiver(st1, players, () => rng)?.id,
+    );
+    expect(ids).toContain("st2");
+  });
 });
 
 describe("goal celebration", () => {

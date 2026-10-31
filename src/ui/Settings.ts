@@ -213,9 +213,10 @@ export class SettingsMenu {
               <option value="REAL" ${settings.gameplayMode === "REAL" ? "selected" : ""}>REAL</option>
               <option value="ARCADE" ${settings.gameplayMode === "ARCADE" ? "selected" : ""}>ARCADE</option>
               <option value="TABLE" ${settings.gameplayMode === "TABLE" ? "selected" : ""}>TABLE</option>
+              <option value="FLICK" ${settings.gameplayMode === "FLICK" ? "selected" : ""}>FLICK</option>
             </select>
           </label>
-          <p class="hint">Also on the main menu. ARCADE = same football AI with multipliers. TABLE = separate foosball mode (setup on launch).</p>
+          <p class="hint">Also on the main menu. ARCADE = football AI multipliers. TABLE = foosball. FLICK = Subbuteo Flickball (setup on launch).</p>
           <label>TABLE layout
             <select id="table-layout">
               <option value="FRENCH_CLASSIC" ${settings.tableLayoutId === "FRENCH_CLASSIC" ? "selected" : ""}>French classic</option>
@@ -238,6 +239,22 @@ export class SettingsMenu {
           </label>
           <label>TABLE first to
             <input id="table-first" type="number" min="1" max="21" value="${settings.tableFirstTo}"/>
+          </label>
+          <label>FLICK opponent
+            <select id="flick-opp">
+              <option value="AI" ${settings.flickOpponent === "AI" ? "selected" : ""}>Computer (AI)</option>
+              <option value="HUMAN" ${settings.flickOpponent === "HUMAN" ? "selected" : ""}>Hotseat 2P</option>
+            </select>
+          </label>
+          <label>FLICK AI difficulty
+            <select id="flick-diff">
+              ${(["EASY", "NORMAL", "HARD", "EXPERT"] as const)
+                .map((d) => `<option value="${d}" ${settings.flickDifficulty === d ? "selected" : ""}>${d}</option>`)
+                .join("")}
+            </select>
+          </label>
+          <label>FLICK first to
+            <input id="flick-first" type="number" min="1" max="21" value="${settings.flickFirstTo}"/>
           </label>
           <label class="check"><input id="invertY" type="checkbox" ${settings.invertShotY ? "checked" : ""}/> Invert vertical aim</label>
           <label class="check"><input id="pass-target" type="checkbox" ${settings.showPassTargetHighlight ? "checked" : ""}/> Highlight pass target</label>
@@ -494,7 +511,10 @@ export class SettingsMenu {
       out.weather = weather.value;
     }
     const gplay = root.querySelector("#gplay") as HTMLSelectElement | null;
-    if (gplay && (gplay.value === "REAL" || gplay.value === "ARCADE" || gplay.value === "TABLE")) {
+    if (
+      gplay &&
+      (gplay.value === "REAL" || gplay.value === "ARCADE" || gplay.value === "TABLE" || gplay.value === "FLICK")
+    ) {
       out.gameplayMode = gplay.value;
     }
     const tableLayout = root.querySelector("#table-layout") as HTMLSelectElement | null;
@@ -520,6 +540,20 @@ export class SettingsMenu {
     }
     const tableFirst = root.querySelector("#table-first") as HTMLInputElement | null;
     if (tableFirst) out.tableFirstTo = Math.max(1, Math.min(21, Number(tableFirst.value) || 5));
+    const flickOpp = root.querySelector("#flick-opp") as HTMLSelectElement | null;
+    if (flickOpp && (flickOpp.value === "AI" || flickOpp.value === "HUMAN")) out.flickOpponent = flickOpp.value;
+    const flickDiff = root.querySelector("#flick-diff") as HTMLSelectElement | null;
+    if (
+      flickDiff &&
+      (flickDiff.value === "EASY" ||
+        flickDiff.value === "NORMAL" ||
+        flickDiff.value === "HARD" ||
+        flickDiff.value === "EXPERT")
+    ) {
+      out.flickDifficulty = flickDiff.value;
+    }
+    const flickFirst = root.querySelector("#flick-first") as HTMLInputElement | null;
+    if (flickFirst) out.flickFirstTo = Math.max(1, Math.min(21, Number(flickFirst.value) || 5));
     const invertY = root.querySelector("#invertY") as HTMLInputElement | null;
     if (invertY) out.invertShotY = invertY.checked;
     const passTarget = root.querySelector("#pass-target") as HTMLInputElement | null;

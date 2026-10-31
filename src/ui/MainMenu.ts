@@ -46,6 +46,8 @@ export interface MainMenuView {
   showLeague: boolean;
   kickOffTime: string;
   matchDuration: number;
+  /** User club kit on the Team Select dial — HOME or AWAY (default HOME). */
+  kitChoice: "home" | "away";
 }
 
 export class MainMenu {
@@ -57,6 +59,8 @@ export class MainMenu {
   gameplayMode: GameplayMode = "REAL";
   kickOffTime = DEFAULT_KICK_OFF_TIME;
   matchDuration = 600;
+  /** Team Select kit dial — HOME or AWAY only. */
+  kitChoice: "home" | "away" = "home";
   panel: MenuPanel = "menu";
   /** Remembers League vs Fixtures when reopening the combined menu entry. */
   leagueFixturesTab: "league" | "fixtures" = "league";
@@ -75,6 +79,7 @@ export class MainMenu {
   private teamSpinWheel = createSpinWheel();
   private leagueSpinWheel = createSpinWheel();
   private eraSpinWheel = createSpinWheel();
+  private kitSpinWheel = createSpinWheel();
   private teamOptions: MenuTeamOption[] = [];
   private teamGroup: MenuTeamGroup = "LEAGUE_ONE";
   private pendingTeamId: string | null = null;
@@ -82,6 +87,7 @@ export class MainMenu {
   /** When true, league/team/era dials ignore input (match launching / left menu). */
   private teamSelectLocked = false;
   onHalf: ((seconds: number) => void) | null = null;
+  onKitChange: ((choice: "home" | "away") => void) | null = null;
   onClubChange: ((teamId: string) => void) | null = null;
   onPredictionsChange: ((state: PredictionsState) => void) | null = null;
   onPredictionsRefresh: (() => void) | null = null;
@@ -117,6 +123,7 @@ export class MainMenu {
     this.gameplayMode = view.gameplayMode;
     this.kickOffTime = DEFAULT_KICK_OFF_TIME;
     this.matchDuration = view.matchDuration;
+    this.kitChoice = view.kitChoice === "away" ? "away" : "home";
     const secs = Math.max(0, Math.ceil(this.countdown));
     const tod = (id: TimeOfDay, label: string) =>
       `<button type="button" class="tod-opt ${view.timeOfDay === id ? "on" : ""}" data-tod="${id}">${label}</button>`;
@@ -148,7 +155,7 @@ export class MainMenu {
               </div>
             </div>
             <div class="menu-fixture team-select-fixture">
-              <span class="tod-row team-dials${showEra ? " has-era" : ""}">
+              <span class="tod-row team-dials${showEra ? " has-era" : ""} has-kit">
                 <span class="team-dial-field">
                   <span class="team-dial-label">League</span>
                   ${leagueSpinHtml(leagueIdx, leagueDialLabel)}
@@ -165,16 +172,22 @@ export class MainMenu {
                 </span>`
                     : ""
                 }
+                <span class="team-dial-field team-dial-kit">
+                  <span class="team-dial-label">Kit</span>
+                  ${kitSpinHtml(this.kitChoice)}
+                </span>
               </span>
             </div>
             <div class="menu-fixture menu-fixture-labeled">
-              <span class="meta">Gameplay</span>
+              <span class="meta fixture-section-label">GAMEPLAY</span>
               <span class="tod-row">
                 ${mode("REAL", "REAL")}
                 <span class="vs">·</span>
                 ${mode("ARCADE", "ARCADE")}
                 <span class="vs">·</span>
                 ${mode("TABLE", "Foosball")}
+                <span class="vs">·</span>
+                ${mode("FLICK", "Flickball")}
                 ${
                   view.showLeague === true
                     ? `<span class="vs">·</span>
@@ -184,7 +197,7 @@ export class MainMenu {
               </span>
             </div>
             <div class="menu-fixture menu-fixture-labeled">
-              <span class="meta">Lighting</span>
+              <span class="meta fixture-section-label">LIGHTING</span>
               <span class="tod-row">
                 ${tod("DAY", "DAY")}
                 <span class="vs">·</span>
@@ -194,19 +207,23 @@ export class MainMenu {
               </span>
             </div>
             <div class="menu-fixture fixture-match">
-              <button type="button" class="fixture-copy" data-id="next" aria-label="Play next fixture ${home.abbreviation} vs ${away.abbreviation}">
-                <div class="fixture-teams">
-                  ${teamBadgeHtml(home, { className: "fixture-crest", size: 28 })}
-                  <strong>${home.abbreviation}</strong>
-                  <span class="vs">vs</span>
-                  ${teamBadgeHtml(away, { className: "fixture-crest", size: 28 })}
-                  <strong>${away.abbreviation}</strong>
-                  <span class="vs">·</span>
-                  ${kickCountdownHtml(fixture.date, view.kickOffTime || DEFAULT_KICK_OFF_TIME)}
-                </div>
+              <div class="fixture-teams-row">
+                <button type="button" class="fixture-copy" data-id="next" aria-label="Play next fixture ${home.abbreviation} vs ${away.abbreviation}">
+                  <div class="fixture-teams">
+                    ${teamBadgeHtml(home, { className: "fixture-crest", size: 28 })}
+                    <strong>${home.abbreviation}</strong>
+                    <span class="vs">vs</span>
+                    ${teamBadgeHtml(away, { className: "fixture-crest", size: 28 })}
+                    <strong>${away.abbreviation}</strong>
+                    <span class="vs">·</span>
+                    ${kickCountdownHtml(fixture.date, view.kickOffTime || DEFAULT_KICK_OFF_TIME)}
+                  </div>
+                </button>
+                ${halfSpinHtml(this.matchDuration)}
+              </div>
+              <div class="fixture-detail-row">
                 <span class="meta">${fixture.competition} · ${view.kickOffTime || DEFAULT_KICK_OFF_TIME} · ${club.matchGround.name}</span>
-              </button>
-              ${halfSpinHtml(this.matchDuration)}
+              </div>
             </div>
           </div>
           <button type="button" class="sim-timer" data-id="sim">
@@ -597,6 +614,41 @@ export class MainMenu {
       });
     }
     this.bindEraSpin();
+    this.bindKitSpin();
+  }
+
+  private bindKitSpin(): void {
+    const kitSpin = this.root.querySelector<HTMLElement>("[data-kit-spin]");
+    if (!kitSpin || kitSpin.dataset.bound === "1") return;
+    kitSpin.dataset.bound = "1";
+    this.kitSpinWheel = createSpinWheel();
+    kitSpin.addEventListener(
+      "wheel",
+      (e) => {
+        e.preventDefault();
+        const dir = consumeSpinWheel(this.kitSpinWheel, e.deltaY, {
+          threshold: 52,
+          cooldownMs: 95,
+          eventCap: 48,
+        });
+        if (dir) this.stepKit(dir);
+      },
+      { passive: false },
+    );
+    kitSpin.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.stepKit(1);
+    });
+  }
+
+  private stepKit(dir: 1 | -1): void {
+    if (this.teamSelectLocked) return;
+    this.kitChoice = this.kitChoice === "home" ? "away" : "home";
+    void dir;
+    const el = this.root.querySelector<HTMLElement>("[data-kit-spin]");
+    if (el) el.outerHTML = kitSpinHtml(this.kitChoice);
+    this.bindKitSpin();
+    this.onKitChange?.(this.kitChoice);
   }
 
   private bindEraSpin(): void {
@@ -723,6 +775,7 @@ export class MainMenu {
       leagueEl.setAttribute("aria-label", `League select ${center}`);
       leagueEl.innerHTML = spinTriplet(prev, center, next);
     }
+    scheduleFitMenuLabels(this.root);
   }
 
   private ensureEraField(
@@ -845,6 +898,20 @@ function halfSpinHtml(durationSeconds: number): string {
   return `<span class="time-spin duration-spin" data-half-spin tabindex="0" role="button" aria-label="Half length">${halfSpinInner(durationSeconds)}</span>`;
 }
 
+function kitSpinInner(choice: "home" | "away"): string {
+  const cur = choice === "home" ? "Home" : "Away";
+  const other = choice === "home" ? "Away" : "Home";
+  return [
+    `<span class="spin-ghost">${other}</span>`,
+    `<strong>${cur}</strong>`,
+    `<span class="spin-ghost">${other}</span>`,
+  ].join("");
+}
+
+function kitSpinHtml(choice: "home" | "away"): string {
+  return `<span class="time-spin kit-spin" data-kit-spin data-kit="${choice}" tabindex="0" role="button" aria-label="Kit select ${choice}">${kitSpinInner(choice)}</span>`;
+}
+
 function spinTriplet(prev: string, current: string, next: string): string {
   return [
     `<span class="spin-ghost">${escapeHtml(prev)}</span>`,
@@ -939,8 +1006,8 @@ function scheduleFitMenuLabels(root: HTMLElement): void {
 }
 
 /**
- * Fit title to the equal menu column, then shrink stadium·team club line to that width.
- * Team/league dials use a fixed CSS size (no JS resize).
+ * Fit title to the equal menu column, shrink stadium·team club line, and
+ * scale long Club dial names down to the dial width.
  */
 export function fitMenuLabels(root: HTMLElement): void {
   const stack = root.querySelector<HTMLElement>(".menu-hero-stack");
@@ -954,18 +1021,46 @@ export function fitMenuLabels(root: HTMLElement): void {
   }
 
   const line = root.querySelector<HTMLElement>(".club-line");
-  if (!line) return;
-  const meta = line.closest<HTMLElement>(".club-meta");
-  const crest = meta?.querySelector<HTMLElement>(".club-crest");
-  const gap = 12;
-  const stackW = stack?.clientWidth ?? 0;
-  const metaBudget =
-    stackW > 0 && crest
-      ? Math.max(24, stackW - crest.offsetWidth - gap)
-      : meta && crest
-        ? Math.max(24, meta.clientWidth - crest.offsetWidth - gap)
-        : line.clientWidth || meta?.clientWidth || 0;
-  fitNowrapToWidth(line, metaBudget, { minPx: 10, basePx: parseFloat(getComputedStyle(line).fontSize) || 20 });
+  if (line) {
+    const meta = line.closest<HTMLElement>(".club-meta");
+    const crest = meta?.querySelector<HTMLElement>(".club-crest");
+    const gap = 12;
+    const stackW = stack?.clientWidth ?? 0;
+    const metaBudget =
+      stackW > 0 && crest
+        ? Math.max(24, stackW - crest.offsetWidth - gap)
+        : meta && crest
+          ? Math.max(24, meta.clientWidth - crest.offsetWidth - gap)
+          : line.clientWidth || meta?.clientWidth || 0;
+    fitNowrapToWidth(line, metaBudget, { minPx: 10, basePx: parseFloat(getComputedStyle(line).fontSize) || 20 });
+  }
+
+  fitTeamDialLabels(root);
+}
+
+/** Shrink Club dial centre (and ghosts) so long names fit the dial column. */
+function fitTeamDialLabels(root: HTMLElement): void {
+  const spin = root.querySelector<HTMLElement>("[data-team-spin]");
+  if (!spin) return;
+  const budget = spin.clientWidth || spin.parentElement?.clientWidth || 0;
+  if (budget < 8) return;
+  const strong = spin.querySelector<HTMLElement>("strong");
+  if (strong) {
+    strong.style.fontSize = "";
+    strong.style.letterSpacing = "";
+    fitNowrapToWidth(strong, budget, {
+      minPx: 9,
+      basePx: parseFloat(getComputedStyle(strong).fontSize) || 15,
+    });
+  }
+  const fitted = strong ? parseFloat(strong.style.fontSize) || 15 : 15;
+  const ghostPx = Math.max(8, Math.min(10, fitted * 0.68));
+  spin.querySelectorAll<HTMLElement>(".spin-ghost").forEach((g) => {
+    g.style.fontSize = `${ghostPx}px`;
+    g.style.overflow = "hidden";
+    g.style.textOverflow = "clip";
+    g.style.whiteSpace = "nowrap";
+  });
 }
 
 function fitNowrapToWidth(

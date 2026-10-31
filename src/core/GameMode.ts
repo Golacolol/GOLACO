@@ -4,6 +4,7 @@ export const GameMode = {
   OPEN_WORLD: "OPEN_WORLD",
   ARCADE: "ARCADE",
   TABLE: "TABLE",
+  FLICK: "FLICK",
 } as const;
 
 export type GameMode = (typeof GameMode)[keyof typeof GameMode];

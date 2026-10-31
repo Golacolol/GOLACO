@@ -851,8 +851,9 @@ export class Match {
       return;
     }
 
-    if (this.state === FootballState.KICK_OFF) {
-      if (intent.skip) this.state = FootballState.PLAYING;
+    if (this.state === FootballState.KICK_OFF && intent.skip) {
+      // Never abandon kick-off without a pass — that left the ball for the opponent.
+      intent.skip = false;
     }
 
     if (intent.cycleView) {
@@ -1712,7 +1713,8 @@ export class Match {
             )
           : back;
         this.executePass(passer, target, intent, "short", dir);
-      } else if (this.possessionTime > 1.75) {
+      } else if (this.possessionTime > 0.95) {
+        // Idle user on the spot — auto-open rather than leave the ball for opponents.
         this.thinkKickOff(passer, dt);
       }
       return;
@@ -1978,7 +1980,7 @@ export class Match {
       }
     }
     const stallStyle = (passer.side === "home" ? this.homePlayStyle : this.awayPlayStyle) ?? undefined;
-    const oppGk = oppGkEarly;
+    void oppGkEarly;
     const inBox = inBoxEarly;
     const gkClose = gkCloseEarly;
     const boxDeadline = boxDeadlineEarly;
@@ -2198,7 +2200,13 @@ export class Match {
       ? normalize2(target.x - kicker.x, target.z - kicker.z)
       : { x: -kicker.attackSign, z: 0 };
     kicker.facing = Math.atan2(dir.x, dir.z);
-    const fake = { moveX: dir.x, moveZ: dir.z, aimX: dir.x, aimY: 0, passHold: 0.28, pass: true, shootHold: 0 } as InputIntent;
+    const dist = target ? kicker.distTo(target.x, target.z) : 12;
+    // Weight the ritual pass for distance — the old fixed 0.28 hold underhit 8–16 m taps.
+    const passHold = Math.min(
+      1,
+      idealPassHold01("short", dist, { composure: kicker.attrs.composure ?? 70, tempo: 1 }) + 0.08,
+    );
+    const fake = { moveX: dir.x, moveZ: dir.z, aimX: dir.x, aimY: 0, passHold, pass: true, shootHold: 0 } as InputIntent;
     this.executePass(kicker, target, fake, "short", dir);
   }
 
@@ -2434,7 +2442,6 @@ export class Match {
 
   private executePass(passer: Player, target: Player | null, intent: InputIntent, passType: PassType, dir: { x: number; z: number }): void {
     const openingKick = this.state === FootballState.KICK_OFF;
-    if (openingKick) this.state = FootballState.PLAYING;
     if (target?.isGK && !passer.isGK) target = null;
     const hold01 = clamp(holdPowerCurve(intent.passHold, 1.1), 0.12, 1);
     let delivery: PassType = passType;
@@ -2508,6 +2515,8 @@ export class Match {
     destX = safe.x;
     destZ = safe.z;
     if (!this.ballActor.tryClaim("kick", passer.id)) return;
+    // Enter PLAYING only after the kick is claimed — never abandon a silent kick-off.
+    if (openingKick) this.state = FootballState.PLAYING;
     const kick = passKickVector(this.ball.x, this.ball.z, destX, destZ, delivery);
     const strengthScale = strengthKickScale(passer.attrs.strength);
     // Kick is already calibrated to stepBall — only apply small error/strength, not mode speed mul

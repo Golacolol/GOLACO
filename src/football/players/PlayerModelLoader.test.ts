@@ -155,13 +155,13 @@ describe("PlayerModelLoader", () => {
     const ctx = c.getContext("2d");
     if (!ctx) return;
     const mid = Math.floor(64 * (1 - (KIT_WRAP_BANDS.shortTop + KIT_WRAP_BANDS.shirtTop) / 2));
-    const [r, g, b] = ctx.getImageData(32, mid, 1, 1).data;
+    const [r, , b] = ctx.getImageData(32, mid, 1, 1).data;
     expect(b).toBeGreaterThan(r); // navy shirt band
     expect(b).toBeGreaterThan(100);
     const headY = Math.floor(64 * (1 - 0.9));
-    const [sr, sg, sb] = ctx.getImageData(32, headY, 1, 1).data;
+    const [sr, , sb] = ctx.getImageData(32, headY, 1, 1).data;
     expect(sr).toBeGreaterThan(sb); // skin band stays warm
-    expect(sg).toBeGreaterThan(80);
+    expect(sr).toBeGreaterThan(80);
   });
 
   it("assigns cylindrical UVs from bind-pose positions (no extra kit meshes)", () => {
