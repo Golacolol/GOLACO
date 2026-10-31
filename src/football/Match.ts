@@ -21,7 +21,14 @@ import {
 import { tickStillPossession } from "./ai/StillPossession";
 import { updateTeamAI } from "./ai/TeamAI";
 import { containTarget, nearestPressTargets, pressTarget, jockeyTarget } from "./ai/DefensiveAI";
-import { decideAttack, isStriker, isWideAttacker, type AttackDecision } from "./ai/AttackingDecision";
+import {
+  boxFinishDeadline,
+  decideAttack,
+  inOpponentPenaltyArea,
+  isStriker,
+  isWideAttacker,
+  type AttackDecision,
+} from "./ai/AttackingDecision";
 import { isPlayStyleId, resolvePlayStyle, type PlayStyleId, type PlayStyleProfile } from "./ai/PlayStyle";
 import { decisionTelemetry } from "./ai/DecisionTelemetry";
 import { decideFreeKick } from "./ai/FreeKickDecision";
@@ -72,7 +79,16 @@ import {
 import { ballSpeed, isLegalStationary, isOutOfWorld, predictLanding } from "./ball/StuckBall";
 import { aimOnGoal, aiShotAimIntent, computeShot } from "./ball/ShotModel";
 import { MatchCamera, isPlayerView, nextTrack, nextView, supportsViewZoom, viewLabel } from "./camera/MatchCamera";
-import { BALL_GRAVITY, BALL_RADIUS, GOAL_WIDTH, HALF_LENGTH, HALF_TIME_PAUSE, HALF_WIDTH, SPEED_BURST_SHOT_MUL } from "./constants";
+import {
+  BALL_GRAVITY,
+  BALL_RADIUS,
+  GOAL_WIDTH,
+  HALF_LENGTH,
+  HALF_TIME_PAUSE,
+  HALF_WIDTH,
+  PENALTY_AREA_LENGTH,
+  SPEED_BURST_SHOT_MUL,
+} from "./constants";
 import type { InputIntent } from "./controls/InputIntent";
 import { FootballState } from "./FootballState";
 import { defendGoalX, scorerForWorldGoal } from "./pitch/PitchEnds";
@@ -1978,6 +1994,20 @@ export class Match {
     const stallAt =
       (stallStyle?.id === "possession" ? 4.2 : stallStyle?.id === "routeOne" || stallStyle?.id === "direct" ? 3.1 : 3.6) /
       Math.max(0.85, stallStyle?.tempo ?? 1);
+    const oppGk = this.opponentsOf(passer).find((p) => p.isGK);
+    const inBox = inOpponentPenaltyArea(passer) || (distGoal < PENALTY_AREA_LENGTH + 1.5 && Math.abs(passer.z) < 20);
+    const gkClose = !!oppGk && passer.distTo(oppGk.x, oppGk.z) < 4.6;
+    const boxDeadline = boxFinishDeadline(this.pressure, gkClose);
+    // Box: force an end-product before the keeper-mirroring carry deadlock.
+    if ((action === "RUN" || action === "HOLD") && inBox && this.possessionTime >= boxDeadline) {
+      if (decision.scores.shotScore + 0.05 >= decision.scores.passScore) {
+        action = "SHOT";
+      } else if (passTarget && !forbid.includes(passTarget.id) && !passTarget.isGK) {
+        action = "PASS";
+      } else {
+        action = "SHOT";
+      }
+    }
     if ((action === "RUN" || action === "HOLD") && this.possessionTime >= stallAt) {
       const style = stallStyle;
       if (passTarget && !forbid.includes(passTarget.id) && !passTarget.isGK) {
@@ -2013,6 +2043,8 @@ export class Match {
         if (alt && passingLaneQuality(passer, alt.x, alt.z, this.opponentsOf(passer)) >= 0.42) {
           action = direct && (alt.x - passer.x) * attackDir > 6 ? "THROUGH" : "PASS";
           passTarget = alt;
+        } else if (inBox) {
+          action = "SHOT";
         }
       }
     }
@@ -2051,7 +2083,16 @@ export class Match {
         return;
       }
       // Settled enough to shoot — box can fire earlier; long shots need a short plant.
-      const minShotHold = action === "LONG_SHOT" ? 1.05 : isStriker(passer) ? 0.48 : 0.72;
+      const minShotHold =
+        action === "LONG_SHOT"
+          ? 1.05
+          : inBox
+            ? gkClose
+              ? 0.32
+              : 0.42
+            : isStriker(passer)
+              ? 0.48
+              : 0.72;
       if (this.possessionTime < minShotHold) {
         if (passTarget && decision.scores.passScore >= 0.28) action = "PASS";
         else {
