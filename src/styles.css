@@ -283,15 +283,21 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 }
 .menu-shell {
   display: grid;
-  grid-template-columns: minmax(240px, 1fr) minmax(300px, 420px);
-  gap: 36px;
+  /* Left column hugs the title stack — no 1fr void between hero and menu list. */
+  grid-template-columns: max-content minmax(300px, 420px);
+  gap: 20px;
   align-items: center;
-  width: min(980px, 94vw);
+  justify-content: center;
+  width: max-content;
+  max-width: min(980px, 94vw);
   padding: 18px;
   --menu-panel-height: 520px;
 }
 .menu-shell.panel-open {
   align-items: start;
+  /* Embedded panels can need the full frame; keep columns tight but allow grow. */
+  width: min(980px, 94vw);
+  grid-template-columns: max-content minmax(300px, 1fr);
 }
 .menu-hero {
   text-align: left;
