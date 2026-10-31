@@ -142,6 +142,8 @@ export function buildClassicPlayer(input: ClassicPlayerInput): PlayerRecord {
     strength: input.strength,
     stamina: input.stamina,
     composure: input.composure,
+    form: input.composure,
+    concentration: input.composure,
     attackingAwareness: input.attackingAwareness,
     reactions: input.reactions,
     jumping: input.jumping,

@@ -320,16 +320,17 @@ describe("attribute model V1", () => {
   });
 
   it("heading is distinct from jumping in shot accuracy", () => {
-    const heady = resolveAttributes(record({ heading: 95, jumping: 40, finishing: 50, shooting: 50, composure: 50 }));
-    const jumpy = resolveAttributes(record({ heading: 40, jumping: 95, finishing: 50, shooting: 50, composure: 50 }));
-    // Deterministic-ish: compare accuracyStat path via many samples of |dx|.
+    const heady = resolveAttributes(record({ heading: 98, jumping: 35, finishing: 50, shooting: 50, composure: 50 }));
+    const jumpy = resolveAttributes(record({ heading: 35, jumping: 98, finishing: 50, shooting: 50, composure: 50 }));
+    // Noise-based: wider gap + more samples so the heading path stays reliably tighter.
+    const samples = 200;
     let errH = 0;
     let errJ = 0;
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < samples; i++) {
       errH += Math.abs(computeShot({ distance: 8, pressure: 0.35, bodyAlignment: 1, energy: 1, attrs: heady, hold01: 0.5, isHeader: true }).dx);
       errJ += Math.abs(computeShot({ distance: 8, pressure: 0.35, bodyAlignment: 1, energy: 1, attrs: jumpy, hold01: 0.5, isHeader: true }).dx);
     }
-    expect(errH / 80).toBeLessThan(errJ / 80);
+    expect(errH / samples).toBeLessThan(errJ / samples);
   });
 
   it("telemetry is off by default and records linked decision/outcome when enabled", () => {

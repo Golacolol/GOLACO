@@ -65,7 +65,7 @@ describe("deriveProfileAxes", () => {
       primaryPosition: "CM",
     });
     expect(resolved.form).toBe(80);
-    expect(resolved.concentration).toBe(75);
+    expect(resolved.concentration).toBe(80);
     expect(effectiveComposure({ ...resolved, form: 40, concentration: 40 })).toBeLessThan(80);
     expect(effectiveComposure({ ...resolved, form: 95, concentration: 95 })).toBeGreaterThan(80);
   });

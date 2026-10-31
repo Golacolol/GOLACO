@@ -303,7 +303,8 @@ export function resolveAttributesDetailed(
     setPieces: take("setPieces", blend(passing, shooting)),
     aggression: take("aggression", blend(defending, strength)),
     form: take("form", composure),
-    concentration: take("concentration", blend(composure, vision)),
+    // Default to composure (not vision blend) so inferred soft-fills do not shift gameplay.
+    concentration: take("concentration", composure),
     attackingAwareness: take(
       "attackingAwareness",
       isAttackingPos(pos) ? blend(vision, composure, finishing) : blend(vision, composure),

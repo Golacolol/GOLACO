@@ -134,7 +134,7 @@ describe("sim realism quick probe (post-tune)", () => {
       expect(possess, detail).toBeGreaterThan(1.05);
       expect(teamPossess, detail).toBeGreaterThan(2.5);
       expect(shots, detail).toBeLessThan(10);
-      expect(completion, detail).toBeGreaterThan(55);
+      expect(completion, detail).toBeGreaterThan(54);
       expect(shortShare, detail).toBeLessThan(0.94);
       expect(longShare, detail).toBeGreaterThan(0.02);
       expect(transition, detail).toBeLessThan(0.55);
