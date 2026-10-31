@@ -4,7 +4,7 @@ import { HALF_LENGTH, HALF_WIDTH } from "../constants";
 import { getFormation, remapPlayersToFormation } from "./Formation";
 import { applyKickOffShape } from "../ai/KickOff";
 import { Player, type Side } from "../players/Player";
-import { heightScaleFromCm } from "../players/PlayerStats";
+import { applyPhysicalToAppearance } from "../players/PlayerStats";
 
 export class Team {
   readonly record: TeamRecord;
@@ -41,10 +41,11 @@ export class Team {
   }
 
   makePlayer(sp: SquadPlayer, slot: string): Player {
-    const appearance = { ...sp.player.appearance };
-    if (appearance.heightScale == null && sp.player.heightCm) {
-      appearance.heightScale = heightScaleFromCm(sp.player.heightCm);
-    }
+    const appearance = applyPhysicalToAppearance(
+      { ...sp.player.appearance },
+      sp.player.heightCm,
+      sp.player.weightKg,
+    );
     return new Player({
       id: sp.player.id,
       name: sp.player.name,

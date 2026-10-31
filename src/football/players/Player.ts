@@ -26,6 +26,8 @@ export class Player {
     hairColor: string;
     heightScale: number;
     bodyType: string;
+    /** Continuous XZ girth from weight/BMI when available. */
+    bodyWidth?: number;
     portraitAsset: string | null;
     fullBodyAsset: string | null;
     modelId: string | null;
@@ -115,6 +117,7 @@ export class Player {
       hairColor?: string;
       heightScale?: number;
       bodyType?: string;
+      bodyWidth?: number;
       portraitAsset?: string | null;
       fullBodyAsset?: string | null;
       modelId?: string | null;
@@ -140,6 +143,7 @@ export class Player {
       hairColor: init.appearance?.hairColor ?? "#1a140f",
       heightScale: init.appearance?.heightScale ?? 1,
       bodyType: init.appearance?.bodyType ?? "standard",
+      bodyWidth: init.appearance?.bodyWidth,
       portraitAsset: init.appearance?.portraitAsset ?? null,
       fullBodyAsset: init.appearance?.fullBodyAsset ?? null,
       modelId: init.appearance?.modelId ?? null,

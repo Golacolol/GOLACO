@@ -9,6 +9,7 @@ import {
   type PlayStyleId,
 } from "../football/ai/PlayStyle";
 import { kitsClash, pickTeamKit, teamHomeKit, teamResolvedAwayKit } from "../football/teams/KitClash";
+import { applyPhysicalToAppearance } from "../football/players/PlayerStats";
 import { fitKitSurnameElements, kitMarkerHtml, portraitHtml, teamBadgeHtml } from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
 import { imageLabel, listPlayerImages, uploadPlayerImage } from "./playerImages";
@@ -1384,6 +1385,10 @@ export class CharacterSelect {
       else sp.player.heightCm = edit.heightCm;
       if (edit.weightKg == null) delete sp.player.weightKg;
       else sp.player.weightKg = edit.weightKg;
+      Object.assign(
+        sp.player.appearance,
+        applyPhysicalToAppearance(sp.player.appearance, edit.heightCm, edit.weightKg),
+      );
       for (const [key, value] of Object.entries(edit.stats) as [EditStatKey, number | null][]) {
         if (value == null) delete (sp.player as unknown as Record<string, unknown>)[key];
         else (sp.player as unknown as Record<string, number>)[key] = value;

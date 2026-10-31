@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { applyOverride, deriveOverall, resolveAttributes } from "./PlayerStats";
+import {
+  applyOverride,
+  applyPhysicalToAppearance,
+  bodyTypeFromPhysical,
+  bodyWidthFromPhysical,
+  deriveOverall,
+  heightScaleFromCm,
+  resolveAttributes,
+} from "./PlayerStats";
 import type { PlayerRecord } from "../../data/schema";
 
 const base = {
@@ -50,5 +58,32 @@ describe("player ratings", () => {
     const over = applyOverride(base, { defending: 80, defensiveAwareness: 92 });
     expect(over.defensiveAwareness).toBe(92);
     expect(player("CM").id).toBe("player_test");
+  });
+});
+
+describe("physical appearance", () => {
+  it("maps height to mesh scale around 180cm ≈ 1", () => {
+    expect(heightScaleFromCm(180)).toBeCloseTo(1.006, 2);
+    expect(heightScaleFromCm(165)).toBeLessThan(heightScaleFromCm(190));
+    expect(heightScaleFromCm(200)).toBeLessThanOrEqual(1.16);
+  });
+
+  it("derives lean/stocky from BMI and continuous width from weight", () => {
+    expect(bodyTypeFromPhysical(180, 68)).toBe("lean");
+    expect(bodyTypeFromPhysical(180, 82)).toBe("stocky");
+    expect(bodyTypeFromPhysical(180, 74)).toBe("standard");
+    expect(bodyWidthFromPhysical(180, 68)).toBeLessThan(1);
+    expect(bodyWidthFromPhysical(180, 85)).toBeGreaterThan(1);
+  });
+
+  it("syncs appearance fields from measured height and weight", () => {
+    const next = applyPhysicalToAppearance(
+      { bodyType: "lean", heightScale: 1 },
+      191,
+      96,
+    );
+    expect(next.heightScale).toBe(heightScaleFromCm(191));
+    expect(next.bodyType).toBe("stocky");
+    expect(next.bodyWidth).toBeGreaterThan(1);
   });
 });

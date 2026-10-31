@@ -37,18 +37,20 @@ const ARRIVE_EPS = 0.35;
 /** Once inside this ring on a set-piece, the referee stands still. */
 const SET_PIECE_HOLD_EPS = 1.15;
 
+/** Match referee — solid black kit with gold trim. */
 const REF_KIT: TeamKit = {
-  shirt: "#1a1a1a",
-  shorts: "#1a1a1a",
-  socks: "#1a1a1a",
+  shirt: "#0a0a0a",
+  shorts: "#0a0a0a",
+  socks: "#0a0a0a",
   trim: "#f0d060",
   numberColor: "#f0d060",
 };
 
+/** Assistant referees — black kit, light trim (distinct from centre ref gold). */
 const AR_KIT: TeamKit = {
-  shirt: "#111111",
-  shorts: "#111111",
-  socks: "#111111",
+  shirt: "#0c0c0c",
+  shorts: "#0c0c0c",
+  socks: "#0c0c0c",
   trim: "#f5f5f5",
   numberColor: "#ffffff",
 };
@@ -313,6 +315,8 @@ function dummyOfficial(id: string, number: number): Player {
       hairStyle: Math.random() > 0.5 ? "short" : "fade",
       hairColor: "#1a1410",
       heightScale: 0.98 + Math.random() * 0.04,
+      bodyType: "standard",
+      bodyWidth: 1,
       sleeveStyle: "long",
     },
   });

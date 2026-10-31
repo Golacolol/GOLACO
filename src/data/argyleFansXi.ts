@@ -112,12 +112,53 @@ export const ARGYLE_FANS_PLAYERS: PlayerRecord[] = [
   fan("player_fan_p_petey", "P. Petey", "P. Petey", "GK", [], {
     pace: 42, passing: 50, longPassing: 56, vision: 52, control: 48, dribbling: 30, shooting: 18, finishing: 14, shotPower: 46, longShots: 16, defending: 22, strength: 68, stamina: 58, composure: 66,
     gkDiving: 68, gkHandling: 67, gkPositioning: 66, gkReflexes: 70, gkKicking: 62, heightCm: 185,
-    appearance: { skinTone: 0.55, hairStyle: "short", hairColor: "#2a2018", bodyType: "stocky" },
+    appearance: {
+      portraitAsset: "/images/l13.png",
+      skinTone: 0.55,
+      hairStyle: "curl",
+      hairColor: "#c45a28",
+      bodyType: "stocky",
+      heightScale: 1.02,
+    },
   }),
   fan("player_fan_c_pilgrim_14", "C. Pilgrim", "C. Pilgrim", "CM", ["ST", "AM"], {
     pace: 66, passing: 70, longPassing: 67, vision: 68, control: 67, dribbling: 65, shooting: 64, finishing: 60, shotPower: 64, longShots: 61, defending: 52, strength: 60, stamina: 75, composure: 66,
     heightCm: 176,
     appearance: { skinTone: 0.41, hairStyle: "fade", hairColor: "#111111", bodyType: "lean" },
+  }),
+  // Bench depth — a notch under the named XI, same band as the other Fans subs.
+  fan("player_fan_a_capman", "A CapMan", "A CapMan", "CM", ["AM", "RM"], {
+    pace: 62, passing: 70, longPassing: 68, vision: 69, control: 68, dribbling: 64, shooting: 55, finishing: 50, shotPower: 60, longShots: 55, defending: 54, strength: 62, stamina: 74, composure: 66,
+    heightCm: 178,
+    appearance: {
+      portraitAsset: "/images/l11.png",
+      skinTone: 0.58,
+      hairStyle: "short",
+      hairColor: "#b8a888",
+      bodyType: "standard",
+    },
+  }),
+  fan("player_fan_g_bobby", "G Bobby", "G Bobby", "RM", ["RW", "RB"], {
+    pace: 72, passing: 64, longPassing: 60, vision: 62, control: 65, dribbling: 70, shooting: 57, finishing: 53, shotPower: 61, longShots: 52, defending: 44, strength: 58, stamina: 75, composure: 61,
+    heightCm: 177,
+    appearance: {
+      portraitAsset: "/images/l17.png",
+      skinTone: 0.5,
+      hairStyle: "short",
+      hairColor: "#3a2818",
+      bodyType: "standard",
+    },
+  }),
+  fan("player_fan_alfie_greenwood", "Alfie Greenwood", "Alfie Greenwood", "ST", ["AM"], {
+    pace: 70, passing: 54, longPassing: 45, vision: 56, control: 64, dribbling: 62, shooting: 70, finishing: 71, shotPower: 69, longShots: 60, defending: 26, strength: 66, stamina: 68, composure: 63,
+    heightCm: 181,
+    appearance: {
+      portraitAsset: "/images/l19.png",
+      skinTone: 0.34,
+      hairStyle: "curl",
+      hairColor: "#1a1010",
+      bodyType: "standard",
+    },
   }),
 ];
 
@@ -139,6 +180,9 @@ export const ARGYLE_FANS_BENCH: { id: string; shirtNumber: number }[] = [
   { id: "player_fan_a_bradderz", shirtNumber: 12 },
   { id: "player_fan_p_petey", shirtNumber: 13 },
   { id: "player_fan_c_pilgrim_14", shirtNumber: 14 },
+  { id: "player_fan_a_capman", shirtNumber: 15 },
+  { id: "player_fan_g_bobby", shirtNumber: 17 },
+  { id: "player_fan_alfie_greenwood", shirtNumber: 19 },
 ];
 
 export const ARGYLE_FANS_MEMBERSHIPS: TeamMembership[] = [

@@ -514,6 +514,69 @@ export function heightScaleFromCm(heightCm?: number): number {
   return clamp(0.92 + t * 0.2, 0.88, 1.16);
 }
 
+/** BMI-ish build label from height + weight (falls back to height-only bands). */
+export function bodyTypeFromPhysical(
+  heightCm?: number,
+  weightKg?: number,
+): "lean" | "standard" | "stocky" {
+  if (weightKg != null && Number.isFinite(weightKg) && heightCm != null && heightCm > 0) {
+    const bmi = weightKg / (heightCm / 100) ** 2;
+    if (bmi < 21.2) return "lean";
+    if (bmi > 24.8) return "stocky";
+    return "standard";
+  }
+  if (heightCm != null && Number.isFinite(heightCm)) {
+    if (heightCm <= 175) return "lean";
+    if (heightCm >= 188) return "stocky";
+  }
+  return "standard";
+}
+
+/**
+ * Continuous XZ girth for the procedural mesh.
+ * Prefer BMI when both height and weight exist; otherwise body-type buckets.
+ */
+export function bodyWidthFromPhysical(
+  heightCm?: number,
+  weightKg?: number,
+  bodyType?: "lean" | "standard" | "stocky" | string,
+): number {
+  if (weightKg != null && Number.isFinite(weightKg) && heightCm != null && heightCm > 0) {
+    const bmi = weightKg / (heightCm / 100) ** 2;
+    // ~20 → lean (0.9), ~23 → standard (1.0), ~27 → stocky (1.12)
+    const t = (bmi - 20) / 7;
+    return clamp(0.9 + t * 0.22, 0.86, 1.14);
+  }
+  const type = bodyType ?? bodyTypeFromPhysical(heightCm, weightKg);
+  if (type === "stocky") return 1.1;
+  if (type === "lean") return 0.92;
+  return 1;
+}
+
+/** Sync appearance heightScale / bodyType / bodyWidth from measured physical facts. */
+export function applyPhysicalToAppearance(
+  appearance: {
+    heightScale?: number;
+    bodyType?: "lean" | "standard" | "stocky" | string;
+    bodyWidth?: number;
+    [key: string]: unknown;
+  },
+  heightCm?: number | null,
+  weightKg?: number | null,
+): typeof appearance {
+  const next = { ...appearance };
+  const h = heightCm == null || !Number.isFinite(heightCm) ? undefined : heightCm;
+  const w = weightKg == null || !Number.isFinite(weightKg) ? undefined : weightKg;
+  if (h != null) next.heightScale = heightScaleFromCm(h);
+  if (w != null || h != null) {
+    // Weight drives build when present; height-only only fills a missing bodyType.
+    if (w != null) next.bodyType = bodyTypeFromPhysical(h, w);
+    else if (next.bodyType == null) next.bodyType = bodyTypeFromPhysical(h, w);
+    next.bodyWidth = bodyWidthFromPhysical(h, w, next.bodyType as string | undefined);
+  }
+  return next;
+}
+
 /** Soft contact mass factor from weight + strength (1 = average). */
 export function contactMassFactor(attrs: PlayerAttributes, weightKg?: number): number {
   const w = weightKg ?? 75;

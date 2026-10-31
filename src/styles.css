@@ -1849,16 +1849,29 @@ html.club-name-glow-off .club-line {
 .bench-card:active { cursor: grabbing; }
 .bench-card.dragging { opacity: 0.45; }
 .bench-card .kit-marker-bench {
-  max-width: 72px;
+  width: 100%;
+  max-width: 100%;
+  margin-inline: auto;
+  justify-self: center;
+  justify-items: center;
   gap: 2px;
 }
 .bench-card .kit-marker-bench .portrait {
   width: 72px;
   height: 72px;
+  margin-inline: auto;
 }
 .bench-card .kit-marker-bench .kit-marker-caption {
-  max-width: 96px;
-  width: 96px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  max-width: 100%;
+  width: 100%;
+  margin: 2px auto 0;
+  text-align: center;
 }
 .bench-card .portrait-badge-kit {
   padding: 3px 4px;
@@ -1866,17 +1879,26 @@ html.club-name-glow-off .club-line {
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 .bench-card .portrait-badge-kit .num {
   font-size: 14px;
+  text-align: center;
+  width: 100%;
 }
 .bench-card .portrait-badge-kit .sur {
   font-size: 13px;
   max-width: 100%;
+  text-align: center;
 }
 .bench-card .kit-marker-caption .kit-marker-num,
 .bench-card .kit-marker-caption .kit-marker-name {
   font-size: 15px;
+  text-align: center;
 }
 .team-bench-hint {
   margin: 8px 2px 0;

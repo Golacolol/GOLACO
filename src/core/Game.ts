@@ -24,6 +24,7 @@ import { Stadium } from "../football/stadium/Stadium";
 import { createPlayerVisual } from "../football/players/PlayerVisual";
 import { DEFAULT_PLAYER_MODEL, preloadPlayerModels } from "../football/players/PlayerModelLoader";
 import { Player } from "../football/players/Player";
+import { applyPhysicalToAppearance } from "../football/players/PlayerStats";
 import { applyClubNameAppearance, applyTitleFont } from "../ui/TitleFonts";
 import { MainMenu } from "../ui/MainMenu";
 import { CharacterSelect, type SquadPlayerEdit } from "../ui/CharacterSelect";
@@ -1111,6 +1112,10 @@ export class Game {
     else player.heightCm = edit.heightCm;
     if (edit.weightKg == null) delete player.weightKg;
     else player.weightKg = edit.weightKg;
+    Object.assign(
+      player.appearance,
+      applyPhysicalToAppearance(player.appearance, edit.heightCm, edit.weightKg),
+    );
     for (const [key, value] of Object.entries(edit.stats)) {
       if (value == null) delete (player as unknown as Record<string, unknown>)[key];
       else (player as unknown as Record<string, number>)[key] = value;

@@ -23,6 +23,7 @@ import {
   cloneSkinnedPlayer,
   resolvePlayerModelUrl,
   setSkinnedShirtMap,
+  skinnedSupportsTeamKit,
   syncSkinnedAnimation,
   type SkinnedPlayerInstance,
 } from "./PlayerModelLoader";
@@ -623,7 +624,14 @@ export function createPlayerVisual(player: Player, kit: TeamKit, keeper: boolean
   const bodyRoot = new THREE.Group();
   bodyRoot.name = "bodyRoot";
   const scale = player.appearance.heightScale;
-  const wide = player.appearance.bodyType === "stocky" ? 1.1 : player.appearance.bodyType === "lean" ? 0.92 : 1;
+  const wide =
+    typeof player.appearance.bodyWidth === "number" && Number.isFinite(player.appearance.bodyWidth)
+      ? player.appearance.bodyWidth
+      : player.appearance.bodyType === "stocky"
+        ? 1.1
+        : player.appearance.bodyType === "lean"
+          ? 0.92
+          : 1;
   group.scale.set(scale * wide, scale, scale * wide);
 
   const shirtHex = kit.shirt;
@@ -854,11 +862,16 @@ export function createPlayerVisual(player: Player, kit: TeamKit, keeper: boolean
   };
   group.userData.rig = rig;
 
-  // Skinned humanoid when the base GLB is preloaded — procedural stays visible if clone fails.
+  // Skinned humanoid only when the GLB has kit-tintable shirt slots; otherwise keep
+  // the procedural mannequin so team colours / kit wraps remain visible.
   const modelUrl = resolvePlayerModelUrl(player);
   try {
     const skinned = cloneSkinnedPlayer(modelUrl);
-    if (skinned) attachSkinnedBody(group, bodyRoot, skinned, player, kit, shirtMap, bootCol);
+    if (skinned && skinnedSupportsTeamKit(skinned)) {
+      attachSkinnedBody(group, bodyRoot, skinned, player, kit, shirtMap, bootCol);
+    } else {
+      bodyRoot.visible = true;
+    }
   } catch (err) {
     console.warn("[PlayerVisual] skinned clone failed — using procedural body", err);
     bodyRoot.visible = true;

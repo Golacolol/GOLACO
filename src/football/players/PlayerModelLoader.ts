@@ -82,18 +82,27 @@ function mapClips(clips: THREE.AnimationClip[]): Partial<Record<PlayerAnimClipKe
   return out;
 }
 
-function classifyMaterialSlot(name: string): keyof SkinnedPlayerInstance["kitMaterials"] | null {
+/**
+ * Map a GLB material/mesh name onto a kit tint slot.
+ * Generic "body" meshes (e.g. VanguardBodyMat) are intentionally unclassified —
+ * treating them as skin would paint the whole figure skin-tone and erase kits.
+ */
+export function classifyMaterialSlot(name: string): keyof SkinnedPlayerInstance["kitMaterials"] | null {
   const n = name.toLowerCase();
-  if (/skin|face|head|arm|hand|leg|flesh|body/.test(n) && !/shirt|jersey|sock|boot|pant|short/.test(n)) {
-    return "skin";
-  }
-  if (/shirt|jersey|torso|chest|top|uniform|vest/.test(n)) return "shirt";
+  if (/visor|helmet|weapon|gun|mask|optic/.test(n)) return null;
+  if (/shirt|jersey|torso|chest|top|uniform|vest|cloth|outfit|gear|suit/.test(n)) return "shirt";
   if (/short|pant|hip|pelvis/.test(n)) return "shorts";
   if (/sock|hose|calf/.test(n)) return "socks";
   if (/boot|shoe|cleat|foot/.test(n)) return "boots";
-  // Soldier.glb: typically "Body_Material" / "Clothes" etc.
-  if (/cloth|outfit|gear/.test(n)) return "shirt";
+  // Explicit skin tokens only — do not match bare "body" (full-character mats).
+  if (/skin|face|flesh|headskin/.test(n)) return "skin";
+  if (/(^|[^a-z])(arm|hand|leg)([^a-z]|$)/.test(n) && !/armor|alarm|legend/.test(n)) return "skin";
   return null;
+}
+
+/** True when the clone has a dedicated shirt (or clothes) slot we can tint for team kits. */
+export function skinnedSupportsTeamKit(inst: SkinnedPlayerInstance): boolean {
+  return inst.kitMaterials.shirt.length > 0;
 }
 
 async function loadTemplate(url: string): Promise<Template | null> {
@@ -215,19 +224,8 @@ export function cloneSkinnedPlayer(url: string): SkinnedPlayerInstance | null {
 
   if (skinnedCount === 0) return null;
 
-  // If nothing classified as shirt, tint the largest mesh material set gently via first std mat.
-  if (!kitMaterials.shirt.length) {
-    root.traverse((obj) => {
-      const mesh = obj as THREE.Mesh;
-      if (!mesh.isMesh) return;
-      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-      for (const m of mats) {
-        if ((m as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
-          kitMaterials.shirt.push(m as THREE.MeshStandardMaterial);
-        }
-      }
-    });
-  }
+  // Do not dump unclassified body mats into shirt — that made Vanguard-style
+  // full-body meshes paint as kit then get overwritten as skin (all players same colour).
 
   const mixer = new THREE.AnimationMixer(root);
   const actions: SkinnedPlayerInstance["actions"] = {};
@@ -241,24 +239,23 @@ export function cloneSkinnedPlayer(url: string): SkinnedPlayerInstance | null {
 }
 
 export function applyKitToSkinned(inst: SkinnedPlayerInstance, kit: TeamKit, skinToneHex: number, bootHex: number): void {
+  const seen = new Set<THREE.MeshStandardMaterial>();
   const paint = (mats: THREE.MeshStandardMaterial[], hex: number, roughness = 0.55) => {
     for (const m of mats) {
+      if (seen.has(m)) continue;
+      seen.add(m);
       m.color.setHex(hex);
       m.roughness = roughness;
       m.metalness = Math.min(m.metalness ?? 0.05, 0.15);
       m.needsUpdate = true;
     }
   };
+  // Shirt/shorts/socks first so a shared mat is never overwritten by skin.
   paint(inst.kitMaterials.shirt, hexColor(kit.shirt), 0.42);
   paint(inst.kitMaterials.shorts, hexColor(kit.shorts), 0.58);
   paint(inst.kitMaterials.socks, hexColor(kit.socks), 0.68);
-  paint(inst.kitMaterials.skin, skinToneHex, 0.7);
   paint(inst.kitMaterials.boots, bootHex, 0.3);
-
-  // Optional: shirt map on first shirt material when kit asset exists.
-  if (kit.shirtAsset && inst.kitMaterials.shirt[0]) {
-    // Kit wrap texture is applied from PlayerVisual via setSkinnedShirtMap.
-  }
+  paint(inst.kitMaterials.skin, skinToneHex, 0.7);
 }
 
 export function setSkinnedShirtMap(inst: SkinnedPlayerInstance, map: THREE.Texture | null): void {

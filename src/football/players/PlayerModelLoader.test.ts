@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { gaitToClip, resolvePlayerModelUrl, DEFAULT_PLAYER_MODEL } from "./PlayerModelLoader";
+import {
+  classifyMaterialSlot,
+  gaitToClip,
+  resolvePlayerModelUrl,
+  DEFAULT_PLAYER_MODEL,
+} from "./PlayerModelLoader";
 import type { Player } from "./Player";
 
 describe("PlayerModelLoader", () => {
@@ -26,5 +31,16 @@ describe("PlayerModelLoader", () => {
       appearance: { fullBodyAsset: "/assets/players/custom.glb", modelId: null },
     } as unknown as Player;
     expect(resolvePlayerModelUrl(byAsset)).toBe("assets/players/custom.glb");
+  });
+
+  it("classifies kit slots without treating full-body mats as skin", () => {
+    expect(classifyMaterialSlot("Shirt_Mat")).toBe("shirt");
+    expect(classifyMaterialSlot("Clothes")).toBe("shirt");
+    expect(classifyMaterialSlot("Shorts")).toBe("shorts");
+    expect(classifyMaterialSlot("Socks_L")).toBe("socks");
+    expect(classifyMaterialSlot("Skin_Face")).toBe("skin");
+    // Vanguard-style whole-character material must not become skin or shirt.
+    expect(classifyMaterialSlot("VanguardBodyMat")).toBeNull();
+    expect(classifyMaterialSlot("Vanguard_VisorMat")).toBeNull();
   });
 });

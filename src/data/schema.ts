@@ -55,6 +55,8 @@ export interface AppearanceData {
   sleeveStyle?: "short" | "long";
   heightScale?: number;
   bodyType?: "lean" | "standard" | "stocky";
+  /** Continuous XZ girth (≈0.86–1.14); derived from height/weight when set. */
+  bodyWidth?: number;
   /** Optional birthplace from openfootball / bio enrich (display only). */
   birthplace?: string;
   /** Full legal / wiki-friendly name from openfootball (for portraits & bios). */
