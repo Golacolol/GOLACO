@@ -854,11 +854,14 @@ export function createPlayerVisual(player: Player, kit: TeamKit, keeper: boolean
   };
   group.userData.rig = rig;
 
-  // Skinned humanoid overlay when the base GLB is preloaded — procedural stays as fallback.
+  // Skinned humanoid when the base GLB is preloaded — procedural stays visible if clone fails.
   const modelUrl = resolvePlayerModelUrl(player);
-  const skinned = cloneSkinnedPlayer(modelUrl);
-  if (skinned) {
-    attachSkinnedBody(group, bodyRoot, skinned, player, kit, shirtMap, bootCol);
+  try {
+    const skinned = cloneSkinnedPlayer(modelUrl);
+    if (skinned) attachSkinnedBody(group, bodyRoot, skinned, player, kit, shirtMap, bootCol);
+  } catch (err) {
+    console.warn("[PlayerVisual] skinned clone failed — using procedural body", err);
+    bodyRoot.visible = true;
   }
 
   return {
@@ -880,14 +883,30 @@ function attachSkinnedBody(
   shirtMap: THREE.Texture,
   bootCol: number,
 ): void {
-  applyKitToSkinned(skinned, kit, skinColor(player.appearance.skinTone), bootCol);
-  setSkinnedShirtMap(skinned, shirtMap);
-  // Soldier faces +Z like our mannequin; scale already normalized in the loader.
-  skinned.root.name = "skinnedBody";
-  bodyRoot.visible = false;
-  group.add(skinned.root);
-  group.userData.skinned = skinned;
-  group.userData.useSkinned = true;
+  try {
+    applyKitToSkinned(skinned, kit, skinColor(player.appearance.skinTone), bootCol);
+    // Only apply shirt map when we have a dedicated shirt material — otherwise the
+    // UV atlas on a full-body mesh goes white / invisible under a jersey texture.
+    if (kit.shirtAsset && skinned.kitMaterials.shirt.length > 0) {
+      const hasDedicatedShirt = skinned.kitMaterials.shirt.some((m) =>
+        /shirt|jersey|cloth|outfit|gear/i.test(m.name || ""),
+      );
+      if (hasDedicatedShirt) setSkinnedShirtMap(skinned, shirtMap);
+    }
+    skinned.root.name = "skinnedBody";
+    skinned.root.visible = true;
+    bodyRoot.visible = false;
+    group.add(skinned.root);
+    group.userData.skinned = skinned;
+    group.userData.useSkinned = true;
+    // Kick an idle pose immediately so the first frame isn't an unbound T-pose flash.
+    syncSkinnedAnimation(skinned, player, 0);
+  } catch (err) {
+    console.warn("[PlayerVisual] skinned attach failed — keeping procedural body", err);
+    bodyRoot.visible = true;
+    group.userData.useSkinned = false;
+    group.userData.skinned = null;
+  }
 }
 
 function asRig(mesh: THREE.Group): InternalRig | null {

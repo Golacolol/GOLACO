@@ -4,6 +4,7 @@
  */
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { assetUrl } from "../../core/assetUrl";
 import type { TeamKit } from "../../data/schema";
 import { hexColor } from "../../core/math";
@@ -172,8 +173,11 @@ export function cloneSkinnedPlayer(url: string): SkinnedPlayerInstance | null {
   const tmpl = templates.get(url);
   if (!tmpl) return null;
 
-  const root = tmpl.scene.clone(true);
-  // Clone materials so kit tint is per-player.
+  // SkeletonUtils remaps bones — Object3D.clone breaks SkinnedMesh bindings (invisible players).
+  const root = cloneSkeleton(tmpl.scene) as THREE.Group;
+  root.visible = true;
+  root.frustumCulled = false;
+
   const kitMaterials: SkinnedPlayerInstance["kitMaterials"] = {
     shirt: [],
     shorts: [],
@@ -181,24 +185,49 @@ export function cloneSkinnedPlayer(url: string): SkinnedPlayerInstance | null {
     skin: [],
     boots: [],
   };
+  let skinnedCount = 0;
   root.traverse((obj) => {
-    const mesh = obj as THREE.Mesh;
-    if (!mesh.isMesh) return;
+    const mesh = obj as THREE.SkinnedMesh;
+    if ((mesh as THREE.Mesh).isMesh) {
+      mesh.frustumCulled = false;
+      mesh.visible = true;
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+    }
+    if (mesh.isSkinnedMesh) {
+      skinnedCount += 1;
+      // Ensure skeleton is bound after clone.
+      if (mesh.skeleton) mesh.bind(mesh.skeleton, mesh.bindMatrix);
+    }
+    if (!(mesh as THREE.Mesh).isMesh) return;
     const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
     const cloned = mats.map((m) => {
       const c = (m as THREE.Material).clone() as THREE.MeshStandardMaterial;
       const slot = classifyMaterialSlot(m.name || mesh.name || "");
       if (slot && "color" in c) kitMaterials[slot].push(c);
-      // Unclassified cloth-like → shirt bucket so kit colour still lands.
-      if (!slot && c.type === "MeshStandardMaterial") {
+      else if (!slot && /cloth|outfit|gear|suit/i.test(m.name || mesh.name || "")) {
         kitMaterials.shirt.push(c);
       }
       return c;
     });
     mesh.material = cloned.length === 1 ? cloned[0]! : cloned;
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
   });
+
+  if (skinnedCount === 0) return null;
+
+  // If nothing classified as shirt, tint the largest mesh material set gently via first std mat.
+  if (!kitMaterials.shirt.length) {
+    root.traverse((obj) => {
+      const mesh = obj as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      for (const m of mats) {
+        if ((m as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
+          kitMaterials.shirt.push(m as THREE.MeshStandardMaterial);
+        }
+      }
+    });
+  }
 
   const mixer = new THREE.AnimationMixer(root);
   const actions: SkinnedPlayerInstance["actions"] = {};

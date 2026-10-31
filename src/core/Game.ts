@@ -352,7 +352,7 @@ export class Game {
             const id = btn.getAttribute("data-id");
             if (id) {
               this.chars.selectPlayerId(id);
-              this.chars.render();
+              this.chars.refreshTeamSelection();
             }
             return;
           }
@@ -412,7 +412,7 @@ export class Game {
           const id = btn.getAttribute("data-id");
           if (id) {
             this.chars.selectPlayerId(id);
-            this.chars.render();
+            this.chars.refreshTeamSelection();
             this.refreshCharacterPreview();
           }
         }
@@ -546,6 +546,11 @@ export class Game {
     this.simBannerPlayT = 0;
     this.fixtureSim = false;
     this.watchSim = false;
+    // Always restart the 60s simulator idle clock when landing on the main menu —
+    // time spent in formation / play-next must not immediately auto-start a match.
+    this.input.lastInputAt = performance.now();
+    this.menu.setCountdown(AUTOPLAY_IDLE_SECONDS);
+    this.menu.attract = false;
     this.audio.stopStadiumAmbience();
     this.clearMatch();
     this.debug.el.hidden = true;
@@ -1618,20 +1623,25 @@ export class Game {
       const listed = this.listedFixture();
       this.menu.setKickOffCountdown(kickOffRemainingSeconds(listed.date, listed.time || DEFAULT_KICK_OFF_TIME));
       if (this.menu.panel !== "menu") {
+        // Sub-panels (league / options / etc.) pause the simulator idle clock.
         this.input.lastInputAt = performance.now();
+        this.menu.setCountdown(AUTOPLAY_IDLE_SECONDS);
+        this.menu.attract = false;
       } else {
-      this.handleMenuNav(intent.moveZ, () => {
-        this.menu.move(intent.moveZ < 0 ? -1 : 1);
-      });
-      if (intent.pass || intent.skip) this.menuAction(this.menu.currentId());
-      const left = Math.max(0, AUTOPLAY_IDLE_SECONDS - this.input.idleSeconds());
-      this.menu.setCountdown(left);
-      this.menu.attract = left < 8;
-      if (left <= 0) this.menuAction("sim");
+        this.handleMenuNav(intent.moveZ, () => {
+          this.menu.move(intent.moveZ < 0 ? -1 : 1);
+        });
+        if (intent.pass || intent.skip) this.menuAction(this.menu.currentId());
+        const left = Math.max(0, AUTOPLAY_IDLE_SECONDS - this.input.idleSeconds());
+        this.menu.setCountdown(left);
+        this.menu.attract = left < 8;
+        if (left <= 0) this.menuAction("sim");
       }
     }
 
     if (this.appState === AppState.MATCH_SETUP) {
+      // Don't accrue idle toward auto-sim while configuring a fixture.
+      this.input.lastInputAt = performance.now();
       if (this.tableSetup.isOpen) {
         if (intent.pause) {
           this.tableSetup.hide();
@@ -1644,6 +1654,8 @@ export class Game {
     }
 
     if (this.appState === AppState.CHARACTER_SELECT) {
+      // Formation / Play Next Fixture: freeze idle so Back can't instantly auto-sim.
+      this.input.lastInputAt = performance.now();
       this.handleMenuNav(intent.moveX + intent.moveZ, () => {
         this.chars.move(intent.moveX + intent.moveZ > 0 ? 1 : -1);
         this.chars.render();
@@ -1799,8 +1811,6 @@ export class Game {
   private returnToMenuAfterSimulator(): void {
     this.attractHold = 0;
     this.simBannerPlayT = 0;
-    this.input.lastInputAt = performance.now();
-    this.menu.countdown = AUTOPLAY_IDLE_SECONDS;
     this.goMenu();
   }
 

@@ -488,8 +488,7 @@ export class CharacterSelect {
       if (toggle && this.root.contains(toggle)) {
         e.preventDefault();
         e.stopPropagation();
-        this.profileView = this.profileView === "hex" ? "detail" : "hex";
-        this.render();
+        this.toggleProfileView();
         return;
       }
       this.onEditDialogClick(e);
@@ -499,8 +498,7 @@ export class CharacterSelect {
       const toggle = (e.target as HTMLElement).closest?.("[data-char='profile-toggle']");
       if (!toggle || !this.root.contains(toggle as Node)) return;
       e.preventDefault();
-      this.profileView = this.profileView === "hex" ? "detail" : "hex";
-      this.render();
+      this.toggleProfileView();
     });
     this.root.addEventListener("change", (e) => void this.onEditDialogChange(e));
   }
@@ -782,12 +780,91 @@ export class CharacterSelect {
     if (i >= 0) this.index = i;
   }
 
+  /** Toggle hex shape ↔ six ratings without rebuilding the formation panel. */
+  toggleProfileView(): void {
+    this.profileView = this.profileView === "hex" ? "detail" : "hex";
+    this.patchProfileStats();
+  }
+
+  /**
+   * Update selection highlight + roster card only.
+   * Preserves squad-list scroll and avoids re-creating pitch/bench kit PNGs.
+   */
+  refreshTeamSelection(): void {
+    if (this.controlMode !== "TEAM") {
+      this.render();
+      return;
+    }
+    if (!this.root.querySelector(".char-panel-team")) {
+      this.render();
+      return;
+    }
+    const list = this.root.querySelector<HTMLElement>(".team-roster-list");
+    const scrollTop = list?.scrollTop ?? 0;
+    const selected = this.current();
+    const selectedId = selected.player.id;
+
+    for (const row of this.root.querySelectorAll<HTMLElement>(".roster-row[data-id]")) {
+      row.classList.toggle("on", row.getAttribute("data-id") === selectedId);
+    }
+    for (const token of this.root.querySelectorAll<HTMLElement>(".pitch-token[data-id]")) {
+      const on = token.getAttribute("data-id") === selectedId;
+      token.classList.toggle("on", on);
+      token.closest(".pitch-slot")?.classList.toggle("on", on);
+    }
+    for (const card of this.root.querySelectorAll<HTMLElement>(".bench-card[data-id]")) {
+      card.classList.toggle("on", card.getAttribute("data-id") === selectedId);
+    }
+
+    const card = this.root.querySelector(".team-roster-card");
+    if (card) {
+      const a = selected.attrs;
+      card.innerHTML = `
+        ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
+          textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
+        })}
+        <div class="char-num">#${selected.shirtNumber}</div>
+        <h3>${escapeHtml(selected.player.name)}</h3>
+        <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
+        ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 148 })}
+      `;
+    }
+
+    if (list) list.scrollTop = scrollTop;
+    requestAnimationFrame(() => {
+      if (list) list.scrollTop = scrollTop;
+      fitKitSurnameElements(this.root);
+    });
+  }
+
+  private patchProfileStats(): void {
+    const host = this.root.querySelector<HTMLElement>("[data-char='profile-toggle']");
+    if (!host) {
+      this.render();
+      return;
+    }
+    const size = Number(host.getAttribute("data-size") || (this.controlMode === "TEAM" ? 148 : 168));
+    const compact = host.classList.contains("profile-stats-compact");
+    const next = profileStatsBlock(this.current().attrs, {
+      compact,
+      mode: this.profileView,
+      size,
+    });
+    host.outerHTML = next;
+  }
+
   render(): void {
+    const list = this.root.querySelector<HTMLElement>(".team-roster-list");
+    const rosterScroll = list?.scrollTop ?? 0;
     this.root.hidden = false;
     if (this.controlMode === "KIT") this.renderKit();
     else if (this.controlMode === "TEAM") this.renderTeam();
     else this.renderPlayer();
-    requestAnimationFrame(() => fitKitSurnameElements(this.root));
+    requestAnimationFrame(() => {
+      const restored = this.root.querySelector<HTMLElement>(".team-roster-list");
+      if (restored && rosterScroll > 0) restored.scrollTop = rosterScroll;
+      fitKitSurnameElements(this.root);
+    });
   }
 
   hide(): void {
@@ -827,7 +904,7 @@ export class CharacterSelect {
         <div class="char-num">#${p.shirtNumber}</div>
         <h2>${escapeHtml(p.player.name)}</h2>
         <div class="char-meta">${p.player.primaryPosition} · OVR ${p.overall} · ${groupOf(p.player.primaryPosition)}</div>
-        ${profileStatsBlock(a, { mode: this.profileView, size: 148 })}
+        ${profileStatsBlock(a, { mode: this.profileView, size: 168 })}
         ${this.modeNavHtml("PLAYER")}
       </div>
     `;
@@ -925,7 +1002,7 @@ export class CharacterSelect {
               <div class="char-num">#${selected.shirtNumber}</div>
               <h3>${escapeHtml(selected.player.name)}</h3>
               <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
-              ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 118 })}
+              ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 148 })}
             </div>
             <div class="team-roster-title">SQUAD <span class="team-roster-hint">Right-click to edit</span></div>
             <div class="team-roster-list">
@@ -1498,6 +1575,7 @@ export class CharacterSelect {
       /* already released */
     }
     this.selectPlayerId(n.playerId);
+    let structureChanged = false;
     if (n.moved) {
       e.preventDefault();
       e.stopPropagation();
@@ -1508,12 +1586,17 @@ export class CharacterSelect {
         this.swapIntoSlot(n.playerId, toSlot);
         this.syncPlayersList();
         this.selectPlayerId(n.playerId);
+        structureChanged = true;
       } else {
         this.markDirtyIfNeeded();
+        structureChanged = true; // slot offsets / chalk positions need a layout pass
       }
     }
     this.nudge = null;
-    if (this.controlMode === "TEAM") this.render();
+    if (this.controlMode === "TEAM") {
+      if (structureChanged) this.render();
+      else this.refreshTeamSelection();
+    }
   }
 
   /** Prefer a nearby occupied slot for swap targeting (avoids pointer-capture hit-test issues). */

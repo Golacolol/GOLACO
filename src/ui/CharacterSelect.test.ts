@@ -183,6 +183,38 @@ describe("character select", () => {
     expect(view.root.querySelector(`.pitch-token.on[data-id="${target.player.player.id}"]`)).toBeTruthy();
   });
 
+  it("refreshTeamSelection keeps roster scroll and does not show click-hint text", () => {
+    const host = document.createElement("div");
+    const view = new CharacterSelect(host);
+    const starters = squad();
+    const roster = [
+      ...starters,
+      ...Array.from({ length: 12 }, (_, i) => makePlayer(`x${i}`, `Extra ${i}`, "CM", 20 + i)),
+    ];
+    view.setSquad("Plymouth Argyle", starters, "#007A3D", {
+      formation: "4-2-3-1",
+      roster,
+      starterSlots: ["GK", "CAM", "ST"],
+    });
+    view.render();
+    const list = view.root.querySelector<HTMLElement>(".team-roster-list");
+    expect(list).toBeTruthy();
+    list!.scrollTop = 80;
+    const pitchImg = view.root.querySelector(".pitch-token img");
+    const target = roster[roster.length - 1]!;
+    view.selectPlayerId(target.player.id);
+    view.refreshTeamSelection();
+    expect(view.root.querySelector<HTMLElement>(".team-roster-list")?.scrollTop).toBe(80);
+    // Selection only toggles classes — kit portrait nodes stay mounted.
+    expect(view.root.querySelector(".pitch-token img")).toBe(pitchImg);
+    expect(view.root.textContent ?? "").not.toMatch(/Click for (shape|details)/i);
+    view.toggleProfileView();
+    expect(view.root.querySelector(".profile-hex-value")).toBeTruthy();
+    expect(view.root.querySelector(".profile-hex-shape")).toBeNull();
+    view.toggleProfileView();
+    expect(view.root.querySelector(".profile-hex-shape")).toBeTruthy();
+  });
+
   it("spot practice keeps the formation panel with a highlighted Select Player button", () => {
     const host = document.createElement("div");
     const view = new CharacterSelect(host);

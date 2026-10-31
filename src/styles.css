@@ -537,15 +537,15 @@ html.club-name-glow-off .club-line {
 }
 .title-emoji {
   display: inline-block;
-  font-size: 0.62em;
+  font-size: 1em;
   line-height: 1;
-  vertical-align: 0.12em;
-  margin-left: 0.06em;
+  vertical-align: -0.05em;
+  margin-left: 0.08em;
   filter: drop-shadow(0 2px 0 rgba(90, 48, 0, 0.35));
 }
 .pause-brand .title-emoji {
-  font-size: 0.68em;
-  vertical-align: 0.08em;
+  font-size: 1em;
+  vertical-align: -0.05em;
 }
 .eyebrow { color: var(--gold); letter-spacing: 0.08em; font-size: 12px; }
 .menu-hero .sub { opacity: 0.78; margin: 12px 0 18px; max-width: 28ch; }
@@ -1304,8 +1304,8 @@ html.club-name-glow-off .club-line {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  margin: 10px 0 4px;
+  justify-content: center;
+  margin: 6px 0 2px;
   cursor: pointer;
   user-select: none;
   color: rgba(255, 255, 255, 0.85);
@@ -1314,8 +1314,8 @@ html.club-name-glow-off .club-line {
   outline: 1px solid var(--gold);
   outline-offset: 3px;
 }
-.profile-stats-compact { margin: 4px 0 2px; }
-.profile-hex-svg { display: block; overflow: visible; }
+.profile-stats-compact { margin: 2px 0 0; }
+.profile-hex-svg { display: block; overflow: visible; flex: 0 0 auto; }
 .profile-hex-shape {
   fill: rgba(0, 122, 61, 0.45);
   stroke: var(--gold);
@@ -1328,15 +1328,11 @@ html.club-name-glow-off .club-line {
   letter-spacing: 0.04em;
   opacity: 0.75;
 }
-.profile-stats-detail {
-  width: 100%;
-  margin: 0;
-}
-.profile-stats-hint {
-  font-size: 9px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  opacity: 0.45;
+.profile-hex-value {
+  fill: var(--gold);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 .team-roster-hint {
   margin-left: 6px;
@@ -1576,7 +1572,8 @@ html.club-name-glow-off .club-line {
   position: absolute;
   left: 50%;
   width: 14%;
-  height: 4.2%;
+  /* Match .team-pitch-markings vertical inset (6%) so the open mouth sits on the goal line. */
+  height: 6%;
   box-sizing: border-box;
   border: 2px solid rgba(244, 247, 242, 0.55);
   background: rgba(244, 247, 242, 0.14);
@@ -1584,14 +1581,14 @@ html.club-name-glow-off .club-line {
   pointer-events: none;
   z-index: 1;
 }
-/* Open side faces the field; bag sits in the 6% end padding outside markings. */
+/* Open side faces the field; fills end padding flush to the markings box. */
 .pitch-goal-mouth-own {
-  bottom: 0.6%;
+  bottom: 0;
   border-top: 0;
   border-radius: 0 0 3px 3px;
 }
 .pitch-goal-mouth-opp {
-  top: 0.6%;
+  top: 0;
   border-bottom: 0;
   border-radius: 3px 3px 0 0;
 }
