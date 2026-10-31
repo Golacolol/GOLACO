@@ -81,7 +81,7 @@ export function clearChanceOpportunity(
 ): { quality: number; close: boolean; laneClear: boolean; gkExposed: boolean } {
   const goalX = carrier.oppGoalX();
   const distance = carrier.distTo(goalX, 0);
-  const close = distance < 14 && Math.abs(carrier.z) < 10;
+  const close = distance < 16 && Math.abs(carrier.z) < 12;
   if (!close) return { quality: 0, close: false, laneClear: false, gkExposed: false };
 
   let outfieldBlock = false;
@@ -115,13 +115,14 @@ export function clearChanceOpportunity(
 
   let quality = 0;
   if (laneClear) {
-    quality = 0.32 + (1 - distance / 14) * 0.38 + (gkExposed ? 0.28 : 0.08);
-    if (distance < 11) quality += 0.18;
-    if (Math.abs(carrier.z) < 5.5) quality += 0.1;
-    if (gk && Math.abs(gk.z - carrier.z) > 2.8) quality += 0.12;
-  } else if (distance < 9 && Math.abs(carrier.z) < 8) {
+    quality = 0.4 + (1 - distance / 16) * 0.42 + (gkExposed ? 0.32 : 0.1);
+    if (distance < 12) quality += 0.2;
+    if (distance < 8) quality += 0.14;
+    if (Math.abs(carrier.z) < 6) quality += 0.12;
+    if (gk && Math.abs(gk.z - carrier.z) > 2.4) quality += 0.14;
+  } else if (distance < 10 && Math.abs(carrier.z) < 9) {
     // Still must hit it when very close even through a crowd.
-    quality = 0.38 + (gkExposed ? 0.12 : 0);
+    quality = 0.48 + (gkExposed ? 0.16 : 0.04);
   }
   return { quality: clamp(quality, 0, 1), close, laneClear, gkExposed };
 }
@@ -273,23 +274,24 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
 
   let shotScore = 0;
   if (distGoal < PENALTY_AREA_LENGTH + 0.5 && Math.abs(carrier.z) < 12) {
-    // Box strikes should finish — keep spam gated by clearChance / canShoot floors below.
-    shotScore = 0.22 + shoot * 0.42 + (1 - pressure) * 0.16 - (shortT && forwardMate > 6 ? 0.28 : 0);
-    if (shortT && lane > 0.55 && forwardMate > 4 && clearChance.quality < 0.45) shotScore *= 0.62;
+    // Box strikes should fire (misses / saves count) — not only gilt-edged chances.
+    shotScore = 0.28 + shoot * 0.45 + (1 - pressure) * 0.18 - (shortT && forwardMate > 6 ? 0.18 : 0);
+    if (shortT && lane > 0.55 && forwardMate > 4 && clearChance.quality < 0.35) shotScore *= 0.72;
   }
 
   let longShotScore = 0;
   if (longShot.inZone) {
     longShotScore =
-      (0.1 + longS * 0.34 + shoot * 0.14 + (1 - pressure) * 0.12) * tuning.longShotDecisionMultiplier;
-    if (longS < 0.55) longShotScore *= 0.35;
-    if (shortT && forwardMate > 6 && lane > 0.55) longShotScore *= 0.42;
-    if (!longShot.open) longShotScore *= 0.45;
-    if ((wantBuildup || building) && clearChance.quality < 0.4) longShotScore *= 0.45;
-    // Central pockets invite a strike rather than forced recycling.
-    if (Math.abs(carrier.z) < 10 && progress > 0.52 && longS > 0.5) longShotScore += 0.14;
+      (0.16 + longS * 0.38 + shoot * 0.16 + (1 - pressure) * 0.14) * tuning.longShotDecisionMultiplier;
+    if (longS < 0.48) longShotScore *= 0.45;
+    if (shortT && forwardMate > 6 && lane > 0.55 && clearChance.quality < 0.35) longShotScore *= 0.55;
+    if (!longShot.open) longShotScore *= 0.55;
+    if ((wantBuildup || building) && clearChance.quality < 0.35 && progress < 0.55) longShotScore *= 0.55;
+    // Speculative strikes from the edge are part of real football (over / wide / saved).
+    if (Math.abs(carrier.z) < 12 && progress > 0.48 && longS > 0.42) longShotScore += 0.18;
+    if (progress > 0.62 && distGoal < 28 && Math.abs(carrier.z) < 14) longShotScore += 0.1;
   }
-  if (longShot.blocked) longShotScore *= 0.1;
+  if (longShot.blocked) longShotScore *= 0.18;
 
   let throughBallScore = throughT
     ? Math.max(
@@ -394,24 +396,29 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   }
 
   // Gilt-edged / near-open-goal: shoot — keeper may still dive, but pass is wrong.
-  if (clearChance.quality > 0.55) {
+  if (clearChance.quality > 0.42) {
     shotScore = Math.max(
       shotScore,
-      0.62 + clearChance.quality * 0.95 + shoot * 0.28 + (clearChance.gkExposed ? 0.22 : 0.08),
+      0.72 + clearChance.quality * 1.05 + shoot * 0.3 + (clearChance.gkExposed ? 0.28 : 0.1),
     );
-    passScore *= 1 - clearChance.quality * 0.6;
-    holdScore *= 0.22;
-    runScore *= 0.4;
-    throughBallScore *= 0.35;
-    longPassScore *= 0.2;
-    crossScore *= 0.35;
+    passScore *= 1 - clearChance.quality * 0.72;
+    holdScore *= 0.15;
+    runScore *= 0.32;
+    throughBallScore *= 0.28;
+    longPassScore *= 0.15;
+    crossScore *= 0.28;
   }
-  // CanShoot hard gate — only force the finish on a genuine clear chance.
-  if (canShoot(carrier, opponents) && clearChance.quality >= 0.42 && possessionTime > 0.45) {
-    shotScore = Math.max(shotScore, 0.82 + shoot * 0.2);
-    passScore *= 0.48;
-    holdScore *= 0.18;
-    throughBallScore *= 0.35;
+  // CanShoot hard gate — force the finish once the touch has settled.
+  if (canShoot(carrier, opponents) && clearChance.quality >= 0.28 && possessionTime > 0.22) {
+    shotScore = Math.max(shotScore, 0.84 + shoot * 0.24 + (clearChance.gkExposed ? 0.12 : 0));
+    passScore *= 0.42;
+    holdScore *= 0.14;
+    throughBallScore *= 0.32;
+  }
+  // Speculative look from the D / edge — keep shots alive even without a clearChance spike.
+  if (progress > 0.55 && distGoal < 28 && Math.abs(carrier.z) < 14 && possessionTime > 0.45) {
+    longShotScore = Math.max(longShotScore, 0.26 + shoot * 0.14 + longS * 0.2);
+    if (distGoal < 18) shotScore = Math.max(shotScore, 0.4 + shoot * 0.22);
   }
   // Phase weights: transition = progressive; chance = shoot/through; build = recycle.
   const phase = matchPhase(carrier, ball, carrier.side, {
@@ -448,16 +455,16 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     if (longT && !wantBuildup) longPassScore += 0.12;
     if (longT && pressure > 0.4) longPassScore += 0.16;
     // Don't suppress finishing when the chance is already there.
-    if (clearChance.quality < 0.4) {
-      shotScore *= 0.35;
-      longShotScore *= 0.25;
+    if (clearChance.quality < 0.35 && progress < 0.62) {
+      shotScore *= 0.55;
+      longShotScore *= 0.42;
     }
-    if (progress < 0.5 && clearChance.quality < 0.4) {
+    if (progress < 0.5 && clearChance.quality < 0.35) {
       passScore += 0.22;
       runScore *= 0.62;
       holdScore += 0.12;
       longPassScore *= directTeam ? 0.85 : 0.72;
-      shotScore *= 0.2;
+      shotScore *= 0.45;
     } else if (progress < 0.5) {
       passScore += 0.1;
       if (longT && longPassScore > 0.12) longPassScore += 0.06;
@@ -494,16 +501,37 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     }
     if (longShot.open && longS > 0.55) longShotScore += 0.12;
     if (distGoal < PENALTY_AREA_LENGTH + 2 && Math.abs(carrier.z) < 10) shotScore += 0.18;
-    if (shortT && lane > 0.6 && forwardMate > 5 && clearChance.quality < 0.45) {
-      passScore += 0.2;
-      shotScore *= 0.65;
+    if (shortT && lane > 0.6 && forwardMate > 5 && clearChance.quality < 0.32) {
+      passScore += 0.16;
+      shotScore *= 0.78;
     }
-  } else if (striker && clearChance.quality < 0.4) {
-    runScore += 0.08;
-    passScore += 0.32;
-    holdScore *= 0.75;
+  } else if (striker && clearChance.quality < 0.32) {
+    // Link-up: control the ball, lay it off, then burst — not an instant dump or endless hold.
+    const layMate =
+      shortT &&
+      (shortT.slot.includes("CM") ||
+        shortT.slot.includes("AM") ||
+        shortT.slot.includes("DM") ||
+        shortT.slot === "LB" ||
+        shortT.slot === "RB" ||
+        shortT.slot === "LWB" ||
+        shortT.slot === "RWB");
+    if (possessionTime < 0.55 && pressure < 0.55) {
+      holdScore += 0.28 + comp * 0.12;
+      passScore *= 0.72;
+      runScore *= 0.55;
+    } else if (possessionTime < 1.65 && progress > 0.38) {
+      holdScore *= 0.55;
+      passScore += 0.38 + (layMate ? 0.26 : 0.08) + lane * 0.16;
+      runScore *= 0.48;
+      shotScore *= 0.7;
+    } else {
+      runScore += 0.08;
+      passScore += 0.32 + (layMate ? 0.12 : 0);
+      holdScore *= 0.7;
+    }
     throughBallScore += 0.06;
-    shotScore *= 0.55;
+    shotScore *= 0.72;
   }
 
   if (wide && progress > 0.48 && pressure < 0.6) {
@@ -579,12 +607,13 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   }
   if (!shortT && longT) longPassScoreAdj += 0.18;
 
-  // Final floor: only gilt-edged chances must outrank recycle/pass.
-  if (clearChance.quality > 0.62 && possessionTime > 0.5) {
-    shotScore = Math.max(shotScore, 0.82 + clearChance.quality * 0.65 + shoot * 0.15);
-    passScore = Math.min(passScore, shotScore - 0.08);
-    runScore = Math.min(runScore, shotScore - 0.15);
-    holdScore = Math.min(holdScore, 0.1);
+  // Final floor: clear / open chances must outrank recycle/pass.
+  if (clearChance.quality > 0.48 && possessionTime > 0.28) {
+    shotScore = Math.max(shotScore, 0.9 + clearChance.quality * 0.7 + shoot * 0.16);
+    passScore = Math.min(passScore, shotScore - 0.14);
+    runScore = Math.min(runScore, shotScore - 0.2);
+    holdScore = Math.min(holdScore, 0.08);
+    throughBallScore = Math.min(throughBallScore, shotScore - 0.12);
   }
 
   const scores: AttackScores = {

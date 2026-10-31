@@ -116,7 +116,7 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
   }
 
   // Retain beyond collect reach so a take cannot instantly drop (hysteresis).
-  if (player.distTo(ball.x, ball.z) > 2.85 + (1 - control) * 0.25) return "loose";
+  if (player.distTo(ball.x, ball.z) > 3.15 + (1 - control) * 0.22) return "loose";
   return "keep";
 }
 

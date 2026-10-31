@@ -1,5 +1,6 @@
-import { clamp, normalize2, stat01 } from "../../core/math";
+import { normalize2, stat01 } from "../../core/math";
 import { HALF_LENGTH, HALF_WIDTH, SPEED_BURST_DRAIN, SPEED_BURST_MIN_ENERGY, SPEED_BURST_SPEED_MUL } from "../constants";
+import { applyFacingHints, moveFacingHint, type FacingHint } from "./FacingControl";
 import type { Player } from "./Player";
 
 /** Playable inset — keep outfielders off the hard pitch barrier. */
@@ -50,6 +51,8 @@ export function movePlayer(
     matchDrainScale?: number;
     grip?: number;
     boost?: boolean;
+    /** Extra facing hints (kick / receive / ball) applied with move intent. */
+    facingHints?: FacingHint[];
   },
 ): void {
   if (player.sentOff) return;
@@ -81,7 +84,6 @@ export function movePlayer(
 
   const pace = player.attrs.pace;
   const acceleration = player.attrs.acceleration ?? pace;
-  const agility = player.attrs.agility ?? Math.round((player.attrs.dribbling + player.attrs.control + pace) / 3);
   const balance = player.attrs.balance ?? Math.round((player.attrs.strength + player.attrs.control) / 2);
 
   let max = hasIntent
@@ -122,15 +124,19 @@ export function movePlayer(
     player.vz *= Math.pow(0.08, dt);
   }
 
-  if (hasIntent && (player.speed > 0.8 || travel > 2.4)) {
-    const desired = Math.atan2(intent.x, intent.z);
-    let diff = desired - player.facing;
-    while (diff > Math.PI) diff -= Math.PI * 2;
-    while (diff < -Math.PI) diff += Math.PI * 2;
-    const maxRate = turnRateFromAttrs(agility, player.speed, player.jockeying) * (extras?.turnMul ?? 1);
-    const step = maxRate * dt;
-    const turned = Math.abs(clamp(diff, -step, step));
-    player.facing += clamp(diff, -step, step);
+  {
+    const hints: FacingHint[] = [...(extras?.facingHints ?? [])];
+    if (hasIntent && (player.speed > 0.55 || travel > 1.6 || extras?.hasBall)) {
+      hints.push(moveFacingHint(intent.x, intent.z));
+    }
+    const facingBefore = player.facing;
+    if (hints.length) {
+      applyFacingHints(player, hints, dt, {
+        turnMul: extras?.turnMul,
+        jockeying: player.jockeying,
+      });
+    }
+    const turned = Math.abs(player.facing - facingBefore);
     // Sharp turns shed speed; balance resists that loss.
     if (turned > 0.08 && prevSpeed > 2.5) {
       const shed = (1 - stat01(balance) * 0.55) * turned * 0.35;

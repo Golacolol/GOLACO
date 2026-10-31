@@ -333,8 +333,8 @@ describe("attacking decisions", () => {
     const d2 = make("d2", 31, 3, "away", {}, "RCB");
     const gk = make("gk", 48, 0, "away", {}, "GK");
     const spot = supportTarget(partner, 20, 0, carrier, [carrier, partner], [d1, d2, gk], "attack");
-    // Must stay onside of the defensive line (~31).
-    expect(spot.x).toBeLessThanOrEqual(30.5);
+    // Stretch runs may sit just beyond the line (~31); never free-run deep.
+    expect(spot.x).toBeLessThanOrEqual(33.5);
     expect(spot.x).toBeGreaterThan(carrier.x);
     expect(
       spot.role === "FORWARD_RUN" ||

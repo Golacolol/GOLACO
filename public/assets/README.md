@@ -4,6 +4,8 @@ Drop faces and emblems here. The game resolves them automatically.
 
 ## Players
 
+### Portraits
+
 Put portraits at:
 
 ```
@@ -18,6 +20,27 @@ Examples:
 Also accepted: `.webp`, `.jpg`
 
 If `appearance.portraitAsset` is already set on a player record, that wins.
+
+### 3D bodies (skinned humanoids)
+
+Shared base mesh (preloaded at boot):
+
+```
+public/assets/players/base_outfield.glb
+```
+
+Cloned per player with an `AnimationMixer`. Kit shirt / shorts / socks / boots / skin materials are tinted at runtime. Clip names looked up (case aliases): Idle, Walk, Run, Sprint, Kick, Pass, Receive, Slide.
+
+**Swap / variants**
+
+| Field | Effect |
+|--------|--------|
+| `appearance.modelId` | Loads `assets/players/{modelId}.glb` |
+| `appearance.fullBodyAsset` | Absolute-ish path under `public/` (e.g. `assets/players/custom.glb`) |
+
+Missing or failed loads fall back to the procedural mannequin. Further designs = drop another `.glb` with the same clip naming and point `modelId` / `fullBodyAsset` at it.
+
+**LOD / perf notes:** one Mixer per on-pitch player; keep texture sizes modest (≤1k shirt maps); prefer shared geometry clones (already done) over unique meshes.
 
 ## Team crests
 

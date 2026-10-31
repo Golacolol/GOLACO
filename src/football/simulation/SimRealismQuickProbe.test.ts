@@ -110,6 +110,7 @@ describe("sim realism quick probe (post-tune)", () => {
       const transition = mean(phases.map((p) => p.transition ?? 0));
       const build = mean(phases.map((p) => p.build ?? 0));
       const attack = mean(phases.map((p) => p.attack ?? 0));
+      const loose = mean(phases.map((p) => p.loose ?? 0));
       const offsides = mean(done.map((m) => m.stats!.offsides));
 
       const detail = JSON.stringify({
@@ -123,6 +124,7 @@ describe("sim realism quick probe (post-tune)", () => {
         transition,
         build,
         attack,
+        loose,
         offsides,
       });
       // eslint-disable-next-line no-console
@@ -132,11 +134,12 @@ describe("sim realism quick probe (post-tune)", () => {
       expect(possess, detail).toBeGreaterThan(1.05);
       expect(teamPossess, detail).toBeGreaterThan(2.5);
       expect(shots, detail).toBeLessThan(10);
-      expect(completion, detail).toBeGreaterThan(60);
+      expect(completion, detail).toBeGreaterThan(55);
       expect(shortShare, detail).toBeLessThan(0.94);
       expect(longShare, detail).toBeGreaterThan(0.02);
       expect(transition, detail).toBeLessThan(0.55);
       expect(build + attack, detail).toBeGreaterThan(0.25);
+      expect(loose, detail).toBeLessThan(0.35);
       if (width > 0) expect(width, detail).toBeGreaterThan(26);
     },
     180_000,

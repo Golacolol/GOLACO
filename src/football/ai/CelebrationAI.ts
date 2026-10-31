@@ -3,8 +3,17 @@ import { HALF_LENGTH, HALF_WIDTH } from "../constants";
 import type { Player } from "../players/Player";
 import { celebrationCorner } from "./KickOff";
 
-/** Five moving celebrations — scorer always runs; teammates follow. */
-export const CELEBRATION_ROUTINES = ["corner", "slide", "crowd", "byline", "channel"] as const;
+/** Moving celebrations — scorer runs, then holds the pose until skip/timer. */
+export const CELEBRATION_ROUTINES = [
+  "corner",
+  "slide",
+  "crowd",
+  "byline",
+  "channel",
+  "knee",
+  "point",
+  "group",
+] as const;
 export type CelebrationRoutine = (typeof CELEBRATION_ROUTINES)[number];
 
 export function pickCelebrationRoutine(rng: () => number = Math.random): CelebrationRoutine {
@@ -27,18 +36,33 @@ export function celebrationTarget(scorer: Player, routine: CelebrationRoutine): 
     };
   }
 
-  if (routine === "slide") {
+  if (routine === "slide" || routine === "knee") {
     return {
-      x: clamp(scorer.x + attack * 8.5, -HALF_LENGTH + 4, HALF_LENGTH - 2),
+      x: clamp(scorer.x + attack * (routine === "knee" ? 5.5 : 8.5), -HALF_LENGTH + 4, HALF_LENGTH - 2),
       z: clamp(scorer.z + (scorer.z >= 0 ? 6.5 : -6.5), -HALF_WIDTH + 2, HALF_WIDTH - 2),
     };
   }
 
   if (routine === "byline") {
-    // Charge along the goal line toward the near corner flag.
     return {
       x: clamp(goalX - attack * 2.2, -HALF_LENGTH + 1.2, HALF_LENGTH - 1.2),
       z: nearTouch,
+    };
+  }
+
+  if (routine === "point") {
+    // Jog toward the technical area / dugout side, then pose.
+    return {
+      x: clamp(scorer.x - attack * 4.5, -HALF_LENGTH + 6, HALF_LENGTH - 6),
+      z: clamp(nearTouch * 0.55, -HALF_WIDTH + 3, HALF_WIDTH - 3),
+    };
+  }
+
+  if (routine === "group") {
+    // Short gather in open grass so teammates can join.
+    return {
+      x: clamp(scorer.x + attack * 4, -HALF_LENGTH + 8, HALF_LENGTH - 8),
+      z: clamp(scorer.z * 0.4, -14, 14),
     };
   }
 
@@ -49,9 +73,16 @@ export function celebrationTarget(scorer: Player, routine: CelebrationRoutine): 
   };
 }
 
-/** All current routines are moving; kept for callers/tests. */
-export function celebrationStaysPut(_routine: CelebrationRoutine): boolean {
-  return false;
+/** Knee / point hold after a short jog; others keep moving until they arrive. */
+export function celebrationStaysPut(routine: CelebrationRoutine): boolean {
+  return routine === "point" || routine === "group";
+}
+
+function defaultPose(routine: CelebrationRoutine): Player["celebrationKind"] {
+  if (routine === "slide" || routine === "knee") return "slide";
+  if (routine === "byline" || routine === "point") return "jump";
+  if (routine === "channel" || routine === "group") return "team";
+  return "arms";
 }
 
 export function celebrateAI(
@@ -66,20 +97,18 @@ export function celebrateAI(
   scorer.runTargetZ = target.z;
   scorer.desiredX = target.x;
   scorer.desiredZ = target.z;
-  scorer.celebrationKind =
-    routine === "slide" ? "slide" : routine === "byline" ? "jump" : routine === "channel" ? "team" : "arms";
+  scorer.celebrationKind = defaultPose(routine);
 
   const pack = teammates
     .filter((p) => p.id !== scorer.id && !p.isGK && p.distTo(scorer.x, scorer.z) < 30)
     .sort((a, b) => a.distTo(scorer.x, scorer.z) - b.distTo(scorer.x, scorer.z))
-    .slice(0, 5);
+    .slice(0, routine === "group" ? 7 : 5);
 
   for (let i = 0; i < pack.length; i++) {
     const p = pack[i];
     p.celebrating = true;
-    p.celebrationKind = i % 2 === 0 ? "arms" : "team";
-    // Spread followers around the scorer's run path so the pack streams with him.
-    const t = 0.35 + i * 0.12;
+    p.celebrationKind = i % 3 === 0 ? "arms" : i % 3 === 1 ? "team" : "jump";
+    const t = 0.28 + i * 0.1;
     p.desiredX = scorer.x * (1 - t) + target.x * t + (Math.random() - 0.5) * 3.2;
     p.desiredZ = scorer.z * (1 - t) + target.z * t + (Math.random() - 0.5) * 3.2;
     p.runTargetX = p.desiredX;

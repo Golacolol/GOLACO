@@ -3,7 +3,7 @@ import { supportTarget } from "./SupportAI";
 import { blendTowardSupportSpot } from "./SupportSpotCalculator";
 import { pitchClamp } from "../pitch/PitchZones";
 import { HALF_LENGTH } from "../constants";
-import type { MatchPhase } from "./MatchBrain";
+import { classifyFootballRole, type MatchPhase } from "./MatchBrain";
 import type { PlayStyleProfile } from "./PlayStyle";
 
 export function attackingSupport(
@@ -31,10 +31,15 @@ export function attackingSupport(
   }
   const s = supportTarget(player, ballX, ballZ, carrier, teammates, opponents, phase, playStyle);
   if (carrier) {
+    const foot = classifyFootballRole(player);
+    // Support-spot grid is midfield-centric — don't pull FB/W inside off their channel.
+    if (foot === "FB" || foot === "W" || foot === "WM") {
+      return pitchClamp(s.x, s.z, 2.2);
+    }
     const progress = (carrier.x * carrier.attackSign + HALF_LENGTH) / (HALF_LENGTH * 2);
     const blended = blendTowardSupportSpot(player, carrier, opponents, s.x, s.z, {
       buildup: progress < 0.55,
-      blend: 0.38,
+      blend: progress < 0.55 ? 0.48 : 0.42,
     });
     return pitchClamp(blended.x, blended.z, 2.2);
   }

@@ -18,6 +18,14 @@ import {
   slidePhase,
   timerProgress,
 } from "./PoseMotion";
+import {
+  applyKitToSkinned,
+  cloneSkinnedPlayer,
+  resolvePlayerModelUrl,
+  setSkinnedShirtMap,
+  syncSkinnedAnimation,
+  type SkinnedPlayerInstance,
+} from "./PlayerModelLoader";
 
 const SLIDE_FALLBACK = 0.32;
 const DIVE_FALLBACK = 0.55;
@@ -845,6 +853,14 @@ export function createPlayerVisual(player: Player, kit: TeamKit, keeper: boolean
     head,
   };
   group.userData.rig = rig;
+
+  // Skinned humanoid overlay when the base GLB is preloaded — procedural stays as fallback.
+  const modelUrl = resolvePlayerModelUrl(player);
+  const skinned = cloneSkinnedPlayer(modelUrl);
+  if (skinned) {
+    attachSkinnedBody(group, bodyRoot, skinned, player, kit, shirtMap, bootCol);
+  }
+
   return {
     group,
     leftArm: leftA.arm,
@@ -853,6 +869,25 @@ export function createPlayerVisual(player: Player, kit: TeamKit, keeper: boolean
     rightLeg: rightL.leg,
     torso,
   };
+}
+
+function attachSkinnedBody(
+  group: THREE.Group,
+  bodyRoot: THREE.Group,
+  skinned: SkinnedPlayerInstance,
+  player: Player,
+  kit: TeamKit,
+  shirtMap: THREE.Texture,
+  bootCol: number,
+): void {
+  applyKitToSkinned(skinned, kit, skinColor(player.appearance.skinTone), bootCol);
+  setSkinnedShirtMap(skinned, shirtMap);
+  // Soldier faces +Z like our mannequin; scale already normalized in the loader.
+  skinned.root.name = "skinnedBody";
+  bodyRoot.visible = false;
+  group.add(skinned.root);
+  group.userData.skinned = skinned;
+  group.userData.useSkinned = true;
 }
 
 function asRig(mesh: THREE.Group): InternalRig | null {
@@ -864,11 +899,28 @@ export function updatePlayerAnimation(player: Player, dt: number, _time: number)
   if (!mesh) return;
   mesh.position.set(player.x, player.y, player.z);
   mesh.rotation.y = player.facing;
-  const rig = asRig(mesh);
-  if (!rig) return;
 
   const gait = gaitFromSpeed(player.speed, player.sprinting || player.boosting, player.jockeying);
   player.gait = gait;
+
+  const skinned = mesh.userData.skinned as SkinnedPlayerInstance | undefined;
+  if (mesh.userData.useSkinned && skinned) {
+    // Root yaw already set; Mixer drives limbs. Soft bob from speed for grounded feel.
+    const bob =
+      gait === "IDLE"
+        ? 0
+        : Math.abs(Math.sin((player.stridePhase += dt * gaitCadence(gait)) * 2)) *
+          (gait === "SPRINT" || player.boosting ? 0.03 : 0.015);
+    if (player.jumpTimer <= 0 && !player.sliding) {
+      player.y = bob;
+      mesh.position.y = bob;
+    }
+    syncSkinnedAnimation(skinned, player, dt);
+    return;
+  }
+
+  const rig = asRig(mesh);
+  if (!rig) return;
   const cadence = gaitCadence(gait);
   const amp = gaitStride(gait);
 
@@ -1135,11 +1187,18 @@ export function updatePlayerAnimation(player: Player, dt: number, _time: number)
   mesh.rotation.z = 0;
   player.stridePhase += dt * cadence * (player.boosting ? 1.12 : 1);
   const swing = Math.sin(player.stridePhase) * amp;
+  // Softer vertical bob — less "bobble" bounce at match camera distance.
   const bob =
-    gait === "IDLE" ? 0 : Math.abs(Math.sin(player.stridePhase * 2)) * (gait === "SPRINT" || player.boosting ? 0.08 : 0.035);
+    gait === "IDLE"
+      ? 0
+      : Math.abs(Math.sin(player.stridePhase * 2)) *
+        (gait === "SPRINT" || player.boosting ? 0.045 : gait === "RUN" ? 0.028 : 0.016);
   player.y = bob;
   mesh.position.y = bob;
-  const lean = player.boosting ? 0.26 : player.sprinting ? 0.2 : player.speed > 5 ? 0.12 : 0.02;
+  const lean = player.boosting ? 0.22 : player.sprinting ? 0.16 : player.speed > 5 ? 0.1 : 0.02;
+  // Subtle torso twist opposite the lead leg.
+  const torsoTwist = gait === "IDLE" ? 0 : -swing * 0.12;
+  rig.torso.rotation.y = torsoTwist;
 
   if (player.firstTouchTimer > 0 && player.kickTimer <= 0) {
     const cush = firstTouchCushion01(player.firstTouchTimer, 0.4);
@@ -1181,16 +1240,18 @@ export function updatePlayerAnimation(player: Player, dt: number, _time: number)
       headPitch: idle * 0.5,
     });
   } else {
-    // Asymmetric arm carry + knee bend on the trailing leg.
+    // Opposite arm/leg with stronger plant bend on the trailing side.
+    const legAmp = amp * (gait === "SPRINT" ? 1.05 : 0.92);
+    const armAmp = amp * 0.72;
     poseLimbs({
-      la: swing * 0.9,
-      ra: -swing * 0.9,
-      ll: -swing,
-      rl: swing,
-      lf: 0.25 + Math.max(0, swing) * 0.35,
-      rf: 0.25 + Math.max(0, -swing) * 0.35,
-      lc: Math.max(0.05, swing > 0 ? swing * 0.65 : 0.1),
-      rc: Math.max(0.05, swing < 0 ? -swing * 0.65 : 0.1),
+      la: swing * armAmp,
+      ra: -swing * armAmp,
+      ll: -swing * legAmp,
+      rl: swing * legAmp,
+      lf: 0.22 + Math.max(0, swing) * 0.42,
+      rf: 0.22 + Math.max(0, -swing) * 0.42,
+      lc: Math.max(0.08, swing > 0 ? swing * 0.72 : 0.12),
+      rc: Math.max(0.08, swing < 0 ? -swing * 0.72 : 0.12),
       lean,
     });
   }
@@ -1210,24 +1271,27 @@ export function updatePlayerAnimation(player: Player, dt: number, _time: number)
       rig.rightFore.rotation.x = -0.85;
       rig.leftFore.rotation.x = -0.25;
     } else {
-      // Phased kick: wind-up → strike → follow-through.
-      // kickTimer counts down; estimate start duration from remaining length.
+      // Phased kick: wind-up → strike → follow-through. Swing the chosen foot.
       const estDur = player.kickTimer > 0.35 ? 0.95 : player.kickTimer > 0.25 ? 0.42 : 0.28;
       const p = timerProgress(player.kickTimer, Math.max(estDur, player.kickTimer + 0.01));
       const phase = kickPhase(p);
       const plant = kickPlant01(p);
       const swingLeg = kickSwing01(p);
+      const right = player.kickSwingRight;
+      const plantLeg = -plant * 0.42;
+      const followArm = phase === "windup" ? 0.55 : phase === "strike" ? 0.35 : 0.2;
+      const driveArm = phase === "windup" ? -0.45 : phase === "strike" ? -0.25 : 0.1;
       poseLimbs({
-        la: phase === "windup" ? 0.55 : phase === "strike" ? 0.35 : 0.2,
-        ra: phase === "windup" ? -0.45 : phase === "strike" ? -0.25 : 0.1,
-        ll: -plant * 0.35,
-        rl: swingLeg,
-        lf: 0.25 + plant * 0.2,
-        rf: phase === "strike" ? 0.55 : 0.3,
-        lc: plant * 0.4,
-        rc: phase === "strike" ? 0.65 : Math.max(0.1, Math.abs(swingLeg) * 0.35),
-        lean: 0.08 + plant * 0.18,
-        headPitch: phase === "strike" ? -0.12 : -0.04,
+        la: right ? followArm : driveArm,
+        ra: right ? driveArm : followArm,
+        ll: right ? plantLeg : swingLeg,
+        rl: right ? swingLeg : plantLeg,
+        lf: right ? 0.25 + plant * 0.28 : phase === "strike" ? 0.55 : 0.3,
+        rf: right ? (phase === "strike" ? 0.55 : 0.3) : 0.25 + plant * 0.28,
+        lc: right ? plant * 0.45 : phase === "strike" ? 0.65 : Math.max(0.1, Math.abs(swingLeg) * 0.35),
+        rc: right ? (phase === "strike" ? 0.65 : Math.max(0.1, Math.abs(swingLeg) * 0.35)) : plant * 0.45,
+        lean: 0.1 + plant * 0.22,
+        headPitch: phase === "strike" ? -0.14 : -0.04,
       });
     }
   }
@@ -1334,6 +1398,14 @@ export function setPortraitDecal(
 }
 
 export function setBodyVisible(player: Player, visible: boolean): void {
-  const body = player.mesh?.getObjectByName("bodyRoot");
-  if (body) body.visible = visible;
+  const mesh = player.mesh;
+  if (!mesh) return;
+  const body = mesh.getObjectByName("bodyRoot");
+  const skinned = mesh.getObjectByName("skinnedBody");
+  if (mesh.userData.useSkinned && skinned) {
+    skinned.visible = visible;
+    if (body) body.visible = false;
+  } else if (body) {
+    body.visible = visible;
+  }
 }

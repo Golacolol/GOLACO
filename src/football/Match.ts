@@ -58,6 +58,12 @@ import {
   kickCommitReady,
   receiveApproachAlignment,
 } from "./ball/BodyMechanics";
+import {
+  applyFacingHints,
+  idleBallFacingHint,
+  receiveFacingHint,
+  turnFacingToward,
+} from "./players/FacingControl";
 import { ballSpeed, isLegalStationary, isOutOfWorld, predictLanding } from "./ball/StuckBall";
 import { aimOnGoal, aiShotAimIntent, computeShot } from "./ball/ShotModel";
 import { MatchCamera, isPlayerView, nextTrack, nextView, supportsViewZoom, viewLabel } from "./camera/MatchCamera";
@@ -89,7 +95,7 @@ import {
 } from "./Substitution";
 import { staminaMatchDrainScale } from "./players/PlayerEnergy";
 import { controlPlayer } from "./players/PlayerController";
-import { autoSelectPlayer, cyclePlayer } from "./players/PlayerSelection";
+import { autoSelectPlayer, cyclePlayer, selectSetPieceTaker } from "./players/PlayerSelection";
 import { createPlayerVisual, portraitStackIndex, setBodyVisible, setControlledMarker, setHudMarker, setPassTargetMarker, setPortraitDecal, updatePlayerAnimation } from "./players/PlayerVisual";
 import { computePressure } from "./players/PressureModel";
 import {
@@ -314,12 +320,12 @@ export class Match {
   private restartSpot: { x: number; z: number } | null = null;
   /**
    * Pre-kick ceremony: stands throw-back, GK walk-collect-place for goal kicks,
-   * or ball returned to the corner arc (no dribble-to-flag). While set, the restart
-   * clock does not auto-take.
+   * free-kick feed/collect/place, or ball returned to the corner arc.
+   * While set, the restart clock does not auto-take.
    */
   private restartPrep: {
-    kind: "goal_kick" | "stands_return" | "corner";
-    phase: "return" | "collect" | "carry" | "place";
+    kind: "goal_kick" | "stands_return" | "corner" | "free_kick";
+    phase: "return" | "feed" | "collect" | "carry" | "place";
     plan: RestartPlan;
     exitX: number;
     exitZ: number;
@@ -328,6 +334,7 @@ export class Match {
     pickZ: number;
     t: number;
     takerId?: string;
+    feederId?: string;
   } | null = null;
   /** After a throw-in, the thrower may not touch until another player does. */
   private throwInOpen = false;
@@ -349,7 +356,6 @@ export class Match {
   }
   private switchLock = 0;
   private shotLock = false;
-  private celebrationStill = 0;
   private celebrationSteered = false;
   private celebrationRoutine: CelebrationRoutine = "corner";
   private spotResetT = 0;
@@ -636,6 +642,7 @@ export class Match {
     if (this.controlled === off) this.controlled = result.on;
     if (this.preferredPlayerId === off.id) this.preferredPlayerId = result.on.id;
     this.pushSubAnnouncement(side, result.off, result.on);
+    this.events.emit("SUBSTITUTION", { outId: result.off.id, inId: result.on.id });
     return true;
   }
 
@@ -665,25 +672,72 @@ export class Match {
   private thinkAiSubstitutions(dt: number): void {
     this.aiSubThinkT -= dt;
     if (this.aiSubThinkT > 0) return;
-    this.aiSubThinkT = 2.4;
+    this.aiSubThinkT = 3.2;
     if (this.practice !== "none") return;
-    if (this.clock.elapsed < this.clock.duration * 0.36) return;
+    const prog = this.clock.duration > 0 ? this.clock.elapsed / this.clock.duration : 0;
+    // Real-ish windows: ~30–40′, half-time, ~55–70′, late (~75′+). Avoid early spam.
+    const inWindow =
+      (prog >= 0.34 && prog < 0.46) ||
+      (prog >= 0.5 && prog < 0.58) ||
+      (prog >= 0.62 && prog < 0.78) ||
+      prog >= 0.84;
+    if (!inWindow) return;
+
     for (const team of [this.home, this.away]) {
       const aiControlled = this.autoplay || team.side !== this.userSide;
       if (!aiControlled) continue;
-      if (this.subsRemaining(team.side) <= 0) continue;
+      const remaining = this.subsRemaining(team.side);
+      if (remaining <= 0) continue;
+      // Spread 3–5 changes over the match — don't dump the lot in one stoppage.
+      const used = team.subsUsed + this.pendingCount(team.side);
+      const targetByProg =
+        prog < 0.5 ? 1 : prog < 0.65 ? 2 : prog < 0.82 ? 3 + (prog > 0.72 ? 1 : 0) : Math.min(5, 4 + (remaining > 0 ? 1 : 0));
+      if (used >= targetByProg) continue;
+      if (this.pendingCount(team.side) >= 2) continue;
+
       const pendingOff = new Set(this.pendingSubs.filter((s) => s.side === team.side).map((s) => s.offId));
+      const energyFloor = prog < 0.55 ? 0.42 : prog < 0.75 ? 0.5 : 0.56;
       const tired = team.players
-        .filter((p) => !p.isGK && !pendingOff.has(p.id) && p.energy.value < 0.4)
+        .filter((p) => !p.isGK && !pendingOff.has(p.id) && p.energy.value < energyFloor)
         .sort((a, b) => a.energy.value - b.energy.value);
-      if (!tired.length) continue;
-      const off = tired[0];
+
+      const scoreDiff =
+        team.side === "home" ? this.homeScore - this.awayScore : this.awayScore - this.homeScore;
+      // Trailing late: freshen an attacker even if energy is only middling.
+      let tacticalOff: (typeof team.players)[number] | null = null;
+      if (scoreDiff < 0 && prog > 0.62) {
+        const attackers = team.players
+          .filter(
+            (p) =>
+              !p.isGK &&
+              !pendingOff.has(p.id) &&
+              (p.slot.includes("ST") ||
+                p.slot.includes("W") ||
+                p.slot.includes("AM") ||
+                p.slot === "CAM" ||
+                p.slot.includes("CM")),
+          )
+          .sort((a, b) => a.energy.value - b.energy.value);
+        tacticalOff = attackers[0] ?? null;
+      }
+
+      const off = tired[0] ?? (tacticalOff && tacticalOff.energy.value < 0.72 ? tacticalOff : null);
+      if (!off) continue;
       const candidates = team.bench.filter((s) => (s.player.primaryPosition === "GK") === off.isGK);
       if (!candidates.length) continue;
       candidates.sort((a, b) => b.overall - a.overall);
-      const pick =
+      let pick =
         candidates.find((s) => s.player.primaryPosition === off.position) ??
+        candidates.find((s) => s.player.primaryPosition[0] === off.position[0]) ??
         candidates[0];
+      // Trailing: prefer a forward/mid coming on.
+      if (scoreDiff < 0 && prog > 0.62) {
+        const attackBench = candidates.find((s) => {
+          const pos = s.player.primaryPosition;
+          return pos === "ST" || pos === "LW" || pos === "RW" || pos === "AM" || pos === "RM" || pos === "LM";
+        });
+        if (attackBench) pick = attackBench;
+      }
       this.queueSubstitution(team.side, off.id, pick.player.id);
     }
   }
@@ -1040,7 +1094,7 @@ export class Match {
       this.possessing &&
       !this.possessing.isGK &&
       this.possessionSecureT <= 0 &&
-      this.possessionTime > 2.15 &&
+      this.possessionTime > 2.55 &&
       this.state !== FootballState.KICK_OFF &&
       !isRestartState(this.state) &&
       !this.ballActor.resolved
@@ -1049,7 +1103,7 @@ export class Match {
         this.ball,
         this.possessing,
         this.opponentsOf(this.possessing),
-        this.tuning.defenderDisturbMultiplier * 0.4,
+        this.tuning.defenderDisturbMultiplier * 0.32,
         Math.random,
         dt,
       );
@@ -1174,7 +1228,7 @@ export class Match {
 
   private updatePossession(): void {
     // Retain radius > collect radius — prevents take/drop flicker (plan Phase 2).
-    const retainRadius = 2.65;
+    const retainRadius = 2.95;
     if (this.possessing && !this.possessing.isGK && this.possessing.distTo(this.ball.x, this.ball.z) > retainRadius) {
       this.makeLoose(this.possessing);
     }
@@ -1291,12 +1345,16 @@ export class Match {
       );
       return near[0]!;
     }
-    const duel = resolveGroundDuel(near, this.ball, Math.random, this.tuning.groundContestUpsetMultiplier);
+    const duel = resolveGroundDuel(near, this.ball, Math.random, this.tuning.groundContestUpsetMultiplier, {
+      // Prefer the side that just played the ball so passes aren't instantly flipped.
+      favorSide: this.ball.lastTouchSide === "home" || this.ball.lastTouchSide === "away" ? this.ball.lastTouchSide : null,
+      favorBonus: this.pendingPassFrom || this.passTargetId ? 0.55 : 0.28,
+    });
     if (!duel) return null;
     if (duel.contested) {
       const loserSide = duel.winner.side === "home" ? "away" : "home";
       this.contestLockSide = loserSide;
-      this.contestLockT = Math.max(this.contestLockT, 0.55 + (1 - clamp(duel.margin, 0, 1.2)) * 0.35);
+      this.contestLockT = Math.max(this.contestLockT, 0.78 + (1 - clamp(duel.margin, 0, 1.2)) * 0.42);
     }
     return duel.winner;
   }
@@ -1515,7 +1573,7 @@ export class Match {
     this.ballState = "owned";
     this.possessionTime = 0;
     // Let the first touch settle before pokes start another midfield flip-flop.
-    this.possessionSecureT = Math.max(this.possessionSecureT, aerial ? 0.95 : 1.65);
+    this.possessionSecureT = Math.max(this.possessionSecureT, aerial ? 1.05 : 1.95);
     this.stats.possessionChanges += 1;
     this.passTargetId = null;
     this.longPassLanding = null;
@@ -1887,10 +1945,10 @@ export class Match {
       const patience = stallStyle?.receivePatience ?? 0.45;
       const openGrass = this.pressure < 0.34 && decision.space.score > 1.3 && decision.space.kind !== "back";
       const dwell = openGrass
-        ? clamp(1.55 + (1 - composure) * 0.28 + stat01(passer.attrs.pace) * 0.22 + patience * 0.35, 1.35, 2.35)
+        ? clamp(1.85 + (1 - composure) * 0.3 + stat01(passer.attrs.pace) * 0.25 + patience * 0.4, 1.55, 2.65)
         : this.pressure > 0.55
-          ? clamp(0.72 + (1 - composure) * 0.2 - patience * 0.03, 0.58, 1.05)
-          : clamp(1.05 + (1 - composure) * 0.25 + (1 - vision) * 0.12 + patience * 0.22, 0.9, 1.75);
+          ? clamp(0.85 + (1 - composure) * 0.22 - patience * 0.02, 0.65, 1.2)
+          : clamp(1.25 + (1 - composure) * 0.28 + (1 - vision) * 0.1 + patience * 0.28, 1.05, 2.05);
       if (passLike && this.possessionTime < dwell) action = "RUN";
     }
     // Marker on the ball + a cut lane = carry / shield, not a hopeful pass straight into him.
@@ -1966,21 +2024,27 @@ export class Match {
     this.shootCharge = 0;
     if (action === "RUN" || action === "HOLD") return;
     if (action === "SHOT" || action === "LONG_SHOT") {
+      // Pre-turn hips toward goal before the strike window.
+      const goalDir = normalize2(goalX - passer.x, (gk?.z ?? 0) * 0.15 - passer.z * 0.05);
+      turnFacingToward(passer, goalDir.x, goalDir.z, dt, { turnMul: 1.85 });
       // Back-to-goal finishes: refuse hopeful long shots; close range still mishits.
-      if (aiAim.bodyAlignment < facingKickFloor("shot") && action === "LONG_SHOT") {
+      if (
+        bodyAlignment(passer.facing, goalX - passer.x, 0) < facingKickFloor("shot") &&
+        action === "LONG_SHOT"
+      ) {
         action = decision.scores.runScore >= 0.1 ? "RUN" : "HOLD";
         return;
       }
-      // Realism: need a settled touch before shooting — kills early spam from receives.
-      const minShotHold = action === "LONG_SHOT" ? 1.45 : isStriker(passer) ? 0.78 : 1.05;
+      // Settled enough to shoot — box can fire earlier; long shots need a short plant.
+      const minShotHold = action === "LONG_SHOT" ? 1.05 : isStriker(passer) ? 0.48 : 0.72;
       if (this.possessionTime < minShotHold) {
-        if (passTarget && decision.scores.passScore >= 0.22) action = "PASS";
+        if (passTarget && decision.scores.passScore >= 0.28) action = "PASS";
         else {
           action = decision.scores.runScore >= 0.1 ? "RUN" : "HOLD";
           return;
         }
       } else {
-        fakeBase.shootHold = action === "LONG_SHOT" ? 1.15 : isStriker(passer) ? 0.95 : 0.78;
+        fakeBase.shootHold = action === "LONG_SHOT" ? 1.05 : isStriker(passer) ? 0.85 : 0.7;
         this.executeShot(passer, fakeBase, action === "LONG_SHOT", false, aiAim.bodyAlignment);
         return;
       }
@@ -2000,15 +2064,27 @@ export class Match {
     const dir = passTarget
       ? normalize2(passTarget.x - passer.x, passTarget.z - passer.z)
       : { x: decision.space.dx, z: decision.space.dz };
-    // Square hips to the pass before committing — otherwise carry.
+    // Pre-turn toward the pass; only refuse when still badly squared under low pressure.
+    turnFacingToward(passer, dir.x, dir.z, dt, { turnMul: 1.9 });
     if (bodyAlignment(passer.facing, dir.x, dir.z) < facingKickFloor("pass") && this.pressure < 0.72) {
       return;
     }
     this.executePass(passer, passTarget, fakeBase, passType, dir);
     if (passTarget && isBackwardPass(passer, passTarget.x, passTarget.z)) {
-      passer.giveAndGoTimer = Math.max(passer.giveAndGoTimer, 2.1);
-      passer.runTargetX = passer.x + attackDir * 10;
+      passer.giveAndGoTimer = Math.max(passer.giveAndGoTimer, isStriker(passer) ? 2.45 : 2.1);
+      passer.runTargetX = passer.x + attackDir * (isStriker(passer) ? 12.5 : 10);
       passer.runTargetZ = clamp(passer.z * 0.6 + passTarget.z * 0.2, -16, 16);
+    } else if (
+      passTarget &&
+      isStriker(passer) &&
+      passType === "short" &&
+      Math.abs((passTarget.x - passer.x) * attackDir) < 5 &&
+      passer.distTo(passTarget.x, passTarget.z) < 16
+    ) {
+      // Lateral / drop lay-off: control → release → make the run.
+      passer.giveAndGoTimer = Math.max(passer.giveAndGoTimer, 2.35);
+      passer.runTargetX = passer.x + attackDir * 11.5;
+      passer.runTargetZ = clamp(passer.z * 0.55 + passTarget.z * 0.15, -14, 14);
     }
   }
 
@@ -2224,7 +2300,8 @@ export class Match {
     controlPlayer(player, intent, dt, this.pressure, moveEx);
   }
 
-  private moveExtras() {
+  private moveExtras(extraHints?: import("./players/FacingControl").FacingHint[]) {
+    const facingHints = [...(extraHints ?? [])];
     return {
       accelMul: this.tuning.movementAccelerationMultiplier,
       speedMul: this.tuning.maxSpeedMultiplier,
@@ -2232,7 +2309,19 @@ export class Match {
       drainMul: this.tuning.staminaDrainMultiplier,
       matchDrainScale: staminaMatchDrainScale(this.clock.duration),
       grip: this.env.playerGripMultiplier,
+      facingHints,
     };
+  }
+
+  /** Prefer the foot on the same side as the kick lateral relative to hips. */
+  private preferRightKickFoot(player: Player, dirX: number, dirZ: number): boolean {
+    const len = Math.hypot(dirX, dirZ) || 1;
+    const fx = Math.sin(player.facing);
+    const fz = Math.cos(player.facing);
+    // Local +X (right) when facing +Z: (fz, -fx) wait — right = (cos, -sin) for yaw around Y with front +Z:
+    const rightX = fz;
+    const rightZ = -fx;
+    return (dirX / len) * rightX + (dirZ / len) * rightZ >= 0;
   }
 
   private aimDir(intent: InputIntent, passer: Player): { x: number; z: number } {
@@ -2329,6 +2418,7 @@ export class Match {
     }
     this.clearOwner();
     // Plant after kick — can't remagnet / second-kick instantly.
+    passer.kickSwingRight = this.preferRightKickFoot(passer, kick.vx, kick.vz);
     passer.kickTimer = 0.48;
     passer.firstTouchTimer = Math.max(passer.firstTouchTimer, 0.12);
     // Release window: the ball is leaving the boot, so a marker standing on the passer cannot
@@ -2465,6 +2555,7 @@ export class Match {
     const pack = nearbyDefenders(passer, this.opponentsOf(passer));
     this.clearOwner();
     this.clearOffsidePhase();
+    passer.kickSwingRight = this.preferRightKickFoot(passer, dx, dz);
     passer.kickTimer = 0.36;
     passer.firstTouchTimer = Math.max(passer.firstTouchTimer, 0.1);
     this.shotTarget = null;
@@ -2961,15 +3052,30 @@ export class Match {
     ) {
       return;
     }
-    const side = possessingSide ?? (this.ball.lastTouchSide as "home" | "away" | null);
+    const lastSide = this.ball.lastTouchSide as "home" | "away" | null;
+    const side = possessingSide ?? lastSide;
     if (!side) {
       this.stats.phaseSeconds.loose += dt;
       return;
     }
+    // In-flight after a pass still belongs to the touching side's build/attack —
+    // only true free scrambles (no recent touch side / contested 50-50) are "loose".
+    const speed = Math.hypot(this.ball.vx, this.ball.vz);
+    const scramble =
+      possessingSide == null &&
+      (lastSide == null ||
+        (speed < 1.2 &&
+          this.home.players.some((p) => !p.isGK && p.distTo(this.ball.x, this.ball.z) < 2.4) &&
+          this.away.players.some((p) => !p.isGK && p.distTo(this.ball.x, this.ball.z) < 2.4)));
+    if (scramble) {
+      this.stats.phaseSeconds.loose += dt;
+      return;
+    }
+    const ownedForPhase = possessingSide ?? lastSide;
     const team = side === "home" ? this.home : this.away;
     const opp = side === "home" ? this.away : this.home;
     const attackSign = team.players[0]?.attackSign ?? (side === "home" ? 1 : -1);
-    const phase = teamMatchPhase(side, this.ball, possessingSide, attackSign, {
+    const phase = teamMatchPhase(side, this.ball, ownedForPhase, attackSign, {
       transitionAge: this.possessionChangeAge,
       distGoal: Math.hypot(defendGoalX(side === "home" ? "away" : "home", this.endsFlipped) - this.ball.x, this.ball.z),
     });
@@ -3308,6 +3414,7 @@ export class Match {
     this.throwInOpen = false;
     this.throwInTakerId = null;
     this.state = plan.type;
+    this.events.emit("REFEREE_WHISTLE", { reason: "restart" });
     this.tryFlushPendingSubs();
     this.restartElapsed = 0;
     this.restartSpot = { x: plan.ballX, z: plan.ballZ };
@@ -3409,6 +3516,50 @@ export class Match {
       return;
     }
 
+    if (plan.type === "FREE_KICK") {
+      const taker = selectSetPieceTaker(this.allPlayers(), plan.takingSide, plan.ballX, plan.ballZ);
+      const spotDist = Math.hypot(this.ball.x - plan.ballX, this.ball.z - plan.ballZ);
+      if (spotDist < 2.4 && !deepStands) {
+        this.placeRestartReady(plan);
+        return;
+      }
+      const feeder =
+        this.allPlayers()
+          .filter(
+            (p) =>
+              p.side === plan.takingSide &&
+              p.id !== taker.id &&
+              !p.isGK &&
+              !p.sentOff &&
+              p.distTo(this.ball.x, this.ball.z) < 16,
+          )
+          .sort((a, b) => a.distTo(this.ball.x, this.ball.z) - b.distTo(this.ball.x, this.ball.z))[0] ?? null;
+      const canFeed = !!feeder && spotDist < 32 && feeder.distTo(this.ball.x, this.ball.z) < 12;
+      this.clearOwner();
+      this.ball.vx = 0;
+      this.ball.vz = 0;
+      this.ball.vy = 0;
+      this.ball.ownerId = null;
+      this.restartPrep = {
+        kind: "free_kick",
+        phase: deepStands ? "return" : canFeed ? "feed" : "collect",
+        plan,
+        exitX: this.ball.x,
+        exitZ: this.ball.z,
+        exitY: Math.max(BALL_RADIUS, this.ball.y),
+        pickX: plan.ballX,
+        pickZ: plan.ballZ,
+        t: 0,
+        takerId: taker.id,
+        feederId: canFeed ? feeder!.id : undefined,
+      };
+      this.arrangeSetPiece(plan.type, plan.takingSide, plan.ballX, plan.ballZ, taker.id, true);
+      if (!this.autoplay && taker.side === this.userSide) this.controlled = taker;
+      this.toast(canFeed ? "FREE KICK — LAY OFF" : "FREE KICK — PLACE");
+      this.snapshotPoses();
+      return;
+    }
+
     this.placeRestartReady(plan);
   }
 
@@ -3423,7 +3574,9 @@ export class Match {
         ? plan.takingSide === "home"
           ? this.home.gk()
           : this.away.gk()
-        : autoSelectPlayer(this.allPlayers(), plan.takingSide, plan.ballX, plan.ballZ);
+        : plan.type === "FREE_KICK" || plan.type === "PENALTY"
+          ? selectSetPieceTaker(this.allPlayers(), plan.takingSide, plan.ballX, plan.ballZ)
+          : autoSelectPlayer(this.allPlayers(), plan.takingSide, plan.ballX, plan.ballZ);
     const inward = plan.type === "THROW_IN" ? -Math.sign(plan.ballZ || 1) : 0;
     if (plan.type === "THROW_IN") {
       taker.x = plan.ballX;
@@ -3472,11 +3625,18 @@ export class Match {
 
     if (prep.phase === "return") {
       prep.t += dt;
-      const dur = prep.kind === "goal_kick" ? 1.05 : prep.kind === "corner" ? 1.1 : 1.25;
+      const dur =
+        prep.kind === "goal_kick" ? 1.05 : prep.kind === "corner" ? 1.1 : prep.kind === "free_kick" ? 1.15 : 1.25;
       const u = clamp(prep.t / dur, 0, 1);
       const ease = u * u * (3 - 2 * u);
-      const toX = prep.kind === "goal_kick" || prep.kind === "corner" ? prep.pickX : prep.plan.ballX;
-      const toZ = prep.kind === "goal_kick" || prep.kind === "corner" ? prep.pickZ : prep.plan.ballZ;
+      const toX =
+        prep.kind === "goal_kick" || prep.kind === "corner" || prep.kind === "free_kick"
+          ? prep.pickX
+          : prep.plan.ballX;
+      const toZ =
+        prep.kind === "goal_kick" || prep.kind === "corner" || prep.kind === "free_kick"
+          ? prep.pickZ
+          : prep.plan.ballZ;
       this.ball.x = lerp(prep.exitX, toX, ease);
       this.ball.z = lerp(prep.exitZ, toZ, ease);
       const arc = Math.sin(ease * Math.PI) * (prep.kind === "goal_kick" ? 2.4 : 3.1);
@@ -3493,11 +3653,21 @@ export class Match {
         this.placeRestartReady(prep.plan);
         return;
       }
+      if (prep.kind === "free_kick") {
+        // Ball rolled to the foul spot — plant taker and take.
+        this.placeRestartReady(prep.plan);
+        return;
+      }
       prep.phase = "collect";
       prep.t = 0;
       prep.exitX = toX;
       prep.exitZ = toZ;
       prep.exitY = BALL_RADIUS;
+      return;
+    }
+
+    if (prep.kind === "free_kick") {
+      this.stepFreeKickPrep(dt, prep as Extract<typeof prep, { kind: "free_kick" }>, moveEx, spot);
       return;
     }
 
@@ -3583,6 +3753,137 @@ export class Match {
     this.toast("GOAL KICK");
   }
 
+  /**
+   * Free-kick ceremony: teammate feeds the ball to the spot, or the taker
+   * collects it and places it ready to strike.
+   */
+  private stepFreeKickPrep(
+    dt: number,
+    prep: {
+      kind: "free_kick";
+      phase: "return" | "feed" | "collect" | "carry" | "place";
+      plan: RestartPlan;
+      exitX: number;
+      exitZ: number;
+      exitY: number;
+      pickX: number;
+      pickZ: number;
+      t: number;
+      takerId?: string;
+      feederId?: string;
+    },
+    moveEx: ReturnType<Match["moveExtras"]>,
+    spot: { x: number; z: number },
+  ): void {
+    const taker = prep.takerId ? this.playerById(prep.takerId) : null;
+    if (!taker) {
+      this.placeRestartReady(prep.plan);
+      return;
+    }
+
+    if (prep.phase === "feed") {
+      prep.t += dt;
+      const feeder = prep.feederId ? this.playerById(prep.feederId) : null;
+      if (!feeder) {
+        prep.phase = "collect";
+        prep.t = 0;
+        return;
+      }
+      const dx = this.ball.x - feeder.x;
+      const dz = this.ball.z - feeder.z;
+      const dist = Math.hypot(dx, dz);
+      if (dist > 1.4 && prep.t < 2.8) {
+        movePlayer(feeder, dt, dx, dz, true, false, moveEx);
+        feeder.facing = Math.atan2(dx, dz);
+        return;
+      }
+      // Kick / roll the ball into the foul spot for the taker.
+      prep.phase = "return";
+      prep.t = 0;
+      prep.exitX = this.ball.x;
+      prep.exitZ = this.ball.z;
+      prep.exitY = Math.max(BALL_RADIUS, this.ball.y);
+      prep.pickX = spot.x;
+      prep.pickZ = spot.z;
+      feeder.vx = 0;
+      feeder.vz = 0;
+      feeder.kickTimer = 0.35;
+      feeder.facing = Math.atan2(spot.x - feeder.x, spot.z - feeder.z);
+      this.toast("FREE KICK");
+      return;
+    }
+
+    if (prep.phase === "collect") {
+      prep.t += dt;
+      const dx = this.ball.x - taker.x;
+      const dz = this.ball.z - taker.z;
+      movePlayer(taker, dt, dx, dz, true, false, moveEx);
+      taker.facing = Math.atan2(dx, dz);
+      const reached = taker.distTo(this.ball.x, this.ball.z) < 1.35 || prep.t > 4.2;
+      if (!reached) return;
+      if (taker.distTo(this.ball.x, this.ball.z) >= 1.35) {
+        this.ball.x = taker.x;
+        this.ball.z = taker.z;
+        this.ball.y = BALL_RADIUS;
+      }
+      this.takePossession(taker);
+      taker.firstTouchTimer = 0;
+      prep.phase = "carry";
+      prep.t = 0;
+      return;
+    }
+
+    if (prep.phase === "carry") {
+      prep.t += dt;
+      if (this.possessing !== taker) this.takePossession(taker);
+      const dir = prep.plan.takingSide === "home" ? (this.endsFlipped ? -1 : 1) : this.endsFlipped ? 1 : -1;
+      const destX = spot.x - dir * 1.15;
+      const destZ = spot.z;
+      const dx = destX - taker.x;
+      const dz = destZ - taker.z;
+      movePlayer(taker, dt, dx, dz, false, false, moveEx);
+      const fx = Math.sin(taker.facing);
+      const fz = Math.cos(taker.facing);
+      this.ball.x = taker.x + fx * 0.35;
+      this.ball.z = taker.z + fz * 0.35;
+      this.ball.y = 0.22;
+      this.ball.vx = 0;
+      this.ball.vz = 0;
+      this.ball.vy = 0;
+      this.ball.ownerId = taker.id;
+      if (Math.hypot(dx, dz) < 1.2 || prep.t > 5.8) {
+        taker.x = destX;
+        taker.z = destZ;
+        taker.vx = 0;
+        taker.vz = 0;
+        taker.facing = dir > 0 ? Math.PI / 2 : -Math.PI / 2;
+        prep.phase = "place";
+        prep.t = 0;
+      }
+      return;
+    }
+
+    // place — set the ball on the foul spot
+    prep.t += dt;
+    const placeU = clamp(prep.t / 0.48, 0, 1);
+    const dir = prep.plan.takingSide === "home" ? (this.endsFlipped ? -1 : 1) : this.endsFlipped ? 1 : -1;
+    taker.x = spot.x - dir * 1.15;
+    taker.z = spot.z;
+    taker.vx = 0;
+    taker.vz = 0;
+    taker.facing = dir > 0 ? Math.PI / 2 : -Math.PI / 2;
+    this.ball.x = spot.x;
+    this.ball.z = spot.z;
+    this.ball.y = lerp(0.22, BALL_RADIUS, placeU);
+    this.ball.vx = 0;
+    this.ball.vz = 0;
+    this.ball.vy = 0;
+    this.ball.ownerId = taker.id;
+    if (placeU < 1) return;
+    this.ball.y = BALL_RADIUS;
+    this.placeRestartReady(prep.plan);
+  }
+
   private stepRestart(dt: number, intent: InputIntent): void {
     if (this.restartPrep) {
       this.stepRestartPrep(dt);
@@ -3593,6 +3894,10 @@ export class Match {
         takerSide === "home" ? this.home.gk() : this.away.gk();
       if (prep?.kind === "goal_kick") skip.add(gk.id);
       if (prep?.kind === "corner" && prep.takerId) skip.add(prep.takerId);
+      if (prep?.kind === "free_kick") {
+        if (prep.takerId) skip.add(prep.takerId);
+        if (prep.feederId) skip.add(prep.feederId);
+      }
       if (this.possessing) skip.add(this.possessing.id);
       const spot = this.restartSpot ?? { x: this.ball.x, z: this.ball.z };
       const piece = {
@@ -3869,9 +4174,12 @@ export class Match {
           meta: { distGoal: fk.distGoal, nearBox: fk.nearBox },
         });
       }
-      const aiShoot = !userTake && fk.action === "SHOT";
-      if (intent.shoot || aiShoot) {
-        this.executeFreeKickShot(taker, intent, aiShoot);
+      // Near-box SHOT must fire on auto-take — previously userTake fell through to a short pass.
+      const userWantsDelivery =
+        userTake && (intent.pass || intent.cross || intent.through || intent.passHold > 0.18);
+      const shouldShoot = intent.shoot || (fk.action === "SHOT" && !userWantsDelivery);
+      if (shouldShoot) {
+        this.executeFreeKickShot(taker, intent, !userTake || this.autoplay);
         this.clearOwner();
         taker.kickTimer = 0.42;
         this.ball.lastTouchId = taker.id;
@@ -3947,14 +4255,20 @@ export class Match {
     } else if (kind === FootballState.PENALTY) {
       const goalX = taker.oppGoalX();
       const pen = stat01(taker.attrs.penalties ?? taker.attrs.finishing);
+      const composure = stat01(taker.attrs.composure);
+      // Prefer near-post / far-post aim — not a central smear across the whole goal.
+      const sidePick = this.autoplay ? (Math.random() < 0.5 ? -1 : 1) : Math.sign(this.aimDir(intent, taker).z || 1) || 1;
+      const postBias = 2.55 + pen * 0.55;
+      const aimScatter = (1.15 - pen * 0.75) * (1.05 - composure * 0.35);
       const aimZ = this.autoplay
-        ? (Math.random() - 0.5) * (6.2 - pen * 2.2)
-        : this.aimDir(intent, taker).z * 6;
+        ? sidePick * postBias + (Math.random() - 0.5) * aimScatter
+        : this.aimDir(intent, taker).z * 5.2;
       const dx = goalX - this.ball.x;
-      const dz = aimZ - this.ball.z + (Math.random() - 0.5) * (1 - pen) * 2.8;
+      const dz = aimZ - this.ball.z + (Math.random() - 0.5) * (1 - pen) * 1.15;
       const dist = Math.hypot(dx, dz) || 1;
-      const power = 24 + pen * 4 + stat01(taker.attrs.shotPower) * 2;
-      kickBall(this.ball, (dx / dist) * power, (dz / dist) * power, 2.2 + (1 - pen) * 0.6);
+      // Firm but not rocket-hot — better takers place; power alone shouldn't guarantee a parry.
+      const power = 21.5 + pen * 3.2 + stat01(taker.attrs.shotPower) * 1.4 + composure * 0.8;
+      kickBall(this.ball, (dx / dist) * power, (dz / dist) * power, 1.55 + (1 - pen) * 0.45);
       this.stats.shots += 1;
       this.incomingShot = true;
       this.incomingAerial = false;
@@ -4097,7 +4411,6 @@ export class Match {
     this.state = FootballState.GOAL_CELEBRATION;
     const userGoal = scorer.side === this.userSide && !this.autoplay;
     this.celebrationTime = userGoal ? USER_CELEBRATION_MAX : AI_CELEBRATION_SECONDS * this.tuning.celebrationDurationMultiplier;
-    this.celebrationStill = 0;
     this.celebrationSteered = false;
     this.kickoffSide = team === "home" ? "away" : "home";
     const scorers = team === "home" ? this.home.players : this.away.players;
@@ -4119,47 +4432,49 @@ export class Match {
     const stay = celebrationStaysPut(this.celebrationRoutine);
     const userScorer = !!scorer && scorer.side === this.userSide && !this.autoplay;
     const moveEx = this.moveExtras();
+    const arrived = !!(scorer && target && scorer.distTo(target.x, target.z) < 2.8);
     if (scorer && userScorer) {
       const steered = Math.hypot(intent.moveX, intent.moveZ) > 0.14;
       if (steered) this.celebrationSteered = true;
       if (this.celebrationSteered) {
         controlPlayer(scorer, intent, dt, 0, moveEx);
-      } else if (target && !stay) {
+      } else if (target && !stay && !arrived) {
         movePlayer(scorer, dt, target.x - scorer.x, target.z - scorer.z, true, false, moveEx);
       } else {
-        scorer.vx *= 0.72;
-        scorer.vz *= 0.72;
+        // Hold the pose at the celebration spot — do not cut to kick-off early.
+        scorer.vx *= 0.55;
+        scorer.vz *= 0.55;
       }
       if (intent.celebrateA || intent.pass) scorer.celebrationKind = "arms";
       if (intent.celebrateB || intent.shoot) scorer.celebrationKind = "slide";
       if (intent.celebrateX || intent.cross) scorer.celebrationKind = "jump";
       if (intent.celebrateY || intent.through) scorer.celebrationKind = "team";
-      const elapsed = (userScorer ? USER_CELEBRATION_MAX : AI_CELEBRATION_SECONDS) - this.celebrationTime;
-      const atTarget = !!(target && scorer.distTo(target.x, target.z) < 2.8);
-      if ((atTarget || stay) && !this.celebrationSteered) {
+      if ((arrived || stay) && !this.celebrationSteered) {
         scorer.vx = 0;
         scorer.vz = 0;
       }
-      if (elapsed > 0.7 && scorer.speed < 0.55) this.celebrationStill += dt;
-      else this.celebrationStill = 0;
-    } else if (scorer && target && !stay) {
+    } else if (scorer && target && !stay && !arrived) {
       movePlayer(scorer, dt, target.x - scorer.x, target.z - scorer.z, true, false, moveEx);
-    } else if (scorer && stay) {
-      scorer.vx *= 0.6;
-      scorer.vz *= 0.6;
+    } else if (scorer) {
+      // Arrived or stay-put: hold pose for the remaining celebration window.
+      scorer.vx *= 0.5;
+      scorer.vz *= 0.5;
     }
     for (const p of this.allPlayers()) {
       if (p.celebrating && scorer && p.id !== scorer.id) {
-        const tx = stay ? p.desiredX : scorer.x * 0.65 + (target?.x ?? scorer.x) * 0.35;
-        const tz = stay ? p.desiredZ : scorer.z * 0.65 + (target?.z ?? scorer.z) * 0.35;
+        const tx = stay || arrived ? p.desiredX : scorer.x * 0.65 + (target?.x ?? scorer.x) * 0.35;
+        const tz = stay || arrived ? p.desiredZ : scorer.z * 0.65 + (target?.z ?? scorer.z) * 0.35;
         const dx = tx - p.x;
         const dz = tz - p.z;
         if (Math.hypot(dx, dz) > 2.2) movePlayer(p, dt, dx, dz, true, false, moveEx);
+        else {
+          p.vx *= 0.55;
+          p.vz *= 0.55;
+        }
       }
     }
-    const arrived = !!(scorer && target && scorer.distTo(target.x, target.z) < 2.8);
-    const stopped = userScorer && this.celebrationStill > 0.38;
-    if (this.celebrationTime <= 0 || intent.skip || stopped || (arrived && !userScorer && !stay)) {
+    // Only skip (Enter/Space) or the safety timer ends the celebration — never arrival/still.
+    if (this.celebrationTime <= 0 || intent.skip) {
       this.endCelebration();
     }
   }
@@ -4168,7 +4483,6 @@ export class Match {
     clearCelebration(this.allPlayers());
     this.stadium.crowd.setReaction("HOME", "idle", 0.25);
     this.stadium.crowd.setReaction("AWAY", "idle", 0.25);
-    this.celebrationStill = 0;
     this.celebrationSteered = false;
     // Apply queued subs on the kick-off restart (not mid-celebration) so the
     // change and HUD card appear when play resumes.
@@ -4368,6 +4682,17 @@ export class Match {
     const homeColor = hexColor(this.home.record.primaryColor || "#ffffff");
     const awayColor = hexColor(this.away.record.primaryColor || "#ffdd55");
     for (const p of this.allPlayers()) {
+      // Idle / receive facing — hips track the ball when not mid-sprint or celebration.
+      if (!p.celebrating && p.kickTimer <= 0 && !p.sliding) {
+        const hints = [];
+        if (this.passTargetId === p.id && !this.possessing) {
+          const recv = receiveFacingHint(this.ball.vx, this.ball.vz);
+          if (recv) hints.push(recv);
+        }
+        const idle = idleBallFacingHint(p, this.ball.x, this.ball.z);
+        if (idle) hints.push(idle);
+        if (hints.length) applyFacingHints(p, hints, dt);
+      }
       updatePlayerAnimation(p, dt, this.time);
       setControlledMarker(p, p.id === this.controlled.id, p.side === "home" ? 0xffffff : 0xffdd55);
       const onHud =

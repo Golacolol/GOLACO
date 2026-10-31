@@ -137,15 +137,15 @@ export function settleFirstTouch(ball: Ball, opts: FirstTouchSettleOpts): FirstT
       : 0.16 + (1 - control) * 0.26 + (zone === "air" ? 0.14 : 0.08) + facePenalty * 0.12) *
     (0.85 + patience * 0.45) *
     clamp(errorMul, 0.55, 1.35);
-  // Routine ground receives stick; lose mainly under real pressure / aerial mess / bad approach.
+  // Routine ground receives stick; lose mainly under heavy pressure / aerial mess / bad approach.
   const lost =
     zone === "air"
-      ? scatterMag > 0.95 &&
-        (opts.pressure > 0.34 || approach < 0.45) &&
-        rng() < clamp(0.28 + opts.pressure * 0.4 + facePenalty * 0.35 - control * 0.3, 0.08, 0.75)
-      : scatterMag > 1.1 &&
-        (opts.pressure > 0.5 || approach < 0.38) &&
-        rng() < clamp(0.16 + opts.pressure * 0.28 + facePenalty * 0.3 - control * 0.38, 0.02, 0.48);
+      ? scatterMag > 1.05 &&
+        (opts.pressure > 0.42 || approach < 0.38) &&
+        rng() < clamp(0.2 + opts.pressure * 0.32 + facePenalty * 0.28 - control * 0.35, 0.05, 0.62)
+      : scatterMag > 1.25 &&
+        (opts.pressure > 0.62 || approach < 0.3) &&
+        rng() < clamp(0.1 + opts.pressure * 0.22 + facePenalty * 0.22 - control * 0.42, 0.01, 0.35);
 
   ball.x += scatterX;
   ball.z += scatterZ;

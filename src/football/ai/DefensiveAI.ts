@@ -58,13 +58,19 @@ export function selectClosingPlayers(defenders: Player[], ball: Ball, max = 2): 
       // Attackers engage shorter — but always contest within 12m so the nearest
       // player never stands still while the ball is loose nearby.
       const engage = Math.max(12, closeDownRange(p) * (isAttackingDefender(p) ? 0.55 : 1));
+      // Wingers stuck high after turnover shouldn't monopolise the press — midfield/FB lead.
+      const wingStuckHigh =
+        (p.slot === "LW" || p.slot === "RW" || p.slot === "LM" || p.slot === "RM") &&
+        (p.x - ball.x) * p.attackSign > 8;
       const roleBias =
         p.slot.includes("CB") || p.slot.includes("DM") || p.slot === "LB" || p.slot === "RB"
           ? 2.4
           : isAttackingDefender(p)
             ? -6.5
-            : 0;
-      const score = d * (1.12 - aw * 0.32) - aw * 6 - ag * 4.5 - roleBias;
+            : wingStuckHigh
+              ? -4.2
+              : 0;
+      const score = d * (1.12 - aw * 0.32) - aw * 6 - ag * 4.5 - roleBias + (wingStuckHigh ? 5.5 : 0);
       return { p, d, engage, score };
     });
   const ranked = pool.filter((row) => row.d < row.engage).sort((a, b) => a.score - b.score);

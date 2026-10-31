@@ -153,13 +153,13 @@ export class MainMenu {
                 ${leagueSpinHtml(leagueIdx, leagueDialLabel)}
               </span>
               <span class="team-dial-field">
-                <span class="team-dial-label">Team</span>
+                <span class="team-dial-label">Club</span>
                 ${teamSpinHtml(clubs, teamIdx)}
               </span>
               ${
                 showEra
                   ? `<span class="team-dial-field" data-era-field>
-                <span class="team-dial-label">Era</span>
+                <span class="team-dial-label">Team</span>
                 ${eraSpinHtml(eras, eraIdx)}
               </span>`
                   : ""
@@ -700,7 +700,7 @@ export class MainMenu {
       const cur = clubs[i]!;
       const next = clubs[(i + 1) % n]!;
       teamEl.setAttribute("data-team-index", String(i));
-      teamEl.setAttribute("aria-label", `Team select ${cur.label}`);
+      teamEl.setAttribute("aria-label", `Club select ${cur.label}`);
       teamEl.innerHTML = spinTriplet(prev.label, cur.label, next.label);
 
       if (showEra) {
@@ -734,8 +734,11 @@ export class MainMenu {
       field = document.createElement("span");
       field.className = "team-dial-field";
       field.setAttribute("data-era-field", "");
-      field.innerHTML = `<span class="team-dial-label">Era</span>`;
+      field.innerHTML = `<span class="team-dial-label">Team</span>`;
       dials.appendChild(field);
+    } else {
+      const lab = field.querySelector(".team-dial-label");
+      if (lab) lab.textContent = "Team";
     }
     let eraEl = field.querySelector<HTMLElement>("[data-era-spin]");
     if (!eraEl) {
@@ -850,19 +853,19 @@ function spinTriplet(prev: string, current: string, next: string): string {
 
 function teamSpinHtml(teams: MenuTeamOption[], index: number): string {
   if (!teams.length) {
-    return `<span class="time-spin team-spin" data-team-spin data-team-index="0" tabindex="0" role="button" aria-label="Team select">—</span>`;
+    return `<span class="time-spin team-spin" data-team-spin data-team-index="0" tabindex="0" role="button" aria-label="Club select">—</span>`;
   }
   const n = teams.length;
   const i = ((index % n) + n) % n;
   const prev = teams[(i - 1 + n) % n]!;
   const cur = teams[i]!;
   const next = teams[(i + 1) % n]!;
-  return `<span class="time-spin team-spin" data-team-spin data-team-index="${i}" tabindex="0" role="button" aria-label="Team select ${cur.label}">${spinTriplet(prev.label, cur.label, next.label)}</span>`;
+  return `<span class="time-spin team-spin" data-team-spin data-team-index="${i}" tabindex="0" role="button" aria-label="Club select ${cur.label}">${spinTriplet(prev.label, cur.label, next.label)}</span>`;
 }
 
 function eraSpinHtml(eras: MenuTeamOption[], index: number): string {
   if (!eras.length) {
-    return `<span class="time-spin era-spin" data-era-spin data-era-index="0" data-club-key="" tabindex="0" role="button" aria-label="Era select">—</span>`;
+    return `<span class="time-spin era-spin" data-era-spin data-era-index="0" data-club-key="" tabindex="0" role="button" aria-label="Team select">—</span>`;
   }
   const n = eras.length;
   const i = ((index % n) + n) % n;
@@ -870,7 +873,7 @@ function eraSpinHtml(eras: MenuTeamOption[], index: number): string {
   const locked = n <= 1;
   const prev = locked ? cur : eras[(i - 1 + n) % n]!;
   const next = locked ? cur : eras[(i + 1) % n]!;
-  return `<span class="time-spin era-spin${locked ? " era-locked" : ""}" data-era-spin data-era-index="${i}" data-club-key="${escapeHtml(cur.clubKey)}" tabindex="0" role="button" aria-label="Era select ${cur.eraLabel}">${spinTriplet(prev.eraLabel, cur.eraLabel, next.eraLabel)}</span>`;
+  return `<span class="time-spin era-spin${locked ? " era-locked" : ""}" data-era-spin data-era-index="${i}" data-club-key="${escapeHtml(cur.clubKey)}" tabindex="0" role="button" aria-label="Team select ${cur.eraLabel}">${spinTriplet(prev.eraLabel, cur.eraLabel, next.eraLabel)}</span>`;
 }
 
 function paintEraSpin(eraEl: HTMLElement, eras: MenuTeamOption[], eraIdx: number): void {
@@ -878,7 +881,7 @@ function paintEraSpin(eraEl: HTMLElement, eras: MenuTeamOption[], eraIdx: number
     eraEl.setAttribute("data-era-index", "0");
     eraEl.setAttribute("data-club-key", "");
     eraEl.classList.add("era-locked");
-    eraEl.setAttribute("aria-label", "Era select");
+    eraEl.setAttribute("aria-label", "Team select");
     eraEl.innerHTML = "—";
     return;
   }
@@ -891,7 +894,7 @@ function paintEraSpin(eraEl: HTMLElement, eras: MenuTeamOption[], eraIdx: number
   eraEl.setAttribute("data-era-index", String(i));
   eraEl.setAttribute("data-club-key", cur.clubKey);
   eraEl.classList.toggle("era-locked", locked);
-  eraEl.setAttribute("aria-label", `Era select ${cur.eraLabel}`);
+  eraEl.setAttribute("aria-label", `Team select ${cur.eraLabel}`);
   eraEl.innerHTML = spinTriplet(prev.eraLabel, cur.eraLabel, next.eraLabel);
 }
 

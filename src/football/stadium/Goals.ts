@@ -1,24 +1,32 @@
 import * as THREE from "three";
 import { GOAL_DEPTH, GOAL_HEIGHT, GOAL_WIDTH, HALF_LENGTH } from "../constants";
 
+/** Post radius — centres sit on the painted goal-line midline. */
+const POST_R = 0.06;
+
 export function createGoals(): THREE.Group {
   const group = new THREE.Group();
   group.add(makeGoal(-HALF_LENGTH), makeGoal(HALF_LENGTH));
   return group;
 }
 
-function makeGoal(x: number): THREE.Group {
+function makeGoal(lineX: number): THREE.Group {
   const g = new THREE.Group();
-  const dir = x < 0 ? 1 : -1;
+  // dir points from goal mouth into the pitch.
+  const dir = lineX < 0 ? 1 : -1;
+  // Post centres on the goal-line paint (0.12m wide) so the posts straddle it —
+  // pitch face at the inner edge, outer face at the outer edge. No air gap.
+  const mouthX = lineX;
+
   const white = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.35, metalness: 0.08 });
-  const postGeo = new THREE.CylinderGeometry(0.06, 0.06, GOAL_HEIGHT, 10);
+  const postGeo = new THREE.CylinderGeometry(POST_R, POST_R, GOAL_HEIGHT, 10);
   const left = new THREE.Mesh(postGeo, white);
-  left.position.set(x, GOAL_HEIGHT / 2, -GOAL_WIDTH / 2);
+  left.position.set(mouthX, GOAL_HEIGHT / 2, -GOAL_WIDTH / 2);
   const right = left.clone();
   right.position.z = GOAL_WIDTH / 2;
-  const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, GOAL_WIDTH, 10), white);
+  const bar = new THREE.Mesh(new THREE.CylinderGeometry(POST_R, POST_R, GOAL_WIDTH, 10), white);
   bar.rotation.x = Math.PI / 2;
-  bar.position.set(x, GOAL_HEIGHT, 0);
+  bar.position.set(mouthX, GOAL_HEIGHT, 0);
   g.add(left, right, bar);
 
   const netMat = new THREE.MeshStandardMaterial({
@@ -28,19 +36,18 @@ function makeGoal(x: number): THREE.Group {
     side: THREE.DoubleSide,
     roughness: 0.8,
   });
+  // Net mouth flush with posts; depth extends behind the goal line.
   const back = new THREE.Mesh(new THREE.PlaneGeometry(GOAL_WIDTH, GOAL_HEIGHT), netMat);
-  back.position.set(x - dir * GOAL_DEPTH, GOAL_HEIGHT / 2, 0);
-  back.rotation.y = Math.PI / 2 * (dir > 0 ? 0 : 0);
-  if (x < 0) back.rotation.y = Math.PI / 2;
-  else back.rotation.y = -Math.PI / 2;
+  back.position.set(mouthX - dir * GOAL_DEPTH, GOAL_HEIGHT / 2, 0);
+  back.rotation.y = lineX < 0 ? Math.PI / 2 : -Math.PI / 2;
   g.add(back);
   const top = new THREE.Mesh(new THREE.PlaneGeometry(GOAL_DEPTH, GOAL_WIDTH), netMat);
   top.rotation.x = Math.PI / 2;
-  top.position.set(x - dir * GOAL_DEPTH / 2, GOAL_HEIGHT, 0);
+  top.position.set(mouthX - dir * (GOAL_DEPTH / 2), GOAL_HEIGHT, 0);
   g.add(top);
   const sideGeo = new THREE.PlaneGeometry(GOAL_DEPTH, GOAL_HEIGHT);
   const s1 = new THREE.Mesh(sideGeo, netMat);
-  s1.position.set(x - dir * GOAL_DEPTH / 2, GOAL_HEIGHT / 2, -GOAL_WIDTH / 2);
+  s1.position.set(mouthX - dir * (GOAL_DEPTH / 2), GOAL_HEIGHT / 2, -GOAL_WIDTH / 2);
   const s2 = s1.clone();
   s2.position.z = GOAL_WIDTH / 2;
   g.add(s1, s2);

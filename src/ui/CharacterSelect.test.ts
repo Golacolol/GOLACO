@@ -80,6 +80,11 @@ describe("character select", () => {
     expect(view.root.textContent).toContain("SUBSTITUTES");
     expect(view.root.textContent).toContain("SQUAD");
     expect(view.root.querySelector(".play-style-chips")).toBeTruthy();
+    expect(view.root.querySelector('[data-char="chalk"]')).toBeTruthy();
+    expect(view.root.querySelector(".team-pitch-chalk")).toBeTruthy();
+    const chalk = view.root.querySelector('[data-char="chalk"]');
+    const auto = view.root.querySelector('[data-char="play-style"][data-style="auto"]');
+    expect(chalk && auto && !!(chalk.compareDocumentPosition(auto) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
     expect(view.root.querySelector('[data-char="play-style"][data-style="auto"]')).toBeTruthy();
     expect(view.root.querySelector('[data-char="play-style"][data-style="counter"]')).toBeTruthy();
     expect(view.playStyle).toBe("auto");
@@ -95,7 +100,8 @@ describe("character select", () => {
     view.setSquad("Plymouth Argyle", squad());
     view.setControlMode("PLAYER");
     view.render();
-    expect(view.root.querySelector(".char-stats")).toBeTruthy();
+    expect(view.root.querySelector(".profile-stats")).toBeTruthy();
+    expect(view.root.querySelector(".profile-hex-svg")).toBeTruthy();
     expect(view.root.querySelector(".team-pitch")).toBeNull();
     expect(view.root.textContent).toContain("START AS PLAYER");
     expect(view.root.querySelector('[data-char="back"]')?.textContent).toBe("BACK");

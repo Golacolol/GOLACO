@@ -26,16 +26,15 @@ function striker(): Player {
 }
 
 describe("goal celebration variety", () => {
-  it("offers five moving routines", () => {
-    expect(CELEBRATION_ROUTINES).toHaveLength(5);
+  it("offers a range of routines with some that hold after a short jog", () => {
+    expect(CELEBRATION_ROUTINES.length).toBeGreaterThanOrEqual(7);
     expect(pickCelebrationRoutine(() => 0)).toBe("corner");
-    expect(pickCelebrationRoutine(() => 0.99)).toBe("channel");
-    for (const routine of CELEBRATION_ROUTINES) {
-      expect(celebrationStaysPut(routine)).toBe(false);
-    }
+    expect(celebrationStaysPut("point")).toBe(true);
+    expect(celebrationStaysPut("group")).toBe(true);
+    expect(celebrationStaysPut("corner")).toBe(false);
   });
 
-  it("sends the scorer away from the spot in every routine", () => {
+  it("sends the scorer away from the spot in moving routines", () => {
     const st = striker();
     const corner = celebrationTarget(st, "corner");
     const crowd = celebrationTarget(st, "crowd");

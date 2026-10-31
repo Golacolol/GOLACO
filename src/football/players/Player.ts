@@ -27,6 +27,8 @@ export class Player {
     heightScale: number;
     bodyType: string;
     portraitAsset: string | null;
+    fullBodyAsset: string | null;
+    modelId: string | null;
     sleeveStyle: "short" | "long";
     bootStyle: string;
   };
@@ -52,6 +54,8 @@ export class Player {
   celebrating = false;
   celebrationKind: "arms" | "slide" | "jump" | "team" | "none" = "none";
   kickTimer = 0;
+  /** Which foot swings on the current kick pose (true = right). */
+  kickSwingRight = true;
   firstTouchTimer = 0;
   /** Brief window where dribble magnet is off after a poke / heavy touch. */
   ballControlLockout = 0;
@@ -112,6 +116,8 @@ export class Player {
       heightScale?: number;
       bodyType?: string;
       portraitAsset?: string | null;
+      fullBodyAsset?: string | null;
+      modelId?: string | null;
       sleeveStyle?: "short" | "long";
       bootStyle?: string;
     };
@@ -135,6 +141,8 @@ export class Player {
       heightScale: init.appearance?.heightScale ?? 1,
       bodyType: init.appearance?.bodyType ?? "standard",
       portraitAsset: init.appearance?.portraitAsset ?? null,
+      fullBodyAsset: init.appearance?.fullBodyAsset ?? null,
+      modelId: init.appearance?.modelId ?? null,
       sleeveStyle: init.appearance?.sleeveStyle ?? "short",
       bootStyle: init.appearance?.bootStyle ?? "",
     };

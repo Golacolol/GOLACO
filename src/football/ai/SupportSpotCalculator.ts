@@ -57,7 +57,8 @@ export function scoreSupportSpot(
   }
   const progress = clamp(forward / 18, 0, 1);
   const space = clamp(nearest / 10, 0, 1.2);
-  const widthPenalty = Math.abs(z) > 18 ? 0.25 : 0;
+  // Reward half-space / channel outlets; only soft-penalise extreme touchline dumps.
+  const widthPenalty = Math.abs(z) > 28 ? 0.18 : Math.abs(z) > 16 && Math.abs(z) < 26 ? -0.12 : 0;
   const pocket =
     distance > 10 && distance < 18 ? 0.35 : distance < 12 ? 0.18 : 0;
   return (
@@ -80,7 +81,7 @@ export function bestSupportSpots(
 ): SupportSpot[] {
   const step = opts?.step ?? 4.2;
   const fwdReach = opts?.forwardReach ?? (opts?.buildup ? 16 : 22);
-  const widthReach = opts?.widthReach ?? 16;
+  const widthReach = opts?.widthReach ?? 22;
   const topN = opts?.topN ?? 3;
   const dir = carrier.attackSign;
   const spots: SupportSpot[] = [];

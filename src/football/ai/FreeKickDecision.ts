@@ -11,17 +11,17 @@ export type FreeKickAction = "SHOT" | "CROSS" | "PASS";
 /** Hand-authored policy — raise nearBoxShotFloor further if sims still recycle too often. */
 export const FREE_KICK_POLICY = {
   /** Metres from goal centre: inside this + central → treat as “near the box”. */
-  nearBoxDist: 24,
+  nearBoxDist: 28,
   /** Absolute max range where a direct shot is considered. */
-  shootingRangeDist: 32,
+  shootingRangeDist: 35,
   /** Lateral width (m) for a strike to be preferred over a delivery. */
-  centralZ: 16,
+  centralZ: 20,
   /** Floor on shot score when near-box + central (forces typical strike). */
-  nearBoxShotFloor: 0.94,
-  setPiecesWeight: 0.38,
-  finishingWeight: 0.16,
+  nearBoxShotFloor: 1.05,
+  setPiecesWeight: 0.42,
+  finishingWeight: 0.18,
   crossWideBias: 0.28,
-  passFarBias: 0.22,
+  passFarBias: 0.18,
 };
 
 export interface FreeKickContext {
@@ -51,22 +51,22 @@ export function decideFreeKick(ctx: FreeKickContext): FreeKickDecision {
   const setTech = stat01(taker.attrs.setPieces ?? taker.attrs.finishing);
   const finish = stat01(taker.attrs.finishing);
   const longS = stat01(taker.attrs.longShots ?? taker.attrs.shotPower);
-  const nearBox = distGoal < P.nearBoxDist && absZ < P.centralZ + 2;
+  const nearBox = distGoal < P.nearBoxDist && absZ < P.centralZ + 3;
 
   let shotScore = 0;
-  if (distGoal < P.shootingRangeDist && absZ < 22) {
+  if (distGoal < P.shootingRangeDist && absZ < 24) {
     shotScore =
-      0.28 +
+      0.32 +
       setTech * P.setPiecesWeight +
       finish * P.finishingWeight +
-      longS * 0.12 +
-      clamp((P.shootingRangeDist - distGoal) / P.shootingRangeDist, 0, 1) * 0.35;
-    if (distGoal < PENALTY_AREA_LENGTH + 8) shotScore += 0.22;
-    if (central) shotScore += 0.18;
-    else if (absZ > 18) shotScore *= 0.48;
+      longS * 0.14 +
+      clamp((P.shootingRangeDist - distGoal) / P.shootingRangeDist, 0, 1) * 0.38;
+    if (distGoal < PENALTY_AREA_LENGTH + 10) shotScore += 0.28;
+    if (central) shotScore += 0.22;
+    else if (absZ > 20) shotScore *= 0.55;
   }
 
-  // Wall / traffic in the lane softens the strike but does not force a back-pass near the box.
+  // Wall softens the strike but near-box still prefers a shot over a recycle.
   const laneBlockers = opponents.filter((o) => {
     if (o.isGK) return false;
     const along = (o.x - ballX) * Math.sign(goalX - ballX || 1);
@@ -75,8 +75,8 @@ export function decideFreeKick(ctx: FreeKickContext): FreeKickDecision {
     const laneZ = ballZ + (0 - ballZ) * t;
     return Math.abs(o.z - laneZ) < 2.4;
   }).length;
-  if (laneBlockers >= 3) shotScore *= 0.72;
-  else if (laneBlockers >= 2) shotScore *= 0.85;
+  if (laneBlockers >= 3) shotScore *= nearBox ? 0.88 : 0.72;
+  else if (laneBlockers >= 2) shotScore *= nearBox ? 0.94 : 0.85;
 
   const boxMate = teammates.some(
     (t) =>
@@ -86,29 +86,30 @@ export function decideFreeKick(ctx: FreeKickContext): FreeKickDecision {
       Math.abs(t.z) < 16,
   );
   let crossScore =
-    absZ > 12 && distGoal < 42
-      ? 0.2 + P.crossWideBias * (absZ > 16 ? 1 : 0.55) + (boxMate ? 0.18 : 0)
+    absZ > 14 && distGoal < 42
+      ? 0.2 + P.crossWideBias * (absZ > 18 ? 1 : 0.55) + (boxMate ? 0.18 : 0)
       : 0;
-  if (nearBox && central) crossScore *= 0.35;
+  if (nearBox && central) crossScore *= 0.22;
 
   let passScore =
     P.passFarBias +
     (distGoal > P.shootingRangeDist ? 0.35 : 0) +
-    (absZ > 20 ? 0.12 : 0) +
-    (1 - setTech) * 0.08;
+    (absZ > 22 ? 0.1 : 0) +
+    (1 - setTech) * 0.06;
   // Recycle only when a strike is clearly off the table.
-  if (distGoal > 36) passScore += 0.25;
-  if (nearBox) passScore *= 0.28;
-  else if (distGoal < P.shootingRangeDist && central) passScore *= 0.45;
+  if (distGoal > 38) passScore += 0.25;
+  if (nearBox) passScore *= 0.12;
+  else if (distGoal < P.shootingRangeDist && central) passScore *= 0.35;
 
   if (nearBox) {
     shotScore = Math.max(shotScore, P.nearBoxShotFloor);
-    passScore = Math.min(passScore, shotScore - 0.35);
+    passScore = Math.min(passScore, shotScore - 0.55);
+    crossScore = Math.min(crossScore, shotScore - 0.35);
   }
 
   // Extreme angle: prefer whipped delivery / short pass over a hopeful shot.
-  if (absZ > 22 && distGoal < 30) {
-    shotScore *= 0.4;
+  if (absZ > 24 && distGoal < 30) {
+    shotScore *= 0.45;
     crossScore = Math.max(crossScore, 0.55);
   }
 

@@ -15,7 +15,13 @@ import {
   pressTrapTarget,
   selectClosingPlayers,
 } from "./DefensiveAI";
-import { designatePursuers, mustChaseLoose, roleShapeTarget, teamMatchPhase } from "./MatchBrain";
+import {
+  classifyFootballRole,
+  designatePursuers,
+  mustChaseLoose,
+  roleShapeTarget,
+  teamMatchPhase,
+} from "./MatchBrain";
 import { playStyleProfile, type PlayStyleProfile } from "./PlayStyle";
 import { positionArchetype } from "./PositionArchetype";
 import { bestSupportSpot } from "./SupportSpotCalculator";
@@ -25,7 +31,7 @@ import type { GameplayTuning } from "../gameplay/GameplayTuning";
 import type { SetPieceContext } from "./SetPieceAI";
 import { setPieceTarget } from "./SetPieceAI";
 import { pitchClamp } from "../pitch/PitchZones";
-import { HALF_LENGTH } from "../constants";
+import { HALF_LENGTH, PITCH_LENGTH } from "../constants";
 
 export interface TeamAIResult {
   pressingId: string | null;
@@ -356,12 +362,33 @@ export function updateTeamAI(
         looseBall,
       });
       const shape = roleShapeTarget(p, ball, possessingSide);
-      // Cover + role block (Gameplay Football / GRF position model).
-      let shapeW = shape.role === "CB" || shape.role === "DM" ? 0.55 : 0.4;
+      // Cover + role block — attackers lean on mid-block shape so they actually drop.
+      let shapeW =
+        shape.role === "CB" || shape.role === "DM"
+          ? 0.55
+          : shape.role === "W" || shape.role === "WM"
+            ? 0.94
+            : shape.role === "CF" || shape.role === "AM"
+              ? 0.82
+              : 0.4;
+      const widthW =
+        shape.role === "W" || shape.role === "WM" || shape.role === "FB" ? Math.min(0.96, shapeW + 0.12) : shapeW;
       target = {
         x: cover.x * (1 - shapeW) + shape.x * shapeW,
-        z: cover.z * (1 - shapeW) + shape.z * shapeW,
+        z: cover.z * (1 - widthW) + shape.z * widthW,
       };
+      // Hard depth ceiling — high cover anchors must not leave W/WM parked upfield.
+      if (shape.role === "W" || shape.role === "WM") {
+        const maxProg = shape.role === "W" ? 0.34 : 0.36;
+        const maxX = p.attackSign * (maxProg * PITCH_LENGTH - HALF_LENGTH);
+        if ((target.x - maxX) * p.attackSign > 0) target.x = maxX;
+      }
+      // Wide defenders of the mid-block must hold the channel while dropping.
+      if (shape.role === "W" || shape.role === "WM" || shape.role === "FB") {
+        const side = Math.sign(p.anchorZ || 1) || 1;
+        const floorZ = side * (shape.role === "FB" ? 22 : 20);
+        if (Math.abs(target.z) < Math.abs(floorZ)) target.z = floorZ;
+      }
       // Cover shadow: CB sits behind the lead presser.
       if (shape.role === "CB" && presser && closerIds.has(presser.id)) {
         const shadow = coverShadowTarget(p, presser, ball.x, ball.z);
@@ -380,25 +407,135 @@ export function updateTeamAI(
     } else {
       const support = attackingSupport(p, ball.x, ball.z, p.hasBall, carrier, us, them, attackPhase, playStyle);
       const shape = roleShapeTarget(p, ball, possessingSide);
-      // Role channels dominate for wide/FB; SupportAI owns CF/AM depth (avoid CF shape nudging past the line).
+      // Support runs dominate while we have (or just played) the ball — shape holds width.
+      // Wide roles lean harder on channel shape so support runs don't collapse the flanks.
       const shapeW =
-        shape.role === "W" || shape.role === "WM" || shape.role === "FB"
-          ? 0.48
-          : shape.role === "CF"
-            ? 0.1
-            : shape.role === "AM"
-              ? 0.18
-              : 0.38;
+        shape.role === "FB"
+          ? 0.94
+          : shape.role === "W" || shape.role === "WM"
+            ? 0.8
+            : shape.role === "CF"
+              ? attackPhase === "attack" || attackPhase === "chance" || attackPhase === "transition"
+                ? 0.82
+                : attackPhase === "build"
+                  ? 0.6
+                  : 0.36
+              : shape.role === "AM"
+                ? attackPhase === "attack" || attackPhase === "chance" || attackPhase === "transition"
+                  ? 0.58
+                  : 0.36
+                : inFlightAttack
+                  ? 0.22
+                  : 0.3;
+      const widthW =
+        shape.role === "FB" || shape.role === "W" || shape.role === "WM" ? Math.min(0.97, shapeW + 0.22) : shapeW;
       target = {
         x: support.x * (1 - shapeW) + shape.x * shapeW,
-        z: support.z * (1 - shapeW) + shape.z * shapeW,
+        z: support.z * (1 - widthW) + shape.z * widthW,
       };
+      // Pin wide roles to the touchline channel after the support blend.
+      if (shape.role === "FB" || shape.role === "W" || shape.role === "WM") {
+        const side = Math.sign(p.anchorZ || shape.z || 1) || 1;
+        const floorZ = side * (shape.role === "FB" ? 24 : shape.role === "W" ? 23 : 21);
+        if (Math.abs(target.z) < Math.abs(floorZ)) target.z = floorZ;
+      }
+      // CF / overlapping FB / WM / W: never let a deep support pocket erase the attacking height floor.
+      if (
+        (shape.role === "CF" ||
+          shape.role === "FB" ||
+          shape.role === "AM" ||
+          shape.role === "WM" ||
+          shape.role === "W") &&
+        (attackPhase === "attack" ||
+          attackPhase === "chance" ||
+          attackPhase === "transition" ||
+          attackPhase === "build")
+      ) {
+        const dir = p.attackSign;
+        const advancedX = dir > 0 ? Math.max(support.x, shape.x) : Math.min(support.x, shape.x);
+        const heightW =
+          shape.role === "CF"
+            ? 0.9
+            : shape.role === "FB"
+              ? 0.96
+              : shape.role === "W"
+                ? 0.84
+                : shape.role === "WM"
+                  ? 0.78
+                  : 0.55;
+        target.x = target.x * (1 - heightW) + advancedX * heightW;
+        if (shape.role === "CF" && attackPhase !== "build") {
+          const floor = dir * (0.78 * PITCH_LENGTH - HALF_LENGTH);
+          if ((floor - target.x) * dir > 0) target.x = floor;
+        }
+        if (shape.role === "CF" && attackPhase === "build") {
+          const floor = dir * (0.66 * PITCH_LENGTH - HALF_LENGTH);
+          if ((floor - target.x) * dir > 0) target.x = target.x * 0.35 + floor * 0.65;
+        }
+        if (shape.role === "FB") {
+          const ballProg = clamp((ball.x * dir + HALF_LENGTH) / PITCH_LENGTH, 0, 1);
+          const sameFlank =
+            Math.sign(p.anchorZ || 1) === Math.sign(ball.z || 1) || Math.abs(ball.z) < 14;
+          // Same-flank overlaps start earlier; weak-side still steps into the final third late.
+          const floorProg =
+            attackPhase === "chance" || attackPhase === "transition"
+              ? sameFlank
+                ? 0.88
+                : 0.8
+              : attackPhase === "attack" || ballProg > 0.5
+                ? sameFlank
+                  ? 0.86
+                  : 0.78
+                : ballProg > 0.35
+                  ? sameFlank
+                    ? 0.8
+                    : 0.7
+                  : ballProg > 0.25
+                    ? sameFlank
+                      ? 0.7
+                      : 0.58
+                    : 0.54;
+          const floor = dir * (floorProg * PITCH_LENGTH - HALF_LENGTH);
+          if ((floor - target.x) * dir > 0) {
+            target.x =
+              attackPhase === "build" && ballProg < 0.35 && !sameFlank
+                ? target.x * 0.15 + floor * 0.85
+                : floor;
+          }
+        }
+        if (
+          (shape.role === "WM" || shape.role === "W") &&
+          (attackPhase === "attack" || attackPhase === "chance" || attackPhase === "transition")
+        ) {
+          const floor = dir * ((shape.role === "W" ? 0.72 : 0.7) * PITCH_LENGTH - HALF_LENGTH);
+          if ((floor - target.x) * dir > 0) target.x = target.x * 0.2 + floor * 0.8;
+        }
+        if ((shape.role === "WM" || shape.role === "W") && attackPhase === "build") {
+          const floor = dir * (0.58 * PITCH_LENGTH - HALF_LENGTH);
+          if ((floor - target.x) * dir > 0) target.x = target.x * 0.35 + floor * 0.65;
+        }
+      }
       // Blend toward the live support-spot grid (Buckland FindSupport).
-      if (supportSpot && (shape.role === "CM" || shape.role === "AM" || shape.role === "CF" || shape.role === "WM")) {
+      // Skip CF depth pull — the grid parks strikers too deep for a high line.
+      // Wide roles: only take lateral pull if it stays/goes wider.
+      if (supportSpot && (shape.role === "CM" || shape.role === "AM")) {
         const sameSide = Math.sign(p.anchorZ || 1) === Math.sign(supportSpot.z || 1) || Math.abs(supportSpot.z) < 7;
-        const pull = sameSide ? 0.28 : 0.12;
+        const pull = sameSide ? (inFlightAttack ? 0.4 : 0.34) : 0.16;
         target = {
           x: target.x * (1 - pull) + supportSpot.x * pull,
+          z: target.z * (1 - pull) + supportSpot.z * pull,
+        };
+      } else if (supportSpot && (shape.role === "WM" || shape.role === "W")) {
+        const side = Math.sign(p.anchorZ || 1) || 1;
+        if (Math.abs(supportSpot.z) >= Math.abs(target.z) - 1) {
+          target.z = target.z * 0.55 + supportSpot.z * 0.45;
+        }
+        if (Math.abs(target.z) < 20) target.z = side * 22;
+      } else if (supportSpot && shape.role === "CF") {
+        const sameSide = Math.sign(p.anchorZ || 1) === Math.sign(supportSpot.z || 1) || Math.abs(supportSpot.z) < 7;
+        const pull = sameSide ? 0.14 : 0.06;
+        target = {
+          x: target.x,
           z: target.z * (1 - pull) + supportSpot.z * pull,
         };
       }
@@ -433,20 +570,58 @@ export function updateTeamAI(
       }
       continue;
     }
-    // Sprint when covering real ground — attackers may burst onto progressive runs.
-    const far = dist > 12;
+    // Sprint when covering real ground — attackers burst onto progressive / tracked runs.
+    // Wide / front players must race back into the mid-block after turnover.
+    const dropRole = classifyFootballRole(p);
+    const wideDrop =
+      defending &&
+      (dropRole === "W" || dropRole === "WM" || dropRole === "CF") &&
+      (p.x - target.x) * p.attackSign > 3.5;
+    const fbOverlap =
+      !defending &&
+      (dropRole === "FB" || dropRole === "W" || dropRole === "WM") &&
+      (target.x - p.x) * p.attackSign > 3.2 &&
+      Math.abs(target.z) > 12;
+    const far = dist > (wideDrop || fbOverlap ? 3.8 : 12);
+    const runMul = extras?.tuning?.attackingRunMultiplier ?? 1;
     const progressive =
       !defending &&
       !p.hasBall &&
-      dist > 10 &&
-      (Math.abs(target.x - p.anchorX) > 5 || Math.abs(target.z - p.anchorZ) > 6);
-    const energyOk = p.energy.value > 0.28;
+      dist > 8.5 &&
+      (Math.abs(target.x - p.anchorX) > 4.5 || Math.abs(target.z - p.anchorZ) > 5.5);
+    const energyOk = p.energy.value > 0.26;
+    // Overlaps keep sprinting on fumes — arriving late is why final-third share stayed low.
+    const overlapEnergyOk = dropRole === "FB" ? p.energy.value > 0.06 : p.energy.value > 0.12;
     const wantSprint =
-      energyOk &&
-      ((far && defending) ||
-        (p.hasBall && dist > 16) ||
-        (progressive && dist > 11));
-    movePlayer(p, dt, dx, dz, wantSprint, false, { hasBall: p.hasBall, pressure: 0, ...moveEx });
+      (energyOk &&
+        ((far && defending) ||
+          wideDrop ||
+          (p.hasBall && dist > 14) ||
+          (progressive && dist > 9.5 / Math.max(0.85, runMul)) ||
+          (inFlightAttack && progressive && dist > 8))) ||
+      (fbOverlap && overlapEnergyOk);
+    const fbLag =
+      !defending && dropRole === "FB" ? Math.max(0, (target.x - p.x) * p.attackSign) : 0;
+    // Distance-scaled catch-up: overlaps were aiming high but never arriving (drift ~25m).
+    const fbCatch =
+      fbLag > 8 ? 1 + clamp(fbLag / 22, 0, 0.95) : fbOverlap && dropRole === "FB" ? 1.55 : 1;
+    movePlayer(p, dt, dx, dz, wantSprint || fbLag > 10, false, {
+      hasBall: p.hasBall,
+      pressure: 0,
+      ...moveEx,
+      accelMul: (moveEx.accelMul ?? 1) * (fbLag > 8 ? 1.65 : fbOverlap ? 1.35 : 1),
+      speedMul:
+        (moveEx.speedMul ?? 1) *
+        (fbCatch > 1
+          ? fbCatch
+          : fbOverlap
+            ? 1.4
+            : wideDrop
+              ? 1.22
+              : !defending && progressive
+                ? clamp(0.95 + runMul * 0.08, 0.95, 1.12)
+                : 1),
+    });
   }
   return {
     pressingId: presser?.id ?? null,

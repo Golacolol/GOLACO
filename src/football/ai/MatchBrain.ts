@@ -65,10 +65,10 @@ const PROFILES: Record<FootballRole, Omit<RoleProfile, "role">> = {
   },
   FB: {
     defendBallPull: 0.28,
-    attackPush: 9,
-    channelZ: 26,
-    buildupBias: 0.55,
-    progressiveBias: 0.48,
+    attackPush: 22,
+    channelZ: 31,
+    buildupBias: 0.48,
+    progressiveBias: 0.62,
     pressWeight: 0.55,
     lineDiscipline: 0.7,
   },
@@ -91,38 +91,38 @@ const PROFILES: Record<FootballRole, Omit<RoleProfile, "role">> = {
     lineDiscipline: 0.45,
   },
   WM: {
-    defendBallPull: 0.3,
-    attackPush: 9.5,
-    channelZ: 24,
-    buildupBias: 0.48,
-    progressiveBias: 0.58,
-    pressWeight: 0.5,
-    lineDiscipline: 0.35,
+    defendBallPull: 0.34,
+    attackPush: 13,
+    channelZ: 29,
+    buildupBias: 0.45,
+    progressiveBias: 0.62,
+    pressWeight: 0.52,
+    lineDiscipline: 0.38,
   },
   AM: {
     defendBallPull: 0.28,
-    attackPush: 11,
+    attackPush: 13,
     channelZ: 7,
-    buildupBias: 0.4,
-    progressiveBias: 0.72,
+    buildupBias: 0.36,
+    progressiveBias: 0.78,
     pressWeight: 0.42,
     lineDiscipline: 0.25,
   },
   W: {
-    defendBallPull: 0.22,
-    attackPush: 12.5,
-    channelZ: 27,
-    buildupBias: 0.35,
-    progressiveBias: 0.72,
-    pressWeight: 0.4,
-    lineDiscipline: 0.2,
+    defendBallPull: 0.36,
+    attackPush: 15,
+    channelZ: 31,
+    buildupBias: 0.32,
+    progressiveBias: 0.78,
+    pressWeight: 0.45,
+    lineDiscipline: 0.28,
   },
   CF: {
-    defendBallPull: 0.2,
-    attackPush: 13,
+    defendBallPull: 0.22,
+    attackPush: 19,
     channelZ: 6,
-    buildupBias: 0.28,
-    progressiveBias: 0.78,
+    buildupBias: 0.24,
+    progressiveBias: 0.88,
     pressWeight: 0.35,
     lineDiscipline: 0.15,
   },
@@ -230,35 +230,66 @@ export function roleShapeTarget(
     x = player.anchorX + (ball.x - player.anchorX) * pull - attack * (2.5 * profile.lineDiscipline);
     z = player.anchorZ + (ball.z - player.anchorZ) * (0.1 + pull * 0.35);
     if (profile.role === "FB") {
-      // Full-back tucks when ball is opposite side; pushes when ball is near.
+      // Full-back tucks when ball is opposite side; holds the channel when near.
       const sameSide = Math.sign(ball.z || 0.01) === sideSign;
       z = sameSide
-        ? clamp(ball.z * 0.35 + player.anchorZ * 0.65, sideSign * 8, sideSign * (HALF_WIDTH - 3))
-        : player.anchorZ * 0.85;
+        ? clamp(ball.z * 0.22 + player.anchorZ * 0.55 + sideSign * profile.channelZ * 0.28, sideSign * 14, sideSign * (HALF_WIDTH - 2.6))
+        : player.anchorZ * 0.92 + sideSign * 2.5;
+    }
+    // Attackers mid-block on turnover — W were stuck high (~0.59 defend progress).
+    if (profile.role === "W" || profile.role === "WM" || profile.role === "CF" || profile.role === "AM") {
+      const targetProgress =
+        profile.role === "CF" ? 0.5 : profile.role === "AM" ? 0.46 : profile.role === "W" ? 0.26 : 0.3;
+      const retreatX = attack * (targetProgress * PITCH_LENGTH - HALF_LENGTH);
+      // Prefer retreat over ball/anchor blend so high anchors can't park them upfield.
+      x = retreatX * 0.9 + ball.x * 0.06 + player.anchorX * 0.04;
+      if ((x - ball.x) * attack > 2.2) x = ball.x + attack * 2.2;
+      // Hard ceiling so wingers cannot stay past the middle third while defending.
+      const maxProg = profile.role === "W" ? 0.34 : profile.role === "WM" ? 0.36 : 0.56;
+      const maxX = attack * (maxProg * PITCH_LENGTH - HALF_LENGTH);
+      if ((x - maxX) * attack > 0) x = maxX;
+      if (profile.role === "W" || profile.role === "WM") {
+        z = sideSign * clamp(Math.max(Math.abs(player.anchorZ) * 0.7, profile.channelZ * 0.88), 18, HALF_WIDTH - 2.4);
+      } else {
+        z = clamp(player.anchorZ * 0.55 + ball.z * 0.25, -12, 12);
+      }
     }
     if (profile.role === "CB") {
       z = clamp(z, -12, 12);
     }
   } else if (phase === "transition") {
-    // Counter: attackers push channels; midfield advances; back line holds a higher line.
-    const push = profile.attackPush * (0.7 + attAw * 0.4);
-    x = player.anchorX + attack * push * 0.85 + (ball.x - player.anchorX) * 0.22;
+    // Counter: attackers push channels fast after regain; midfield advances; back line holds.
+    const push = profile.attackPush * (0.85 + attAw * 0.45);
+    x = player.anchorX + attack * push * 0.95 + (ball.x - player.anchorX) * 0.28;
     // Hold channel width — ball pull was collapsing the team to ~20m.
     z = player.anchorZ * 0.7 + ball.z * 0.12 + sideSign * profile.channelZ * 0.48;
     if (profile.role === "W" || profile.role === "WM" || profile.role === "FB") {
-      z = sideSign * clamp(Math.abs(z), profile.channelZ * 0.88, HALF_WIDTH - 2.6);
+      z = sideSign * clamp(Math.abs(z), profile.channelZ * 0.94, HALF_WIDTH - 2.2);
+      // Burst up the channel immediately on turnover.
+      const burst = profile.role === "W" ? 16 : profile.role === "WM" ? 12 : 14;
+      x = ball.x + attack * burst * (0.55 + attAw * 0.35);
+      const minProg = profile.role === "FB" ? 0.52 : 0.58;
+      const minX = attack * (minProg * PITCH_LENGTH - HALF_LENGTH);
+      if ((minX - x) * attack > 0) x = minX;
+    }
+    if (profile.role === "CF" || profile.role === "AM") {
+      x = ball.x + attack * (profile.role === "CF" ? 12 : 9);
+      z = clamp(ball.z * 0.35 + player.anchorZ * 0.4, -12, 12);
     }
     if (profile.role === "CB" || profile.role === "DM") {
       x = player.anchorX + attack * (profile.role === "DM" ? 6 : 3.5) + (ball.x - player.anchorX) * 0.12;
     }
   } else if (phase === "chance") {
-    // Box / clear chance: CF crash, AM edge, wide stay available, defenders hold shape.
+    // Box / clear chance: CF crash, AM edge, wide stay available, FB join, defenders hold shape.
     if (profile.role === "CF" || profile.role === "AM") {
-      x = ball.x + attack * (profile.role === "CF" ? 4.5 : 2.5);
+      x = ball.x + attack * (profile.role === "CF" ? 5.5 : 3.2);
       z = clamp(ball.z * 0.55 + player.anchorZ * 0.25, -11, 11);
     } else if (profile.role === "W" || profile.role === "WM") {
-      x = ball.x + attack * 2;
-      z = sideSign * clamp(Math.max(Math.abs(ball.z), 10), 10, HALF_WIDTH - 3);
+      x = ball.x + attack * 2.5;
+      z = sideSign * clamp(Math.max(Math.abs(ball.z), 12), 12, HALF_WIDTH - 2.6);
+    } else if (profile.role === "FB") {
+      x = ball.x + attack * 1.5;
+      z = sideSign * clamp(Math.max(Math.abs(player.anchorZ), 20), 20, HALF_WIDTH - 2.4);
     } else {
       x = player.anchorX + attack * 4 + (ball.x - player.anchorX) * 0.15;
       z = player.anchorZ * 0.7 + ball.z * 0.2;
@@ -269,15 +300,67 @@ export function roleShapeTarget(
     x = player.anchorX + attack * push + (ball.x - player.anchorX) * (0.12 + attAw * 0.1);
     if (profile.channelZ > 0.5) {
       const channel = sideSign * profile.channelZ;
-      z = channel * 0.72 + player.anchorZ * 0.22 + ball.z * 0.08;
+      z = channel * 0.88 + player.anchorZ * 0.1 + ball.z * 0.02;
       // Wingers / FB stay high and wide; CF / AM stay more central.
       if (profile.role === "W" || profile.role === "WM" || profile.role === "FB") {
-        z = sideSign * clamp(Math.abs(z), profile.channelZ * 0.9, HALF_WIDTH - 2.6);
+        z = sideSign * clamp(Math.abs(z), profile.channelZ * 0.96, HALF_WIDTH - 2.0);
       } else if (profile.role === "CF" || profile.role === "AM") {
         z = clamp(ball.z * 0.28 + player.anchorZ * 0.48, -11, 11);
       }
     } else {
       z = player.anchorZ * 0.75 + ball.z * 0.14;
+    }
+    // Full-back overlap: track the ball into the final third, not just the formation anchor.
+    if (profile.role === "FB" && (phase === "attack" || phase === "build")) {
+      const sameSide = Math.sign(ball.z || 0.01) === sideSign || Math.abs(ball.z) < 16;
+      const roomAhead = (ball.x - player.x) * attack > -14;
+      const ballProg = clamp((ball.x * attack + HALF_LENGTH) / PITCH_LENGTH, 0, 1);
+      if (roomAhead) {
+        if (sameSide) {
+          const overlapLead = phase === "attack" ? 20 + attAw * 8 : 13 + attAw * 5;
+          x = ball.x + attack * overlapLead * (phase === "attack" ? 1 : 0.95);
+          const anchorPush = player.anchorX + attack * (profile.attackPush * (phase === "attack" ? 1.55 : 1.15));
+          if ((anchorPush - x) * attack > 0) x = x * 0.12 + anchorPush * 0.88;
+          // Past halfway: hard floor into the final third even in build.
+          const minProg =
+            phase === "attack" ? 0.86 : ballProg > 0.5 ? 0.78 : ballProg > 0.35 ? 0.7 : 0.6;
+          const minX = attack * (minProg * PITCH_LENGTH - HALF_LENGTH);
+          if ((minX - x) * attack > 0) x = minX;
+          if (ballProg > 0.28) {
+            const boxApproach = attack * (HALF_LENGTH - 7);
+            x = x * 0.22 + boxApproach * 0.45 + (ball.x + attack * 24) * 0.33;
+          }
+        } else {
+          // Weak-side FB steps up so overlaps aren't only same-flank samples.
+          const tuckProg = phase === "attack" ? 0.76 : ballProg > 0.45 ? 0.66 : 0.56;
+          const tuckX = attack * (tuckProg * PITCH_LENGTH - HALF_LENGTH);
+          if ((tuckX - x) * attack > 0) x = x * 0.18 + tuckX * 0.82;
+        }
+        z = sideSign * clamp(Math.max(Math.abs(z), profile.channelZ * 0.98), profile.channelZ * 0.94, HALF_WIDTH - 2.0);
+      }
+    }
+    // WM: hold height in the final third once the ball is past halfway.
+    if (profile.role === "WM" && (phase === "attack" || phase === "build")) {
+      const ballProg = clamp((ball.x * attack + HALF_LENGTH) / PITCH_LENGTH, 0, 1);
+      if (ballProg > 0.36) {
+        const minProg = phase === "attack" ? 0.7 : 0.58;
+        const minX = attack * (minProg * PITCH_LENGTH - HALF_LENGTH);
+        if ((minX - x) * attack > 0) x = x * 0.25 + minX * 0.75;
+        z = sideSign * clamp(Math.max(Math.abs(z), profile.channelZ * 0.95), 20, HALF_WIDTH - 2.2);
+      }
+    }
+    // CF / AM: pin a higher floor once the ball has crossed halfway.
+    if ((profile.role === "CF" || profile.role === "AM") && (phase === "attack" || phase === "build")) {
+      const ballProg = clamp((ball.x * attack + HALF_LENGTH) / PITCH_LENGTH, 0, 1);
+      if (ballProg > 0.34) {
+        const floorLead = profile.role === "CF" ? (phase === "attack" ? 11 : 7.5) : phase === "attack" ? 7 : 4;
+        const floor = ball.x + attack * floorLead;
+        x = x * 0.18 + floor * 0.82;
+        // Absolute height floor so CF doesn't live in the middle third.
+        const absMin = attack * ((phase === "attack" ? 0.8 : 0.68) * PITCH_LENGTH - HALF_LENGTH);
+        if ((absMin - x) * attack > 0) x = x * 0.12 + absMin * 0.88;
+        z = clamp(ball.z * 0.22 + player.anchorZ * 0.5, -10, 10);
+      }
     }
     // Build phase: CBs / DM stay deeper as recycle options.
     if (phase === "build" && (profile.role === "CB" || profile.role === "DM")) {
@@ -285,14 +368,29 @@ export function roleShapeTarget(
     }
   }
 
-  // Keep wide roles on their side of the pitch.
+  // Keep wide roles on their side of the pitch — never collapse inside ~20m.
   if (profile.channelZ >= 12 && Math.abs(player.anchorZ) > 6) {
-    z = clamp(z, sideSign * 5, sideSign * (HALF_WIDTH - 2.8));
+    const minWide = profile.role === "FB" || profile.role === "W" || profile.role === "WM" ? 20 : 8;
+    z = clamp(z, sideSign * minWide, sideSign * (HALF_WIDTH - 2.0));
   }
-  // CF depth is owned by SupportAI — don't push shape past a soft lead of the ball.
+  // CF soft ceiling — only curb extreme overruns past the ball; never undo the height floor.
   if (profile.role === "CF" && (phase === "build" || phase === "attack" || phase === "transition" || phase === "chance")) {
-    const softLead = ball.x + attack * (phase === "chance" ? 3.2 : 1.8);
+    const lead =
+      phase === "chance" ? 14 : phase === "attack" ? 16 : phase === "transition" ? 18 : 11;
+    const softLead = ball.x + attack * lead;
     if ((x - softLead) * attack > 0) x = softLead;
+    // Re-assert absolute attacking height after the ceiling so mid-third parking can't stick.
+    if (phase === "attack" || phase === "chance" || phase === "transition") {
+      const absMin = attack * ((phase === "chance" ? 0.84 : 0.78) * PITCH_LENGTH - HALF_LENGTH);
+      if ((absMin - x) * attack > 0) x = absMin;
+    } else if (phase === "build") {
+      const absMin = attack * (0.68 * PITCH_LENGTH - HALF_LENGTH);
+      if ((absMin - x) * attack > 0) x = x * 0.25 + absMin * 0.75;
+    }
+  }
+  if (profile.role === "AM" && (phase === "attack" || phase === "chance" || phase === "transition")) {
+    const absMin = attack * (0.68 * PITCH_LENGTH - HALF_LENGTH);
+    if ((absMin - x) * attack > 0) x = x * 0.35 + absMin * 0.65;
   }
   x = clamp(x, -HALF_LENGTH + 3.5, HALF_LENGTH - 3.5);
   const clamped = pitchClamp(x, z, 2.4);
@@ -336,7 +434,7 @@ export function roleOnBallBias(player: Player): {
     case "W":
       return { pass: 0.12, run: 0.08, through: 0.12, cross: 0.3, hold: -0.12, shot: 0.08, buildup: p.buildupBias };
     case "CF":
-      return { pass: 0.05, run: 0.22, through: 0.08, cross: -0.1, hold: -0.15, shot: 0.28, buildup: p.buildupBias };
+      return { pass: 0.14, run: 0.2, through: 0.08, cross: -0.1, hold: -0.04, shot: 0.26, buildup: p.buildupBias };
     default:
       return { pass: 0.1, run: 0, through: 0, cross: 0, hold: 0, shot: 0, buildup: 0.5 };
   }

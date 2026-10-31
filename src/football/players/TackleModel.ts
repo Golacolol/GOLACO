@@ -187,37 +187,39 @@ export function resolveTackle(ctx: TackleContext): TackleOutcome {
   const range = clamp(1.15 - Math.min(ctx.distance, ctx.ballDistance), 0, 1);
 
   // Catch the man before the ball from behind → foul territory.
-  if (!ctx.ballFirst && ctx.fromBehind > 0.42) {
+  // Kept deliberately rarer: box slides were flooding the match with penalties.
+  if (!ctx.ballFirst && ctx.fromBehind > 0.55) {
     const foulChance = clamp(
-      0.22 +
-        ctx.fromBehind * 0.48 +
-        speedFactor * 0.2 +
-        (1 - skill) * 0.32 -
-        (ctx.timed ? 0.1 : 0) +
-        boundedNoise(0.08),
-      0.08,
-      0.96,
+      0.06 +
+        ctx.fromBehind * 0.22 +
+        speedFactor * 0.08 +
+        (1 - skill) * 0.16 -
+        (ctx.timed ? 0.16 : 0) +
+        boundedNoise(0.05),
+      0.02,
+      0.55,
     );
-    if (Math.random() < foulChance || (ctx.throughOnGoal && Math.random() < foulChance + 0.18)) {
+    const throughBump = ctx.throughOnGoal ? 0.05 : 0;
+    if (Math.random() < foulChance + throughBump) {
       // DOGSO / extreme from-behind + poor timing → red; otherwise yellow or soft foul.
       const red =
-        ctx.throughOnGoal ||
-        (ctx.fromBehind > 0.78 && speedFactor > 0.75 && skill < 0.42 && foulChance > 0.7);
+        (ctx.throughOnGoal && ctx.fromBehind > 0.7 && speedFactor > 0.75) ||
+        (ctx.fromBehind > 0.85 && speedFactor > 0.8 && skill < 0.35 && foulChance > 0.48);
       if (red) return "RED_CARD";
-      if (foulChance > 0.42 || ctx.fromBehind > 0.52) return "YELLOW_CARD";
+      if (foulChance > 0.42 || ctx.fromBehind > 0.68) return "YELLOW_CARD";
       return "FOUL";
     }
   }
 
   // Sideways clip without ball contact → softer foul chance.
-  if (!ctx.ballFirst && ctx.distance < 0.95) {
+  if (!ctx.ballFirst && ctx.distance < 0.78) {
     const clipChance = clamp(
-      (1 - skill) * 0.42 + speedFactor * 0.18 + (1 - angle) * 0.14 + boundedNoise(0.06),
-      0.05,
-      0.85,
+      (1 - skill) * 0.2 + speedFactor * 0.08 + (1 - angle) * 0.08 + boundedNoise(0.04),
+      0.02,
+      0.4,
     );
-    if (Math.random() < clipChance * 0.55) return "YELLOW_CARD";
-    if (Math.random() < clipChance) return "FOUL";
+    if (Math.random() < clipChance * 0.32) return "YELLOW_CARD";
+    if (Math.random() < clipChance * 0.55) return "FOUL";
   }
 
   const timingQ = ctx.timingQuality ?? slideTimingQuality(Math.min(ctx.distance, ctx.ballDistance));
@@ -358,26 +360,26 @@ export function shouldAiSlideTackle(opts: {
   const timingQ = slideTimingQuality(opts.distance);
   if (timingQ < 0.28 && !opts.throughOnGoal) return no;
 
-  if (opts.fromBehind > 0.55 && !opts.throughOnGoal) return no;
-  if (opts.fromBehind > 0.7 && opts.throughOnGoal && stat01(opts.tackling) < 0.45 && rng() < 0.65) {
-    return no;
-  }
+  if (opts.fromBehind > 0.42 && !opts.throughOnGoal) return no;
+  // Through-on-goal: prefer a standing challenge — don't auto-slide every breakaway.
+  if (opts.throughOnGoal && opts.fromBehind > 0.45 && rng() < 0.85) return no;
+  if (opts.fromBehind > 0.62 && opts.throughOnGoal && rng() < 0.9) return no;
 
   let urge = 0;
-  if (opts.throughOnGoal && opts.distance < 4.2) {
-    urge = 0.42 + (1 - opts.distance / 4.2) * 0.28 + (1 - opts.fromBehind) * 0.08;
-    if (!defensiveRole) urge *= 0.72;
-  } else if (defensiveRole && opts.distance < 1.85 && opts.pressure > 0.62 && opts.possessionTime > 1.0) {
-    urge = 0.14 + opts.pressure * 0.12 + (1.85 - opts.distance) * 0.1 + aggression * 0.12;
+  if (opts.throughOnGoal && opts.distance < 2.8) {
+    urge = 0.14 + (1 - opts.distance / 2.8) * 0.12 + (1 - opts.fromBehind) * 0.05;
+    if (!defensiveRole) urge *= 0.4;
+  } else if (defensiveRole && opts.distance < 1.7 && opts.pressure > 0.68 && opts.possessionTime > 1.15) {
+    urge = 0.1 + opts.pressure * 0.08 + (1.7 - opts.distance) * 0.07 + aggression * 0.08;
   } else {
     return no;
   }
 
   // Tackling = technical willingness to complete; aggression = propensity to dive in.
-  urge *= 0.48 + stat01(opts.tackling) * 0.22 + aggression * 0.22;
-  urge *= 0.7 + timingQ * 0.45;
-  if (opts.fromBehind > 0.5) urge *= 0.45;
-  if (rng() > clamp(urge, 0, 0.78)) return no;
+  urge *= 0.38 + stat01(opts.tackling) * 0.18 + aggression * 0.14;
+  urge *= 0.6 + timingQ * 0.35;
+  if (opts.fromBehind > 0.4) urge *= 0.28;
+  if (rng() > clamp(urge, 0, 0.42)) return no;
   return { attempt: true, forBall: false };
 }
 

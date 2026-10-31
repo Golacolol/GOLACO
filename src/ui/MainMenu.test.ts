@@ -157,7 +157,7 @@ describe("MainMenu LEAGUE mode button", () => {
     const fields = [...teamSelect!.querySelectorAll(".team-dial-field")];
     expect(fields).toHaveLength(2);
     expect(fields[0]?.querySelector(".team-dial-label")?.textContent).toBe("League");
-    expect(fields[1]?.querySelector(".team-dial-label")?.textContent).toBe("Team");
+    expect(fields[1]?.querySelector(".team-dial-label")?.textContent).toBe("Club");
     const dials = [...teamSelect!.querySelectorAll(".time-spin")];
     expect(dials[0]?.hasAttribute("data-league-spin")).toBe(true);
     expect(dials[1]?.hasAttribute("data-team-spin")).toBe(true);
@@ -236,7 +236,8 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(teamSelect.querySelector(".team-dials")?.classList.contains("has-era")).toBe(true);
     const fields = [...teamSelect.querySelectorAll(".team-dial-field")];
     expect(fields).toHaveLength(3);
-    expect(fields[2]?.querySelector(".team-dial-label")?.textContent).toBe("Era");
+    expect(fields[1]?.querySelector(".team-dial-label")?.textContent).toBe("Club");
+    expect(fields[2]?.querySelector(".team-dial-label")?.textContent).toBe("Team");
     expect(menu.root.querySelector("[data-team-spin] strong")?.textContent).toBe("Chelsea");
     expect(menu.root.querySelector("[data-era-spin] strong")?.textContent).toBe("04-05");
     expect(menu.root.querySelector("[data-team-spin]")?.textContent).not.toContain("Mourinho");

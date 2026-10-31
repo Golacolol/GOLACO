@@ -37,8 +37,10 @@ export interface KeeperTargetOpts {
 
 /** Dive stretch in metres from diving / reflexes (SWOS-style reach table). */
 export function keeperDiveReach(diving: number, reflexes: number, diveReachMul = 1): number {
-  const base = diving * 1.55 + reflexes * 0.72 + diving * reflexes * 0.35;
-  return base * clamp(diveReachMul, 0.7, 1.45);
+  // Elite keepers stretch further — cubic-ish bonus so 80+ gloves pull clear of average.
+  const elite = Math.max(0, (diving + reflexes) * 0.5 - 0.62);
+  const base = diving * 1.72 + reflexes * 0.95 + diving * reflexes * 0.55 + elite * elite * 2.4;
+  return base * clamp(diveReachMul, 0.7, 1.55);
 }
 
 /**
@@ -65,17 +67,19 @@ export function keeperSaveKind(
   const diveReach = keeperDiveReach(diving, reflexes, extras?.diveReachMul ?? 1);
 
   // Speed ceilings — above these the gloves can't smother cleanly.
-  const parryHot = (16.8 - reflexes * 2.4) / holdBias;
-  const parryFirm = (13.2 - reflexes * 1.7) / holdBias;
+  // High reflexes push the hold window up so top keepers gather more firmly.
+  const parryHot = (17.6 - reflexes * 3.4) / holdBias;
+  const parryFirm = (13.8 - reflexes * 2.4) / holdBias;
   if (speed >= parryHot) return "parry";
   if (speed >= parryFirm && !inSix) return "parry";
   // High balls need diving reach; short keepers punch more.
   if (ballY > 2.15 && speed > 8.5 && diving < 0.7 / holdBias) return "parry";
   if (ballY > 2.45 && dist > 0.85 + diveReach * 0.25) return "parry";
 
-  const holdDist = (inSix ? 1.85 + diving * 0.5 : 1.5 + diving * 0.55) * (0.92 + holdBias * 0.08);
-  const holdSpeedSix = (8.0 + handling * 5.2 + reflexes * 1.6) * holdBias;
-  const holdSpeedBox = (9.6 + handling * 4.2 + reflexes * 1.9) * holdBias;
+  const holdDist = (inSix ? 1.95 + diving * 0.55 : 1.6 + diving * 0.62) * (0.92 + holdBias * 0.08);
+  // holdBiasMul still decides tip-vs-claim on mid-pace shots; reflexes expand the firm window.
+  const holdSpeedSix = (7.5 + handling * 5.0 + reflexes * 2.15) * holdBias;
+  const holdSpeedBox = (9.0 + handling * 4.2 + reflexes * 2.35) * holdBias;
   if (inSix && speed < holdSpeedSix && dist < holdDist) return "hold";
   if (!inSix && speed < holdSpeedBox && dist < holdDist) return "hold";
   // Stretched dive at the limit of reach → tip over the bar / wide rather than claim.
@@ -146,10 +150,13 @@ export function goalkeeperTarget(gk: Player, ball: Ball, reactionMul = 1, opts?:
 
   // Penalty / spot: plant on the line. Only shuffle laterally once the shot is live.
   if (opts?.holdLine) {
-    const look = shotComing ? clamp((0.14 + speed * 0.004) * reactionMul, 0.12, 0.38) : 0;
+    const look = shotComing
+      ? clamp((0.12 + speed * 0.004 + reflexes * 0.12) * reactionMul, 0.12, 0.42)
+      : 0;
+    const diveLead = shotComing ? reflexes * 0.35 : 0;
     return {
       x: goalX + gk.attackSign * 0.55,
-      z: clamp(ball.z + ball.vz * look, -GOAL_WIDTH / 2 + 0.2, GOAL_WIDTH / 2 - 0.2),
+      z: clamp(ball.z + ball.vz * (look + diveLead), -GOAL_WIDTH / 2 + 0.15, GOAL_WIDTH / 2 - 0.15),
       rush: false,
     };
   }
@@ -392,6 +399,7 @@ export function decideKeeperDistribution(opts: {
 export function parryBall(gk: Player, ball: Ball): void {
   const speed = Math.max(8, Math.hypot(ball.vx, ball.vz));
   const away = gk.attackSign;
+  const reflexes = (gk.attrs.gkReflexes ?? gk.attrs.composure) / 100;
   // Parry wide of the goal, not straight into the corridor of the pitch.
   const side = Math.abs(ball.z) > 1.2 ? Math.sign(ball.z) : Math.random() > 0.5 ? 1 : -1;
   ball.vx = away * speed * (0.28 + Math.random() * 0.18);
@@ -400,9 +408,10 @@ export function parryBall(gk: Player, ball: Ball): void {
   ball.ownerId = null;
   ball.lastTouchId = gk.id;
   ball.lastTouchSide = gk.side;
-  gk.kickTimer = 0.55;
+  // Better reflexes recover faster for a second save on the rebound.
+  gk.kickTimer = clamp(0.48 - reflexes * 0.28, 0.14, 0.48);
   gk.handRelease = false;
-  startDive(gk, side, DIVE_DURATION_FULL * 0.92);
+  startDive(gk, side, DIVE_DURATION_FULL * (0.78 + (1 - reflexes) * 0.2));
 }
 
 export function updateGoalkeeper(
@@ -413,7 +422,12 @@ export function updateGoalkeeper(
   opts?: KeeperTargetOpts,
 ): "hold" | "parry" | null {
   if (gk.hasBall || ball.ownerId === gk.id) return null;
-  if (ball.lastTouchId === gk.id && (gk.kickTimer > 0 || Math.hypot(ball.vx, ball.vz) > 2.4)) return null;
+  const reflexesPre = (gk.attrs.gkReflexes ?? gk.attrs.composure) / 100;
+  // Own parry rebound: elite keepers stay live; average gloves need a beat to recover.
+  const reboundLock =
+    ball.lastTouchId === gk.id &&
+    (gk.kickTimer > 0 || (Math.hypot(ball.vx, ball.vz) > 3.2 + reflexesPre * 2.4 && reflexesPre < 0.72));
+  if (reboundLock) return null;
 
   const aim = goalkeeperTarget(gk, ball, reactionMul, opts);
   const distTarget = gk.distTo(aim.x, aim.z);
@@ -426,9 +440,10 @@ export function updateGoalkeeper(
   const allowSprint =
     !holdPlant &&
     (aim.rush || distTarget > 2.4 || lateralGap > 1.15 || (loose && inBoxEarly && distTarget > 1.4));
+  const reactBoost = 1 + reflexesPre * 0.18;
   const moveEx = {
-    speedMul: allowSprint ? 1.14 : 1.06,
-    accelMul: allowSprint ? 1.28 : 1.12,
+    speedMul: (allowSprint ? 1.14 : 1.06) * reactBoost,
+    accelMul: (allowSprint ? 1.28 : 1.12) * (1 + reflexesPre * 0.22),
   };
   if (aim.rush && loose && inBoxEarly && !holdPlant) {
     // Commit onto the ball itself when claiming, not only the cover spot.
@@ -444,10 +459,11 @@ export function updateGoalkeeper(
   }
 
   const handling = (gk.attrs.gkHandling ?? gk.attrs.composure) / 100;
-  const reflexes = (gk.attrs.gkReflexes ?? gk.attrs.composure) / 100;
+  const reflexes = reflexesPre;
   const diving = (gk.attrs.gkDiving ?? gk.attrs.jumping ?? 62) / 100;
   const speed = Math.hypot(ball.vx, ball.vz);
-  const look = clamp((0.08 + (1 - reflexes) * 0.08) * reactionMul, 0.06, 0.26);
+  // Snappy contact prediction — high reflexes read the ball earlier and close sooner.
+  const look = clamp((0.1 + reflexes * 0.06 + (1 - reflexes) * 0.04) * reactionMul, 0.07, 0.3);
   const predX = ball.x + ball.vx * look;
   const predZ = ball.z + ball.vz * look;
   const dist = Math.min(gk.distTo(ball.x, ball.z), gk.distTo(predX, predZ));
@@ -468,19 +484,20 @@ export function updateGoalkeeper(
         ? 2.65
         : 2.25
       : speed > 15
-        ? 1.28
+        ? 1.35
         : speed > 11
-          ? 1.55
+          ? 1.62
           : inSix
-            ? 2.25
+            ? 2.35
             : inBox
-              ? 1.9
-              : 1.4) +
-    handling * 0.48 +
-    (shotThreat ? diveReach * 0.7 : diveReach * 0.28) +
+              ? 2.0
+              : 1.45) +
+    handling * 0.55 +
+    reflexes * 0.22 +
+    (shotThreat ? diveReach * 0.82 : diveReach * 0.32) +
     (aim.rush ? 0.35 : 0);
   if (!inBox && dist > 1.55 + diveReach * 0.3) return null;
-  const maxY = softClaim ? 2.35 + diving * 0.45 : 2.95 + diving * 0.4 + handling * 0.25;
+  const maxY = softClaim ? 2.35 + diving * 0.45 : 2.95 + diving * 0.4 + handling * 0.25 + reflexes * 0.15;
   if (dist > catchRange || ball.y > maxY) return null;
 
   const canSmother = loose || ball.lastTouchSide !== gk.side || speed > 3.5;
@@ -488,10 +505,10 @@ export function updateGoalkeeper(
 
   // Dive laterally toward the flight when the ball is outside the body.
   const lateral = predZ - gk.z;
-  if (shotThreat && Math.abs(lateral) > 0.45) {
-    const step = Math.min(Math.abs(lateral), diveReach * 0.62) * Math.sign(lateral);
-    gk.z += step * clamp(0.6 + diving * 0.42, 0.55, 1);
-    startDive(gk, Math.sign(lateral) || 1, DIVE_DURATION_FULL * (0.85 + diving * 0.2));
+  if (shotThreat && Math.abs(lateral) > 0.35) {
+    const step = Math.min(Math.abs(lateral), diveReach * (0.68 + reflexes * 0.18)) * Math.sign(lateral);
+    gk.z += step * clamp(0.62 + diving * 0.38 + reflexes * 0.22, 0.55, 1.15);
+    startDive(gk, Math.sign(lateral) || 1, DIVE_DURATION_FULL * (0.78 + diving * 0.16 + reflexes * 0.08));
   }
 
   const punch = preferKeeperPunch({

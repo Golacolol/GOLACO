@@ -51,14 +51,20 @@ export function resolveGroundDuel(
   ball: Ball,
   rng: () => number = Math.random,
   upsetMul = 1,
+  opts?: { favorSide?: "home" | "away" | null; favorBonus?: number },
 ): { winner: Player; contested: boolean; margin: number } | null {
   if (!challengers.length) return null;
   if (challengers.length === 1) {
     return { winner: challengers[0]!, contested: false, margin: 1.5 };
   }
 
+  const favorSide = opts?.favorSide ?? null;
+  const favorBonus = opts?.favorBonus ?? 0;
   const ranked = challengers
-    .map((p) => ({ p, w: groundContestWeight(p, ball) }))
+    .map((p) => ({
+      p,
+      w: groundContestWeight(p, ball) + (favorSide && p.side === favorSide ? favorBonus : 0),
+    }))
     .sort((a, b) => b.w - a.w);
 
   const sides = new Set(challengers.map((c) => c.side));

@@ -40,9 +40,9 @@ export function canShoot(
 ): boolean {
   const goalX = carrier.oppGoalX();
   const dist = carrier.distTo(goalX, 0);
-  const maxDist = opts?.maxDist ?? 14;
-  if (dist > maxDist || Math.abs(carrier.z) > 10) return false;
-  return passingLaneQuality(carrier, goalX, 0, opponents) >= (opts?.minLane ?? 0.52);
+  const maxDist = opts?.maxDist ?? 16;
+  if (dist > maxDist || Math.abs(carrier.z) > 12) return false;
+  return passingLaneQuality(carrier, goalX, 0, opponents) >= (opts?.minLane ?? 0.45);
 }
 
 /** Best pass-safe teammate for a type, or null (hard filter before soft scores). */
@@ -79,10 +79,12 @@ export function layoffOptionBonus(
     mate.position === "CM" ||
     mate.position === "AM" ||
     mate.position === "DM";
-  if (!mateMid) return 0;
-  if (distance > 16 || distance < 3.5) return 0;
-  if (forward > 5 || width > 14) return 0;
-  return clamp(0.72 - distance * 0.02 + (forward < 0 ? 0.12 : 0), 0.2, 0.85);
+  const mateFb = mate.slot === "LB" || mate.slot === "RB" || mate.slot === "LWB" || mate.slot === "RWB";
+  if (!mateMid && !mateFb) return 0;
+  if (distance > 18 || distance < 3.2) return 0;
+  if (forward > 6 || width > (mateFb ? 18 : 14)) return 0;
+  const base = mateFb ? 0.55 : 0.78;
+  return clamp(base - distance * 0.018 + (forward < 0 ? 0.16 : 0.04), 0.22, 0.92);
 }
 
 export function ownGoalX(side: "home" | "away", endsFlipped = false): number {
@@ -306,8 +308,9 @@ export function choosePassTarget(
             ? -0.45
             : 0.04
       : 0;
-    // Discourage passes into the corner / byline pocket — keep play circulating.
-    const cornerDump = Math.abs(mate.z) > 20 || (Math.abs(mate.z) > 17 && Math.abs(mate.x) > HALF_LENGTH - 18);
+    // Discourage true corner dumps (wide + deep byline), not a stretch full-back outlet.
+    const cornerDump =
+      Math.abs(mate.z) > 22 && Math.abs(mate.x) > HALF_LENGTH - 16;
     const flatSwitch = isFlatCrossFieldPass(passer, mate.x, mate.z);
     // Progressive diagonal switch (ahead + width) can still beat a dead end — flat ones cannot.
     const progressiveSwitch = flatSwitch && forward >= 8 && width < 26;
@@ -340,10 +343,29 @@ export function choosePassTarget(
       (crossFieldSpam ? (passType === "short" ? -1.35 : -1.95) : 0) +
       (flatSwitch ? (progressiveSwitch ? -0.85 : passType === "short" ? -1.75 : -2.3) : 0) +
       (oppositeWing && forward < 12 ? -0.95 : 0) +
-      (width > 14 && forward < 5 ? -1.15 : 0) +
+      (width > 14 && forward < 5 && !(role === "wide" && !oppositeWing && Math.abs(mate.z) > 16) ? -1.15 : 0) +
+      // Same-side wide stretch (RB/LB/W available for a switch-out lane).
+      (role === "wide" && !oppositeWing && passType === "short" && Math.abs(mate.z) > 16 && width > 8 && forward > -3 && forward < 12
+        ? 0.38 + clamp((Math.abs(mate.z) - 16) / 12, 0, 0.22)
+        : 0) +
+      // Early ball into an overlapping full-back (ahead + wide).
+      ((mate.slot === "LB" || mate.slot === "RB" || mate.slot === "LWB" || mate.slot === "RWB") &&
+      !oppositeWing &&
+      (passType === "short" || passType === "through") &&
+      Math.abs(mate.z) > 11 &&
+      forward > 0 &&
+      forward < 28 &&
+      laneClear > 0.3
+        ? 0.88 +
+          clamp(forward / 14, 0, 0.42) +
+          (Math.abs(mate.z) > 20 ? 0.24 : 0) +
+          (passType === "through" ? 0.18 : 0) +
+          // Reward FBs who have already joined the final third.
+          (Math.abs(mate.x) > HALF_LENGTH * 0.45 ? 0.22 : 0)
+        : 0) +
       (tightPingPong ? -0.85 : 0) +
       (acrossOwn ? -1.55 : acrossBox ? -1.35 : 0) +
-      (cornerDump ? (passType === "short" ? -0.42 : -0.75) : 0) +
+      (cornerDump ? (passType === "short" ? -0.28 : -0.65) : 0) +
       // Low-pressure backwards / lateral dumps are not "safe football".
       (forward < -3 && !buildup ? -0.65 : forward < -3 && buildup ? -0.35 : 0) +
       (passType === "short" && forward < 1 && width > 10 ? -0.55 : 0) +

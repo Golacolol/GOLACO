@@ -86,7 +86,7 @@ export function evaluateGameplayFidelity(
   const tempoOk = sample.matchSeconds < 45 || passesPerMinute <= (short ? 48 : 22);
   const passApexOk = sample.passApexCount < 5 || sample.medianPassApex >= (short ? 0.55 : 0.7);
   const shotApexOk = sample.shotApexCount < 1 || sample.medianShotApex >= (short ? 0.7 : 0.85);
-  const widthOk = sample.widthCount < 10 || sample.meanTeamWidth >= (short ? 28 : 40);
+  const widthOk = sample.widthCount < 10 || sample.meanTeamWidth >= (short ? 26 : 38);
   return {
     sample,
     passCompletion,

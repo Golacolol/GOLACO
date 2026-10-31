@@ -8,6 +8,7 @@ import { hudFocusPlayers } from "./HudFocus";
 import type { KeyBindings } from "../controls/KeyBindings";
 import { HUD_CARD_RAISE_MS, hudSheetFading, hudSheetShowing } from "./HudCardRaise";
 import { subAnnounceFading, type SubAnnouncement } from "../Substitution";
+import { profileStatsBlock } from "../../ui/ProfileHex";
 
 export class MatchHUD {
   readonly root: HTMLElement;
@@ -59,14 +60,16 @@ export class MatchHUD {
       <div class="hud-auto" hidden></div>
       <div class="hud-toast hud-auto" hidden></div>
       <div class="hud-ft" hidden>FULL TIME</div>
-      <div class="hud-slot hud-home-slot">
-        <div class="hud-player-sheet" data-sheet="home" hidden></div>
-        <div class="hud-card hud-home-card" data-kind="home" hidden></div>
-      </div>
-      <div class="radar" id="radar-wrap"><canvas id="radar-canvas" width="160" height="104"></canvas></div>
-      <div class="hud-slot hud-opp-slot">
-        <div class="hud-player-sheet" data-sheet="away" hidden></div>
-        <div class="hud-card hud-opp-card" data-kind="away" hidden></div>
+      <div class="hud-bottom">
+        <div class="hud-slot hud-home-slot">
+          <div class="hud-player-sheet" data-sheet="home" hidden></div>
+          <div class="hud-card hud-home-card" data-kind="home" hidden></div>
+        </div>
+        <div class="radar" id="radar-wrap"><canvas id="radar-canvas" width="160" height="104"></canvas></div>
+        <div class="hud-slot hud-opp-slot">
+          <div class="hud-player-sheet" data-sheet="away" hidden></div>
+          <div class="hud-card hud-opp-card" data-kind="away" hidden></div>
+        </div>
       </div>
       <div class="hud-shot" hidden>SHOT TARGET</div>
       <div class="spot-hud" hidden>
@@ -155,7 +158,9 @@ export class MatchHUD {
     if (isRestartState(match.state) && match.practice !== "spot") banner = restartLabel(match.state);
     else if (match.state === FootballState.FREE_KICK) banner = "FREE KICK";
     else if (match.state === FootballState.PENALTY) banner = "PENALTY";
-    else if (autoplay && match.state !== FootballState.HALF_TIME && match.state !== FootballState.FULL_TIME) {
+    else if (match.state === FootballState.GOAL_CELEBRATION) {
+      banner = autoplay ? "GOAL!" : "GOAL!  ·  Enter / Space to continue";
+    } else if (autoplay && match.state !== FootballState.HALF_TIME && match.state !== FootballState.FULL_TIME) {
       banner = this.root.parentElement?.querySelector(".attract-banner") ? "" : "AUTO PLAY";
     }
     this.bannerEl.hidden = !banner;
@@ -290,10 +295,7 @@ export class MatchHUD {
       <div class="sheet-num">#${player.shirtNumber}</div>
       <div class="sheet-name">${escapeHtml(player.displayName.toUpperCase())}</div>
       <div class="sheet-meta">${team.record.abbreviation} · ${player.position} · OVR ${player.overall}</div>
-      <div class="char-stats">
-        ${stat("PACE", a.pace)}${stat("PASSING", a.passing)}${stat("CONTROL", a.control)}
-        ${stat("SHOOTING", a.shooting)}${stat("DEFENDING", a.defending)}${stat("STAMINA", a.stamina)}
-      </div>
+      ${profileStatsBlock(a, { compact: true, mode: "hex", size: 112 })}
     `;
   }
 
@@ -324,10 +326,6 @@ export class MatchHUD {
   dispose(): void {
     this.root.remove();
   }
-}
-
-function stat(label: string, value: number): string {
-  return `<div><span>${label}</span><b>${value}</b><i style="width:${value}%"></i></div>`;
 }
 
 function escapeHtml(s: string): string {

@@ -9,6 +9,8 @@ export type AppEventMap = {
   HALF_TIME: Record<string, never>;
   FULL_TIME: { home: number; away: number };
   SUBSTITUTION: { outId: string; inId: string };
+  /** Short referee blast — fouls, goals, restarts, kick-off. */
+  REFEREE_WHISTLE: { reason: "foul" | "goal" | "restart" | "kickoff" | "half" | "full" };
   STATE_CHANGED: { from: string; to: string };
   PLAYER_SELECTED: { playerId: string };
   INPUT: { kind: string };

@@ -352,6 +352,85 @@ function attr(source: PlayerAttributes, key: keyof PlayerAttributes): number {
   return 60;
 }
 
+/** Six display axes for the formation hex / comparison chart (not gameplay multipliers). */
+export const PROFILE_AXIS_IDS = ["attack", "defence", "passing", "fitness", "mental", "technique"] as const;
+export type ProfileAxisId = (typeof PROFILE_AXIS_IDS)[number];
+
+export const PROFILE_AXIS_LABELS: Record<ProfileAxisId, string> = {
+  attack: "Attack",
+  defence: "Defence",
+  passing: "Passing",
+  fitness: "Fitness",
+  mental: "Mental",
+  technique: "Technique",
+};
+
+export type ProfileAxes = Record<ProfileAxisId, number>;
+
+function weightedMean(attrs: PlayerAttributes, parts: { key: keyof PlayerAttributes; w: number }[]): number {
+  let sum = 0;
+  let total = 0;
+  for (const { key, w } of parts) {
+    sum += attr(attrs, key) * w;
+    total += w;
+  }
+  return Math.round(clamp(sum / Math.max(1e-6, total), 1, 100));
+}
+
+/**
+ * Six overalls from accumulated attrs — Attack / Defence / Passing / Fitness / Mental / Technique.
+ * Technique = on-the-ball craft (control, dribble, first-touch feel). Display only.
+ */
+export function deriveProfileAxes(attrs: PlayerAttributes): ProfileAxes {
+  return {
+    attack: weightedMean(attrs, [
+      { key: "finishing", w: 0.22 },
+      { key: "shooting", w: 0.18 },
+      { key: "shotPower", w: 0.14 },
+      { key: "longShots", w: 0.14 },
+      { key: "heading", w: 0.12 },
+      { key: "attackingAwareness", w: 0.12 },
+      { key: "penalties", w: 0.08 },
+    ]),
+    defence: weightedMean(attrs, [
+      { key: "defending", w: 0.28 },
+      { key: "defensiveAwareness", w: 0.24 },
+      { key: "tackling", w: 0.22 },
+      { key: "aggression", w: 0.14 },
+      { key: "strength", w: 0.12 },
+    ]),
+    passing: weightedMean(attrs, [
+      { key: "passing", w: 0.32 },
+      { key: "longPassing", w: 0.22 },
+      { key: "vision", w: 0.22 },
+      { key: "crossing", w: 0.16 },
+      { key: "setPieces", w: 0.08 },
+    ]),
+    fitness: weightedMean(attrs, [
+      { key: "pace", w: 0.24 },
+      { key: "acceleration", w: 0.16 },
+      { key: "stamina", w: 0.24 },
+      { key: "strength", w: 0.16 },
+      { key: "agility", w: 0.1 },
+      { key: "jumping", w: 0.1 },
+    ]),
+    mental: weightedMean(attrs, [
+      { key: "composure", w: 0.34 },
+      { key: "reactions", w: 0.22 },
+      { key: "vision", w: 0.16 },
+      { key: "attackingAwareness", w: 0.14 },
+      { key: "defensiveAwareness", w: 0.14 },
+    ]),
+    technique: weightedMean(attrs, [
+      { key: "control", w: 0.32 },
+      { key: "dribbling", w: 0.28 },
+      { key: "balance", w: 0.14 },
+      { key: "agility", w: 0.14 },
+      { key: "setPieces", w: 0.12 },
+    ]),
+  };
+}
+
 /**
  * Display/summary overall only — NEVER multiply into gameplay systems.
  */

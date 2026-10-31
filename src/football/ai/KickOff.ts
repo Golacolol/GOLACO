@@ -73,6 +73,8 @@ export function applyKickOffShape(players: Player[], kicking: boolean): void {
   }
 }
 
-export const USER_CELEBRATION_MAX = 10;
-export const AI_CELEBRATION_SECONDS = 5.6;
+/** User goals: long window — skip (Enter/Space) ends early; timer is a safety cap. */
+export const USER_CELEBRATION_MAX = 22;
+/** AI / autoplay goals: enough time for a full routine before kick-off. */
+export const AI_CELEBRATION_SECONDS = 11;
 export const KICK_OFF_PASS_DELAY = 0.55;

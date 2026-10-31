@@ -11,6 +11,7 @@ import {
 } from "./MatchBrain";
 import { updateTeamAI } from "./TeamAI";
 import { decideAttack } from "./AttackingDecision";
+import { supportTarget } from "./SupportAI";
 import { REAL_TUNING } from "../gameplay/GameplayTuning";
 
 const attrs: PlayerAttributes = {
@@ -85,7 +86,70 @@ describe("MatchBrain position model", () => {
     const rb = make("rb", -16, 18, "RB");
     const t = roleShapeTarget(rb, ball, "home");
     expect(t.role).toBe("FB");
-    expect(t.z).toBeGreaterThan(8);
+    expect(t.z).toBeGreaterThan(18);
+  });
+
+  it("pushes the overlapping full-back upfield when the channel is free", () => {
+    const ball = new Ball();
+    ball.x = 12;
+    ball.z = 6;
+    const rb = make("rb", -8, 20, "RB");
+    const t = roleShapeTarget(rb, ball, "home");
+    expect(t.role).toBe("FB");
+    expect(t.phase).toBe("attack");
+    expect(t.z).toBeGreaterThan(22);
+    expect(t.x).toBeGreaterThan(rb.anchorX + 4);
+  });
+
+  it("stretches the right-back wide as a pass outlet in support", () => {
+    const carrier = make("cm", 0, 0, "LCM");
+    const rb = make("rb", -10, 18, "RB");
+    rb.anchorX = -10;
+    rb.anchorZ = 20;
+    const spot = supportTarget(rb, 0, 2, carrier, [carrier, rb], [], "build");
+    expect(spot.role === "WIDE_OUTLET" || spot.role === "OVERLAP").toBe(true);
+    expect(Math.abs(spot.z)).toBeGreaterThan(22);
+  });
+
+  it("shows the striker to feet for a lay-off in build-up", () => {
+    const carrier = make("cm", 8, 0, "LCM");
+    const st = make("st", 18, 2, "RST");
+    st.anchorX = 22;
+    st.anchorZ = 2;
+    const spot = supportTarget(st, 8, 0, carrier, [carrier, st], [], "build");
+    expect(
+      spot.role === "CHECK_TO_BALL" ||
+        spot.role === "SUPPORT_SIDE" ||
+        spot.role === "FORWARD_RUN" ||
+        spot.role === "EDGE_OF_BOX",
+    ).toBe(true);
+    // Meet around halfway — don't collapse onto a deep carrier.
+    expect(spot.x).toBeGreaterThan(-5);
+  });
+
+  it("drops wingers into a mid-block when defending", () => {
+    const ball = new Ball();
+    ball.x = -10;
+    ball.z = 8;
+    const rw = make("rw", 25, 22, "RW");
+    rw.anchorX = 18;
+    rw.anchorZ = 24;
+    const t = roleShapeTarget(rw, ball, "away");
+    expect(t.phase).toBe("defend");
+    expect(t.x).toBeLessThan(12);
+    expect(Math.abs(t.z)).toBeGreaterThan(12);
+  });
+
+  it("stretches the CF higher once the attack crosses halfway", () => {
+    const ball = new Ball();
+    ball.x = 18;
+    ball.z = 0;
+    const st = make("st", 10, 2, "RST");
+    st.anchorX = 12;
+    st.anchorZ = 2;
+    const t = roleShapeTarget(st, ball, "home");
+    expect(t.phase).toBe("attack");
+    expect(t.x).toBeGreaterThan(ball.x);
   });
 
   it("gives CBs pass/buildup bias and CFs shot/run bias", () => {

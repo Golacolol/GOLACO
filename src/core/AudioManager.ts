@@ -1,4 +1,7 @@
 const STADIUM_SRC = `${import.meta.env.BASE_URL}audio/stadium.mp3`;
+const WHISTLE_SRC = `${import.meta.env.BASE_URL}audio/whistle.mp3`;
+/** Quiet under the stadium bed — short single blow, not a blast. */
+const WHISTLE_VOL = 0.16;
 
 export class AudioManager {
   private ctx: AudioContext | null = null;
@@ -7,6 +10,7 @@ export class AudioManager {
   private away: GainNode | null = null;
   private stadium: HTMLAudioElement | null = null;
   private stadiumReady: Promise<void> | null = null;
+  private whistleEl: HTMLAudioElement | null = null;
   private fadeToken = 0;
   /** True while a match session wants a stadium bed (even if currently paused/silent). */
   private matchAmbienceActive = false;
@@ -168,7 +172,27 @@ export class AudioManager {
 
   whistle(): void {
     if (!this.enabled) return;
-    this.blip(1400, 0.35, 0.12);
+    this.ensureContext();
+    const el = this.ensureWhistle();
+    el.volume = WHISTLE_VOL * this.volume;
+    try {
+      el.currentTime = 0;
+    } catch {
+      /* ignore seek race */
+    }
+    void el.play().catch(() => {
+      // Fallback soft chirp if the sample can't start (autoplay / missing file).
+      this.blip(1400, 0.22, 0.05);
+    });
+  }
+
+  private ensureWhistle(): HTMLAudioElement {
+    if (this.whistleEl) return this.whistleEl;
+    const el = new Audio(WHISTLE_SRC);
+    el.preload = "auto";
+    el.volume = WHISTLE_VOL;
+    this.whistleEl = el;
+    return el;
   }
 
   goal(section: "HOME" | "AWAY"): void {

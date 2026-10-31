@@ -75,3 +75,31 @@ export function cyclePlayer(players: Player[], side: Side, current: Player, ball
   const idx = pool.findIndex((p) => p.id === current.id);
   return pool[(idx + 1) % pool.length] ?? current;
 }
+
+/**
+ * Free-kick / penalty taker: set-piece tech + shooting, with a soft distance cost
+ * so the specialist walks over instead of the nearest midfielder dumping a pass.
+ */
+export function selectSetPieceTaker(
+  players: Player[],
+  side: Side,
+  ballX: number,
+  ballZ: number,
+): Player {
+  const pool = players.filter((p) => p.side === side && !p.isGK && !p.sentOff && !p.celebrating);
+  if (!pool.length) return autoSelectPlayer(players, side, ballX, ballZ);
+  let best = pool[0]!;
+  let bestScore = -Infinity;
+  for (const p of pool) {
+    const set = p.attrs.setPieces ?? p.attrs.finishing;
+    const shoot =
+      (p.attrs.longShots + p.attrs.finishing + p.attrs.shotPower + (p.attrs.shooting ?? 60)) / 4;
+    const dist = p.distTo(ballX, ballZ);
+    const score = set * 1.35 + shoot * 0.55 - dist * 0.48 + (p.slot.includes("ST") || p.slot === "CAM" ? 4 : 0);
+    if (score > bestScore) {
+      bestScore = score;
+      best = p;
+    }
+  }
+  return best;
+}

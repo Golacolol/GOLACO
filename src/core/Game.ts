@@ -22,6 +22,7 @@ import { UnitLines, type UnitLineSettings } from "../football/ui/UnitLines";
 import { resolveMatchKits } from "../football/teams/KitClash";
 import { Stadium } from "../football/stadium/Stadium";
 import { createPlayerVisual } from "../football/players/PlayerVisual";
+import { DEFAULT_PLAYER_MODEL, preloadPlayerModels } from "../football/players/PlayerModelLoader";
 import { Player } from "../football/players/Player";
 import { applyClubNameAppearance, applyTitleFont } from "../ui/TitleFonts";
 import { MainMenu } from "../ui/MainMenu";
@@ -129,6 +130,8 @@ export class Game {
 
   async start(): Promise<void> {
     this.db = await GameDatabase.load(this.save);
+    // Shared skinned humanoid — procedural mannequin remains the fallback if this fails.
+    await preloadPlayerModels([DEFAULT_PLAYER_MODEL]);
     this.menu = new MainMenu(this.ui);
     this.menu.onHalf = (seconds) => this.setMenuHalfLength(seconds);
     this.menu.onClubChange = (teamId) => this.setDefaultClub(teamId);
@@ -191,9 +194,18 @@ export class Game {
         e.preventDefault();
       }
     });
-    this.events.on("GOAL", (e) => this.audio.goal(e.scoringTeam === "home" ? "HOME" : "AWAY"));
+    this.events.on("GOAL", (e) => {
+      this.audio.whistle();
+      this.audio.goal(e.scoringTeam === "home" ? "HOME" : "AWAY");
+    });
     this.events.on("SHOT", () => this.audio.kick());
-    this.events.on("FULL_TIME", (e) => this.recordLeagueResult(e.home, e.away));
+    // Restarts (foul FK/pen, throw, corner, GK) — one blast via Match.beginRestart.
+    this.events.on("REFEREE_WHISTLE", () => this.audio.whistle());
+    this.events.on("FULL_TIME", (e) => {
+      this.audio.whistle();
+      this.recordLeagueResult(e.home, e.away);
+    });
+    this.events.on("HALF_TIME", () => this.audio.whistle());
     this.events.on("KICKOFF", () => {
       this.audio.whistle();
       if (this.appState !== AppState.PRE_MATCH) this.matchCard.hide();
@@ -324,6 +336,10 @@ export class Game {
             }
             return;
           }
+          if (char === "chalk") {
+            this.chars.toggleChalkMode();
+            return;
+          }
           if (char === "play-style") {
             const style = btn.getAttribute("data-style");
             if (style === "auto" || style === "possession" || style === "balanced" || style === "counter" || style === "direct" || style === "routeOne") {
@@ -373,6 +389,9 @@ export class Game {
             this.chars.setFormation(form);
             this.chars.render();
           }
+        }
+        if (char === "chalk") {
+          this.chars.toggleChalkMode();
         }
         if (char === "play-style") {
           const style = btn.getAttribute("data-style");
@@ -1290,7 +1309,7 @@ export class Game {
       return;
     }
     this.matchCard.show(this.match, "kickoff");
-    this.audio.whistle();
+    // Whistle fires once on KICKOFF when play actually starts (not here — avoids a double blast).
   }
 
   private launchMatch(): void {

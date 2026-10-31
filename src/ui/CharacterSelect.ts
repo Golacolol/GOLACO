@@ -12,6 +12,7 @@ import { kitsClash, pickTeamKit, teamHomeKit, teamResolvedAwayKit } from "../foo
 import { fitKitSurnameElements, kitMarkerHtml, portraitHtml, teamBadgeHtml } from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
 import { imageLabel, listPlayerImages, uploadPlayerImage } from "./playerImages";
+import { profileStatsBlock } from "./ProfileHex";
 
 const EDIT_POSITIONS: PositionCode[] = [
   "GK",
@@ -438,6 +439,14 @@ export class CharacterSelect {
   private imagesLoaded = false;
   /** Persist edits from the Formation squad editor. */
   onSquadPlayerSave: ((edit: SquadPlayerEdit) => void) | null = null;
+  /** Hex shape vs six detail bars on the roster card / player panel. */
+  private profileView: "hex" | "detail" = "hex";
+  /** Formation chalk board — draw thick lines on the pitch under player counters. */
+  private chalkMode = false;
+  /** Normalized 0–1 stroke polylines relative to the pitch box. */
+  private chalkStrokes: { x: number; y: number }[][] = [];
+  private chalkDraft: { x: number; y: number }[] | null = null;
+  private chalkPointerId: number | null = null;
 
   constructor(parent: HTMLElement) {
     this.root = document.createElement("div");
@@ -457,8 +466,42 @@ export class CharacterSelect {
     this.root.addEventListener("pointermove", (e) => this.onPitchPointerMove(e));
     this.root.addEventListener("pointerup", (e) => this.onPitchPointerUp(e));
     this.root.addEventListener("pointercancel", (e) => this.onPitchPointerUp(e));
-    this.root.addEventListener("contextmenu", (e) => this.onRosterContextMenu(e));
-    this.root.addEventListener("click", (e) => this.onEditDialogClick(e));
+    this.root.addEventListener("contextmenu", (e) => {
+      const chalkBtn = (e.target as HTMLElement).closest<HTMLElement>("[data-char='chalk']");
+      if (chalkBtn && this.root.contains(chalkBtn)) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.clearChalk();
+        return;
+      }
+      this.onRosterContextMenu(e);
+    });
+    this.root.addEventListener("click", (e) => {
+      const chalkBtn = (e.target as HTMLElement).closest<HTMLElement>("[data-char='chalk']");
+      if (chalkBtn && this.root.contains(chalkBtn)) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.toggleChalkMode();
+        return;
+      }
+      const toggle = (e.target as HTMLElement).closest<HTMLElement>("[data-char='profile-toggle']");
+      if (toggle && this.root.contains(toggle)) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.profileView = this.profileView === "hex" ? "detail" : "hex";
+        this.render();
+        return;
+      }
+      this.onEditDialogClick(e);
+    });
+    this.root.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const toggle = (e.target as HTMLElement).closest?.("[data-char='profile-toggle']");
+      if (!toggle || !this.root.contains(toggle as Node)) return;
+      e.preventDefault();
+      this.profileView = this.profileView === "hex" ? "detail" : "hex";
+      this.render();
+    });
     this.root.addEventListener("change", (e) => void this.onEditDialogChange(e));
   }
 
@@ -784,10 +827,7 @@ export class CharacterSelect {
         <div class="char-num">#${p.shirtNumber}</div>
         <h2>${escapeHtml(p.player.name)}</h2>
         <div class="char-meta">${p.player.primaryPosition} · OVR ${p.overall} · ${groupOf(p.player.primaryPosition)}</div>
-        <div class="char-stats">
-          ${stat("PACE", a.pace)}${stat("PASSING", a.passing)}${stat("CONTROL", a.control)}
-          ${stat("SHOOTING", a.shooting)}${stat("DEFENDING", a.defending)}${stat("STAMINA", a.stamina)}
-        </div>
+        ${profileStatsBlock(a, { mode: this.profileView, size: 148 })}
         ${this.modeNavHtml("PLAYER")}
       </div>
     `;
@@ -860,6 +900,7 @@ export class CharacterSelect {
         <div class="team-select-head">
           ${this.teamTitleHtml(titleLabel)}
           <div class="play-style-chips" role="group" aria-label="Play style">
+            <button type="button" class="formation-chip chalk-chip ${this.chalkMode ? "on" : ""}" data-char="chalk" title="Chalk — draw on the pitch. Right-click to wipe." aria-pressed="${this.chalkMode ? "true" : "false"}">Chalk</button>
             ${(["auto", ...PLAY_STYLE_IDS] as PlayStyleChoice[])
               .map(
                 (id) =>
@@ -884,10 +925,7 @@ export class CharacterSelect {
               <div class="char-num">#${selected.shirtNumber}</div>
               <h3>${escapeHtml(selected.player.name)}</h3>
               <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
-              <div class="char-stats char-stats-compact">
-                ${stat("PACE", a.pace)}${stat("PASS", a.passing)}${stat("CTRL", a.control)}
-                ${stat("SHOT", a.shooting)}${stat("DEF", a.defending)}${stat("STM", a.stamina)}
-              </div>
+              ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 118 })}
             </div>
             <div class="team-roster-title">SQUAD <span class="team-roster-hint">Right-click to edit</span></div>
             <div class="team-roster-list">
@@ -906,7 +944,7 @@ export class CharacterSelect {
                 .join("")}
             </div>
           </aside>
-          <div class="team-pitch" aria-label="Formation pitch">
+          <div class="team-pitch${this.chalkMode ? " chalking" : ""}" aria-label="Formation pitch">
             <span class="pitch-goal-mouth pitch-goal-mouth-own" aria-hidden="true"></span>
             <span class="pitch-goal-mouth pitch-goal-mouth-opp" aria-hidden="true"></span>
             <div class="team-pitch-markings" aria-hidden="true">
@@ -915,6 +953,7 @@ export class CharacterSelect {
               <span class="pitch-six pitch-six-own"></span>
               <span class="pitch-six pitch-six-opp"></span>
             </div>
+            <canvas class="team-pitch-chalk" aria-hidden="true"></canvas>
             ${(() => {
               const raw = form.map((slot) => {
                 const off = this.slotOffsets.get(slot.id) ?? { dx: 0, dz: 0 };
@@ -973,6 +1012,81 @@ export class CharacterSelect {
       </div>
       ${this.squadEditDialogHtml()}
     `;
+    this.paintChalkCanvas();
+  }
+
+  toggleChalkMode(): void {
+    this.chalkMode = !this.chalkMode;
+    if (!this.chalkMode) {
+      this.chalkDraft = null;
+      this.chalkPointerId = null;
+    }
+    this.render();
+  }
+
+  clearChalk(): void {
+    this.chalkStrokes = [];
+    this.chalkDraft = null;
+    this.chalkPointerId = null;
+    this.paintChalkCanvas();
+  }
+
+  private chalkPointFromEvent(pitchEl: HTMLElement, e: PointerEvent): { x: number; y: number } | null {
+    const rect = pitchEl.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return null;
+    return {
+      x: clamp((e.clientX - rect.left) / rect.width, 0, 1),
+      y: clamp((e.clientY - rect.top) / rect.height, 0, 1),
+    };
+  }
+
+  private paintChalkCanvas(): void {
+    const canvas = this.root.querySelector<HTMLCanvasElement>(".team-pitch-chalk");
+    const pitch = this.root.querySelector<HTMLElement>(".team-pitch");
+    if (!canvas || !pitch) return;
+    const rect = pitch.getBoundingClientRect();
+    const w = Math.max(1, Math.round(rect.width));
+    const h = Math.max(1, Math.round(rect.height));
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w;
+      canvas.height = h;
+    }
+    // jsdom has no canvas implementation — skip quietly in tests.
+    const getCtx = canvas.getContext?.bind(canvas);
+    if (!getCtx) return;
+    let ctx: CanvasRenderingContext2D | null = null;
+    const err = console.error;
+    console.error = () => undefined;
+    try {
+      ctx = getCtx("2d");
+    } catch {
+      console.error = err;
+      return;
+    }
+    console.error = err;
+    if (!ctx || typeof (ctx as CanvasRenderingContext2D).beginPath !== "function") return;
+    ctx.clearRect(0, 0, w, h);
+    const strokes = this.chalkDraft ? [...this.chalkStrokes, this.chalkDraft] : this.chalkStrokes;
+    for (const stroke of strokes) {
+      if (stroke.length < 2) continue;
+      ctx.beginPath();
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "rgba(245, 248, 242, 0.82)";
+      ctx.lineWidth = Math.max(6, Math.min(w, h) * 0.018);
+      ctx.shadowColor = "rgba(255, 255, 255, 0.35)";
+      ctx.shadowBlur = 1.2;
+      ctx.moveTo(stroke[0]!.x * w, stroke[0]!.y * h);
+      for (let i = 1; i < stroke.length; i++) {
+        ctx.lineTo(stroke[i]!.x * w, stroke[i]!.y * h);
+      }
+      ctx.stroke();
+      // Soft chalk dust edge.
+      ctx.strokeStyle = "rgba(220, 228, 216, 0.35)";
+      ctx.lineWidth = Math.max(10, Math.min(w, h) * 0.028);
+      ctx.shadowBlur = 0;
+      ctx.stroke();
+    }
   }
 
   private squadEditDialogHtml(): string {
@@ -1270,6 +1384,19 @@ export class CharacterSelect {
 
   private onPitchPointerDown(e: PointerEvent): void {
     if (e.button !== 0) return;
+    if (this.chalkMode) {
+      const pitchEl = (e.target as HTMLElement).closest<HTMLElement>(".team-pitch");
+      if (!pitchEl || !this.root.contains(pitchEl)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const pt = this.chalkPointFromEvent(pitchEl, e);
+      if (!pt) return;
+      this.chalkPointerId = e.pointerId;
+      this.chalkDraft = [pt];
+      pitchEl.setPointerCapture(e.pointerId);
+      this.paintChalkCanvas();
+      return;
+    }
     const token = (e.target as HTMLElement).closest<HTMLElement>(".pitch-token");
     if (!token || token.closest(".bench-card")) return;
     const slotEl = token.closest<HTMLElement>(".pitch-slot");
@@ -1310,6 +1437,18 @@ export class CharacterSelect {
   }
 
   private onPitchPointerMove(e: PointerEvent): void {
+    if (this.chalkMode && this.chalkDraft && e.pointerId === this.chalkPointerId) {
+      const pitchEl = this.root.querySelector<HTMLElement>(".team-pitch");
+      if (!pitchEl) return;
+      e.preventDefault();
+      const pt = this.chalkPointFromEvent(pitchEl, e);
+      if (!pt) return;
+      const last = this.chalkDraft[this.chalkDraft.length - 1]!;
+      if (Math.hypot(pt.x - last.x, pt.y - last.y) < 0.004) return;
+      this.chalkDraft.push(pt);
+      this.paintChalkCanvas();
+      return;
+    }
     const n = this.nudge;
     if (!n || e.pointerId !== n.pointerId) return;
     const dx = e.clientX - n.startClientX;
@@ -1336,6 +1475,19 @@ export class CharacterSelect {
   }
 
   private onPitchPointerUp(e: PointerEvent): void {
+    if (this.chalkMode && e.pointerId === this.chalkPointerId) {
+      const pitchEl = this.root.querySelector<HTMLElement>(".team-pitch");
+      try {
+        pitchEl?.releasePointerCapture(e.pointerId);
+      } catch {
+        /* already released */
+      }
+      if (this.chalkDraft && this.chalkDraft.length >= 2) this.chalkStrokes.push(this.chalkDraft);
+      this.chalkDraft = null;
+      this.chalkPointerId = null;
+      this.paintChalkCanvas();
+      return;
+    }
     const n = this.nudge;
     if (!n || e.pointerId !== n.pointerId) return;
     n.slotEl.classList.remove("nudging");
@@ -1508,6 +1660,3 @@ export class CharacterSelect {
   }
 }
 
-function stat(label: string, value: number): string {
-  return `<div><span>${label}</span><b>${value}</b><i style="width:${value}%"></i></div>`;
-}
