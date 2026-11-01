@@ -5,9 +5,11 @@ import {
   applyKitToSkinned,
   bakeHeightBandedKitWrap,
   classifyMaterialSlot,
+  desiredSkinnedClip,
   gaitToClip,
   isSkinLikePixel,
   KIT_WRAP_BANDS,
+  pickSkinnedAction,
   resolvePlayerModelUrl,
   skinnedSupportsTeamKit,
   tintBodyAlbedoMap,
@@ -15,7 +17,7 @@ import {
   type SkinnedPlayerInstance,
 } from "./PlayerModelLoader";
 import type { Player } from "./Player";
-import { BufferAttribute, BufferGeometry, CanvasTexture, MeshStandardMaterial, Texture } from "three";
+import { AnimationAction, BufferAttribute, BufferGeometry, CanvasTexture, MeshStandardMaterial, Texture } from "three";
 import type { TeamKit } from "../../data/schema";
 
 describe("PlayerModelLoader", () => {
@@ -25,6 +27,36 @@ describe("PlayerModelLoader", () => {
     expect(gaitToClip("JOG")).toBe("jog");
     expect(gaitToClip("RUN")).toBe("run");
     expect(gaitToClip("SPRINT")).toBe("sprint");
+  });
+
+  it("keeps off-ball runners on gait clips even with a leftover first-touch timer", () => {
+    const moving = {
+      gait: "RUN",
+      hasBall: false,
+      firstTouchTimer: 0.3,
+      kickTimer: 0,
+      sliding: false,
+      slideRecoverTimer: 0,
+      handRelease: false,
+      boosting: false,
+    } as unknown as Player;
+    expect(desiredSkinnedClip(moving)).toBe("run");
+
+    const onBall = { ...moving, hasBall: true } as unknown as Player;
+    expect(desiredSkinnedClip(onBall)).toBe("receive");
+  });
+
+  it("collapses sprint onto the shared run action without inventing a new clip", () => {
+    const runAction = { uuid: "run" } as unknown as AnimationAction;
+    const inst = {
+      actions: { run: runAction, walk: { uuid: "walk" } as unknown as AnimationAction },
+      activeClip: null,
+    } as unknown as SkinnedPlayerInstance;
+    const sprint = pickSkinnedAction(inst, "sprint");
+    const run = pickSkinnedAction(inst, "run");
+    expect(sprint?.action).toBe(runAction);
+    expect(run?.action).toBe(runAction);
+    expect(sprint?.action).toBe(run?.action);
   });
 
   it("resolves default and custom model urls", () => {

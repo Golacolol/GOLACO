@@ -1,6 +1,7 @@
 import { BALL_RADIUS } from "../constants";
 import { clamp, lerp, normalize2, stat01 } from "../../core/math";
 import type { Player } from "../players/Player";
+import { topSpeedFromPace } from "../players/PlayerMovement";
 import type { Ball } from "./Ball";
 import { facingDelta, overTurnLooseChance } from "./GroundContest";
 
@@ -16,9 +17,23 @@ export interface DribbleOpts {
   rng?: () => number;
 }
 
+/**
+ * 0–1 how hard the carrier is dashing with the ball.
+ * Near top sprint → control dies and interceptions become easy.
+ */
+export function dashCarryRisk01(player: Player): number {
+  const top = topSpeedFromPace(player.attrs.pace, true, false);
+  const ratio = clamp(player.speed / Math.max(top, 1), 0, 1.08);
+  // Only the upper end of the speed band counts as a "dash".
+  const nearTop = clamp((ratio - 0.7) / 0.3, 0, 1);
+  if (player.sprinting) return nearTop;
+  // Fast non-sprint carries still leak a little control.
+  return nearTop * 0.45;
+}
+
 export function dribbleAhead(speed: number, control: number, sprinting: boolean): number {
   const run = clamp((speed - 2.2) / 8.5, 0, 1);
-  const base = lerp(0.62, sprinting ? 1.55 : 1.22, run);
+  const base = lerp(0.62, sprinting ? 1.72 : 1.22, run);
   return base * lerp(1.12, 0.86, stat01(control));
 }
 
@@ -44,21 +59,27 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
   const rng = opts.rng ?? Math.random;
 
   player.touchTimer -= dt;
-  const control = stat01(player.attrs.control);
-  const drib = stat01(player.attrs.dribbling);
+  const dash = dashCarryRisk01(player);
+  // Dash kills close control — effective touch quality collapses near top speed.
+  const control = clamp(stat01(player.attrs.control) * (1 - dash * 0.62), 0.08, 1);
+  const drib = clamp(stat01(player.attrs.dribbling) * (1 - dash * 0.48), 0.08, 1);
   const close = player.jockeying;
   const fx = Math.sin(player.facing);
   const fz = Math.cos(player.facing);
-  const ahead = dribbleAhead(player.speed, player.attrs.control, player.sprinting) * (close ? 0.88 : 1);
+  const ahead =
+    dribbleAhead(player.speed, control * 100, player.sprinting) *
+    (close ? 0.88 : 1) *
+    (1 + dash * 0.55);
   const tx = player.x + fx * ahead;
   const tz = player.z + fz * ahead;
   // Collect reach; retain hysteresis is larger so a carry does not drop mid-stride.
-  const reach = 1.65 + (1 - control) * 0.22 + (close ? 0.12 : 0);
+  // Dash pushes the ball further out — easier for a defender to nick.
+  const reach = 1.65 + (1 - control) * 0.22 + (close ? 0.12 : 0) - dash * 0.28;
 
   // Sharp cut at pace — classic over-turn spill (rare unless heavily pressured).
   const turnRate = Math.abs(facingDelta(player.prevFacing, player.facing)) / Math.max(dt, 1 / 120);
-  const spill = overTurnLooseChance(player, turnRate, pressure, turnLooseMul);
-  if (spill > 0 && rng() < spill * 0.35) {
+  const spill = overTurnLooseChance(player, turnRate, pressure, turnLooseMul * (1 + dash * 1.6));
+  if (spill > 0 && rng() < spill * (0.35 + dash * 0.45)) {
     const away = normalize2(ball.x - player.x + fx * 0.2, ball.z - player.z + fz * 0.2);
     const kick = 1.6 + player.speed * 0.28 + pressure * 1.1;
     ball.vx = ball.vx * 0.45 + away.x * kick + (rng() - 0.5) * 0.9;
@@ -74,17 +95,19 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
   }
 
   if (player.touchTimer <= 0) {
-    player.touchTimer = touchInterval(player.speed) * (close ? 1.12 : 0.92);
+    player.touchTimer = touchInterval(player.speed) * (close ? 1.12 : 0.92) * (1 - dash * 0.18);
     if (player.distTo(ball.x, ball.z) > reach + 0.35) return "loose";
 
     // Sticky carry: pull the ball onto the stride and match player velocity.
     const scatter =
-      ((1 - drib) * 0.18 + pressure * 0.28 + (1 - player.energy.value) * 0.12) * (close ? 0.5 : 1);
+      ((1 - drib) * 0.18 + pressure * 0.28 + (1 - player.energy.value) * 0.12 + dash * 0.35) *
+      (close ? 0.5 : 1);
     const ox = (rng() - 0.5) * scatter;
     const oz = (rng() - 0.5) * scatter;
-    const magnet = lerp(0.62, 0.9, control) * magnetMul * (close ? 1.12 : 1);
-    ball.x += (tx + ox - ball.x) * clamp(magnet, 0.42, 0.95);
-    ball.z += (tz + oz - ball.z) * clamp(magnet, 0.42, 0.95);
+    const magnet =
+      lerp(0.62, 0.9, control) * magnetMul * (close ? 1.12 : 1) * (1 - dash * 0.55);
+    ball.x += (tx + ox - ball.x) * clamp(magnet, 0.28, 0.95);
+    ball.z += (tz + oz - ball.z) * clamp(magnet, 0.28, 0.95);
     if (ball.y < BALL_RADIUS + 0.35) ball.y = BALL_RADIUS;
 
     const intent = 0.85 + player.speed * 0.62;
@@ -95,15 +118,20 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
 
     const pressSoft = pressure > 0.55 ? 0.7 : 0.45;
     const looseChance = clamp(
-      pressure * 0.09 * pressSoft * (1.1 - drib) * (1.05 - player.energy.value * 0.3) * (close ? 0.28 : 1) *
-        (1.0 - magnetMul * 0.4),
+      (pressure * 0.09 * pressSoft + dash * 0.16) *
+        (1.1 - drib) *
+        (1.05 - player.energy.value * 0.3) *
+        (close ? 0.28 : 1) *
+        (1.0 - magnetMul * 0.35),
       0,
-      0.1,
+      0.28,
     );
-    if (pressure > 0.65 && rng() < looseChance) return "loose";
+    if ((pressure > 0.48 || dash > 0.55) && rng() < looseChance) return "loose";
   } else {
     // Between touches: keep the ball glued under the stride while running.
-    const follow = lerp(0.32, 0.68, control) * magnetMul * (close ? 1.25 : 1);
+    // Dash: weak follow so the ball sits ahead for a challenge.
+    const follow =
+      lerp(0.32, 0.68, control) * magnetMul * (close ? 1.25 : 1) * (1 - dash * 0.65);
     const dist = player.distTo(ball.x, ball.z);
     if (follow > 0.01 && dist < reach + 0.75) {
       const pull = Math.min(1, follow * dt * 12);
@@ -116,7 +144,7 @@ export function stepDribble(ball: Ball, player: Player, pressureOrOpts: number |
   }
 
   // Retain beyond collect reach so a take cannot instantly drop (hysteresis).
-  if (player.distTo(ball.x, ball.z) > 3.15 + (1 - control) * 0.22) return "loose";
+  if (player.distTo(ball.x, ball.z) > 3.15 + (1 - control) * 0.22 - dash * 0.55) return "loose";
   return "keep";
 }
 

@@ -67,6 +67,19 @@ describe("ReceiveModel", () => {
     expect(cap).toBeLessThan(topSpeedFromPace(r.attrs.pace, true, false) * 1.01);
   });
 
+  it("sprints onto a dying underhit pass instead of jogging while attackers arrive", () => {
+    const r = makeReceiver();
+    r.x = -8;
+    const ball = new Ball();
+    ball.x = 0;
+    ball.z = 0;
+    ball.vx = 1.2;
+    ball.vz = 0;
+    const plan = planReceiveRun(r, ball, { speedMul: 1 });
+    expect(plan.sprint).toBe(true);
+    expect(plan.speedMul).toBeGreaterThan(1);
+  });
+
   it("hands aerial runs to the lofted path; ground landing markers stay steerable", () => {
     const ball = new Ball();
     ball.y = 1.5;

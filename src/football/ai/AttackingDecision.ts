@@ -413,29 +413,29 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   }
 
   // Gilt-edged / near-open-goal: shoot — keeper may still dive, but pass is wrong.
-  if (clearChance.quality > 0.42) {
+  if (clearChance.quality > 0.36) {
     shotScore = Math.max(
       shotScore,
-      0.72 + clearChance.quality * 1.05 + shoot * 0.3 + (clearChance.gkExposed ? 0.28 : 0.1),
+      0.82 + clearChance.quality * 1.15 + shoot * 0.32 + (clearChance.gkExposed ? 0.32 : 0.12),
     );
-    passScore *= 1 - clearChance.quality * 0.72;
-    holdScore *= 0.15;
-    runScore *= 0.32;
-    throughBallScore *= 0.28;
-    longPassScore *= 0.15;
-    crossScore *= 0.28;
+    passScore *= 1 - clearChance.quality * 0.78;
+    holdScore *= 0.12;
+    runScore *= 0.28;
+    throughBallScore *= 0.24;
+    longPassScore *= 0.12;
+    crossScore *= 0.24;
   }
-  // CanShoot hard gate — force the finish once the touch has settled.
-  if (canShoot(carrier, opponents) && clearChance.quality >= 0.28 && possessionTime > 0.22) {
-    shotScore = Math.max(shotScore, 0.84 + shoot * 0.24 + (clearChance.gkExposed ? 0.12 : 0));
-    passScore *= 0.42;
-    holdScore *= 0.14;
-    throughBallScore *= 0.32;
+  // CanShoot hard gate — force the finish once the touch has settled (or on a one-touch).
+  if (canShoot(carrier, opponents) && clearChance.quality >= 0.24 && possessionTime > 0.12) {
+    shotScore = Math.max(shotScore, 0.92 + shoot * 0.26 + (clearChance.gkExposed ? 0.14 : 0));
+    passScore *= 0.36;
+    holdScore *= 0.12;
+    throughBallScore *= 0.28;
   }
   // Speculative look from the D / edge — keep shots alive even without a clearChance spike.
-  if (progress > 0.55 && distGoal < 28 && Math.abs(carrier.z) < 14 && possessionTime > 0.45) {
-    longShotScore = Math.max(longShotScore, 0.26 + shoot * 0.14 + longS * 0.2);
-    if (distGoal < 18) shotScore = Math.max(shotScore, 0.4 + shoot * 0.22);
+  if (progress > 0.52 && distGoal < 30 && Math.abs(carrier.z) < 15 && possessionTime > 0.32) {
+    longShotScore = Math.max(longShotScore, 0.32 + shoot * 0.16 + longS * 0.22);
+    if (distGoal < 19) shotScore = Math.max(shotScore, 0.48 + shoot * 0.24);
   }
   // Phase weights: transition = progressive; chance = shoot/through; build = recycle.
   const phase = matchPhase(carrier, ball, carrier.side, {

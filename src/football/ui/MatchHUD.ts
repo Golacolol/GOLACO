@@ -267,10 +267,10 @@ export class MatchHUD {
     }
     if (stats) {
       const book =
-        player.yellowCards >= 1 ? ` · YELLOW${player.yellowCards > 1 ? `×${player.yellowCards}` : ""}` : "";
+        player.yellowCards >= 1 ? `YELLOW${player.yellowCards > 1 ? `×${player.yellowCards}` : ""}` : "";
       stats.textContent = player.boosting
         ? `SPEED BURST · ENERGY ${player.energy.percent}%`
-        : `PASS ${player.attrs.passing} · SHOT ${player.attrs.shooting} · PACE ${player.attrs.pace}${book}`;
+        : book;
     }
     const power = el.querySelector(".shot-power") as HTMLElement | null;
     if (power) {

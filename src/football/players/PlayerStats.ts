@@ -391,6 +391,79 @@ export const PROFILE_AXIS_SHORT: Record<ProfileAxisId, string> = {
 
 export type ProfileAxes = Record<ProfileAxisId, number>;
 
+/**
+ * Full radar spokes — one vertex per authored gameplay attribute.
+ * Add / remove entries here when PlayerAttributes grows; the full-shape view
+ * rebuilds from this list so the polygon always matches the live stat set.
+ */
+export const PROFILE_ATTR_SPOKES: ReadonlyArray<{
+  key: keyof PlayerAttributes;
+  short: string;
+  label: string;
+  /** Keeper-only — omitted for outfielders unless they have GK ratings set. */
+  gk?: boolean;
+}> = [
+  { key: "pace", short: "PAC", label: "Pace" },
+  { key: "acceleration", short: "ACC", label: "Acceleration" },
+  { key: "agility", short: "AGI", label: "Agility" },
+  { key: "balance", short: "BAL", label: "Balance" },
+  { key: "stamina", short: "STA", label: "Stamina" },
+  { key: "strength", short: "STR", label: "Strength" },
+  { key: "jumping", short: "JMP", label: "Jumping" },
+  { key: "passing", short: "PAS", label: "Passing" },
+  { key: "longPassing", short: "LPA", label: "Long Passing" },
+  { key: "vision", short: "VIS", label: "Vision" },
+  { key: "crossing", short: "CRO", label: "Crossing" },
+  { key: "control", short: "CTL", label: "Control" },
+  { key: "dribbling", short: "DRI", label: "Dribbling" },
+  { key: "shooting", short: "SHO", label: "Shooting" },
+  { key: "finishing", short: "FIN", label: "Finishing" },
+  { key: "shotPower", short: "POW", label: "Shot Power" },
+  { key: "longShots", short: "LSH", label: "Long Shots" },
+  { key: "heading", short: "HEA", label: "Heading" },
+  { key: "penalties", short: "PEN", label: "Penalties" },
+  { key: "setPieces", short: "SET", label: "Set Pieces" },
+  { key: "defending", short: "DEF", label: "Defending" },
+  { key: "defensiveAwareness", short: "DAW", label: "Def Awareness" },
+  { key: "tackling", short: "TAC", label: "Tackling" },
+  { key: "aggression", short: "AGG", label: "Aggression" },
+  { key: "composure", short: "CMP", label: "Composure" },
+  { key: "form", short: "FRM", label: "Form" },
+  { key: "concentration", short: "FOC", label: "Concentration" },
+  { key: "attackingAwareness", short: "AAW", label: "Att Awareness" },
+  { key: "reactions", short: "REA", label: "Reactions" },
+  { key: "gkDiving", short: "DIV", label: "GK Diving", gk: true },
+  { key: "gkHandling", short: "HAN", label: "GK Handling", gk: true },
+  { key: "gkPositioning", short: "POS", label: "GK Positioning", gk: true },
+  { key: "gkReflexes", short: "REF", label: "GK Reflexes", gk: true },
+  { key: "gkKicking", short: "KIC", label: "GK Kicking", gk: true },
+];
+
+export type ProfileAttrSpoke = {
+  key: keyof PlayerAttributes;
+  short: string;
+  label: string;
+  value: number;
+};
+
+/** Live spoke list for the full radar — length tracks PROFILE_ATTR_SPOKES (+ GK when relevant). */
+export function listProfileAttrSpokes(attrs: PlayerAttributes): ProfileAttrSpoke[] {
+  const includeGk = PROFILE_ATTR_SPOKES.some(
+    (s) => s.gk && typeof attrs[s.key] === "number" && Number.isFinite(attrs[s.key] as number),
+  );
+  const out: ProfileAttrSpoke[] = [];
+  for (const s of PROFILE_ATTR_SPOKES) {
+    if (s.gk && !includeGk) continue;
+    out.push({
+      key: s.key,
+      short: s.short,
+      label: s.label,
+      value: attr(attrs, s.key),
+    });
+  }
+  return out;
+}
+
 function weightedMean(attrs: PlayerAttributes, parts: { key: keyof PlayerAttributes; w: number }[]): number {
   let sum = 0;
   let total = 0;

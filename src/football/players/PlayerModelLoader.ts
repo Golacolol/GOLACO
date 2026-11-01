@@ -596,29 +596,86 @@ export function gaitToClip(gait: Gait): PlayerAnimClipKey {
   }
 }
 
+/** Preferred clip for the current pose, before falling back to aliases. */
+export function desiredSkinnedClip(player: Player): PlayerAnimClipKey {
+  if (player.sliding || player.slideRecoverTimer > 0) return "slide";
+  if (player.kickTimer > 0 && !player.handRelease) return player.kickTimer > 0.35 ? "kick" : "pass";
+  // Receive cushion only while on the ball — a stuck firstTouch off-ball froze Idle forever.
+  if (player.hasBall && player.firstTouchTimer > 0.08) return "receive";
+  return gaitToClip(player.gait);
+}
+
+/**
+ * Pick an action that exists on this instance. Collapses jog→walk / sprint→run when
+ * those clips share (or lack) assets so we don't thrash reset() on alias keys.
+ */
+export function pickSkinnedAction(
+  inst: SkinnedPlayerInstance,
+  want: PlayerAnimClipKey,
+): { key: PlayerAnimClipKey; action: THREE.AnimationAction } | null {
+  const order: PlayerAnimClipKey[] = (() => {
+    switch (want) {
+      case "sprint":
+        return ["sprint", "run", "jog", "walk", "idle"];
+      case "run":
+        return ["run", "sprint", "jog", "walk", "idle"];
+      case "jog":
+        return ["jog", "walk", "run", "idle"];
+      case "walk":
+        return ["walk", "jog", "idle", "run"];
+      case "receive":
+        return ["receive", "idle", "walk"];
+      case "pass":
+        return ["pass", "kick", "idle"];
+      case "kick":
+        return ["kick", "pass", "idle"];
+      case "slide":
+        return ["slide", "idle"];
+      default:
+        return ["idle", "walk"];
+    }
+  })();
+  for (const key of order) {
+    const action = inst.actions[key];
+    if (action) return { key, action };
+  }
+  return null;
+}
+
+function gaitTimeScale(player: Player): number {
+  if (player.boosting || player.gait === "SPRINT") return 1.22;
+  if (player.gait === "RUN") return 1.08;
+  if (player.gait === "JOG") return 1.0;
+  if (player.gait === "WALK") return 0.92;
+  return 1;
+}
+
 /** Cross-fade to the clip that matches gameplay state. */
 export function syncSkinnedAnimation(
   inst: SkinnedPlayerInstance,
   player: Player,
   dt: number,
 ): void {
-  let want: PlayerAnimClipKey = gaitToClip(player.gait);
-  if (player.sliding || player.slideRecoverTimer > 0) want = "slide";
-  else if (player.kickTimer > 0 && !player.handRelease) want = player.kickTimer > 0.35 ? "kick" : "pass";
-  else if (player.firstTouchTimer > 0.08) want = "receive";
-
-  if (want !== inst.activeClip) {
-    const next = inst.actions[want] ?? inst.actions.idle ?? inst.actions.walk ?? null;
-    const prev = inst.activeClip ? inst.actions[inst.activeClip] : null;
-    if (next) {
-      next.reset();
-      next.setEffectiveTimeScale(player.gait === "SPRINT" || player.boosting ? 1.15 : 1);
-      next.setEffectiveWeight(1);
-      next.fadeIn(0.12);
-      next.play();
-      if (prev && prev !== next) prev.fadeOut(0.12);
-      inst.activeClip = want;
-    }
+  const want = desiredSkinnedClip(player);
+  const picked = pickSkinnedAction(inst, want);
+  if (!picked) {
+    inst.mixer.update(dt);
+    return;
+  }
+  const prev = inst.activeClip ? inst.actions[inst.activeClip] ?? null : null;
+  // Only reset/crossfade when the underlying AnimationAction changes. jog/sprint often
+  // alias walk/run onto the same Three action — resetting every key flip froze the cycle.
+  if (picked.action !== prev) {
+    picked.action.reset();
+    picked.action.setEffectiveTimeScale(gaitTimeScale(player));
+    picked.action.setEffectiveWeight(1);
+    picked.action.fadeIn(0.14);
+    picked.action.play();
+    if (prev && prev !== picked.action) prev.fadeOut(0.14);
+    inst.activeClip = picked.key;
+  } else {
+    picked.action.setEffectiveTimeScale(gaitTimeScale(player));
+    if (inst.activeClip !== picked.key) inst.activeClip = picked.key;
   }
   inst.mixer.update(dt);
 }

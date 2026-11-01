@@ -2,6 +2,7 @@ import { clamp, normalize2, stat01 } from "../../core/math";
 import type { Ball } from "./Ball";
 import type { Player } from "../players/Player";
 import { tacklingStat } from "../players/TackleModel";
+import { dashCarryRisk01 } from "./DribbleModel";
 
 export type DisturbResult = "none" | "poke" | "loose";
 
@@ -51,7 +52,13 @@ export function resolveGroundDuel(
   ball: Ball,
   rng: () => number = Math.random,
   upsetMul = 1,
-  opts?: { favorSide?: "home" | "away" | null; favorBonus?: number },
+  opts?: {
+    favorSide?: "home" | "away" | null;
+    favorBonus?: number;
+    /** Designated pass outlet — strongly preferred so GK/restart releases aren't flipped. */
+    favorPlayerId?: string | null;
+    favorPlayerBonus?: number;
+  },
 ): { winner: Player; contested: boolean; margin: number } | null {
   if (!challengers.length) return null;
   if (challengers.length === 1) {
@@ -60,10 +67,15 @@ export function resolveGroundDuel(
 
   const favorSide = opts?.favorSide ?? null;
   const favorBonus = opts?.favorBonus ?? 0;
+  const favorPlayerId = opts?.favorPlayerId ?? null;
+  const favorPlayerBonus = opts?.favorPlayerBonus ?? 1.35;
   const ranked = challengers
     .map((p) => ({
       p,
-      w: groundContestWeight(p, ball) + (favorSide && p.side === favorSide ? favorBonus : 0),
+      w:
+        groundContestWeight(p, ball) +
+        (favorSide && p.side === favorSide ? favorBonus : 0) +
+        (favorPlayerId && p.id === favorPlayerId ? favorPlayerBonus : 0),
     }))
     .sort((a, b) => b.w - a.w);
 
@@ -144,38 +156,45 @@ export function tryDefenderDisturbance(
 ): DisturbResult {
   if (carrier.isGK || carrier.ballControlLockout > 0) return "none";
   const ballSpeed = Math.hypot(ball.vx, ball.vz);
+  const dash = dashCarryRisk01(carrier);
   let best: { def: Player; dist: number; weight: number } | null = null;
 
   for (const def of opponents) {
     if (def.sentOff || def.isGK || def.kickTimer > 0) continue;
     if (def.sliding || def.slideRecoverTimer > 0.35) continue;
     const dist = def.distTo(ball.x, ball.z);
-    // Tighter — only genuine contact on the ball, not a multi-man ring.
-    if (dist > 0.95) continue;
+    // Dash carries leave the ball further out — allow a longer poke reach.
+    if (dist > 0.95 + dash * 0.85) continue;
     const toCarrier = def.distTo(carrier.x, carrier.z);
-    if (toCarrier > 1.75) continue;
+    if (toCarrier > 1.75 + dash * 0.7) continue;
     const w =
       (1.15 - dist) +
       stat01(tacklingStat(def)) * 0.45 +
       stat01(def.attrs.strength) * 0.25 +
       stat01(def.attrs.defending) * 0.2 +
       clamp(def.speed / 8, 0, 1) * 0.15 -
-      stat01(carrier.attrs.control) * 0.35 -
-      stat01(carrier.attrs.dribbling) * 0.25 -
-      (carrier.jockeying ? 0.22 : 0);
+      stat01(carrier.attrs.control) * (0.35 - dash * 0.28) -
+      stat01(carrier.attrs.dribbling) * (0.25 - dash * 0.18) -
+      (carrier.jockeying ? 0.22 : 0) +
+      dash * 0.85;
     if (!best || w > best.weight) best = { def, dist, weight: w };
   }
 
-  if (!best || best.weight < 0.38) return "none";
+  if (!best || best.weight < 0.38 - dash * 0.22) return "none";
 
   const def = best.def;
   const resist =
-    stat01(carrier.attrs.control) * 0.4 +
-    stat01(carrier.attrs.dribbling) * 0.35 +
-    stat01(carrier.attrs.strength) * 0.2 +
-    carrier.energy.value * 0.12;
-  // Per-second rate (~0.2–1.6 Hz), not a per-frame roll that guaranteed spam.
-  const pokeRate = clamp((0.55 + best.weight * 0.9 - resist * 0.85) * disturbMul, 0.2, 1.6);
+    (stat01(carrier.attrs.control) * 0.4 +
+      stat01(carrier.attrs.dribbling) * 0.35 +
+      stat01(carrier.attrs.strength) * 0.2 +
+      carrier.energy.value * 0.12) *
+    (1 - dash * 0.7);
+  // Per-second rate — dash dribbles are much easier to nick.
+  const pokeRate = clamp(
+    (0.55 + best.weight * 0.9 - resist * 0.85 + dash * 1.45) * disturbMul,
+    0.2,
+    3.2,
+  );
   const pokeChance = 1 - Math.exp(-pokeRate * Math.max(dt, 1 / 120));
   if (rng() > pokeChance) return "none";
 
@@ -198,6 +217,7 @@ export function tryDefenderDisturbance(
   const spill =
     pokeRate > 1.05 ||
     (best.weight > 0.85 && rng() < 0.62 * disturbMul) ||
-    (carrier.speed > 6.5 && rng() < 0.48);
+    (carrier.speed > 6.5 && rng() < 0.48) ||
+    (dash > 0.55 && rng() < 0.55 + dash * 0.35);
   return spill ? "loose" : "poke";
 }

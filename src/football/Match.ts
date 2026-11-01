@@ -10,6 +10,9 @@ import {
   keeperHandReleaseVector,
   keeperOutletAimPoint,
   keeperPassDelivery,
+  chooseGoalKickLongTarget,
+  goalKickAimPoint,
+  goalKickPowerScale,
 } from "./ai/GoalkeeperAI";
 import {
   choosePassTarget,
@@ -350,7 +353,7 @@ export class Match {
   private restartSpot: { x: number; z: number } | null = null;
   /**
    * Pre-kick ceremony: stands throw-back, GK walk-collect-place for goal kicks,
-   * free-kick feed/collect/place, or ball returned to the corner arc.
+   * corner taker collect-carry-place, free-kick feed/collect/place.
    * While set, the restart clock does not auto-take.
    */
   private restartPrep: {
@@ -986,6 +989,10 @@ export class Match {
       p.diveTimer = Math.max(0, p.diveTimer - dt);
       p.jumpTimer = Math.max(0, p.jumpTimer - dt);
       p.headerCooldown = Math.max(0, p.headerCooldown - dt);
+      // Tick first-touch for everyone — only decaying on the owner left off-ball
+      // players stuck on the receive/idle clip, so they slid with frozen legs.
+      p.firstTouchTimer = Math.max(0, p.firstTouchTimer - dt);
+      p.ballControlLockout = Math.max(0, p.ballControlLockout - dt);
       if (p.kickTimer <= 0) p.handRelease = false;
     }
     if (this.pendingThrowStepIn) {
@@ -1124,20 +1131,26 @@ export class Match {
 
     // Close defenders poke the ball — change speed/direction without sticky steal.
     // Skip while the new carrier is still settling (stops centre dual-fight flip-flops).
+    // Dash / top-speed carries open the window earlier and raise poke strength.
     if (
       this.possessing &&
       !this.possessing.isGK &&
       this.possessionSecureT <= 0 &&
-      this.possessionTime > 2.55 &&
       this.state !== FootballState.KICK_OFF &&
       !isRestartState(this.state) &&
       !this.ballActor.resolved
     ) {
+      const dash =
+        this.possessing.sprinting && this.possessing.speed > 6.0
+          ? clamp((this.possessing.speed - 5.5) / 4.5, 0, 1)
+          : 0;
+      const secureNeed = dash > 0.35 ? 0.45 : 2.55;
+      if (this.possessionTime > secureNeed) {
       const disturb = tryDefenderDisturbance(
         this.ball,
         this.possessing,
         this.opponentsOf(this.possessing),
-        this.tuning.defenderDisturbMultiplier * 0.32,
+        this.tuning.defenderDisturbMultiplier * (0.32 + dash * 1.15),
         Math.random,
         dt,
       );
@@ -1219,11 +1232,6 @@ export class Match {
         }
       }
     }
-    if (this.possessing) {
-      this.possessing.firstTouchTimer = Math.max(0, this.possessing.firstTouchTimer - dt);
-      this.possessing.ballControlLockout = Math.max(0, this.possessing.ballControlLockout - dt);
-    }
-
     this.recoverStuckBall(dt);
     this.checkRestarts();
     if (this.practice === "spot") this.tickSpotKick(dt);
@@ -1301,13 +1309,18 @@ export class Match {
     const contest = duel?.winner ?? this.contestForBall();
     if (!contest) return;
     const heightM = contest.height || 1.82;
+    const designated = !!this.passTargetId && contest.id === this.passTargetId;
     const yCap = aerial ? Math.min(3.35, 1.55 + heightM * 0.85) : Math.min(1.72, 0.55 + heightM * 0.55);
     const speedCap = aerial
       ? 14 + (contest.attrs.jumping ?? contest.attrs.heading ?? 50) * 0.045
-      : 10 + contest.attrs.control * 0.06;
+      : (designated ? 13.5 : 10) + contest.attrs.control * 0.06;
     const { reach } = aerial
       ? aerialContestReach(contest, speed)
-      : { reach: collectSpeed * (0.94 + Math.min(0.14, (heightM - 1.7) * 0.35)) };
+      : {
+          reach:
+            collectSpeed *
+            (designated ? 1.28 : 0.94 + Math.min(0.14, (heightM - 1.7) * 0.35)),
+        };
     if (contest.distTo(this.ball.x, this.ball.z) < reach && speed < speedCap && this.ball.y < yCap) {
       const wasAerial = aerial || this.incomingAerial;
       const contested = !!duel?.contested || this.opponentsOf(contest).some((o) => o.distTo(this.ball.x, this.ball.z) < 2.6);
@@ -1383,6 +1396,9 @@ export class Match {
       // Prefer the side that just played the ball so passes aren't instantly flipped.
       favorSide: this.ball.lastTouchSide === "home" || this.ball.lastTouchSide === "away" ? this.ball.lastTouchSide : null,
       favorBonus: this.pendingPassFrom || this.passTargetId ? 0.55 : 0.28,
+      // GK / restart outlets (often LB/RB) must win the claim vs rushing attackers.
+      favorPlayerId: this.passTargetId,
+      favorPlayerBonus: this.passTargetId ? 1.55 : 0,
     });
     if (!duel) return null;
     if (duel.contested) {
@@ -3586,36 +3602,37 @@ export class Match {
     }
 
     if (plan.type === "CORNER") {
-      // Never let the taker dribble to the flag — place on the arc (optional stands return).
-      if (deepStands) {
-        const taker = autoSelectPlayer(this.allPlayers(), plan.takingSide, plan.ballX, plan.ballZ);
-        this.clearOwner();
-        this.ball.vx = 0;
-        this.ball.vz = 0;
-        this.ball.vy = 0;
-        this.ball.ownerId = null;
-        this.ball.x = clamp(exitX, -HALF_LENGTH - 4, HALF_LENGTH + 4);
-        this.ball.z = clamp(exitZ, -HALF_WIDTH - 5, HALF_WIDTH + 5);
-        this.ball.y = exitY;
-        this.restartPrep = {
-          kind: "corner",
-          phase: "return",
-          plan,
-          exitX: this.ball.x,
-          exitZ: this.ball.z,
-          exitY,
-          pickX: plan.ballX,
-          pickZ: plan.ballZ,
-          t: 0,
-          takerId: taker.id,
-        };
-        this.arrangeSetPiece(plan.type, plan.takingSide, plan.ballX, plan.ballZ, taker.id, true);
-        if (!this.autoplay && taker.side === this.userSide) this.controlled = taker;
-        this.toast("BALL RETURNED");
-        this.snapshotPoses();
-        return;
-      }
-      this.placeRestartReady(plan);
+      // Same spirit as goal kicks: taker walks to the ball, carries it to the arc, places it.
+      const taker = autoSelectPlayer(this.allPlayers(), plan.takingSide, plan.ballX, plan.ballZ);
+      this.clearOwner();
+      this.ball.vx = 0;
+      this.ball.vz = 0;
+      this.ball.vy = 0;
+      this.ball.ownerId = null;
+      this.ball.x = clamp(exitX, -HALF_LENGTH - 4, HALF_LENGTH + 4);
+      this.ball.z = clamp(exitZ, -HALF_WIDTH - 5, HALF_WIDTH + 5);
+      this.ball.y = exitY;
+      // Deep stands: lob toward a collectible spot just inside the flag, then walk-place.
+      const zSign = Math.sign(plan.ballZ || 1) || 1;
+      const xSign = Math.sign(plan.ballX || 1) || 1;
+      const pickX = deepStands ? plan.ballX - xSign * 1.4 : this.ball.x;
+      const pickZ = deepStands ? plan.ballZ - zSign * 1.4 : this.ball.z;
+      this.restartPrep = {
+        kind: "corner",
+        phase: deepStands ? "return" : "collect",
+        plan,
+        exitX: this.ball.x,
+        exitZ: this.ball.z,
+        exitY,
+        pickX,
+        pickZ,
+        t: 0,
+        takerId: taker.id,
+      };
+      this.arrangeSetPiece(plan.type, plan.takingSide, plan.ballX, plan.ballZ, taker.id, true);
+      if (!this.autoplay && taker.side === this.userSide) this.controlled = taker;
+      this.toast(deepStands ? "BALL RETURNED" : restartLabel(plan.type));
+      this.snapshotPoses();
       return;
     }
 
@@ -3739,7 +3756,8 @@ export class Match {
     taker.firstTouchTimer = 0;
     this.ballState = "restart";
     this.arrangeSetPiece(plan.type, plan.takingSide, plan.ballX, plan.ballZ, taker.id);
-    if (!this.autoplay && taker.side === this.userSide && !taker.isGK) this.controlled = taker;
+    // Goal kicks included — user must be able to shape a long ball to the strikers.
+    if (!this.autoplay && taker.side === this.userSide) this.controlled = taker;
     this.toast(restartLabel(plan.type));
     this.snapshotPoses();
   }
@@ -3775,8 +3793,7 @@ export class Match {
       this.ball.x = toX;
       this.ball.z = toZ;
       this.ball.y = BALL_RADIUS;
-      if (prep.kind === "stands_return" || prep.kind === "corner") {
-        // Corners: ball lands on the arc; taker plants and kicks — no carry/dribble.
+      if (prep.kind === "stands_return") {
         this.placeRestartReady(prep.plan);
         return;
       }
@@ -3785,6 +3802,7 @@ export class Match {
         this.placeRestartReady(prep.plan);
         return;
       }
+      // Goal kick + corner: after the lob, the taker walks to collect.
       prep.phase = "collect";
       prep.t = 0;
       prep.exitX = toX;
@@ -3795,6 +3813,11 @@ export class Match {
 
     if (prep.kind === "free_kick") {
       this.stepFreeKickPrep(dt, prep as Extract<typeof prep, { kind: "free_kick" }>, moveEx, spot);
+      return;
+    }
+
+    if (prep.kind === "corner") {
+      this.stepCornerPrep(dt, prep as Extract<typeof prep, { kind: "corner" }>, moveEx, spot);
       return;
     }
 
@@ -3878,6 +3901,112 @@ export class Match {
     this.restartPrep = null;
     this.restartElapsed = 0;
     this.toast("GOAL KICK");
+  }
+
+  /** Corner plant: just inside the arc, facing the box. */
+  private cornerPlantPose(taker: Player, spot: { x: number; z: number }): { x: number; z: number; facing: number } {
+    const takingDir = taker.side === "home" ? (this.endsFlipped ? -1 : 1) : this.endsFlipped ? 1 : -1;
+    const zSign = Math.sign(spot.z || 1) || 1;
+    const x = spot.x - Math.sign(spot.x || takingDir) * 0.7;
+    const z = spot.z - zSign * 0.55;
+    const boxX = takingDir * (HALF_LENGTH - 11);
+    return { x, z, facing: Math.atan2(boxX - x, 0 - z) };
+  }
+
+  /**
+   * Corner ceremony: taker collects the loose ball (or the stands return),
+   * walks it to the arc, and places it — same beat as a goal-kick collect.
+   */
+  private stepCornerPrep(
+    dt: number,
+    prep: {
+      kind: "corner";
+      phase: "return" | "feed" | "collect" | "carry" | "place";
+      plan: RestartPlan;
+      exitX: number;
+      exitZ: number;
+      exitY: number;
+      pickX: number;
+      pickZ: number;
+      t: number;
+      takerId?: string;
+    },
+    moveEx: ReturnType<Match["moveExtras"]>,
+    spot: { x: number; z: number },
+  ): void {
+    const taker = prep.takerId ? this.playerById(prep.takerId) : null;
+    if (!taker) {
+      this.placeRestartReady(prep.plan);
+      return;
+    }
+
+    if (prep.phase === "collect") {
+      prep.t += dt;
+      const dx = this.ball.x - taker.x;
+      const dz = this.ball.z - taker.z;
+      movePlayer(taker, dt, dx, dz, true, false, moveEx);
+      taker.facing = Math.atan2(dx, dz);
+      const reached = taker.distTo(this.ball.x, this.ball.z) < 1.35 || prep.t > 4.2;
+      if (!reached) return;
+      if (taker.distTo(this.ball.x, this.ball.z) >= 1.35) {
+        this.ball.x = taker.x;
+        this.ball.z = taker.z;
+        this.ball.y = BALL_RADIUS;
+      }
+      this.takePossession(taker);
+      taker.firstTouchTimer = 0;
+      prep.phase = "carry";
+      prep.t = 0;
+      return;
+    }
+
+    if (prep.phase === "carry") {
+      prep.t += dt;
+      if (this.possessing !== taker) this.takePossession(taker);
+      const plant = this.cornerPlantPose(taker, spot);
+      const dx = plant.x - taker.x;
+      const dz = plant.z - taker.z;
+      movePlayer(taker, dt, dx, dz, false, false, moveEx);
+      const fx = Math.sin(taker.facing);
+      const fz = Math.cos(taker.facing);
+      this.ball.x = taker.x + fx * 0.35;
+      this.ball.z = taker.z + fz * 0.35;
+      this.ball.y = 0.22;
+      this.ball.vx = 0;
+      this.ball.vz = 0;
+      this.ball.vy = 0;
+      this.ball.ownerId = taker.id;
+      if (Math.hypot(dx, dz) < 1.2 || prep.t > 5.8) {
+        taker.x = plant.x;
+        taker.z = plant.z;
+        taker.vx = 0;
+        taker.vz = 0;
+        taker.facing = plant.facing;
+        prep.phase = "place";
+        prep.t = 0;
+      }
+      return;
+    }
+
+    // place — set the ball on the corner arc
+    prep.t += dt;
+    const placeU = clamp(prep.t / 0.48, 0, 1);
+    const plant = this.cornerPlantPose(taker, spot);
+    taker.x = plant.x;
+    taker.z = plant.z;
+    taker.vx = 0;
+    taker.vz = 0;
+    taker.facing = plant.facing;
+    this.ball.x = spot.x;
+    this.ball.z = spot.z;
+    this.ball.y = lerp(0.22, BALL_RADIUS, placeU);
+    this.ball.vx = 0;
+    this.ball.vz = 0;
+    this.ball.vy = 0;
+    this.ball.ownerId = taker.id;
+    if (placeU < 1) return;
+    this.ball.y = BALL_RADIUS;
+    this.placeRestartReady(prep.plan);
   }
 
   /**
@@ -4408,6 +4537,52 @@ export class Match {
         strengthMul: this.tuning.aftertouchMultiplier * 0.35,
         aiSide: this.autoplay ? aiCurveSide(aimZ, this.ball.z) : null,
       });
+    } else if (kind === FootballState.GOAL_KICK) {
+      const dir = this.aimDir(intent, taker);
+      const userTake = !this.autoplay && taker.id === this.controlled.id;
+      const hold01 = userTake
+        ? clamp(Math.max(intent.passHold / 1.1, intent.shootHold / 1.15), 0.12, 1)
+        : clamp(0.42 + Math.random() * 0.5, 0.35, 0.95);
+      // Shoot / through / charged pass → long toward strikers; soft tap → short build-up.
+      const wantLong =
+        intent.shoot ||
+        intent.through ||
+        intent.cross ||
+        hold01 > 0.52 ||
+        (!userTake && Math.random() < 0.62);
+      const mates = this.teamOf(taker).players;
+      const opps = this.opponentsOf(taker);
+      let target: Player | null = null;
+      if (wantLong) {
+        target =
+          chooseGoalKickLongTarget(taker, mates, dir.x || forward, dir.z) ??
+          choosePassTarget(taker, mates, opps, this.ball, dir.x || forward, dir.z, "long", {
+            style: "attack",
+          });
+      } else {
+        target = choosePassTarget(taker, mates, opps, this.ball, dir.x || forward, dir.z, "short", {
+          style: "buildup",
+        });
+      }
+      const aim = goalKickAimPoint(taker, target, wantLong, dir.z);
+      const tx = aim.x;
+      const tz = clampInboundZ(aim.z, TOUCHLINE_SAFE_MARGIN + (wantLong ? 4 : 2));
+      const delivery: PassType = wantLong || (target != null && taker.distTo(tx, tz) >= 28) ? "long" : "short";
+      const kick = passKickVector(this.ball.x, this.ball.z, tx, tz, delivery);
+      const reach = Math.max(1, Math.hypot(tx - this.ball.x, tz - this.ball.z));
+      const scale = goalKickPowerScale(reach, wantLong || delivery === "long");
+      const loft = wantLong || delivery === "long" ? Math.max(kick.vy * 1.08 * scale, 7.2) : kick.vy;
+      kickBall(this.ball, kick.vx * scale, kick.vz * scale, loft);
+      this.passTargetId = target?.id ?? null;
+      this.longPassLanding = { x: tx, z: tz };
+      if (delivery === "long") {
+        this.stats.longPasses += 1;
+        this.incomingAerial = true;
+      } else {
+        this.stats.shortPasses += 1;
+        this.incomingAerial = false;
+      }
+      this.stats.passes += 1;
     } else {
       const target = choosePassTarget(taker, this.teamOf(taker).players, this.opponentsOf(taker), this.ball, forward, 0, "long");
       const aim = target ? keeperOutletAimPoint(target) : { x: taker.x + forward * 28, z: 0 };

@@ -130,12 +130,12 @@ export function settleFirstTouch(ball: Ball, opts: FirstTouchSettleOpts): FirstT
       : zone === "body"
         ? clamp(0.55 + control * 0.28 + strength * 0.1 - opts.pressure * 0.1 - facePenalty * 0.1, 0.4, 0.88)
         : clamp(0.22 + control * 0.48 + strength * 0.12 - facePenalty * 0.08, 0.16, 0.78);
-  // Longer plant window so second touch / pass isn't instant after a firm receive.
+  // Short plant so clean foot receives can one-touch; awkward/aerial still need a settle.
   const firstTouchTimer =
     (zone === "foot"
-      ? 0.1 + (1 - control) * 0.16 + facePenalty * 0.1
-      : 0.16 + (1 - control) * 0.26 + (zone === "air" ? 0.14 : 0.08) + facePenalty * 0.12) *
-    (0.85 + patience * 0.45) *
+      ? 0.055 + (1 - control) * 0.12 + facePenalty * 0.08
+      : 0.14 + (1 - control) * 0.24 + (zone === "air" ? 0.12 : 0.07) + facePenalty * 0.1) *
+    (0.78 + patience * 0.35) *
     clamp(errorMul, 0.55, 1.35);
   // Routine ground receives stick; lose mainly under heavy pressure / aerial mess / bad approach.
   const lost =

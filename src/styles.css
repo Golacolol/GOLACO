@@ -191,14 +191,19 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   margin: 0 auto 8px;
   max-width: 96px;
 }
-.hud-player-sheet .kit-marker-hud-sheet .portrait {
+.hud-player-sheet .kit-marker-hud-sheet .portrait,
+.hud-player-sheet .kit-marker-hud-sheet.kit-marker-photo .portrait {
   width: 72px;
   height: 72px;
   margin: 0;
   border-radius: 4px;
-  border: 2px solid rgba(197, 165, 114, 0.95);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  /* Same white frame as PNG portraits — not gold. */
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(197, 165, 114, 0.45),
+    0 4px 12px rgba(0, 0, 0, 0.4);
   overflow: hidden;
+  box-sizing: border-box;
 }
 .hud-player-sheet .kit-marker-hud-sheet .portrait-badge-kit .num {
   font-size: 18px;
@@ -263,14 +268,19 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   max-width: 48px;
   min-width: 48px;
 }
-.hud-card .kit-marker-hud .portrait {
+.hud-card .kit-marker-hud .portrait,
+.hud-card .kit-marker-hud.kit-marker-photo .portrait {
   width: 48px;
   height: 48px;
   margin: 0;
   border-radius: 4px;
-  border: 1.5px solid rgba(197, 165, 114, 0.95);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  /* Match PNG frames: white box (not gold) for badge fallbacks too. */
+  border: 1.5px solid rgba(255, 255, 255, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(197, 165, 114, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.35);
   overflow: hidden;
+  box-sizing: border-box;
 }
 .hud-card .kit-marker-hud .portrait-badge-kit {
   padding: 3px 2px;
@@ -1771,16 +1781,19 @@ html.club-name-glow-off .club-line {
 .team-roster-card .kit-marker-roster {
   display: grid;
   justify-items: center;
+  justify-content: center;
   gap: 0;
   margin: 0 auto 8px;
-  max-width: 168px;
+  width: 144px;
+  max-width: 100%;
 }
 /* Top-left Formation player card: square frame in panel gold/green — never a white circle. */
 .team-roster-card .kit-marker-roster .portrait,
 .team-roster-card .kit-marker-roster.kit-marker-photo .portrait {
+  position: relative;
   width: 144px;
   height: 144px;
-  margin: 0;
+  margin: 0 auto;
   padding: 7px;
   border-radius: 4px;
   border: 2px solid rgba(197, 165, 114, 0.85);
@@ -1790,13 +1803,18 @@ html.club-name-glow-off .club-line {
     0 6px 16px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   box-sizing: border-box;
+  display: grid;
+  place-items: center;
 }
 .team-roster-card .kit-marker-roster .portrait img {
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
   border-radius: 2px;
   object-fit: cover;
-  object-position: center;
+  object-position: center center;
   display: block;
   background: rgba(7, 20, 13, 0.9);
 }
@@ -1888,6 +1906,14 @@ html.club-name-glow-off .club-line {
   letter-spacing: 0.04em;
   opacity: 0.75;
 }
+.profile-hex-label-full {
+  letter-spacing: 0.02em;
+  opacity: 0.62;
+  font-weight: 600;
+}
+.profile-hex-full .profile-hex-shape {
+  stroke-width: 1.25;
+}
 .profile-detail-bars {
   width: 100%;
   height: 100%;
@@ -1922,6 +1948,7 @@ html.club-name-glow-off .club-line {
   background: var(--green);
 }
 .team-roster-hint {
+  display: none;
   margin-left: 6px;
   font-size: 9px;
   letter-spacing: 0.04em;
@@ -2288,8 +2315,9 @@ html.club-name-glow-off .club-line {
   overflow: hidden;
   box-sizing: border-box;
 }
-/* PNG markers on the pitch / bench: framed box; never paint number/name on the image. */
-.kit-marker-photo:not(.kit-marker-roster) .portrait {
+/* PNG markers on the pitch / bench: framed box; never paint number/name on the image.
+   Match HUD markers keep their own square white frame (see .kit-marker-hud*). */
+.kit-marker-photo:not(.kit-marker-roster):not(.kit-marker-hud):not(.kit-marker-hud-sheet) .portrait {
   border-radius: 10px;
   border: 2px solid rgba(255, 255, 255, 0.92);
   box-shadow:
@@ -2303,7 +2331,7 @@ html.club-name-glow-off .club-line {
 .kit-marker:not(.kit-marker-roster) .portrait-badge {
   border-radius: 50%;
 }
-.char-panel-team .kit-marker,
+.char-panel-team .kit-marker:not(.kit-marker-roster),
 .team-pitch .kit-marker {
   display: grid;
   justify-items: center;
@@ -2312,7 +2340,7 @@ html.club-name-glow-off .club-line {
   max-width: 112px;
 }
 /* PNG counters: pull number+name caption up under the framed photo. */
-.char-panel-team .kit-marker.kit-marker-photo,
+.char-panel-team .kit-marker.kit-marker-photo:not(.kit-marker-roster),
 .team-pitch .kit-marker.kit-marker-photo {
   gap: 3px;
 }
@@ -2546,6 +2574,9 @@ html.club-name-glow-off .club-line {
     width: 56px;
     height: 56px;
   }
+  .team-roster-card .kit-marker-roster {
+    width: 120px;
+  }
   .team-roster-card .kit-marker-roster .portrait {
     width: 120px;
     height: 120px;
@@ -2644,6 +2675,9 @@ html.club-name-glow-off .club-line {
   .team-roster-card .portrait {
     width: 56px;
     height: 56px;
+  }
+  .team-roster-card .kit-marker-roster {
+    width: 120px;
   }
   .team-roster-card .kit-marker-roster .portrait {
     width: 120px;

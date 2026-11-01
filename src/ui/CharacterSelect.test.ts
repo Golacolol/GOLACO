@@ -227,7 +227,15 @@ describe("character select", () => {
     const detailBox = view.root.querySelector<HTMLElement>(".profile-stats");
     expect(detailBox?.style.width).toBe(detailBox?.style.height);
     view.toggleProfileView();
+    // Third click: full attribute polygon in the same fixed box.
+    expect(view.root.querySelector(".profile-hex-full")).toBeTruthy();
     expect(view.root.querySelector(".profile-hex-shape")).toBeTruthy();
+    expect(view.root.querySelector(".profile-detail-bars")).toBeNull();
+    const fullBox = view.root.querySelector<HTMLElement>(".profile-stats");
+    expect(fullBox?.style.width).toBe(detailBox?.style.width);
+    expect(fullBox?.style.height).toBe(detailBox?.style.height);
+    view.toggleProfileView();
+    expect(view.root.querySelector(".profile-hex-six")).toBeTruthy();
     expect(view.root.querySelector(".profile-detail-bars")).toBeNull();
   });
 
@@ -416,7 +424,7 @@ describe("character select", () => {
     expect(photo).toBeTruthy();
     expect(photo?.querySelector(".kit-marker-num-overlay")).toBeNull();
     expect(photo?.querySelector(".kit-marker-caption .kit-marker-num")?.textContent).toBe("9.");
-    expect(photo?.querySelector(".kit-marker-caption .kit-marker-name")?.textContent).toBe("R. HARDIE");
+    expect(photo?.querySelector(".kit-marker-caption .kit-marker-name")?.textContent).toBe("HARDIE");
     const stBadge = photo?.querySelector(".portrait-badge-kit") as HTMLElement | null;
     // Photo markers keep caption in secondary; hidden fallback badge still carries team colours.
     expect(stBadge?.style.color.toLowerCase()).toBe("rgb(197, 165, 114)");
@@ -595,11 +603,11 @@ describe("kitSurnameFromName", () => {
     expect(kitSurnameFromName("Hardie")).toBe("HARDIE");
   });
 
-  it("abbreviates given names for under-photo captions", () => {
-    expect(kitCaptionSurname("van der Sar", "Edwin van der Sar")).toBe("E. VAN DER SAR");
-    expect(kitCaptionSurname("Del Piero", "Alessandro Del Piero")).toBe("A. DEL PIERO");
-    expect(kitCaptionSurname("de Boer", "Frank de Boer")).toBe("F. DE BOER");
-    expect(kitCaptionSurname("Hardie", "Ryan Hardie")).toBe("R. HARDIE");
+  it("uses surname only for under-photo captions", () => {
+    expect(kitCaptionSurname("van der Sar", "Edwin van der Sar")).toBe("VAN DER SAR");
+    expect(kitCaptionSurname("Del Piero", "Alessandro Del Piero")).toBe("DEL PIERO");
+    expect(kitCaptionSurname("de Boer", "Frank de Boer")).toBe("DE BOER");
+    expect(kitCaptionSurname("Hardie", "Ryan Hardie")).toBe("HARDIE");
     expect(kitCaptionSurname("Del Piero")).toBe("DEL PIERO");
   });
 });
@@ -622,7 +630,7 @@ describe("kitMarkerHtml", () => {
     expect(del).toContain(">DEL PIERO</span>");
   });
 
-  it("uses initial + surname under PNG and keeps badge text off the photo", () => {
+  it("uses number + surname under PNG and keeps badge text off the photo", () => {
     const html = kitMarkerHtml(
       {
         name: "Edwin van der Sar",
@@ -632,7 +640,9 @@ describe("kitMarkerHtml", () => {
       1,
     );
     expect(html).toContain("kit-marker-photo");
-    expect(html).toContain(">E. VAN DER SAR</span>");
+    expect(html).toContain(">1.</span>");
+    expect(html).toContain(">VAN DER SAR</span>");
+    expect(html).not.toContain("E. VAN DER SAR");
     expect(html).toMatch(/portrait-badge-kit" hidden/);
   });
 

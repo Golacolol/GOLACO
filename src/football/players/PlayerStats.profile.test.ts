@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import type { PlayerAttributes } from "../../data/schema";
-import { PROFILE_AXIS_IDS, deriveProfileAxes, effectiveComposure, resolveAttributes } from "./PlayerStats";
+import {
+  PROFILE_ATTR_SPOKES,
+  PROFILE_AXIS_IDS,
+  deriveProfileAxes,
+  effectiveComposure,
+  listProfileAttrSpokes,
+  resolveAttributes,
+} from "./PlayerStats";
+import { nextProfileStatsMode, profileFullSvg, profileStatsBlock } from "../../ui/ProfileHex";
 
 const attrs: PlayerAttributes = {
   pace: 80,
@@ -68,5 +76,35 @@ describe("deriveProfileAxes", () => {
     expect(resolved.concentration).toBe(80);
     expect(effectiveComposure({ ...resolved, form: 40, concentration: 40 })).toBeLessThan(80);
     expect(effectiveComposure({ ...resolved, form: 95, concentration: 95 })).toBeGreaterThan(80);
+  });
+});
+
+describe("full attribute radar spokes", () => {
+  it("lists every non-GK spoke and grows when GK ratings are present", () => {
+    const outfield = listProfileAttrSpokes(attrs);
+    const expectedOutfield = PROFILE_ATTR_SPOKES.filter((s) => !s.gk).length;
+    expect(outfield).toHaveLength(expectedOutfield);
+    expect(outfield.every((s) => s.value >= 1 && s.value <= 100)).toBe(true);
+
+    const keeper = listProfileAttrSpokes({ ...attrs, gkReflexes: 82, gkDiving: 78 });
+    expect(keeper.length).toBe(PROFILE_ATTR_SPOKES.length);
+    expect(keeper.some((s) => s.key === "gkReflexes")).toBe(true);
+  });
+
+  it("keeps the full shape inside the same fixed footprint as the hex", () => {
+    const hex = profileStatsBlock(attrs, { mode: "hex", size: 168 });
+    const full = profileStatsBlock(attrs, { mode: "full", size: 168 });
+    expect(hex).toMatch(/width:168px;height:168px/);
+    expect(full).toMatch(/width:168px;height:168px/);
+    expect(full).toContain("profile-hex-full");
+    const svg = profileFullSvg(listProfileAttrSpokes(attrs), 168);
+    expect(svg).toContain('viewBox="0 0 168 168"');
+    expect(svg.match(/profile-hex-shape/g)?.length).toBe(1);
+  });
+
+  it("cycles hex → detail → full → hex", () => {
+    expect(nextProfileStatsMode("hex")).toBe("detail");
+    expect(nextProfileStatsMode("detail")).toBe("full");
+    expect(nextProfileStatsMode("full")).toBe("hex");
   });
 });

@@ -176,11 +176,9 @@ export function kitGivenInitial(displayName: string | undefined, fullName?: stri
   return null;
 }
 
-/** Under-photo caption name: `E. VAN DER SAR` when a given name is known. */
+/** Under-photo caption name: surname only (`VAN DER SAR`) — number sits beside it. */
 export function kitCaptionSurname(displayName: string | undefined, fullName?: string | undefined): string {
-  const surname = kitSurnameFromName(displayName || fullName || "?");
-  const initial = kitGivenInitial(displayName, fullName);
-  return initial ? `${initial}. ${surname}` : surname;
+  return kitSurnameFromName(displayName || fullName || "?");
 }
 
 /** Scale surname text so long names still fit — mild shrink only; never go tiny when space exists. */
@@ -270,7 +268,7 @@ export function kitMarkerHtml(
   const surname = kitSurnameFromName(label);
   const initials = playerInitials(label);
   const badgeMode = options.badgeMode ?? "surname";
-  // Caption under PNG: "E. VAN DER SAR" when a given name exists on the full name.
+  // Caption under PNG: number + surname only (no given-name initial).
   const captionLabel = kitCaptionSurname(player.displayName, player.name);
   // Trusted = explicit appearance path. Speculative convention paths only promote on load.
   const trustedSrc = portraitAsset(player);
@@ -284,7 +282,7 @@ export function kitMarkerHtml(
   const captionTracking = surnameLetterSpacingEm(captionLabel);
   const nameStyle = `font-size:${captionSize}px;letter-spacing:${captionTracking}em`;
   const surStyle = `font-size:${surSize}px;letter-spacing:${tracking}em`;
-  // Under PNG: "12. E. SURNAME". Disc badge (no PNG): surname (formation) or initials (match HUD).
+  // Under PNG: "12. SURNAME". Disc badge (no PNG): surname (formation) or initials (match HUD).
   const caption = `<div class="kit-marker-caption" style="color:${escapePortrait(text)}"><span class="kit-marker-num">${shirtNumber}.</span><span class="kit-marker-name" style="${nameStyle}">${escapePortrait(captionLabel)}</span></div>`;
   const badgeLabel =
     badgeMode === "initials"

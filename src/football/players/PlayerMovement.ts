@@ -9,13 +9,13 @@ const BOUND_Z = HALF_WIDTH - 0.55;
 
 /**
  * Top speed from pace (m/s game units).
- * Pace 70 jog ≈ 7.5, sprint ≈ 9.4; pace 90 sprint ≈ 10.7 — closer to real football peaks.
+ * Pace 70 jog ≈ 6.9, sprint ≈ 8.7; pace 90 sprint ≈ 9.8 — slightly under the old peaks.
  */
 export function topSpeedFromPace(pace: number, sprinting: boolean, jockeying: boolean, closeControl = false): number {
   const p = stat01(pace);
-  if (jockeying || closeControl) return 3.1 + p * 1.2;
-  if (sprinting) return 7.0 + p * 3.5;
-  return 5.6 + p * 2.8;
+  if (jockeying || closeControl) return 2.95 + p * 1.15;
+  if (sprinting) return 6.55 + p * 3.25;
+  return 5.2 + p * 2.55;
 }
 
 /** Acceleration toward target velocity — higher acceleration reaches sprint sooner. */

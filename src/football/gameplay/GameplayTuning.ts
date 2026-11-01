@@ -50,7 +50,7 @@ export interface GameplayTuning {
 export const REAL_TUNING: GameplayTuning = {
   id: "REAL",
   movementAccelerationMultiplier: 0.9,
-  maxSpeedMultiplier: 0.94,
+  maxSpeedMultiplier: 0.9,
   turnMultiplier: 1,
   passSpeedMultiplier: 1,
   passErrorMultiplier: 0.62,
@@ -81,8 +81,8 @@ export const REAL_TUNING: GameplayTuning = {
 /** ARCADE stays multiplier-only off the same AI — faster, freer, more chaos. */
 export const ARCADE_TUNING: GameplayTuning = {
   id: "ARCADE",
-  movementAccelerationMultiplier: 1.34,
-  maxSpeedMultiplier: 1.16,
+  movementAccelerationMultiplier: 1.28,
+  maxSpeedMultiplier: 1.08,
   turnMultiplier: 1.28,
   passSpeedMultiplier: 1.2,
   passErrorMultiplier: 0.68,

@@ -54,13 +54,16 @@ export function planReceiveRun(
   // Late to the meet → sprint; otherwise jog / stride into the ball.
   const late = timeAtJog > ballEta * 0.92 && dist > 2.6;
   const far = dist > 14 && ground > 6;
+  // Dying / underhit release: FBs were jogging while attackers sprinted onto the loose ball.
+  const stranded = ground < 3.2 && dist > 3.2;
   return {
     x: aim.x,
     z: aim.z,
-    sprint: late || far,
+    sprint: late || far || stranded,
     // Cap below open-play chase bursts — receive must look human.
-    speedMul: baseMul * 0.96,
-    accelMul: 1.05,
+    // Stranded outlets get a touch more urgency so restarts actually stick.
+    speedMul: baseMul * (stranded ? 1.05 : 0.96),
+    accelMul: stranded ? 1.18 : 1.05,
   };
 }
 

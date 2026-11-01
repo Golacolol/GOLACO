@@ -346,9 +346,13 @@ export function chooseKeeperOutlet(gk: Player, teammates: Player[], opponents: P
 
 /** Aim at the outlet's feet, pulled inbound so wide FB throws/kicks stay on the pitch. */
 export function keeperOutletAimPoint(target: Player): { x: number; z: number } {
+  // Nudge slightly into the pitch and ahead of the FB so the meet isn't on the touchline
+  // (wide LBs/RBs were leaving balls that strikers could claim before play started).
+  const inbound = clampInboundZ(target.z, TOUCHLINE_SAFE_MARGIN + 2.2);
+  const towardMiddle = inbound * 0.82;
   return {
-    x: target.x,
-    z: clampInboundZ(target.z, TOUCHLINE_SAFE_MARGIN + 1.5),
+    x: target.x + target.attackSign * 1.8,
+    z: towardMiddle,
   };
 }
 
@@ -396,6 +400,82 @@ export function keeperPuntAim(gk: Player, teammates: Player[], rng: () => number
     x: clamp(gk.x + fwd * depth, -HALF_LENGTH + 14, HALF_LENGTH - 14),
     z: clampInboundZ(wideZ + (rng() - 0.5) * 5, 8),
   };
+}
+
+export function isStrikerOutlet(player: Player): boolean {
+  if (player.isGK) return false;
+  const s = player.slot;
+  return player.position === "ST" || s.includes("ST") || s.includes("CF");
+}
+
+/**
+ * Dead-ball goal-kick aim: long services target strikers / the halfway channel;
+ * short ones keep the FB/CB outlet nudge so the ball stays on the pitch.
+ */
+export function goalKickAimPoint(
+  gk: Player,
+  target: Player | null,
+  wantLong: boolean,
+  intentZ = 0,
+): { x: number; z: number } {
+  const fwd = gk.attackSign;
+  if (wantLong && target) {
+    return {
+      x: clamp(target.x + fwd * 3.2, -HALF_LENGTH + 12, HALF_LENGTH - 12),
+      z: clampInboundZ(target.z * 0.88 + intentZ * 4, 6),
+    };
+  }
+  if (target) return keeperOutletAimPoint(target);
+  if (wantLong) {
+    const depth = 54 + Math.abs(intentZ) * 4;
+    return {
+      x: clamp(gk.x + fwd * depth, -HALF_LENGTH + 12, HALF_LENGTH - 12),
+      z: clampInboundZ(intentZ * 16 + (Math.sign(intentZ || 1) || 1) * 6, 8),
+    };
+  }
+  return {
+    x: clamp(gk.x + fwd * 26, -HALF_LENGTH + 14, HALF_LENGTH - 14),
+    z: clampInboundZ(intentZ * 14, 8),
+  };
+}
+
+/** Planted goal kicks need a little more carry than open-play long passes. */
+export function goalKickPowerScale(distance: number, wantLong: boolean): number {
+  if (!wantLong) return distance > 28 ? 1.04 : 1;
+  return clamp(0.98 + distance / 95, 1.06, 1.24);
+}
+
+/** Prefer a striker for long goal kicks; fall back to the most advanced teammate. */
+export function chooseGoalKickLongTarget(
+  gk: Player,
+  teammates: Player[],
+  intentX = gk.attackSign,
+  intentZ = 0,
+): Player | null {
+  const useStick = Math.hypot(intentX, intentZ) > 0.18;
+  const intent = useStick
+    ? { x: intentX / (Math.hypot(intentX, intentZ) || 1), z: intentZ / (Math.hypot(intentX, intentZ) || 1) }
+    : { x: gk.attackSign, z: 0 };
+  let best: Player | null = null;
+  let bestScore = -Infinity;
+  for (const mate of teammates) {
+    if (mate.id === gk.id || mate.isGK) continue;
+    const dx = mate.x - gk.x;
+    const dz = mate.z - gk.z;
+    const dist = Math.hypot(dx, dz);
+    const forward = dx * gk.attackSign;
+    if (dist < 28 || forward < 22) continue;
+    const dirLen = dist || 1;
+    const align = (intent.x * (dx / dirLen) + intent.z * (dz / dirLen) + 1) / 2;
+    if (useStick && align < 0.22) continue;
+    const st = isStrikerOutlet(mate) ? 1.35 : mate.slot.includes("AM") || mate.slot.includes("CF") ? 0.55 : 0.1;
+    const score = forward * 0.045 + st + align * 0.7 + clamp(dist / 70, 0, 0.35);
+    if (score > bestScore) {
+      bestScore = score;
+      best = mate;
+    }
+  }
+  return best;
 }
 
 export function decideKeeperDistribution(opts: {

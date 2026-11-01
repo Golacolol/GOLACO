@@ -77,6 +77,19 @@ describe("ground contests", () => {
     expect(awayWin?.winner.side).toBe("away");
   });
 
+  it("lets a designated pass outlet beat a closer opponent", () => {
+    const ball = new Ball();
+    const outlet = make("fb", "home", 1.2, 0, { control: 60, reactions: 55 });
+    const attacker = make("st", "away", 0.4, 0, { control: 80, reactions: 80 });
+    const duel = resolveGroundDuel([outlet, attacker], ball, () => 0.5, 1, {
+      favorSide: "home",
+      favorBonus: 0.55,
+      favorPlayerId: "fb",
+      favorPlayerBonus: 1.55,
+    });
+    expect(duel?.winner.id).toBe("fb");
+  });
+
   it("defender poke changes ball velocity without magnet steal", () => {
     const ball = new Ball();
     ball.x = 1;

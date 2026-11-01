@@ -13,7 +13,7 @@ import { applyPhysicalToAppearance } from "../football/players/PlayerStats";
 import { fitKitSurnameElements, kitMarkerHtml, kitSurnameFromName, portraitHtml, teamBadgeHtml } from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
 import { imageLabel, listPlayerImages, uploadPlayerImage } from "./playerImages";
-import { profileStatsBlock } from "./ProfileHex";
+import { nextProfileStatsMode, profileStatsBlock, type ProfileStatsMode } from "./ProfileHex";
 
 const EDIT_POSITIONS: PositionCode[] = [
   "GK",
@@ -526,7 +526,7 @@ export class CharacterSelect {
   /** Persist edits from the Formation squad editor. */
   onSquadPlayerSave: ((edit: SquadPlayerEdit) => void) | null = null;
   /** Hex shape vs six detail bars on the roster card / player panel. */
-  private profileView: "hex" | "detail" = "hex";
+  private profileView: ProfileStatsMode = "hex";
   /**
    * When true, pitch/bench counters show native hover titles with the player name.
    * Driven by Options → Display → Formation overlays (default off).
@@ -1116,9 +1116,9 @@ export class CharacterSelect {
     if (i >= 0) this.index = i;
   }
 
-  /** Toggle hex shape ↔ six ratings without rebuilding the formation panel. */
+  /** Cycle hex (6) → six ratings → full attribute shape, without rebuilding the formation panel. */
   toggleProfileView(): void {
-    this.profileView = this.profileView === "hex" ? "detail" : "hex";
+    this.profileView = nextProfileStatsMode(this.profileView);
     this.patchProfileStats();
   }
 
@@ -1556,7 +1556,7 @@ export class CharacterSelect {
               <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
               ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
             </div>
-            <div class="team-roster-title">SQUAD <span class="team-roster-hint">Right-click to edit</span></div>
+            <div class="team-roster-title">SQUAD</div>
             <div class="team-roster-list">
               ${this.players
                 .map((p) => {
