@@ -344,10 +344,10 @@ export function choosePassTarget(
       (laneClear - 0.5) * (buildup ? 0.78 : 0.42) +
       switchedLane +
       (flatReswitch ? -1.95 : 0) +
-      (crossFieldSpam ? (passType === "short" ? -1.35 : -1.95) : 0) +
-      (flatSwitch ? (progressiveSwitch ? -0.85 : passType === "short" ? -1.75 : -2.3) : 0) +
-      (oppositeWing && forward < 12 ? -0.95 : 0) +
-      (width > 14 && forward < 5 && !(role === "wide" && !oppositeWing && Math.abs(mate.z) > 16) ? -1.15 : 0) +
+      (crossFieldSpam ? (passType === "short" ? -1.7 : -2.35) : 0) +
+      (flatSwitch ? (progressiveSwitch ? -1.05 : passType === "short" ? -2.1 : -2.65) : 0) +
+      (oppositeWing && forward < 12 ? -1.15 : 0) +
+      (width > 14 && forward < 5 && !(role === "wide" && !oppositeWing && Math.abs(mate.z) > 16) ? -1.35 : 0) +
       // Same-side wide stretch (RB/LB/W available for a switch-out lane).
       (role === "wide" && !oppositeWing && passType === "short" && Math.abs(mate.z) > 16 && width > 8 && forward > -3 && forward < 12
         ? 0.38 + clamp((Math.abs(mate.z) - 16) / 12, 0, 0.22)

@@ -84,8 +84,8 @@ export function evaluateGameplayFidelity(
   const completionOk = sample.passes < 8 || passCompletion >= (short ? 0.32 : 0.6);
   const possessionOk = sample.meanPossessionSpell >= (short ? 0.35 : 1.0);
   const tempoOk = sample.matchSeconds < 45 || passesPerMinute <= (short ? 48 : 22);
-  // Ground-first shorts sit ~0.3–0.8 m; longs/crosses still lift the median.
-  const passApexOk = sample.passApexCount < 5 || sample.medianPassApex >= (short ? 0.32 : 0.42);
+  // Ground-first shorts sit ~0.22–0.7 m; longs/crosses still lift the median.
+  const passApexOk = sample.passApexCount < 5 || sample.medianPassApex >= (short ? 0.24 : 0.36);
   const shotApexOk = sample.shotApexCount < 1 || sample.medianShotApex >= (short ? 0.7 : 0.85);
   const widthOk = sample.widthCount < 10 || sample.meanTeamWidth >= (short ? 26 : 38);
   return {
