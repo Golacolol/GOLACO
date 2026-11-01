@@ -145,6 +145,7 @@ export class Game {
     this.menu.onKitChange = (choice) => {
       this.save.data.settings.menuKitChoice = choice;
       this.save.save();
+      this.resetMenuIdleTimer();
     };
     this.menu.onClubChange = (teamId) => this.setDefaultClub(teamId);
     this.menu.onOppositionChange = (teamId) => this.setMenuOpposition(teamId);
@@ -636,6 +637,15 @@ export class Game {
     return fixture.awayTeamId === this.defaultClubId() && fixture.homeTeamId !== this.defaultClubId() ? "away" : "home";
   }
 
+  /** Any main-menu option tweak restarts the Simulator 60s idle clock. */
+  private resetMenuIdleTimer(): void {
+    if (this.appState !== AppState.MAIN_MENU) return;
+    this.input.lastInputAt = performance.now();
+    this.menu.countdown = AUTOPLAY_IDLE_SECONDS;
+    this.menu.setCountdown(AUTOPLAY_IDLE_SECONDS);
+    this.menu.attract = false;
+  }
+
   private setDefaultClub(teamId: string): void {
     // Ignore late dial commits once a match / pre-match flow has begun.
     if (this.appState !== AppState.MAIN_MENU) return;
@@ -647,6 +657,7 @@ export class Game {
     this.buildMenuWorld();
     this.applyMenuEnvironment();
     this.paintMainMenu();
+    this.resetMenuIdleTimer();
   }
 
   private setMenuOpposition(teamId: string): void {
@@ -660,6 +671,7 @@ export class Game {
     this.buildMenuWorld();
     this.applyMenuEnvironment();
     this.paintMainMenu();
+    this.resetMenuIdleTimer();
   }
 
   private paintMainMenu(): void {
@@ -721,11 +733,13 @@ export class Game {
     this.save.save();
     this.applyMenuEnvironment();
     this.paintMainMenu();
+    this.resetMenuIdleTimer();
   }
 
   private setMenuPlayMode(mode: "REAL" | "ARCADE" | "LEAGUE" | "TABLE" | "FLICK"): void {
     if (mode === "LEAGUE" && !this.hasUserLeagueProgress()) {
       this.paintMainMenu();
+      this.resetMenuIdleTimer();
       return;
     }
     // FOOSBALL / FLICKBALL are gameplay modes like REAL / ARCADE — selecting them
@@ -746,6 +760,7 @@ export class Game {
     this.buildMenuWorld();
     this.applyMenuEnvironment();
     this.paintMainMenu();
+    this.resetMenuIdleTimer();
   }
 
   private flickConfigFromSave(): FlickMatchConfig {
@@ -934,6 +949,7 @@ export class Game {
     const duration = clampMatchDuration(seconds);
     this.save.data.settings.matchDuration = duration;
     this.persistListedFixture();
+    this.resetMenuIdleTimer();
   }
 
   private hideEditors(): void {
