@@ -160,6 +160,44 @@ export const ARGYLE_FANS_PLAYERS: PlayerRecord[] = [
       bodyType: "standard",
     },
   }),
+  // Stronger than the other Fans CBs (Bones / Doo / Bradderz).
+  fan("player_fan_g_sparks", "G. Sparks", "G. Sparks", "CB", ["RB"], {
+    pace: 64, passing: 62, longPassing: 66, vision: 60, control: 64, dribbling: 52, shooting: 36, finishing: 30, shotPower: 64, longShots: 34, defending: 81, strength: 82, stamina: 74, composure: 74,
+    heightCm: 188,
+    appearance: {
+      portraitAsset: "/images/l10.png",
+      skinTone: 0.52,
+      hairStyle: "short",
+      hairColor: "#2a2018",
+      bodyType: "stocky",
+      heightScale: 1.04,
+    },
+  }),
+  // Surname-only moniker — kit shows ARGYLEUSA (no given-name initial).
+  fan("player_fan_argyle_usa", "ARGYLEUSA", "ARGYLEUSA", "CM", ["DM", "AM"], {
+    pace: 64, passing: 68, longPassing: 66, vision: 67, control: 66, dribbling: 64, shooting: 55, finishing: 50, shotPower: 60, longShots: 54, defending: 58, strength: 64, stamina: 74, composure: 65,
+    heightCm: 178,
+    appearance: {
+      portraitAsset: "/images/l9.png",
+      skinTone: 0.5,
+      hairStyle: "short",
+      hairColor: "#1a1410",
+      bodyType: "standard",
+    },
+  }),
+  // Aging poacher — drop in pace, strong finishing vs the other Fans strikers.
+  fan("player_fan_pasoti", "PASOTI", "PASOTI", "ST", [], {
+    pace: 63, passing: 52, longPassing: 44, vision: 60, control: 66, dribbling: 58, shooting: 75, finishing: 79, shotPower: 76, longShots: 58, defending: 28, strength: 74, stamina: 62, composure: 72,
+    heightCm: 185,
+    appearance: {
+      portraitAsset: "/images/l15.png",
+      skinTone: 0.5,
+      hairStyle: "short",
+      hairColor: "#1a1410",
+      bodyType: "stocky",
+      heightScale: 1.02,
+    },
+  }),
 ];
 
 export const ARGYLE_FANS_XI: { id: string; shirtNumber: number; slot: string; captain?: boolean }[] = [
@@ -183,6 +221,9 @@ export const ARGYLE_FANS_BENCH: { id: string; shirtNumber: number }[] = [
   { id: "player_fan_a_capman", shirtNumber: 15 },
   { id: "player_fan_g_bobby", shirtNumber: 17 },
   { id: "player_fan_alfie_greenwood", shirtNumber: 19 },
+  { id: "player_fan_g_sparks", shirtNumber: 32 },
+  { id: "player_fan_argyle_usa", shirtNumber: 76 },
+  { id: "player_fan_pasoti", shirtNumber: 96 },
 ];
 
 export const ARGYLE_FANS_MEMBERSHIPS: TeamMembership[] = [

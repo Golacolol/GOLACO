@@ -144,6 +144,11 @@ export function kitSurnameFromName(name: string): string {
   while (start < parts.length - 1 && /^[A-Za-z]$/.test(parts[start]!)) start += 1;
   const tokens = parts.slice(start);
   if (tokens.length === 1) return tokens[0]!.toUpperCase();
+  // Fan / club monikers ending in a short acronym ("Argyle USA", "City AFC").
+  const last = tokens[tokens.length - 1]!;
+  if (tokens.length >= 2 && /^[A-Z]{2,4}$/.test(last) && !isSurnameParticle(tokens[0]!)) {
+    return tokens.join(" ").toUpperCase();
+  }
   // From the end: include the final word plus any preceding particles.
   let i = tokens.length - 1;
   while (i > 0 && isSurnameParticle(tokens[i - 1]!)) i -= 1;
@@ -259,6 +264,39 @@ export function fitKitSurnameElements(root: ParentNode): void {
       guard += 1;
     }
     if (numEl && !numEl.style.fontSize) numEl.style.fontSize = `${size}px`;
+  }
+  fitRosterHeadingElements(root);
+}
+
+/**
+ * Formation top-left `12. R. HARDIE` — shrink to stay on one line inside the card.
+ */
+export function fitRosterHeadingElements(root: ParentNode): void {
+  const nodes = root.querySelectorAll<HTMLElement>(".team-roster-card h3");
+  for (const el of nodes) {
+    const host = el.parentElement;
+    const maxW = Math.max(48, (host?.clientWidth ?? el.clientWidth ?? 160) - 12);
+    if (maxW < 8) continue;
+    el.style.overflow = "hidden";
+    el.style.textOverflow = "clip";
+    el.style.whiteSpace = "nowrap";
+    let size = parseFloat(el.style.fontSize) || parseFloat(getComputedStyle(el).fontSize) || 17;
+    const trackingMatch = /^([\d.]+)em$/.exec(el.style.letterSpacing.trim());
+    let tracking = trackingMatch ? Number(trackingMatch[1]) : 0.04;
+    el.style.fontSize = `${size}px`;
+    el.style.letterSpacing = `${tracking}em`;
+    let guard = 0;
+    const over = () => el.scrollWidth > maxW + 0.5;
+    while (over() && size > 11 && guard < 48) {
+      size -= 0.5;
+      el.style.fontSize = `${size}px`;
+      guard += 1;
+    }
+    while (over() && tracking > 0 && guard < 72) {
+      tracking = Math.max(0, tracking - 0.01);
+      el.style.letterSpacing = `${tracking}em`;
+      guard += 1;
+    }
   }
 }
 

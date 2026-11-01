@@ -1920,6 +1920,11 @@ html.club-name-glow-off .club-line {
   letter-spacing: 0.04em;
   line-height: 1.2;
   color: inherit;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  box-sizing: border-box;
 }
 .team-roster-card .char-meta {
   opacity: 0.75;
@@ -2359,9 +2364,10 @@ html.club-name-glow-off .club-line {
   padding: 10px 14px;
 }
 /* Beat `.char-panel .portrait { 120px }` — formation pitch discs large enough to read.
-   Exclude `.kit-marker-roster` (top-left detail card stays square). */
+   Exclude roster (square card) and bench (own disc size — otherwise 88/120px portraits
+   clip inside the shorter bench box at ~75%). */
 .char-panel-team .pitch-token .portrait,
-.char-panel-team .kit-marker:not(.kit-marker-roster) .portrait,
+.char-panel-team .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench) .portrait,
 .team-pitch .pitch-token .portrait,
 .team-pitch .kit-marker .portrait {
   position: relative;
@@ -2569,27 +2575,48 @@ html.club-name-glow-off .club-line {
 }
 .bench-card:active { cursor: grabbing; }
 .bench-card.dragging { opacity: 0.45; }
+/* Beat `.char-panel .portrait { 120px }` — badge-only subs were clipped ~75%. */
+.char-panel .bench-card .kit-marker-bench,
 .bench-card .kit-marker-bench {
   --bench-disc: 72px;
   --bench-caption: 18px;
   display: grid;
-  width: var(--bench-disc);
+  width: max(var(--bench-disc), 7.5rem);
   max-width: 100%;
-  height: calc(var(--bench-disc) + 2px + var(--bench-caption));
   margin-inline: auto;
   justify-self: center;
   justify-items: center;
   align-content: start;
-  grid-template-rows: var(--bench-disc) var(--bench-caption);
   gap: 2px;
-  overflow: hidden;
   box-sizing: border-box;
 }
-.bench-card .kit-marker-bench .portrait,
-.bench-card .kit-marker-bench.kit-marker-photo .portrait {
+/* Badge fallback (no PNG): disc only — never reserve a caption lane that clips the circle. */
+.char-panel .bench-card .kit-marker-bench:not(.kit-marker-photo),
+.bench-card .kit-marker-bench:not(.kit-marker-photo) {
   width: var(--bench-disc);
   height: var(--bench-disc);
-  margin-inline: auto;
+  grid-template-rows: var(--bench-disc);
+  overflow: visible;
+}
+.char-panel .bench-card .kit-marker-bench.kit-marker-photo,
+.bench-card .kit-marker-bench.kit-marker-photo {
+  height: calc(var(--bench-disc) + 2px + var(--bench-caption));
+  grid-template-rows: var(--bench-disc) var(--bench-caption);
+  overflow: hidden;
+}
+.char-panel .bench-card .kit-marker-bench .portrait,
+.char-panel .bench-card .kit-marker-bench.kit-marker-photo .portrait,
+.bench-card .kit-marker-bench .portrait,
+.bench-card .kit-marker-bench.kit-marker-photo .portrait {
+  position: relative;
+  width: var(--bench-disc);
+  height: var(--bench-disc);
+  margin: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 .bench-card .kit-marker-bench .kit-marker-caption {
   display: flex;
@@ -2600,8 +2627,11 @@ html.club-name-glow-off .club-line {
   gap: 4px;
   max-width: 100%;
   width: 100%;
-  margin: 2px auto 0;
+  margin: 0 auto;
   text-align: center;
+}
+.bench-card .kit-marker-bench:not(.kit-marker-photo) .kit-marker-caption {
+  display: none;
 }
 .bench-card .portrait-badge-kit {
   padding: 3px 4px;
@@ -2615,11 +2645,13 @@ html.club-name-glow-off .club-line {
   justify-content: center;
   text-align: center;
 }
+.char-panel .bench-card .portrait-badge-kit .num,
 .bench-card .portrait-badge-kit .num {
   font-size: 14px;
   text-align: center;
   width: 100%;
 }
+.char-panel .bench-card .portrait-badge-kit .sur,
 .bench-card .portrait-badge-kit .sur {
   font-size: 13px;
   max-width: 100%;
@@ -2714,11 +2746,16 @@ html.club-name-glow-off .club-line {
     min-height: 96px;
   }
   .char-panel-team .pitch-token .portrait,
-  .char-panel-team .kit-marker .portrait,
+  .char-panel-team .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench) .portrait,
   .team-pitch .pitch-token .portrait,
   .team-pitch .kit-marker .portrait {
     width: 64px;
     height: 64px;
+  }
+  .char-panel .bench-card .kit-marker-bench,
+  .bench-card .kit-marker-bench {
+    --bench-disc: 56px;
+    --bench-caption: 16px;
   }
   .char-panel-team .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench),
   .team-pitch .kit-marker {

@@ -7,7 +7,13 @@ import {
   MARKER_MIN_DY,
   separatePitchMarkers,
 } from "./CharacterSelect";
-import { kitCaptionSurname, kitInitialSurnameLabel, kitMarkerHtml, kitSurnameFromName } from "./Portrait";
+import {
+  fitRosterHeadingElements,
+  kitCaptionSurname,
+  kitInitialSurnameLabel,
+  kitMarkerHtml,
+  kitSurnameFromName,
+} from "./Portrait";
 import type { SquadPlayer } from "../core/Database";
 import type { PlayerRecord } from "../data/schema";
 
@@ -394,6 +400,29 @@ describe("character select", () => {
     host.remove();
   });
 
+  it("renders badge-only substitute markers without photo class (full disc, no under-caption)", () => {
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    const view = new CharacterSelect(host);
+    const starters = squad();
+    const bench = makePlayer("b1", "B. Ench", "CM", 14);
+    // No portraitAsset — must stay badge-only so CSS can size the full disc.
+    delete (bench.player as { appearance?: unknown }).appearance;
+    view.setSquad("Argyle", starters, "#007A3D", {
+      formation: "4-2-3-1",
+      roster: [...starters, bench],
+      starterSlots: ["GK", "CAM", "ST"],
+    });
+    view.render();
+    const marker = view.root.querySelector('.bench-card[data-id="b1"] .kit-marker-bench');
+    expect(marker).toBeTruthy();
+    expect(marker?.classList.contains("kit-marker-photo")).toBe(false);
+    expect(marker?.querySelector(".portrait-badge-kit:not([hidden])")).toBeTruthy();
+    expect(marker?.querySelector(".portrait-badge-kit .sur")?.textContent).toBe("ENCH");
+    view.dispose();
+    host.remove();
+  });
+
   it("shows pause formation nav with Apply/Back and hides player/team mode toggles", () => {
     const host = document.createElement("div");
     document.body.appendChild(host);
@@ -640,6 +669,26 @@ describe("kitSurnameFromName", () => {
     expect(kitInitialSurnameLabel(undefined, "Ryan Hardie")).toBe("R. HARDIE");
     expect(kitInitialSurnameLabel("Edwin van der Sar", "Edwin van der Sar")).toBe("E. VAN DER SAR");
     expect(kitInitialSurnameLabel("Hardie", "Hardie")).toBe("HARDIE");
+    expect(kitSurnameFromName("ARGYLEUSA")).toBe("ARGYLEUSA");
+    expect(kitInitialSurnameLabel("ARGYLEUSA", "ARGYLEUSA")).toBe("ARGYLEUSA");
+    expect(kitCaptionSurname("ARGYLEUSA", "ARGYLEUSA")).toBe("ARGYLEUSA");
+    expect(kitInitialSurnameLabel("PASOTI", "PASOTI")).toBe("PASOTI");
+    expect(kitInitialSurnameLabel("G. Sparks", "G. Sparks")).toBe("G. SPARKS");
+  });
+
+  it("shrinks formation roster headings to one line", () => {
+    const host = document.createElement("div");
+    host.style.width = "120px";
+    host.innerHTML = `<div class="team-roster-card" style="width:120px"><h3 style="font-size:17px;letter-spacing:0.04em">99. E. VAN DER SAR</h3></div>`;
+    document.body.appendChild(host);
+    const h3 = host.querySelector("h3") as HTMLElement;
+    // jsdom often reports scrollWidth === clientWidth; stub an overflow.
+    Object.defineProperty(h3, "scrollWidth", { configurable: true, get: () => 200 });
+    Object.defineProperty(h3, "clientWidth", { configurable: true, get: () => 120 });
+    fitRosterHeadingElements(host);
+    expect(parseFloat(h3.style.fontSize)).toBeLessThan(17);
+    expect(h3.style.whiteSpace).toBe("nowrap");
+    host.remove();
   });
 });
 
