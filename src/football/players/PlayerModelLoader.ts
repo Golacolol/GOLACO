@@ -347,12 +347,16 @@ export function tintBodyAlbedoMap(
   return tex;
 }
 
-/** Mixamo-style humanoid height bands (feet → head) for kit wrap atlases. */
+/**
+ * Mixamo-style humanoid height bands (feet → head) for kit wrap atlases.
+ * `shirtTop` must clear the Vanguard front chest plate (~0.75–0.84) or that
+ * plate samples the skin band and reads as flesh instead of kit colour.
+ */
 export const KIT_WRAP_BANDS = {
   bootTop: 0.09,
   sockTop: 0.24,
   shortTop: 0.4,
-  shirtTop: 0.74,
+  shirtTop: 0.86,
 } as const;
 
 /**

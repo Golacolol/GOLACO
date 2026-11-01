@@ -190,7 +190,12 @@ describe("PlayerModelLoader", () => {
     const [r, , b] = ctx.getImageData(32, mid, 1, 1).data;
     expect(b).toBeGreaterThan(r); // navy shirt band
     expect(b).toBeGreaterThan(100);
-    const headY = Math.floor(64 * (1 - 0.9));
+    // Upper chest / Vanguard plate (~0.80) must stay in the shirt band, not flesh.
+    const chestY = Math.floor(64 * (1 - 0.8));
+    const [cr, , cb] = ctx.getImageData(32, chestY, 1, 1).data;
+    expect(cb).toBeGreaterThan(cr);
+    expect(cb).toBeGreaterThan(100);
+    const headY = Math.floor(64 * (1 - 0.92));
     const [sr, , sb] = ctx.getImageData(32, headY, 1, 1).data;
     expect(sr).toBeGreaterThan(sb); // skin band stays warm
     expect(sr).toBeGreaterThan(80);
