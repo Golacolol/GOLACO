@@ -778,10 +778,10 @@ html.club-name-glow-off .club-line {
   opacity: 0.12;
 }
 .fixture-match .opposition-dial-field {
-  flex: 1 1 16rem;
+  flex: 1 1 auto;
   min-width: 0;
-  max-width: 18rem;
-  width: auto;
+  max-width: none;
+  width: 100%;
   align-self: center;
   align-items: stretch;
 }
@@ -790,24 +790,91 @@ html.club-name-glow-off .club-line {
   max-width: none;
 }
 .fixture-match .opposition-spin.time-spin strong {
-  font-size: 16px;
-  letter-spacing: 0.04em;
+  font-size: 13px;
+  letter-spacing: 0.03em;
 }
 .fixture-match .opposition-spin .spin-ghost {
   font-size: 10px;
 }
-.lighting-fixture {
-  gap: 8px;
-}
-.lighting-half-row {
+/*
+ * Lighting: title + chips in a left stack; match-time dial after the chips,
+ * vertically centred on the panel (not horizontally centred under them).
+ */
+.menu-hero-stack > .menu-fixture.lighting-fixture,
+.menu-fixture.menu-fixture-labeled.lighting-fixture {
   display: flex;
-  width: 100%;
-  justify-content: center;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  height: var(--menu-fixture-height);
+  min-height: var(--menu-fixture-height);
+  max-height: var(--menu-fixture-height);
+  overflow: hidden;
+}
+.lighting-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 7px;
+  min-width: 0;
+  width: auto;
+}
+.lighting-fixture .lighting-main > .fixture-section-label {
+  width: auto;
+  max-width: 100%;
+}
+.lighting-fixture .lighting-main > .tod-row {
+  width: auto;
+  max-width: 100%;
+  flex: 0 1 auto;
+}
+/* Length + dial sit after Lighting chips, Y-centred as one group on the panel. */
+.lighting-length-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  flex: 0 0 auto;
+  align-items: center;
+  align-self: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+}
+/* Beat .menu-fixture-labeled .meta / .fixture-section-label { width:100% }. */
+.menu-fixture.menu-fixture-labeled.lighting-fixture .lighting-length-label,
+.lighting-fixture .lighting-length-label {
+  display: block;
+  flex: 0 0 auto;
+  align-self: center;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  opacity: 0.88;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  text-transform: none;
+  color: var(--paper);
+}
+.lighting-half-slot {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
   margin: 0;
   padding: 0;
 }
-.lighting-half-row .duration-spin.time-spin {
+.lighting-half-slot .duration-spin.time-spin {
   align-self: center;
 }
 @media (max-width: 640px) {
@@ -817,11 +884,7 @@ html.club-name-glow-off .club-line {
     gap: 10px;
   }
   .menu-fixture.fixture-match {
-    flex-wrap: wrap;
-  }
-  .fixture-match .opposition-dial-field {
-    flex: 1 1 10rem;
-    max-width: none;
+    grid-template-columns: minmax(0, 1fr) minmax(4.5rem, 5.5rem);
   }
 }
 .team-dials.team-dials-locked,
@@ -918,23 +981,22 @@ html.club-name-glow-off .club-line {
   max-height: none;
 }
 .menu-fixture.fixture-match {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
+  display: grid;
+  /* Next-match abbrs + countdown need the wide column; opposition stays compact. */
+  grid-template-columns: minmax(0, 1fr) minmax(4.75rem, 5.75rem);
   align-items: center; /* opposition dial sits on the panel mid-line */
-  gap: 10px;
+  column-gap: 8px;
+  row-gap: 0;
   padding: 6px 10px 6px 12px;
   overflow: hidden;
 }
 .fixture-match-main {
   display: flex;
   flex-direction: column;
-  /* Basis 0 so content cannot shove under the opposition dial. */
-  flex: 1 1 0;
+  grid-column: 1;
   min-width: 0;
-  width: auto;
-  max-width: none;
+  width: 100%;
+  max-width: 100%;
   overflow: hidden;
   gap: 0;
 }
@@ -943,10 +1005,13 @@ html.club-name-glow-off .club-line {
   flex-direction: row;
   flex-wrap: nowrap;
   align-items: center;
+  grid-column: 2;
   gap: 10px;
-  flex: 0 0 auto;
   min-width: 0;
-  margin-left: auto;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  overflow: hidden;
 }
 .fixture-teams-row {
   display: flex;
@@ -996,7 +1061,7 @@ html.club-name-glow-off .club-line {
 .fixture-teams {
   display: flex;
   flex-wrap: nowrap;
-  gap: 6px 8px;
+  gap: 4px 6px;
   align-items: center;
   justify-content: flex-start;
   width: 100%;
@@ -1007,26 +1072,38 @@ html.club-name-glow-off .club-line {
 .fixture-teams .fixture-crest.team-badge,
 .fixture-teams .team-badge {
   flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
 }
 .fixture-teams > strong {
+  /* Never flex-shrink 3-letter abbrs into a clipped sliver. */
   flex: 0 0 auto;
   min-width: 0;
   overflow: visible;
   text-overflow: clip;
   white-space: nowrap;
-  font-size: 15px;
-  letter-spacing: 0.06em;
+  font-size: 14px;
+  letter-spacing: 0.04em;
 }
 .fixture-teams .vs {
   flex: 0 0 auto;
 }
+.fixture-teams .fixture-kick-block {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.fixture-teams .fixture-kick-block[hidden] {
+  display: none !important;
+}
 .fixture-teams .kick-countdown {
   margin-left: 0;
   align-self: center;
-  flex: 0 1 auto;
-  min-width: 0;
+  flex: 0 0 auto;
+  min-width: 1.6em;
+  overflow: visible;
 }
 .menu-fixture .meta { width: 100%; opacity: 0.7; font-size: 12px; letter-spacing: 0.08em; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 8px; }
 .menu-fixture.fixture-match .meta,
@@ -1078,22 +1155,25 @@ html.club-name-glow-off .club-line {
   line-height: 1;
   background: transparent;
 }
-.lighting-half-row > .duration-spin.time-spin {
+.lighting-half-slot > .duration-spin.time-spin {
   flex: 0 0 auto;
   align-self: center;
+  height: 2.4em;
+  min-width: 4.4em;
+  width: 4.4em;
 }
-.lighting-half-row .duration-spin .spin-ghost {
-  font-size: 10px;
+.lighting-half-slot .duration-spin .spin-ghost {
+  font-size: 9px;
   line-height: 1;
   opacity: 0.34;
 }
-.lighting-half-row .duration-spin strong {
+.lighting-half-slot .duration-spin strong {
   display: block;
   width: 100%;
   text-align: center;
-  font-size: 15px;
+  font-size: 14px;
   letter-spacing: 0.08em;
-  line-height: 1.15;
+  line-height: 1.1;
 }
 .time-spin:hover, .time-spin:focus-visible {
   background: rgba(0,0,0,0.35);
@@ -1198,6 +1278,11 @@ html.club-name-glow-off .club-line {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
+}
+/* Gameplay chips keep full label width — JS fit scales type to the panel. */
+.menu-fixture-labeled.gameplay-fixture .tod-opt {
+  flex: 0 0 auto;
+  min-width: max-content;
 }
 .menu-fixture-labeled .vs {
   flex: 0 0 auto;

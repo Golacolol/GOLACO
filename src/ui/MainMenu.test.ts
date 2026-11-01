@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { describe, expect, it, vi } from "vitest";
-import { fitMenuLabels, MainMenu, type MainMenuView } from "./MainMenu";
+import { fitGameplayModeRow, fitMenuLabels, MainMenu, type MainMenuView } from "./MainMenu";
 import type { FixtureRecord, StadiumRecord, TeamRecord } from "../data/schema";
 import type { GameDatabase } from "../core/Database";
 
@@ -73,14 +73,23 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector(".fixture-section-label")?.textContent).toBe("Gameplay");
     const labels = [...menu.root.querySelectorAll(".fixture-section-label")].map((el) => el.textContent);
     expect(labels).toEqual(["Gameplay", "Lighting"]);
+    expect(menu.root.querySelector(".lighting-length-label")?.textContent).toBe("Length");
     expect(menu.root.querySelector(".fixture-match [data-opposition-spin]")).toBeTruthy();
-    expect(menu.root.querySelector(".lighting-fixture .lighting-half-row [data-half-spin]")).toBeTruthy();
+    expect(menu.root.querySelector(".lighting-fixture .lighting-main .tod-row [data-tod='DAY']")).toBeTruthy();
+    expect(menu.root.querySelector(".lighting-fixture .lighting-main .tod-row [data-tod='EVENING']")).toBeTruthy();
+    expect(menu.root.querySelector(".lighting-fixture .lighting-main .tod-row [data-tod='NIGHT']")).toBeTruthy();
+    expect(menu.root.querySelector(".lighting-fixture .lighting-length-group [data-half-spin]")).toBeTruthy();
     expect(menu.root.querySelector(".fixture-match [data-half-spin]")).toBeNull();
     expect(menu.root.querySelector(".fixture-teams-row [data-half-spin]")).toBeNull();
     const lightingKids = [...menu.root.querySelector(".lighting-fixture")!.children].map((el) => el.className);
-    expect(lightingKids[0]).toContain("fixture-section-label");
-    expect(lightingKids[1]).toContain("tod-row");
-    expect(lightingKids[2]).toContain("lighting-half-row");
+    expect(lightingKids[0]).toContain("lighting-main");
+    expect(lightingKids[1]).toContain("lighting-length-group");
+    const lengthKids = [...menu.root.querySelector(".lighting-length-group")!.children].map((el) => el.className);
+    expect(lengthKids[0]).toContain("lighting-length-label");
+    expect(lengthKids[1]).toContain("lighting-half-slot");
+    const mainKids = [...menu.root.querySelector(".lighting-main")!.children].map((el) => el.className);
+    expect(mainKids[0]).toContain("fixture-section-label");
+    expect(mainKids[1]).toContain("tod-row");
     const matchKids = [...menu.root.querySelector(".fixture-match")!.children];
     expect(matchKids[0]?.classList.contains("fixture-match-main")).toBe(true);
     expect(matchKids[1]?.classList.contains("fixture-match-dials")).toBe(true);
@@ -101,10 +110,12 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(meta?.textContent).toContain("15:00");
     const teams = menu.root.querySelector(".fixture-teams");
     const kick = menu.root.querySelector("[data-kick-count]");
+    const block = menu.root.querySelector<HTMLElement>("[data-kick-block]");
     expect(teams?.querySelectorAll(".fixture-crest").length).toBe(2);
     expect(teams?.contains(kick)).toBe(true);
     expect(kick?.querySelector("[data-kick-unit]")).toBeTruthy();
     menu.setKickOffCountdown(45);
+    expect(block?.hidden).toBe(false);
     expect(kick!.classList.contains("phase-seconds")).toBe(true);
     expect(kick!.querySelector("strong")?.textContent).toBe("45");
     expect(kick!.querySelector("[data-kick-unit]")?.textContent).toBe("S");
@@ -115,6 +126,8 @@ describe("MainMenu LEAGUE mode button", () => {
     menu.setKickOffCountdown(48 * 3600);
     expect(kick!.classList.contains("phase-days")).toBe(true);
     expect(kick!.querySelector("[data-kick-unit]")?.textContent).toBe("D");
+    menu.setKickOffCountdown(0);
+    expect(block?.hidden).toBe(true);
   });
 
   it("colours stadium and club name with the club primary", () => {
@@ -175,6 +188,48 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(parseFloat(line.style.fontSize)).toBeLessThan(16);
     expect(line.style.textOverflow).toBe("clip");
     expect(parseFloat(strong.style.fontSize)).toBeLessThan(15);
+
+    host.remove();
+    vi.restoreAllMocks();
+  });
+
+  it("refits Gameplay chips up from an undersize when the panel has room", () => {
+    const host = document.createElement("div");
+    host.innerHTML = `
+      <div class="menu-fixture menu-fixture-labeled gameplay-fixture" style="width:420px;padding:8px 12px;box-sizing:border-box">
+        <span class="meta fixture-section-label">Gameplay</span>
+        <span class="tod-row">
+          <button type="button" class="tod-opt" style="font-size:9px">FOOTBALL</button>
+          <span class="vs">·</span>
+          <button type="button" class="tod-opt" style="font-size:9px">SOCCER</button>
+          <span class="vs">·</span>
+          <button type="button" class="tod-opt" style="font-size:9px">FOOSBALL</button>
+          <span class="vs">·</span>
+          <button type="button" class="tod-opt" style="font-size:9px">FLICKBALL</button>
+        </span>
+      </div>`;
+    document.body.appendChild(host);
+    const panel = host.querySelector<HTMLElement>(".gameplay-fixture")!;
+    const row = host.querySelector<HTMLElement>(".tod-row")!;
+    const opt = host.querySelector<HTMLElement>(".tod-opt")!;
+    Object.defineProperty(panel, "clientWidth", { configurable: true, get: () => 420 });
+    // max-content measure: wide enough that 13px still fits the 396px content budget.
+    vi.spyOn(row, "getBoundingClientRect").mockImplementation(() => {
+      const px = parseFloat(opt.style.fontSize) || 13;
+      const w = 220 * (px / 13);
+      return { width: w, height: 16, top: 0, left: 0, bottom: 16, right: w, x: 0, y: 0, toJSON: () => ({}) } as DOMRect;
+    });
+    Object.defineProperty(row, "scrollWidth", {
+      configurable: true,
+      get: () => {
+        const px = parseFloat(opt.style.fontSize) || 13;
+        return 220 * (px / 13);
+      },
+    });
+
+    fitGameplayModeRow(host);
+    expect(parseFloat(opt.style.fontSize)).toBeGreaterThanOrEqual(12.5);
+    expect(parseFloat(opt.style.fontSize)).toBeLessThanOrEqual(13);
 
     host.remove();
     vi.restoreAllMocks();

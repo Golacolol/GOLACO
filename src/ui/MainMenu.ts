@@ -191,7 +191,7 @@ export class MainMenu {
                 </span>
               </span>
             </div>
-            <div class="menu-fixture menu-fixture-labeled">
+            <div class="menu-fixture menu-fixture-labeled gameplay-fixture">
               <span class="meta fixture-section-label">Gameplay</span>
               <span class="tod-row">
                 ${mode("REAL", "FOOTBALL")}
@@ -210,17 +210,22 @@ export class MainMenu {
               </span>
             </div>
             <div class="menu-fixture menu-fixture-labeled lighting-fixture">
-              <span class="meta fixture-section-label">Lighting</span>
-              <span class="tod-row">
-                ${tod("DAY", "DAY")}
-                <span class="vs">·</span>
-                ${tod("EVENING", "EVENING")}
-                <span class="vs">·</span>
-                ${tod("NIGHT", "NIGHT")}
-              </span>
-              <span class="lighting-half-row">
-                ${halfSpinHtml(this.matchDuration)}
-              </span>
+              <div class="lighting-main">
+                <span class="meta fixture-section-label">Lighting</span>
+                <span class="tod-row">
+                  ${tod("DAY", "DAY")}
+                  <span class="vs">·</span>
+                  ${tod("EVENING", "EVENING")}
+                  <span class="vs">·</span>
+                  ${tod("NIGHT", "NIGHT")}
+                </span>
+              </div>
+              <div class="lighting-length-group">
+                <span class="lighting-length-label">Length</span>
+                <span class="lighting-half-slot">
+                  ${halfSpinHtml(this.matchDuration)}
+                </span>
+              </div>
             </div>
             <div class="menu-fixture fixture-match">
               <div class="fixture-match-main">
@@ -230,13 +235,12 @@ export class MainMenu {
                 <div class="fixture-teams-row">
                   <button type="button" class="fixture-copy" data-id="next" aria-label="Play next fixture ${home.abbreviation} vs ${away.abbreviation}">
                     <div class="fixture-teams">
-                      ${teamBadgeHtml(home, { className: "fixture-crest", size: 28 })}
+                      ${teamBadgeHtml(home, { className: "fixture-crest", size: 22 })}
                       <strong>${home.abbreviation}</strong>
                       <span class="vs">vs</span>
-                      ${teamBadgeHtml(away, { className: "fixture-crest", size: 28 })}
+                      ${teamBadgeHtml(away, { className: "fixture-crest", size: 22 })}
                       <strong>${away.abbreviation}</strong>
-                      <span class="vs">·</span>
-                      ${kickCountdownHtml(fixture.date, view.kickOffTime || DEFAULT_KICK_OFF_TIME)}
+                      ${kickCountdownBlockHtml(fixture.date, view.kickOffTime || DEFAULT_KICK_OFF_TIME)}
                     </div>
                   </button>
                 </div>
@@ -362,7 +366,9 @@ export class MainMenu {
   setKickOffCountdown(remainingSeconds: number): void {
     const cd = formatKickCountdown(remainingSeconds);
     const unit = kickCountdownUnit(cd.phase);
+    const block = this.root.querySelector<HTMLElement>("[data-kick-block]");
     const el = this.root.querySelector<HTMLElement>("[data-kick-count]");
+    if (block) block.hidden = remainingSeconds <= 0;
     if (!el) return;
     el.className = `kick-countdown phase-${cd.phase}`;
     el.setAttribute("aria-label", `Kick-off in ${cd.value} ${cd.phase}`);
@@ -1110,10 +1116,12 @@ function kickCountdownUnit(phase: KickCountdownPhase): string {
   return "S";
 }
 
-function kickCountdownHtml(date: string, time: string): string {
-  const cd = formatKickCountdown(kickOffRemainingSeconds(date, time));
+function kickCountdownBlockHtml(date: string, time: string): string {
+  const remaining = kickOffRemainingSeconds(date, time);
+  const cd = formatKickCountdown(remaining);
   const unit = kickCountdownUnit(cd.phase);
-  return `<span class="kick-countdown phase-${cd.phase}" data-kick-count aria-label="Kick-off in ${cd.value} ${cd.phase}"><strong>${cd.value}</strong><span class="kick-unit" data-kick-unit>${unit}</span></span>`;
+  const hidden = remaining <= 0 ? " hidden" : "";
+  return `<span class="fixture-kick-block"${hidden} data-kick-block><span class="vs">·</span><span class="kick-countdown phase-${cd.phase}" data-kick-count aria-label="Kick-off in ${cd.value} ${cd.phase}"><strong>${cd.value}</strong><span class="kick-unit" data-kick-unit>${unit}</span></span></span>`;
 }
 
 function clubBadgeStyle(team: TeamRecord): string {
@@ -1180,75 +1188,93 @@ export function fitMenuLabels(root: HTMLElement): void {
   fitGameplayModeRow(root);
 }
 
-/** Shrink Gameplay chips (FOOTBALL · … · FLICKBALL) so the row fits the column. */
-function fitGameplayModeRow(root: HTMLElement): void {
-  const labeled = [...root.querySelectorAll<HTMLElement>(".menu-fixture-labeled")].find(
-    (el) => el.querySelector(".fixture-section-label")?.textContent?.trim() === "Gameplay",
-  );
+/** Intrinsic width of the Gameplay chip row (ignores the 100%-wide flex box). */
+function measureGameplayRowWidth(row: HTMLElement): number {
+  const prevWidth = row.style.width;
+  const prevOverflow = row.style.overflow;
+  row.style.width = "max-content";
+  row.style.overflow = "visible";
+  const w = Math.max(row.scrollWidth, row.getBoundingClientRect().width);
+  row.style.width = prevWidth;
+  row.style.overflow = prevOverflow;
+  return w;
+}
+
+/**
+ * Fit Gameplay chips (FOOTBALL · … · FLICKBALL) to the panel content width.
+ * Always restarts from the CSS base size so a prior undersize can grow again
+ * when the column has more room.
+ */
+export function fitGameplayModeRow(root: HTMLElement): void {
+  const labeled =
+    root.querySelector<HTMLElement>(".gameplay-fixture") ??
+    [...root.querySelectorAll<HTMLElement>(".menu-fixture-labeled")].find(
+      (el) => el.querySelector(".fixture-section-label")?.textContent?.trim() === "Gameplay",
+    );
   const row = labeled?.querySelector<HTMLElement>(".tod-row");
-  if (!row) return;
-  const budget = labeled!.clientWidth || row.clientWidth || 0;
+  if (!labeled || !row) return;
+
+  const style = getComputedStyle(labeled);
+  const pad =
+    (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0);
+  const budget = Math.max(8, labeled.clientWidth - pad);
   if (budget < 8) return;
 
+  const opts = [...row.querySelectorAll<HTMLElement>(".tod-opt")];
   row.style.fontSize = "";
   row.style.letterSpacing = "";
-  row.querySelectorAll<HTMLElement>(".tod-opt").forEach((opt) => {
+  opts.forEach((opt) => {
     opt.style.fontSize = "";
     opt.style.letterSpacing = "";
   });
 
-  const basePx = parseFloat(getComputedStyle(row.querySelector(".tod-opt") ?? row).fontSize) || 13;
-  fitNowrapToWidth(row, budget, { minPx: 9, basePx });
-  const fitted = parseFloat(row.style.fontSize) || basePx;
-  const tracking = row.style.letterSpacing || "0.06em";
-  row.querySelectorAll<HTMLElement>(".tod-opt").forEach((opt) => {
-    opt.style.fontSize = `${fitted}px`;
-    opt.style.letterSpacing = tracking;
-  });
+  const basePx = parseFloat(getComputedStyle(opts[0] ?? row).fontSize) || 13;
+  const minPx = 11;
+  let size = basePx;
+  let tracking = 0.06;
+  const apply = () => {
+    const font = `${size}px`;
+    const track = `${tracking}em`;
+    row.style.fontSize = font;
+    row.style.letterSpacing = track;
+    for (const opt of opts) {
+      opt.style.fontSize = font;
+      opt.style.letterSpacing = track;
+    }
+  };
+  apply();
+  let guard = 0;
+  while (measureGameplayRowWidth(row) > budget + 0.5 && size > minPx && guard < 48) {
+    size -= 0.5;
+    apply();
+    guard += 1;
+  }
+  while (measureGameplayRowWidth(row) > budget + 0.5 && tracking > 0.02 && guard < 72) {
+    tracking = Math.max(0.02, tracking - 0.01);
+    apply();
+    guard += 1;
+  }
 }
 
-/** Shrink next-match abbrs only when the row actually overflows — leave countdown sized separately. */
+/** Soft-fit next-match detail line; keep 3-letter abbrs readable (never crush to a sliver). */
 function fitFixtureMatchLabels(root: HTMLElement): void {
   const main = root.querySelector<HTMLElement>(".fixture-match-main");
   const teams = root.querySelector<HTMLElement>(".fixture-teams");
   if (!teams) return;
-  const budget =
-    teams.clientWidth ||
-    main?.clientWidth ||
-    teams.parentElement?.clientWidth ||
-    0;
+  const budget = main?.clientWidth || teams.clientWidth || 0;
   if (budget < 8) return;
 
-  teams.style.fontSize = "";
-  teams.style.letterSpacing = "";
   const strongs = [...teams.querySelectorAll<HTMLElement>(":scope > strong")];
   strongs.forEach((s) => {
     s.style.fontSize = "";
     s.style.letterSpacing = "";
   });
 
-  // Typical 3-letter abbrs should stay at the CSS size; only shrink when the row overflows.
-  const basePx = parseFloat(getComputedStyle(strongs[0] ?? teams).fontSize) || 15;
-  let size = basePx;
-  let tracking = 0.06;
-  let guard = 0;
-  const apply = () => {
-    for (const s of strongs) {
-      s.style.fontSize = `${size}px`;
-      s.style.letterSpacing = `${tracking}em`;
-    }
-  };
-  apply();
-  const over = () => measureNowrapWidth(teams) > budget + 2;
-  while (over() && size > 12 && guard < 48) {
-    size -= 0.5;
-    apply();
-    guard += 1;
-  }
-  while (over() && tracking > 0.02 && guard < 72) {
-    tracking = Math.max(0.02, tracking - 0.01);
-    apply();
-    guard += 1;
+  // Abbrs stay at CSS size — 3 letters must remain visible beside the crests.
+  const basePx = parseFloat(getComputedStyle(strongs[0] ?? teams).fontSize) || 14;
+  for (const s of strongs) {
+    s.style.fontSize = `${basePx}px`;
+    s.style.letterSpacing = "0.04em";
   }
 
   const detail = root.querySelector<HTMLElement>(".fixture-detail-row .meta");
