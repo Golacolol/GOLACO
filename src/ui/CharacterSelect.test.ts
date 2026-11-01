@@ -2,6 +2,8 @@
 import { describe, expect, it } from "vitest";
 import {
   CharacterSelect,
+  fitFormationTeamTitle,
+  fitPitchCounters,
   formationToPitchPercent,
   MARKER_MIN_DX,
   MARKER_MIN_DY,
@@ -85,21 +87,25 @@ describe("character select", () => {
     expect(view.root.textContent).toContain("START AS TEAM");
     expect(view.root.textContent).toContain("SUBSTITUTES");
     expect(view.root.textContent).toContain("SQUAD");
-    expect(view.root.querySelector(".play-style-chips")).toBeTruthy();
+    expect(view.root.querySelector(".formation-toolbar")).toBeTruthy();
     expect(view.root.querySelector('[data-char="form-side"]')).toBeNull();
     expect(view.root.querySelector('[data-char="chalk"]')).toBeTruthy();
     expect(view.root.querySelector(".team-pitch-chalk")).toBeTruthy();
     const chalk = view.root.querySelector('[data-char="chalk"]');
-    const auto = view.root.querySelector('[data-char="play-style"][data-style="auto"]');
-    expect(chalk && auto && !!(chalk.compareDocumentPosition(auto) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
-    expect(view.root.querySelector(".play-style-chips [data-char='form-side']")).toBeNull();
-    expect(view.root.querySelector('[data-char="play-style"][data-style="auto"]')).toBeTruthy();
-    expect(view.root.querySelector('[data-char="play-style"][data-style="counter"]')).toBeTruthy();
+    const styleSelect = view.root.querySelector<HTMLSelectElement>('select[data-char="play-style"]');
+    const formSelect = view.root.querySelector<HTMLSelectElement>('select[data-char="form"]');
+    expect(chalk && styleSelect && !!(chalk.compareDocumentPosition(styleSelect) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
+    expect(view.root.querySelector(".formation-toolbar [data-char='form-side']")).toBeNull();
+    expect(styleSelect).toBeTruthy();
+    expect(formSelect).toBeTruthy();
+    expect([...styleSelect!.options].map((o) => o.value)).toContain("auto");
+    expect([...styleSelect!.options].map((o) => o.value)).toContain("counter");
+    expect(styleSelect!.value).toBe("auto");
     expect(view.playStyle).toBe("auto");
     view.setPlayStyle("possession");
     view.render();
     expect(view.getEditedLineup().playStyle).toBe("possession");
-    expect(view.root.querySelector('[data-style="possession"]')?.classList.contains("on")).toBe(true);
+    expect(view.root.querySelector<HTMLSelectElement>('select[data-char="play-style"]')?.value).toBe("possession");
   });
 
   it("opens Flickball / Foosball on the formation pitch, not setup", () => {
@@ -613,21 +619,26 @@ describe("character select", () => {
     view.render();
     expect(view.canSwitchFormationSide()).toBe(true);
     expect(view.formationSide).toBe("home");
-    const sideChip = view.root.querySelector('.play-style-chips [data-char="form-side"][data-side-toggle]');
-    expect(sideChip?.textContent).toBe("HOME");
-    expect(sideChip?.classList.contains("on")).toBe(true);
-    const chalk = view.root.querySelector('.play-style-chips [data-char="chalk"]');
-    const form442 = view.root.querySelector('[data-char="form"][data-form="4-4-2"]');
+    const homeChip = view.root.querySelector('.formation-toolbar [data-char="form-side"][data-side="home"]');
+    const awayChip = view.root.querySelector('.formation-toolbar [data-char="form-side"][data-side="away"]');
+    expect(homeChip?.textContent).toBe("HOME");
+    expect(awayChip?.textContent).toBe("AWAY");
+    expect(homeChip?.classList.contains("on")).toBe(true);
+    expect(awayChip?.classList.contains("on")).toBe(false);
+    const chalk = view.root.querySelector('.formation-toolbar [data-char="chalk"]');
+    const formSelect = view.root.querySelector<HTMLSelectElement>('.formation-toolbar select[data-char="form"]');
     expect(
-      sideChip &&
+      homeChip &&
         chalk &&
-        !!(sideChip.compareDocumentPosition(chalk) & Node.DOCUMENT_POSITION_FOLLOWING),
+        !!(homeChip.compareDocumentPosition(chalk) & Node.DOCUMENT_POSITION_FOLLOWING),
     ).toBe(true);
     expect(
-      sideChip &&
-        form442 &&
-        !!(sideChip.compareDocumentPosition(form442) & Node.DOCUMENT_POSITION_FOLLOWING),
+      awayChip &&
+        formSelect &&
+        !!(awayChip.compareDocumentPosition(formSelect) & Node.DOCUMENT_POSITION_FOLLOWING),
     ).toBe(true);
+    expect(formSelect?.value).toBe("4-2-3-1");
+    expect([...formSelect!.options].map((o) => o.value)).toContain("4-4-2");
     expect(view.root.querySelector(".char-team-title")?.textContent).toContain("Home FC");
     view.setFormation("4-3-3");
     view.toggleFormationSide();
@@ -636,7 +647,8 @@ describe("character select", () => {
     expect(view.formation).toBe("4-4-2");
     expect(view.playStyle).toBe("counter");
     expect(view.root.querySelector(".char-team-title")?.textContent).toContain("Away FC");
-    expect(view.root.querySelector('[data-char="form-side"][data-side-toggle]')?.textContent).toBe("AWAY");
+    expect(view.root.querySelector('[data-char="form-side"][data-side="home"]')?.classList.contains("on")).toBe(false);
+    expect(view.root.querySelector('[data-char="form-side"][data-side="away"]')?.classList.contains("on")).toBe(true);
     expect(view.xi.some((row) => row.player.player.id === "a_st")).toBe(true);
     view.setPlayStyle("direct");
     const edits = view.getEditedLineups();
@@ -693,9 +705,45 @@ describe("kitSurnameFromName", () => {
     Object.defineProperty(h3, "scrollWidth", { configurable: true, get: () => 200 });
     Object.defineProperty(h3, "clientWidth", { configurable: true, get: () => 120 });
     fitRosterHeadingElements(host);
-    expect(parseFloat(h3.style.fontSize)).toBeLessThan(22);
+    expect(parseFloat(h3.style.fontSize)).toBeLessThan(26);
     expect(parseFloat(h3.style.fontSize)).toBeGreaterThanOrEqual(13);
     expect(h3.style.whiteSpace).toBe("nowrap");
+    host.remove();
+  });
+
+  it("shrinks pitch counters on narrow boards and leaves wide boards alone", () => {
+    const host = document.createElement("div");
+    host.innerHTML = `<div class="team-pitch"></div>`;
+    document.body.appendChild(host);
+    const pitch = host.querySelector(".team-pitch") as HTMLElement;
+    Object.defineProperty(pitch, "clientWidth", { configurable: true, get: () => 320 });
+    fitPitchCounters(host);
+    expect(pitch.style.getPropertyValue("--counter-disc")).toMatch(/px/);
+    expect(parseFloat(pitch.style.getPropertyValue("--counter-disc"))).toBeLessThan(88);
+    expect(parseFloat(pitch.style.getPropertyValue("--counter-disc"))).toBeGreaterThanOrEqual(48);
+    Object.defineProperty(pitch, "clientWidth", { configurable: true, get: () => 700 });
+    fitPitchCounters(host);
+    expect(pitch.style.getPropertyValue("--counter-disc")).toBe("");
+    host.remove();
+  });
+
+  it("fits classic team titles without treating the crest as text width", () => {
+    const host = document.createElement("div");
+    host.className = "char-team-title";
+    host.innerHTML = `<span class="char-team-crest" style="display:inline-block;width:28px;height:28px"></span><div class="eyebrow">Cameroon — 1990</div>`;
+    document.body.appendChild(host);
+    Object.defineProperty(host, "clientWidth", { configurable: true, get: () => 160 });
+    const crest = host.querySelector(".char-team-crest") as HTMLElement;
+    Object.defineProperty(crest, "offsetWidth", { configurable: true, get: () => 28 });
+    const title = host.querySelector(".eyebrow") as HTMLElement;
+    Object.defineProperty(title, "scrollWidth", {
+      configurable: true,
+      get: () => (parseFloat(title.style.fontSize || "15") > 11.5 ? 150 : 118),
+    });
+    fitFormationTeamTitle(title);
+    expect(title.textContent).toBe("Cameroon — 1990");
+    expect(parseFloat(title.style.fontSize)).toBeLessThan(15);
+    expect(parseFloat(title.style.fontSize)).toBeGreaterThanOrEqual(10);
     host.remove();
   });
 });

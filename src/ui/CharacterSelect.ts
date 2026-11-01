@@ -219,56 +219,105 @@ function kitHeadingName(player: { displayName?: string; name?: string }): string
   return kitInitialSurnameLabel(player.displayName, player.name);
 }
 
-/** Keep play-style / formation chip rows on one line; shrink type when the team name is long. */
+/** Shrink the right-side formation toolbar chips so they stay inside the head. */
+/** Fit the formation team title inside its crest+label row (do not count the crest as text width). */
+export function fitFormationTeamTitle(title: HTMLElement): void {
+  const host = title.parentElement;
+  if (!host) return;
+  let siblings = 0;
+  for (const child of Array.from(host.children)) {
+    if (child === title) continue;
+    siblings += (child as HTMLElement).offsetWidth;
+  }
+  const hostStyle = getComputedStyle(host);
+  const gap = parseFloat(hostStyle.columnGap || hostStyle.gap || "0") || 0;
+  const gaps = Math.max(0, host.children.length - 1) * gap;
+  const maxW = Math.max(40, host.clientWidth - siblings - gaps - 4);
+  title.style.fontSize = "";
+  title.style.letterSpacing = "";
+  title.style.whiteSpace = "nowrap";
+  let size = parseFloat(getComputedStyle(title).fontSize) || 15;
+  let tracking = parseFloat(getComputedStyle(title).letterSpacing) || 0.07;
+  // letterSpacing from computed style is px — prefer the CSS em default.
+  if (getComputedStyle(title).letterSpacing.endsWith("px")) tracking = 0.07;
+  let guard = 0;
+  while (title.scrollWidth > maxW + 0.5 && size > 10 && guard < 48) {
+    size -= 0.5;
+    title.style.fontSize = `${size}px`;
+    guard += 1;
+  }
+  while (title.scrollWidth > maxW + 0.5 && tracking > 0.02 && guard < 72) {
+    tracking = Math.max(0.02, tracking - 0.01);
+    title.style.letterSpacing = `${tracking}em`;
+    guard += 1;
+  }
+}
+
+/**
+ * Shrink pitch player counters on narrow boards so discs keep formation spacing.
+ * Wide pitches stay at the authored 88×112 size.
+ */
+export function fitPitchCounters(root: ParentNode): void {
+  const pitch = root.querySelector<HTMLElement>(".team-pitch");
+  if (!pitch) return;
+  const w = pitch.clientWidth;
+  if (w < 8) {
+    pitch.style.removeProperty("--counter-disc");
+    pitch.style.removeProperty("--counter-caption");
+    pitch.style.removeProperty("--counter-width");
+    return;
+  }
+  // ~560px pitch ≈ comfortable for 88px discs at MARKER_MIN_DX spacing.
+  const scale = Math.min(1, Math.max(0.55, w / 560));
+  if (scale >= 0.995) {
+    pitch.style.removeProperty("--counter-disc");
+    pitch.style.removeProperty("--counter-caption");
+    pitch.style.removeProperty("--counter-width");
+    return;
+  }
+  const disc = Math.round(88 * scale);
+  const caption = Math.max(12, Math.round(22 * scale));
+  const width = Math.round(112 * scale);
+  pitch.style.setProperty("--counter-disc", `${disc}px`);
+  pitch.style.setProperty("--counter-caption", `${caption}px`);
+  pitch.style.setProperty("--counter-width", `${width}px`);
+}
+
 export function fitFormationHeaderChips(root: ParentNode): void {
   const title = root.querySelector<HTMLElement>(".char-team-title .eyebrow");
-  if (title) {
-    const host = title.parentElement;
-    const maxW = Math.max(64, Math.min(title.clientWidth || 280, host?.clientWidth || 280));
-    title.style.fontSize = "";
-    title.style.letterSpacing = "";
-    let size = parseFloat(getComputedStyle(title).fontSize) || 15;
-    let guard = 0;
-    title.style.whiteSpace = "nowrap";
-    while (title.scrollWidth > maxW + 0.5 && size > 10 && guard < 40) {
-      size -= 0.5;
-      title.style.fontSize = `${size}px`;
-      guard += 1;
-    }
+  if (title) fitFormationTeamTitle(title);
+  fitPitchCounters(root);
+  const bar = root.querySelector<HTMLElement>(".formation-toolbar");
+  if (!bar) return;
+  const budget = bar.clientWidth || bar.parentElement?.clientWidth || 0;
+  if (budget < 8) return;
+  const chips = [...bar.querySelectorAll<HTMLElement>(".formation-chip")];
+  if (!chips.length) return;
+  for (const chip of chips) {
+    chip.style.fontSize = "";
+    chip.style.paddingLeft = "";
+    chip.style.paddingRight = "";
+    chip.style.letterSpacing = "";
   }
-  for (const sel of [".play-style-chips", ".formation-chips"]) {
-    const row = root.querySelector<HTMLElement>(sel);
-    if (!row) continue;
-    const budget = row.clientWidth || row.parentElement?.clientWidth || 0;
-    if (budget < 8) continue;
-    const chips = [...row.querySelectorAll<HTMLElement>(".formation-chip")];
-    if (!chips.length) continue;
+  let size = parseFloat(getComputedStyle(chips[0]!).fontSize) || 10;
+  let pad = 8;
+  let tracking = 0.06;
+  let guard = 0;
+  const over = () => bar.scrollHeight > bar.clientHeight + 2 || bar.scrollWidth > budget + 2;
+  while (over() && size > 8 && guard < 48) {
+    size -= 0.5;
+    pad = Math.max(3, pad - 0.4);
     for (const chip of chips) {
-      chip.style.fontSize = "";
-      chip.style.paddingLeft = "";
-      chip.style.paddingRight = "";
-      chip.style.letterSpacing = "";
+      chip.style.fontSize = `${size}px`;
+      chip.style.paddingLeft = `${pad}px`;
+      chip.style.paddingRight = `${pad}px`;
     }
-    let size = parseFloat(getComputedStyle(chips[0]!).fontSize) || 11;
-    let pad = 10;
-    let tracking = 0.08;
-    let guard = 0;
-    const over = () => row.scrollWidth > budget + 1;
-    while (over() && size > 8 && guard < 48) {
-      size -= 0.5;
-      pad = Math.max(4, pad - 0.5);
-      for (const chip of chips) {
-        chip.style.fontSize = `${size}px`;
-        chip.style.paddingLeft = `${pad}px`;
-        chip.style.paddingRight = `${pad}px`;
-      }
-      guard += 1;
-    }
-    while (over() && tracking > 0.02 && guard < 72) {
-      tracking = Math.max(0.02, tracking - 0.01);
-      for (const chip of chips) chip.style.letterSpacing = `${tracking}em`;
-      guard += 1;
-    }
+    guard += 1;
+  }
+  while (over() && tracking > 0.02 && guard < 72) {
+    tracking = Math.max(0.02, tracking - 0.01);
+    for (const chip of chips) chip.style.letterSpacing = `${tracking}em`;
+    guard += 1;
   }
 }
 
@@ -603,12 +652,20 @@ export class CharacterSelect {
   private chalkStrokes: { x: number; y: number }[][] = [];
   private chalkDraft: { x: number; y: number }[] | null = null;
   private chalkPointerId: number | null = null;
+  private fitObserver: ResizeObserver | null = null;
 
   constructor(parent: HTMLElement) {
     this.root = document.createElement("div");
     this.root.className = "char-select";
     parent.appendChild(this.root);
     this.hide();
+    if (typeof ResizeObserver !== "undefined") {
+      this.fitObserver = new ResizeObserver(() => {
+        fitKitSurnameElements(this.root);
+        fitFormationHeaderChips(this.root);
+      });
+      this.fitObserver.observe(this.root);
+    }
     this.root.addEventListener("dragstart", (e) => this.onDragStart(e));
     this.root.addEventListener("dragover", (e) => this.onDragOver(e));
     this.root.addEventListener("drop", (e) => this.onDrop(e));
@@ -1274,6 +1331,7 @@ export class CharacterSelect {
     requestAnimationFrame(() => {
       const restored = this.root.querySelector<HTMLElement>(".team-roster-list");
       if (restored && rosterScroll > 0) restored.scrollTop = rosterScroll;
+      this.observePitchFit();
       fitKitSurnameElements(this.root);
       fitFormationHeaderChips(this.root);
     });
@@ -1284,7 +1342,15 @@ export class CharacterSelect {
   }
 
   dispose(): void {
+    this.fitObserver?.disconnect();
+    this.fitObserver = null;
     this.root.remove();
+  }
+
+  private observePitchFit(): void {
+    const pitch = this.root.querySelector(".team-pitch");
+    if (!pitch || !this.fitObserver) return;
+    this.fitObserver.observe(pitch);
   }
 
   private teamTitleHtml(label?: string, opts?: { withKitChips?: boolean }): string {
@@ -1416,6 +1482,29 @@ export class CharacterSelect {
   private onTabletopFieldChange(e: Event): void {
     const el = e.target as HTMLElement | null;
     if (!el || !this.root.contains(el)) return;
+    if (el instanceof HTMLSelectElement && el.matches("[data-char='play-style']")) {
+      const style = el.value;
+      if (
+        style === "auto" ||
+        style === "possession" ||
+        style === "balanced" ||
+        style === "counter" ||
+        style === "direct" ||
+        style === "routeOne"
+      ) {
+        this.setPlayStyle(style);
+        this.render();
+      }
+      return;
+    }
+    if (el instanceof HTMLSelectElement && el.matches("[data-char='form']")) {
+      const form = el.value;
+      if (form) {
+        this.setFormation(form);
+        this.render();
+      }
+      return;
+    }
     const key = el.getAttribute("data-tt");
     if (!key) return;
     if (this.tabletopKind === "FLICK") {
@@ -1590,10 +1679,11 @@ export class CharacterSelect {
       <div class="char-panel char-panel-team ${this.purpose === "spot" ? "char-panel-spot" : ""}">
         <div class="team-select-head">
           ${this.teamTitleHtml(titleLabel)}
-          <div class="play-style-chips" role="group" aria-label="Play style">
+          <div class="formation-toolbar" role="toolbar" aria-label="Formation controls">
             ${
               this.canSwitchFormationSide()
-                ? `<button type="button" class="formation-chip form-side-chip on" data-char="form-side" data-side-toggle="1" aria-label="Switch fixture side (currently ${this.formationSide === "home" ? "HOME" : "AWAY"})" title="Tap to switch HOME / AWAY">${this.formationSide === "home" ? "HOME" : "AWAY"}</button>`
+                ? `<button type="button" class="formation-chip form-side-chip ${this.formationSide === "home" ? "on" : ""}" data-char="form-side" data-side="home" aria-pressed="${this.formationSide === "home" ? "true" : "false"}">HOME</button>
+            <button type="button" class="formation-chip form-side-chip ${this.formationSide === "away" ? "on" : ""}" data-char="form-side" data-side="away" aria-pressed="${this.formationSide === "away" ? "true" : "false"}">AWAY</button>`
                 : ""
             }
             ${
@@ -1601,18 +1691,26 @@ export class CharacterSelect {
                 ? ""
                 : `<button type="button" class="formation-chip chalk-chip ${this.chalkMode ? "on" : ""}" data-char="chalk" title="Chalk — draw on the pitch. Right-click to wipe." aria-pressed="${this.chalkMode ? "true" : "false"}">Chalk</button>`
             }
-            ${(["auto", ...PLAY_STYLE_IDS] as PlayStyleChoice[])
-              .map(
-                (id) =>
-                  `<button type="button" class="formation-chip play-style-chip ${id === this.playStyle ? "on" : ""}" data-char="play-style" data-style="${id}">${PLAY_STYLE_LABELS[id]}</button>`,
-              )
-              .join("")}
-          </div>
-          <div class="formation-chips" role="group" aria-label="Formation">
-            ${FORMATION_NAMES.map(
-              (name) =>
-                `<button type="button" class="formation-chip ${name === this.formation ? "on" : ""}" data-char="form" data-form="${name}">${name}</button>`,
-            ).join("")}
+            <label class="formation-select-wrap">
+              <span class="visually-hidden">Play style</span>
+              <select class="formation-chip formation-select play-style-select on" data-char="play-style" aria-label="Play style">
+                ${(["auto", ...PLAY_STYLE_IDS] as PlayStyleChoice[])
+                  .map(
+                    (id) =>
+                      `<option value="${id}" ${id === this.playStyle ? "selected" : ""}>${PLAY_STYLE_LABELS[id]}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </label>
+            <label class="formation-select-wrap">
+              <span class="visually-hidden">Formation</span>
+              <select class="formation-chip formation-select form-select on" data-char="form" aria-label="Formation">
+                ${FORMATION_NAMES.map(
+                  (name) =>
+                    `<option value="${name}" ${name === this.formation ? "selected" : ""}>${name}</option>`,
+                ).join("")}
+              </select>
+            </label>
           </div>
           ${spotHint}
         </div>

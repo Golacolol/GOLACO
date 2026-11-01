@@ -238,10 +238,12 @@ export class MainMenu {
                   </button>
                 </div>
               </div>
-              <span class="team-dial-field opposition-dial-field">
-                ${oppositionSpinHtml(this.oppositionOptions, this.oppositionIndex)}
-              </span>
-              ${halfSpinHtml(this.matchDuration)}
+              <div class="fixture-match-dials">
+                <span class="team-dial-field opposition-dial-field">
+                  ${oppositionSpinHtml(this.oppositionOptions, this.oppositionIndex)}
+                </span>
+                ${halfSpinHtml(this.matchDuration)}
+              </div>
             </div>
           </div>
           <button type="button" class="sim-timer" data-id="sim">

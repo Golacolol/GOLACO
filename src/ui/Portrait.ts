@@ -233,9 +233,9 @@ export function fitKitSurnameElements(root: ParentNode): void {
       el.parentElement;
     // Name under photo: use full marker width (~72px+). Inside-badge: disc width.
     const markerW = marker?.clientWidth || host?.clientWidth || 52;
-    // Caption is "num + name" on one row — fit against remaining width after the number.
+    // Caption is "num + name" on one centred line — fit the name against leftover width.
     const numEl = caption?.querySelector<HTMLElement>(".kit-marker-num");
-    const numW = numEl ? numEl.getBoundingClientRect().width + 4 : 0;
+    const numW = numEl ? numEl.getBoundingClientRect().width + 6 : 0;
     const maxW = caption
       ? Math.max(36, Math.min(108, (caption.clientWidth || markerW || 112) - numW) - 4)
       : Math.max(28, (host?.clientWidth ?? el.clientWidth ?? 88) - 8);
@@ -246,13 +246,18 @@ export function fitKitSurnameElements(root: ParentNode): void {
     let size = parseFloat(el.style.fontSize) || parseFloat(getComputedStyle(el).fontSize) || 18;
     const trackingMatch = /^([\d.]+)em$/.exec(el.style.letterSpacing.trim());
     let tracking = trackingMatch ? Number(trackingMatch[1]) : 0.04;
+    const applyTracking = (em: number) => {
+      el.style.letterSpacing = `${em}em`;
+      // Cancel the trailing letter-spacing slot so the label stays optically centred.
+      el.style.marginInlineEnd = em > 0 ? `-${em}em` : "";
+    };
     el.style.fontSize = `${size}px`;
-    el.style.letterSpacing = `${tracking}em`;
+    applyTracking(tracking);
     let guard = 0;
     // Caption under disc: shrink earlier so long names never crowd the counter.
-    // Roster square surname is the hero line — keep it large.
+    // Roster kit-back surname stays readable but smaller than the number.
     const rosterSur = !!el.closest(".kit-marker-roster");
-    const floor = caption ? 10 : rosterSur ? 14 : 9;
+    const floor = caption ? 10 : rosterSur ? 12 : 9;
     const over = () => el.scrollWidth > maxW + 0.5;
     while (over() && size > floor && guard < 48) {
       size -= 0.5;
@@ -262,7 +267,7 @@ export function fitKitSurnameElements(root: ParentNode): void {
     }
     while (over() && tracking > 0 && guard < 72) {
       tracking = Math.max(0, tracking - 0.01);
-      el.style.letterSpacing = `${tracking}em`;
+      applyTracking(tracking);
       guard += 1;
     }
     if (numEl && !numEl.style.fontSize) numEl.style.fontSize = `${size}px`;
@@ -285,7 +290,7 @@ export function fitRosterHeadingElements(root: ParentNode): void {
     el.style.fontSize = "";
     el.style.letterSpacing = "";
     // Prefer a large face that fills the line; only step down when it overflows.
-    let size = 22;
+    let size = 26;
     let tracking = 0.04;
     const floor = 13;
     el.style.fontSize = `${size}px`;
@@ -330,19 +335,20 @@ export function kitMarkerHtml(
   const src = trustedSrc ?? speculativeSrc;
   const bench = (options.className ?? "").includes("kit-marker-bench");
   const roster = (options.className ?? "").includes("kit-marker-roster");
-  // Roster square (no PNG): name is the hero line above the number.
-  const surSize = surnameFitPx(surname, roster ? 26 : bench ? 15 : 17);
+  // Roster square (no PNG): kit-back — smaller surname above a large number.
+  const surSize = surnameFitPx(surname, roster ? 18 : bench ? 15 : 17);
   const captionSize = surnameFitPx(captionLabel, bench ? 14 : 16);
   const tracking = surnameLetterSpacingEm(surname);
   const captionTracking = surnameLetterSpacingEm(captionLabel);
-  const nameStyle = `font-size:${captionSize}px;letter-spacing:${captionTracking}em`;
-  const surStyle = `font-size:${surSize}px;letter-spacing:${tracking}em`;
+  // letter-spacing adds a trailing gap after the last glyph — cancel it so centred labels stay centred.
+  const nameStyle = `font-size:${captionSize}px;letter-spacing:${captionTracking}em;margin-inline-end:-${captionTracking}em`;
+  const surStyle = `font-size:${surSize}px;letter-spacing:${tracking}em;margin-inline-end:-${tracking}em`;
   // Under PNG: "12. SURNAME". Disc badge (no PNG): surname (formation) or initials (match HUD).
-  const caption = `<div class="kit-marker-caption" style="color:${escapePortrait(text)}"><span class="kit-marker-num">${shirtNumber}.</span><span class="kit-marker-name" style="${nameStyle}">${escapePortrait(captionLabel)}</span></div>`;
+  const caption = `<div class="kit-marker-caption" style="color:${escapePortrait(text)}"><span class="kit-marker-num">${shirtNumber}.</span><span class="kit-marker-name" style="${nameStyle}">${escapePortrait(captionLabel.trim())}</span></div>`;
   const badgeLabel =
     badgeMode === "initials"
       ? `<span class="ini">${escapePortrait(initials)}</span>`
-      : `<span class="sur" style="${surStyle}">${escapePortrait(surname)}</span>`;
+      : `<span class="sur" style="${surStyle}">${escapePortrait(surname.trim())}</span>`;
   const numSpan = `<span class="num">${shirtNumber}</span>`;
   // Top-left formation card only: surname above number. Pitch / bench / HUD keep number first.
   const badgeInner = roster ? `${badgeLabel}${numSpan}` : `${numSpan}${badgeLabel}`;

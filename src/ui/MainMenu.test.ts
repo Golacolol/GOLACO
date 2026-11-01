@@ -74,12 +74,14 @@ describe("MainMenu LEAGUE mode button", () => {
     const labels = [...menu.root.querySelectorAll(".fixture-section-label")].map((el) => el.textContent);
     expect(labels).toEqual(["Gameplay", "Lighting"]);
     expect(menu.root.querySelector(".fixture-match [data-opposition-spin]")).toBeTruthy();
-    expect(menu.root.querySelector(".fixture-match > [data-half-spin]")).toBeTruthy();
+    expect(menu.root.querySelector(".fixture-match-dials [data-half-spin]")).toBeTruthy();
     expect(menu.root.querySelector(".fixture-teams-row [data-half-spin]")).toBeNull();
     const matchKids = [...menu.root.querySelector(".fixture-match")!.children];
     expect(matchKids[0]?.classList.contains("fixture-match-main")).toBe(true);
-    expect(matchKids[1]?.classList.contains("opposition-dial-field")).toBe(true);
-    expect(matchKids[2]?.hasAttribute("data-half-spin")).toBe(true);
+    expect(matchKids[1]?.classList.contains("fixture-match-dials")).toBe(true);
+    const dialKids = [...menu.root.querySelector(".fixture-match-dials")!.children];
+    expect(dialKids[0]?.classList.contains("opposition-dial-field")).toBe(true);
+    expect(dialKids[1]?.hasAttribute("data-half-spin")).toBe(true);
     expect(menu.root.querySelector(".fixture-detail-row .meta")?.textContent).toContain("League One");
   });
 

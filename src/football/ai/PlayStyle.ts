@@ -97,7 +97,7 @@ export const PLAY_STYLE_LABELS: Record<PlayStyleChoice, string> = {
   balanced: "Balanced",
   counter: "Counter",
   direct: "Direct",
-  routeOne: "Route one",
+  routeOne: "Route 1",
 };
 
 export function isPlayStyleId(value: string | null | undefined): value is PlayStyleId {

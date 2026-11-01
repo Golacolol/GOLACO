@@ -916,12 +916,23 @@ html.club-name-glow-off .club-line {
 .fixture-match-main {
   display: flex;
   flex-direction: column;
-  /* Grow to fill leftover width; dials stay packed after the match details. */
-  flex: 1 1 auto;
+  /* Basis 0 so content cannot shove under the opposition dial. */
+  flex: 1 1 0;
   min-width: 0;
   width: auto;
   max-width: none;
+  overflow: hidden;
   gap: 0;
+}
+.fixture-match-dials {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+  min-width: 0;
+  margin-left: auto;
 }
 .fixture-teams-row {
   display: flex;
@@ -1053,8 +1064,8 @@ html.club-name-glow-off .club-line {
   line-height: 1;
   background: transparent;
 }
+.fixture-match-dials > .duration-spin.time-spin,
 .fixture-match > .duration-spin.time-spin {
-  /* Packs immediately after the opposition dial — not pinned to the right edge. */
   flex: 0 0 auto;
   align-self: center;
 }
@@ -1713,23 +1724,26 @@ html.club-name-glow-off .club-line {
   }
 }
 .team-select-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px 10px;
+  display: grid;
+  /* Title keeps classic names (e.g. Cameroon — 1990); toolbar flexes into the rest. */
+  grid-template-columns: minmax(10rem, max-content) minmax(0, 1fr);
+  align-items: start;
+  column-gap: 12px;
+  row-gap: 8px;
   margin-bottom: 10px;
   flex: 0 0 auto;
 }
 .team-select-head .eyebrow { margin: 0; }
+.team-select-head .spot-pick-hint {
+  grid-column: 1 / -1;
+}
 .char-team-title {
   display: inline-flex;
   align-items: center;
   gap: 8px 10px;
   min-width: 0;
-  flex: 0 1 auto;
-  max-width: min(42%, 320px);
   flex-wrap: nowrap;
+  align-self: center;
 }
 .char-team-title .eyebrow {
   margin: 0;
@@ -1762,23 +1776,17 @@ html.club-name-glow-off .club-line {
   margin-left: 0;
   margin-bottom: 8px;
 }
-.play-style-chips {
+/* One right-aligned chip grid: HOME · Chalk · styles · formations. */
+.formation-toolbar {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-content: flex-start;
   align-items: center;
-  gap: 6px;
-  flex: 1 1 auto;
+  gap: 5px;
   min-width: 0;
-  overflow: hidden;
-}
-.formation-chips {
-  display: flex;
-  flex-wrap: nowrap;
-  align-items: center;
-  gap: 6px;
-  flex: 1 0 100%;
   width: 100%;
-  min-width: 0;
+  max-height: 4.6rem;
   overflow: hidden;
 }
 .formation-chip {
@@ -1788,9 +1796,10 @@ html.club-name-glow-off .club-line {
   border: 1px solid rgba(197, 165, 114, 0.4);
   background: transparent;
   color: var(--paper);
-  padding: 6px 10px;
-  letter-spacing: 0.08em;
-  font-size: 11px;
+  padding: 5px 8px;
+  letter-spacing: 0.06em;
+  font-size: 10px;
+  line-height: 1.15;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -1798,6 +1807,71 @@ html.club-name-glow-off .club-line {
   border-color: var(--gold);
   background: linear-gradient(90deg, rgba(0, 122, 61, 0.55), rgba(0, 122, 61, 0.22));
   color: var(--gold);
+}
+.formation-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  flex: 0 0 auto;
+  min-width: 0;
+  max-width: 100%;
+  height: 100%;
+}
+.formation-select-wrap .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+select.formation-chip.formation-select {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  font: inherit;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: inherit;
+  letter-spacing: 0.06em;
+  line-height: 1.15;
+  border-radius: 0;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  background:
+    linear-gradient(90deg, rgba(0, 122, 61, 0.55), rgba(0, 122, 61, 0.22));
+  /* Match .formation-chip button box: 5px + 1.15×10px + 5px + borders. */
+  padding: 5px 1.55em 5px 8px;
+  height: calc(10px * 1.15 + 10px + 2px);
+  max-width: 9.5rem;
+  cursor: pointer;
+  vertical-align: middle;
+}
+select.formation-chip.formation-select:hover,
+select.formation-chip.formation-select:focus-visible {
+  outline: none;
+  border-color: var(--gold);
+  color: var(--paper);
+}
+.formation-select-wrap::after {
+  content: "";
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-left: 3.5px solid transparent;
+  border-right: 3.5px solid transparent;
+  border-top: 4.5px solid var(--gold);
+  transform: translateY(-35%);
+  pointer-events: none;
+}
+select.formation-chip.formation-select option {
+  background: #07140d;
+  color: var(--paper);
 }
 .kit-chip {
   display: inline-flex;
@@ -1909,28 +1983,32 @@ html.club-name-glow-off .club-line {
   width: 100%;
   height: 100%;
   border-radius: 2px;
-  padding: 6px 4px;
+  padding: 10px 6px 8px;
   box-sizing: border-box;
-  gap: 4px;
+  gap: 2px;
+  justify-content: center;
 }
-/* No-PNG roster square: surname above number (DOM order from kitMarkerHtml). */
+/* Kit-back style: surname arched above a large shirt number. */
 .team-roster-card .kit-marker-roster .portrait-badge-kit .num {
-  font-size: 30px;
+  font-family: "Oswald", "Arial Narrow", Impact, sans-serif;
+  font-size: 64px;
   font-weight: 800;
-  line-height: 1;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
   order: 2;
 }
 .team-roster-card .kit-marker-roster .portrait-badge-kit .sur {
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 26px;
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.12em;
   line-height: 1.05;
   max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
-  padding: 0 4px;
+  padding: 0 6px;
   text-align: center;
+  text-transform: uppercase;
   order: 1;
 }
 /* Top-left card already shows the name in <h3> — never a caption under PNG or badge. */
@@ -1940,7 +2018,7 @@ html.club-name-glow-off .club-line {
 }
 .team-roster-card h3 {
   margin: 6px 0 8px;
-  font-size: 20px;
+  font-size: 24px;
   letter-spacing: 0.04em;
   line-height: 1.15;
   color: inherit;
@@ -2182,6 +2260,12 @@ html.club-name-glow-off .club-line {
 }
 .roster-row.on .roster-role { color: var(--gold); opacity: 0.95; }
 .team-pitch {
+  /* Narrow pitches shrink counters via cqw so discs keep formation spacing. */
+  container-type: inline-size;
+  container-name: team-pitch;
+  --counter-disc: clamp(52px, 14.5cqw, 88px);
+  --counter-caption: clamp(14px, 3.6cqw, 22px);
+  --counter-width: clamp(72px, 18.5cqw, 112px);
   position: relative;
   width: 100%;
   height: 100%;
@@ -2212,8 +2296,7 @@ html.club-name-glow-off .club-line {
 .team-pitch.chalking .pitch-token {
   pointer-events: none;
 }
-.play-style-chips .form-side-chip,
-.formation-chips .form-side-chip {
+.formation-toolbar .form-side-chip {
   min-width: 3.6em;
   padding-left: 8px;
   padding-right: 8px;
@@ -2319,11 +2402,11 @@ html.club-name-glow-off .club-line {
   position: absolute;
   transform: translate(-50%, 0);
   z-index: 3;
-  width: 112px;
-  min-height: 126px;
+  width: var(--counter-width, 112px);
+  min-height: calc(var(--counter-disc, 88px) + 3px + var(--counter-caption, 22px) + 12px);
 }
 .pitch-slot.empty {
-  min-height: 88px;
+  min-height: var(--counter-disc, 88px);
   border-radius: 10px;
 }
 .pitch-slot.nudging {
@@ -2398,8 +2481,8 @@ html.club-name-glow-off .club-line {
 .team-pitch .pitch-token .portrait,
 .team-pitch .kit-marker .portrait {
   position: relative;
-  width: 88px;
-  height: 88px;
+  width: var(--counter-disc, 88px);
+  height: var(--counter-disc, 88px);
   margin: 0;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.85);
@@ -2425,19 +2508,30 @@ html.club-name-glow-off .club-line {
 .char-panel-team .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench),
 .team-pitch .kit-marker {
   /* Disc + caption lane — same box whether PNG caption shows or badge has none. */
-  --counter-disc: 88px;
-  --counter-caption: 22px;
   display: grid;
   justify-items: center;
   align-content: start;
-  grid-template-rows: var(--counter-disc) var(--counter-caption);
+  grid-template-rows: var(--counter-disc, 88px) var(--counter-caption, 22px);
   gap: 3px;
-  width: 112px;
-  height: calc(var(--counter-disc) + 3px + var(--counter-caption));
+  width: var(--counter-width, 112px);
+  height: calc(var(--counter-disc, 88px) + 3px + var(--counter-caption, 22px));
   min-width: 0;
-  max-width: 112px;
+  max-width: var(--counter-width, 112px);
   box-sizing: border-box;
   overflow: hidden;
+}
+/* Off-pitch defaults. Pitch markers must NOT reset these — they inherit from .team-pitch. */
+.char-panel-team .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench) {
+  --counter-disc: 88px;
+  --counter-caption: 22px;
+  --counter-width: 112px;
+}
+/* Beat the off-pitch defaults so narrow pitches can shrink counters. */
+.char-panel-team .team-pitch .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench),
+.team-pitch .pitch-token .kit-marker {
+  --counter-disc: inherit;
+  --counter-caption: inherit;
+  --counter-width: inherit;
 }
 /* PNG counters: pull number+name caption up under the framed photo. */
 .char-panel-team .kit-marker.kit-marker-photo:not(.kit-marker-roster):not(.kit-marker-bench),
@@ -2457,6 +2551,9 @@ html.club-name-glow-off .club-line {
   letter-spacing: 0.02em;
   margin: 0;
 }
+.team-pitch .portrait-badge-kit .num {
+  font-size: calc(var(--counter-disc, 88px) * 0.25);
+}
 .char-panel-team .portrait-badge-kit .sur,
 .team-pitch .portrait-badge-kit .sur {
   font-family: "Oswald", "Arial Narrow", sans-serif;
@@ -2474,24 +2571,25 @@ html.club-name-glow-off .club-line {
   opacity: 1;
   box-sizing: border-box;
 }
+.team-pitch .portrait-badge-kit .sur {
+  font-size: calc(var(--counter-disc, 88px) * 0.18);
+  margin-inline-end: -0.03em;
+}
 .char-panel-team .kit-marker-caption,
 .team-pitch .kit-marker-caption {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: baseline;
-  justify-content: center;
-  gap: 4px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
-  max-width: 112px;
-  width: 112px;
+  display: block;
+  width: var(--counter-width, 112px);
+  max-width: var(--counter-width, 112px);
   margin: 2px auto 0;
-  padding-top: 1px;
+  padding: 1px 0 0;
   overflow: hidden;
   text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
   /* Keep caption clear of the disc (no bleed into the counter). */
   position: relative;
   z-index: 0;
+  box-sizing: border-box;
 }
 .char-panel-team .kit-marker-photo .kit-marker-caption,
 .team-pitch .kit-marker-photo .kit-marker-caption {
@@ -2500,21 +2598,34 @@ html.club-name-glow-off .club-line {
 }
 .char-panel-team .kit-marker-caption .kit-marker-num,
 .team-pitch .kit-marker-caption .kit-marker-num {
-  flex: 0 0 auto;
+  display: inline;
   font-family: "Oswald", "Arial Narrow", sans-serif;
   font-weight: 700;
   font-size: 17px;
   letter-spacing: 0.03em;
+  margin-inline-end: -0.03em;
   line-height: 1.1;
+}
+.char-panel-team .kit-marker-caption .kit-marker-num::after {
+  /* Fixed thin gap before the surname — never a leading space on the name. */
+  content: "";
+  display: inline-block;
+  width: 0.28em;
+  margin-inline-end: 0;
+}
+.team-pitch .kit-marker-caption .kit-marker-num,
+.team-pitch .kit-marker-caption .kit-marker-name {
+  font-size: calc(var(--counter-disc, 88px) * 0.19);
 }
 .char-panel-team .kit-marker-caption .kit-marker-name,
 .team-pitch .kit-marker-caption .kit-marker-name {
-  flex: 0 1 auto;
+  display: inline;
   min-width: 0;
   font-family: "Oswald", "Arial Narrow", sans-serif;
   font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.03em;
+  margin-inline-end: -0.03em;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
@@ -2723,10 +2834,11 @@ html.club-name-glow-off .club-line {
     padding: 6px;
   }
   .team-roster-card .kit-marker-roster .portrait-badge-kit .num {
-    font-size: 26px;
+    font-size: 48px;
   }
   .team-roster-card .kit-marker-roster .portrait-badge-kit .sur {
-    font-size: 20px;
+    font-size: 15px;
+    letter-spacing: 0.1em;
   }
   .team-roster-card .profile-stats,
   .team-roster-card .profile-stats-compact {
@@ -2768,43 +2880,24 @@ html.club-name-glow-off .club-line {
     max-height: min(58vh, 520px);
     aspect-ratio: 68 / 105;
   }
-  .pitch-slot {
-    width: 84px;
-    min-height: 96px;
-  }
-  .char-panel-team .pitch-token .portrait,
-  .char-panel-team .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench) .portrait,
-  .team-pitch .pitch-token .portrait,
-  .team-pitch .kit-marker .portrait {
-    width: 64px;
-    height: 64px;
-  }
+  /* Pitch counters keep .team-pitch cqw clamp — no fixed 64px override. */
   .char-panel .bench-card .kit-marker-bench,
   .bench-card .kit-marker-bench {
     --bench-disc: 56px;
     --bench-caption: 16px;
   }
-  .char-panel-team .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench),
-  .team-pitch .kit-marker {
-    --counter-disc: 64px;
-    --counter-caption: 18px;
-    width: 84px;
-    max-width: 84px;
-    height: calc(var(--counter-disc) + 3px + var(--counter-caption));
-    grid-template-rows: var(--counter-disc) var(--counter-caption);
-  }
-  .char-panel-team .kit-marker-caption,
-  .team-pitch .kit-marker-caption {
-    max-width: 84px;
-    width: 84px;
-  }
-  .char-panel-team .portrait-badge-kit .num,
   .team-pitch .portrait-badge-kit .num {
-    font-size: 16px;
+    font-size: clamp(14px, 3.6cqw, 22px);
   }
-  .char-panel-team .portrait-badge-kit .sur,
   .team-pitch .portrait-badge-kit .sur {
-    font-size: 12px;
+    font-size: clamp(10px, 2.6cqw, 16px);
+  }
+  .team-pitch .kit-marker-caption .kit-marker-num,
+  .team-pitch .kit-marker-caption .kit-marker-name {
+    font-size: clamp(12px, 2.8cqw, 17px);
+  }
+  .team-select-head {
+    grid-template-columns: 1fr;
   }
   .team-roster {
     grid-area: roster;
