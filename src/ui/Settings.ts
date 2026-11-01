@@ -42,7 +42,7 @@ export type { OptionsSection };
 /** Short tab labels + menu-item titles/hints for the Options hub. */
 export const OPTIONS_SECTIONS: { id: OptionsSection; label: string; title: string; hint: string }[] = [
   { id: "match", label: "Match", title: "Match Settings", hint: "Length, weather and time of day defaults" },
-  { id: "gameplay", label: "Gameplay", title: "Gameplay", hint: "REAL / ARCADE mode and aim" },
+  { id: "gameplay", label: "Gameplay", title: "Gameplay", hint: "FOOTBALL / SOCCER mode and aim" },
   { id: "controls", label: "Controls", title: "Controls", hint: "Keyboard bindings" },
   { id: "audio", label: "Audio", title: "Audio", hint: "Master volume and mute" },
   { id: "display", label: "Display", title: "Display", hint: "Graphics, camera, HUD and boards" },
@@ -210,8 +210,8 @@ export class SettingsMenu {
           <h3>Gameplay</h3>
           <label>Default gameplay mode
             <select id="gplay">
-              <option value="REAL" ${settings.gameplayMode === "REAL" ? "selected" : ""}>REAL</option>
-              <option value="ARCADE" ${settings.gameplayMode === "ARCADE" ? "selected" : ""}>ARCADE</option>
+              <option value="REAL" ${settings.gameplayMode === "REAL" ? "selected" : ""}>FOOTBALL</option>
+              <option value="ARCADE" ${settings.gameplayMode === "ARCADE" ? "selected" : ""}>SOCCER</option>
               <option value="TABLE" ${settings.gameplayMode === "TABLE" ? "selected" : ""}>TABLE</option>
               <option value="FLICK" ${settings.gameplayMode === "FLICK" ? "selected" : ""}>FLICK</option>
             </select>

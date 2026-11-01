@@ -3,6 +3,7 @@ import { GOAL_WIDTH, HALF_LENGTH, HALF_WIDTH } from "../constants";
 import { inPenaltyArea, inSixYardArea } from "../pitch/PitchZones";
 import type { Ball } from "../ball/Ball";
 import { preferKeeperPunch } from "../ball/AerialContest";
+import { passFlightTime, passKickVector, solvePassGroundSpeed } from "../ball/PassModel";
 import type { Player } from "../players/Player";
 import { movePlayer } from "../players/PlayerMovement";
 import { DIVE_DURATION_CLAIM, DIVE_DURATION_FULL, startDive } from "../players/PoseMotion";
@@ -349,6 +350,36 @@ export function keeperOutletAimPoint(target: Player): { x: number; z: number } {
     x: target.x,
     z: clampInboundZ(target.z, TOUCHLINE_SAFE_MARGIN + 1.5),
   };
+}
+
+/**
+ * Hand release impulse that actually reaches the outlet under stepBall friction.
+ * Old fixed caps (roll≤14 / throw≤19) died ~8–12 m short of typical CB/FB outlets.
+ */
+export function keeperHandReleaseVector(
+  fromX: number,
+  fromZ: number,
+  toX: number,
+  toZ: number,
+  delivery: "roll" | "throw",
+  kicking01 = 0.7,
+): { vx: number; vz: number; vy: number } {
+  const dx = toX - fromX;
+  const dz = toZ - fromZ;
+  const dist = Math.max(1, Math.hypot(dx, dz));
+  const kickBonus = 1 + clamp(kicking01, 0, 1) * 0.08;
+  if (delivery === "roll") {
+    const t = passFlightTime(dist, "short");
+    const vy = 0.42;
+    const mag = solvePassGroundSpeed(dist, vy, "short", t) * kickBonus;
+    return { vx: (dx / dist) * mag, vz: (dz / dist) * mag, vy };
+  }
+  // Side-arm throw: mid loft, calibrated to land near the outlet.
+  const kick = passKickVector(fromX, fromZ, toX, toZ, "through");
+  const vy = clamp(kick.vy * 0.72, 2.4, 5.2);
+  const t = passFlightTime(dist, "through");
+  const mag = solvePassGroundSpeed(dist, vy, "through", t) * kickBonus;
+  return { vx: (dx / dist) * mag, vz: (dz / dist) * mag, vy };
 }
 
 /** Safer long clearance: aim into a wide channel, not the crowded centre. */

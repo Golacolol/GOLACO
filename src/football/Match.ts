@@ -7,6 +7,7 @@ import { celebrateAI, celebrationStaysPut, clearCelebration, concedeReaction, ty
 import {
   updateGoalkeeper,
   decideKeeperDistribution,
+  keeperHandReleaseVector,
   keeperOutletAimPoint,
   keeperPassDelivery,
 } from "./ai/GoalkeeperAI";
@@ -2218,12 +2219,10 @@ export class Match {
     if (wantPunt) {
       const aimX = gk.x + gk.attackSign * (48 + intent.passHold * 12);
       const aimZ = clamp((dir.z || 0) * 22, -22, 22);
+      // passKickVector already lands near the aim — the old /1.65 cap truncated deep punts.
       const kick = passKickVector(this.ball.x, this.ball.z, aimX, aimZ, "long");
-      const reach = Math.max(1, Math.hypot(aimX - this.ball.x, aimZ - this.ball.z));
-      const speed = Math.hypot(kick.vx, kick.vz);
-      const scale = speed > 0.1 ? clamp(reach / 1.65, 32, 48) / speed : 1.25;
       this.ball.y = 0.28;
-      kickBall(this.ball, kick.vx * scale, kick.vz * scale, Math.max(kick.vy * 1.08, 6.8));
+      kickBall(this.ball, kick.vx * 1.04, kick.vz * 1.04, Math.max(kick.vy * 1.06, 7.0));
       this.clearOwner();
       gk.handRelease = false;
       gk.kickTimer = 0.95;
@@ -2254,16 +2253,22 @@ export class Match {
       this.executeKeeperHandRelease(gk, target, delivery);
       return;
     }
+    const passType: PassType = dist > 18 ? "long" : "short";
+    const passHold = idealPassHold01(passType, dist, {
+      composure: gk.attrs.composure ?? 70,
+      pressure: this.pressure,
+      tempo: 1,
+    });
     const fake = {
       moveX: dir.x,
       moveZ: dir.z,
       aimX: dir.x,
       aimY: 0,
-      passHold: dist > 18 ? 0.72 : 0.34,
+      passHold,
       pass: true,
       shootHold: 0,
     } as InputIntent;
-    this.executePass(gk, target, fake, dist > 18 ? "long" : "short", normalize2(target.x - gk.x, target.z - gk.z));
+    this.executePass(gk, target, fake, passType, normalize2(target.x - gk.x, target.z - gk.z));
     gk.handRelease = false;
     gk.kickTimer = 0.95;
   }
@@ -2292,12 +2297,17 @@ export class Match {
         return;
       }
       const passType: PassType = dist > 18 ? "long" : "short";
+      const passHold = idealPassHold01(passType, dist, {
+        composure: gk.attrs.composure ?? 70,
+        pressure: this.pressure,
+        tempo: 1,
+      });
       const fake = {
         moveX: dir.x,
         moveZ: dir.z,
         aimX: dir.x,
         aimY: 0,
-        passHold: passType === "long" ? 0.72 : 0.34,
+        passHold,
         pass: true,
         shootHold: 0,
       } as InputIntent;
@@ -2309,15 +2319,10 @@ export class Match {
     const dx = decided.x - this.ball.x;
     const dz = decided.z - this.ball.z;
     gk.facing = Math.atan2(dx, dz);
+    // Drop from the hands then clear — use the long-pass solver so deep punts actually travel.
     const kick = passKickVector(this.ball.x, this.ball.z, decided.x, decided.z, "long");
-    // Punt needs extra carry vs a pitched long pass — scale to land near the aim point.
-    const reach = Math.max(1, Math.hypot(dx, dz));
-    const speed = Math.hypot(kick.vx, kick.vz);
-    const need = clamp(reach / 1.65, 32, 48);
-    const scale = speed > 0.1 ? need / speed : 1.25;
-    // Drop from the hands then kick clear.
     this.ball.y = 0.28;
-    kickBall(this.ball, kick.vx * scale, kick.vz * scale, Math.max(kick.vy * 1.08, 6.8));
+    kickBall(this.ball, kick.vx * 1.04, kick.vz * 1.04, Math.max(kick.vy * 1.06, 7.0));
     this.clearOwner();
     gk.handRelease = false;
     gk.kickTimer = 0.95;
@@ -2334,20 +2339,18 @@ export class Match {
   /** Roll or throw from the hands after a claim. */
   private executeKeeperHandRelease(gk: Player, target: Player, delivery: "throw" | "roll"): void {
     const aim = keeperOutletAimPoint(target);
-    const dx = aim.x - this.ball.x;
-    const dz = aim.z - this.ball.z;
-    const dist = Math.hypot(dx, dz) || 1;
     const kicking = stat01(gk.attrs.gkKicking ?? gk.attrs.passing);
-    if (delivery === "roll") {
-      const power = clamp(6.5 + dist * 0.35 + kicking * 2.2, 6.5, 14);
-      kickBall(this.ball, (dx / dist) * power, (dz / dist) * power, 0.35);
-      this.incomingAerial = false;
-    } else {
-      const power = clamp(9 + dist * 0.4 + kicking * 3.5, 9, 19);
-      const lift = clamp(2.1 + dist * 0.03 + kicking * 0.4, 2, 3.8);
-      kickBall(this.ball, (dx / dist) * power, (dz / dist) * power, lift);
-      this.incomingAerial = lift > 2.6;
-    }
+    const impulse = keeperHandReleaseVector(
+      this.ball.x,
+      this.ball.z,
+      aim.x,
+      aim.z,
+      delivery,
+      kicking,
+    );
+    if (this.ball.y < 0.25) this.ball.y = 0.28;
+    kickBall(this.ball, impulse.vx, impulse.vz, impulse.vy);
+    this.incomingAerial = delivery === "throw" && impulse.vy > 2.6;
     this.clearOwner();
     gk.handRelease = true;
     gk.kickTimer = 0.72;
@@ -3307,7 +3310,15 @@ export class Match {
 
   private guideReceivers(dt: number): void {
     if (this.possessing) return;
-    const landing = this.longPassLanding ?? (this.ball.y > 0.7 ? predictLanding(this.ball) : null);
+    // Prefer live bounce prediction so underhit GK / lofted services still get chased —
+    // longPassLanding alone left outlets parked on a marker the ball never reached.
+    const predicted = this.ball.y > 0.7 ? predictLanding(this.ball) : null;
+    const marker = this.longPassLanding;
+    let landing = predicted ?? marker;
+    if (predicted && marker) {
+      const shortOfMarker = Math.hypot(predicted.x - marker.x, predicted.z - marker.z) > 3.5;
+      if (shortOfMarker) landing = predicted;
+    }
     if (!landing) return;
     const passer = this.playerById(this.ball.lastTouchId ?? "");
     if (!passer) return;
@@ -3316,7 +3327,9 @@ export class Match {
     const candidates = this.teamOf(passer).players
       .filter((p) => !p.isGK && p.id !== passer.id && !this.offsidePassIds.has(p.id))
       .map((p) => ({ p, d: p.distTo(landing.x, landing.z) }))
-      .filter((row) => row.d < 16)
+      // Always keep the designated outlet — GK kicks often land 20–40 m from release,
+      // and the old 16 m gate left them frozen (skipped by TeamAI, never steered).
+      .filter((row) => row.d < 16 || row.p.id === this.passTargetId)
       .sort((a, b) => a.d - b.d);
     const primary =
       (this.passTargetId ? candidates.find((c) => c.p.id === this.passTargetId) : null) ?? candidates[0];

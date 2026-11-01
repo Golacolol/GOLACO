@@ -69,6 +69,7 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 }
 
 .hud-bottom {
+  --hud-detail-w: clamp(168px, 26vw, 280px);
   position: absolute;
   left: 10px;
   right: 10px;
@@ -83,7 +84,8 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 .hud-home-slot,
 .hud-opp-slot {
   position: relative;
-  width: auto;
+  /* Equal fixed band for home/away — name length must not resize either side. */
+  width: var(--hud-detail-w);
   max-width: 100%;
   min-width: 0;
   z-index: 12;
@@ -137,23 +139,32 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   padding: 6px 8px 7px;
   border-radius: 8px;
   display: grid;
-  grid-template-columns: 48px 1fr;
+  grid-template-columns: 48px minmax(0, 1fr);
   gap: 8px;
   align-items: center;
   min-width: 0;
   width: 100%;
-  max-width: min(320px, 100%);
+  max-width: 100%;
   box-sizing: border-box;
+  overflow: hidden;
   pointer-events: auto;
   cursor: pointer;
 }
 .hud-card[hidden] { display: none !important; }
 .hud-card.away { border-color: rgba(226, 75, 75, 0.45); }
+.hud-card > :last-child {
+  min-width: 0;
+  overflow: hidden;
+}
 .hud-player-sheet {
   position: absolute;
   left: 0;
   right: 0;
   bottom: calc(100% + 12px);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
   z-index: 13;
   pointer-events: auto;
   background: rgba(7, 20, 13, 0.96);
@@ -184,8 +195,8 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   width: 72px;
   height: 72px;
   margin: 0;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 4px;
+  border: 2px solid rgba(197, 165, 114, 0.95);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   overflow: hidden;
 }
@@ -211,9 +222,38 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   font-size: 12px;
 }
 .hud-player-sheet .sheet-num { color: var(--gold); font-size: 22px; font-weight: 800; text-align: center; }
-.hud-player-sheet .sheet-name { text-align: center; font-weight: 800; letter-spacing: 0.06em; margin-top: 2px; }
-.hud-player-sheet .sheet-meta { text-align: center; font-size: 11px; opacity: 0.78; margin: 4px 0 10px; }
+.hud-player-sheet .sheet-name {
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  padding: 0 2px;
+}
+.hud-player-sheet .sheet-meta {
+  text-align: center;
+  font-size: 11px;
+  opacity: 0.78;
+  margin: 4px 0 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .hud-player-sheet .char-stats { margin: 0; }
+.hud-player-sheet .profile-stats {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+}
+.hud-player-sheet .profile-hex-svg {
+  width: min(112px, 100%);
+  height: auto;
+  max-width: 100%;
+}
 .hud-card .tag { font-size: 9px; letter-spacing: 0.14em; color: var(--gold); margin-bottom: 2px; }
 .hud-card .portrait { width: 36px; height: 36px; margin: 0; overflow: hidden; }
 .hud-card .kit-marker-hud {
@@ -227,8 +267,8 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   width: 48px;
   height: 48px;
   margin: 0;
-  border-radius: 50%;
-  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  border: 1.5px solid rgba(197, 165, 114, 0.95);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   overflow: hidden;
 }
@@ -254,9 +294,28 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   padding: 0 2px;
   text-align: center;
 }
-/* HUD strip is tight — keep surname on the disc; hide under-photo caption. */
+/* HUD strip is tight — initials on the disc; name lives in the card text. */
 .hud-card .kit-marker-hud .kit-marker-caption {
   display: none !important;
+}
+.hud-card .kit-marker-hud .portrait-badge-kit .ini {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  margin-top: 1px;
+}
+.hud-player-sheet .kit-marker-hud-sheet .kit-marker-caption {
+  display: none !important;
+}
+.hud-player-sheet .kit-marker-hud-sheet .portrait-badge-kit .ini {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  margin-top: 2px;
 }
 .hud-card .portrait img {
   width: 100%;
@@ -278,16 +337,41 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   padding: 0 1px;
 }
 .hud-card .portrait-badge .ini { font-size: 8px; margin-top: 1px; }
-.hud-card .row { display: flex; gap: 8px; align-items: baseline; font-size: 12px; }
-.hud-card .num { color: var(--gold); font-weight: 800; }
-.hud-card .name { font-weight: 800; letter-spacing: 0.05em; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hud-card .row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 12px;
+  min-width: 0;
+  max-width: 100%;
+}
+.hud-card .num { color: var(--gold); font-weight: 800; flex: 0 0 auto; }
+.hud-card .pos,
+.hud-card .ovr { flex: 0 0 auto; }
+.hud-card .name {
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .hud-card .ovr { color: #9fe7b8; font-size: 11px; }
 .hud-card .energy { height: 5px; background: #133; margin: 5px 0 4px; border-radius: 99px; overflow: hidden; }
 .hud-card .energy span { display: block; height: 100%; background: linear-gradient(90deg, #1d8a4a, #7dffb0); }
 .shot-power { height: 7px; background: #1a1020; margin: 0 0 4px; border-radius: 99px; overflow: hidden; border: 1px solid rgba(255,210,74,0.35); }
 .shot-power span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #7dffb0, #ffd24a 72%, #e24b4b 92%); }
 .shot-power.hot span { background: #e24b4b; }
-.hud-card .stats { font-size: 10px; opacity: 0.75; letter-spacing: 0.06em; }
+.hud-card .stats {
+  font-size: 10px;
+  opacity: 0.75;
+  letter-spacing: 0.06em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
 .bind-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0 4px; }
 .bind-row {
   display: flex;
@@ -308,9 +392,11 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 
 .radar {
   position: relative;
-  z-index: 3;
+  /* Stay above player detail sheets so raised panels never cover the pitch radar. */
+  z-index: 15;
   justify-self: center;
   max-width: 100%;
+  flex-shrink: 0;
 }
 #radar-canvas {
   border-radius: 4px;
@@ -323,6 +409,7 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 }
 @media (max-width: 900px) {
   .hud-bottom {
+    --hud-detail-w: clamp(148px, 30vw, 220px);
     left: 6px;
     right: 6px;
     bottom: 8px;
@@ -331,7 +418,7 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   .hud-card {
     padding: 5px 6px 6px;
     gap: 6px;
-    grid-template-columns: 40px 1fr;
+    grid-template-columns: 40px minmax(0, 1fr);
   }
   .hud-card .portrait { width: 28px; height: 28px; }
   .hud-card .kit-marker-hud,
@@ -343,14 +430,16 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   }
   .hud-card .kit-marker-hud .portrait-badge-kit .num { font-size: 12px; }
   .hud-card .kit-marker-hud .portrait-badge-kit .sur { font-size: 7px; }
-  .hud-card .row { font-size: 11px; }
+  .hud-card .row { font-size: 11px; gap: 5px; }
   .hud-card .stats { font-size: 9px; }
   .hud-player-sheet { padding: 8px 8px 8px; }
   .hud-player-sheet .portrait { width: 56px; height: 56px; }
   .hud-player-sheet .kit-marker-hud-sheet .portrait { width: 56px; height: 56px; }
+  .hud-player-sheet .profile-hex-svg { width: min(96px, 100%); }
 }
 @media (max-width: 640px) {
   .hud-bottom {
+    --hud-detail-w: clamp(120px, 32vw, 168px);
     left: 4px;
     right: 4px;
     bottom: 6px;
@@ -359,6 +448,10 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   #radar-canvas { width: clamp(72px, 22vw, 110px); }
   .hud-card .tag { font-size: 8px; }
   .hud-card .name { letter-spacing: 0.02em; }
+  .hud-card .pos { display: none; }
+  .hud-player-sheet .sheet-num { font-size: 18px; }
+  .hud-player-sheet .sheet-name { font-size: 12px; letter-spacing: 0.03em; }
+  .hud-player-sheet .profile-hex-svg { width: min(84px, 100%); }
 }
 
 .menu-screen, .char-select, .editor-screen, .pause-menu {
@@ -1251,20 +1344,54 @@ html.club-name-glow-off .club-line {
     0 0 0 1px rgba(197, 165, 114, 0.25),
     0 18px 50px rgba(0, 0, 0, 0.45);
 }
-.char-panel-tabletop {
-  text-align: left;
-  min-width: min(420px, 92vw);
-  max-width: min(520px, 94vw);
-  padding: 16px 18px 14px;
+/* PLAYER SELECT / Flickball / Foosball settings replace the pitch well only. */
+.team-pitch.team-pitch-panel {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background:
+    linear-gradient(180deg, rgba(6, 22, 14, 0.92) 0%, rgba(4, 14, 9, 0.96) 100%),
+    linear-gradient(90deg, #1f7a3a 0%, #146330 50%, #0f5228 100%);
+  overflow: auto;
+  touch-action: auto;
+  padding: 14px 12px;
 }
-.tabletop-setup {
-  margin: 8px 0 4px;
+.pitch-overlay-card {
+  width: min(100%, 400px);
+  margin: auto;
+  text-align: left;
+  padding: 4px 2px 8px;
+}
+.pitch-overlay-card.player-pitch-select {
+  text-align: center;
+}
+.pitch-overlay-card.player-pitch-select .portrait {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 8px;
+}
+.pitch-overlay-card.player-pitch-select h2 {
+  margin: 4px 0 2px;
+  font-size: 1.25rem;
+}
+.pitch-overlay-card.player-pitch-select .char-num {
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+}
+.pitch-overlay-card.player-pitch-select .hint {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  opacity: 0.72;
 }
 .tabletop-setup-kicker {
   letter-spacing: 0.14em;
   font-size: 11px;
   color: var(--gold);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  text-align: left;
+}
+.player-pitch-select .tabletop-setup-kicker {
+  text-align: center;
 }
 .tabletop-setup-blurb {
   margin: 0 0 14px;
@@ -1648,17 +1775,18 @@ html.club-name-glow-off .club-line {
   margin: 0 auto 8px;
   max-width: 168px;
 }
-/* Shared framed box for PNG and no-PNG badge (top-left Formation card). */
-.team-roster-card .kit-marker-roster .portrait {
+/* Top-left Formation player card: square frame in panel gold/green — never a white circle. */
+.team-roster-card .kit-marker-roster .portrait,
+.team-roster-card .kit-marker-roster.kit-marker-photo .portrait {
   width: 144px;
   height: 144px;
   margin: 0;
   padding: 7px;
-  border-radius: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.92);
-  background: rgba(4, 17, 10, 0.85);
+  border-radius: 4px;
+  border: 2px solid rgba(197, 165, 114, 0.85);
+  background: rgba(4, 17, 10, 0.92);
   box-shadow:
-    0 0 0 1px rgba(197, 165, 114, 0.55),
+    0 0 0 1px rgba(197, 165, 114, 0.28),
     0 6px 16px rgba(0, 0, 0, 0.45);
   overflow: hidden;
   box-sizing: border-box;
@@ -1666,15 +1794,17 @@ html.club-name-glow-off .club-line {
 .team-roster-card .kit-marker-roster .portrait img {
   width: 100%;
   height: 100%;
-  border-radius: 9px;
+  border-radius: 2px;
   object-fit: cover;
   object-position: center;
   display: block;
+  background: rgba(7, 20, 13, 0.9);
 }
+.team-roster-card .kit-marker-roster .portrait-badge,
 .team-roster-card .kit-marker-roster .portrait-badge-kit {
   width: 100%;
   height: 100%;
-  border-radius: 9px;
+  border-radius: 2px;
   padding: 6px 4px;
   box-sizing: border-box;
 }
@@ -2142,9 +2272,10 @@ html.club-name-glow-off .club-line {
   min-width: 12rem;
   padding: 10px 14px;
 }
-/* Beat `.char-panel .portrait { 120px }` — formation discs large enough to read. */
+/* Beat `.char-panel .portrait { 120px }` — formation pitch discs large enough to read.
+   Exclude `.kit-marker-roster` (top-left detail card stays square). */
 .char-panel-team .pitch-token .portrait,
-.char-panel-team .kit-marker .portrait,
+.char-panel-team .kit-marker:not(.kit-marker-roster) .portrait,
 .team-pitch .pitch-token .portrait,
 .team-pitch .kit-marker .portrait {
   position: relative;
@@ -2157,8 +2288,8 @@ html.club-name-glow-off .club-line {
   overflow: hidden;
   box-sizing: border-box;
 }
-/* PNG markers: framed box around the photo; never paint number/name on the image. */
-.kit-marker-photo .portrait {
+/* PNG markers on the pitch / bench: framed box; never paint number/name on the image. */
+.kit-marker-photo:not(.kit-marker-roster) .portrait {
   border-radius: 10px;
   border: 2px solid rgba(255, 255, 255, 0.92);
   box-shadow:
@@ -2169,7 +2300,7 @@ html.club-name-glow-off .club-line {
   display: none !important;
 }
 .pitch-token .portrait-badge,
-.kit-marker .portrait-badge {
+.kit-marker:not(.kit-marker-roster) .portrait-badge {
   border-radius: 50%;
 }
 .char-panel-team .kit-marker,

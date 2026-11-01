@@ -22,6 +22,11 @@ export interface KitMarkerOptions {
   textColor?: string;
   /** Extra class on the outer wrapper (e.g. bench sizing). */
   className?: string;
+  /**
+   * Disc fallback label under the shirt number.
+   * Formation / roster use surname; match HUD uses initials (name lives beside the card).
+   */
+  badgeMode?: "surname" | "initials";
 }
 
 /**
@@ -263,6 +268,8 @@ export function kitMarkerHtml(
   const wrapClass = ["kit-marker", options.className].filter(Boolean).join(" ");
   const label = player.displayName ?? player.name ?? "?";
   const surname = kitSurnameFromName(label);
+  const initials = playerInitials(label);
+  const badgeMode = options.badgeMode ?? "surname";
   // Caption under PNG: "E. VAN DER SAR" when a given name exists on the full name.
   const captionLabel = kitCaptionSurname(player.displayName, player.name);
   // Trusted = explicit appearance path. Speculative convention paths only promote on load.
@@ -277,10 +284,14 @@ export function kitMarkerHtml(
   const captionTracking = surnameLetterSpacingEm(captionLabel);
   const nameStyle = `font-size:${captionSize}px;letter-spacing:${captionTracking}em`;
   const surStyle = `font-size:${surSize}px;letter-spacing:${tracking}em`;
-  // Under PNG: "12. E. SURNAME". Disc badge (no PNG): number + surname only.
+  // Under PNG: "12. E. SURNAME". Disc badge (no PNG): surname (formation) or initials (match HUD).
   const caption = `<div class="kit-marker-caption" style="color:${escapePortrait(text)}"><span class="kit-marker-num">${shirtNumber}.</span><span class="kit-marker-name" style="${nameStyle}">${escapePortrait(captionLabel)}</span></div>`;
-  const badge = `<div class="portrait-badge portrait-badge-kit" style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div>`;
-  const badgeHidden = `<div class="portrait-badge portrait-badge-kit" hidden style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span><span class="sur" style="${surStyle}">${escapePortrait(surname)}</span></div>`;
+  const badgeLabel =
+    badgeMode === "initials"
+      ? `<span class="ini">${escapePortrait(initials)}</span>`
+      : `<span class="sur" style="${surStyle}">${escapePortrait(surname)}</span>`;
+  const badge = `<div class="portrait-badge portrait-badge-kit" style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span>${badgeLabel}</div>`;
+  const badgeHidden = `<div class="portrait-badge portrait-badge-kit" hidden style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span>${badgeLabel}</div>`;
 
   if (!src) {
     return `<div class="${wrapClass}"><div class="portrait">${badge}</div></div>`;
@@ -304,13 +315,19 @@ export function portraitHtml(
   player: PortraitSource,
   shirtNumber: number,
   color = "#007A3D",
-  options?: { surnameOnly?: boolean; textColor?: string; className?: string },
+  options?: {
+    surnameOnly?: boolean;
+    textColor?: string;
+    className?: string;
+    badgeMode?: "surname" | "initials";
+  },
 ): string {
   if (options?.surnameOnly) {
     return kitMarkerHtml(player, shirtNumber, {
       primaryColor: color,
       textColor: options.textColor ?? "#ffffff",
       className: options.className,
+      badgeMode: options.badgeMode,
     });
   }
   const src = portraitAsset(player);
@@ -320,8 +337,11 @@ export function portraitHtml(
   const surSize = surnameFitPx(surname, 11);
   const tracking = surnameLetterSpacingEm(surname);
   const text = options?.textColor?.trim() || "#ffffff";
-  // Full surname under the number (not two-letter initials).
-  const badgeInner = `<span class="num">${fb.number}</span><span class="sur" style="font-size:${surSize}px;letter-spacing:${tracking}em">${escapePortrait(surname)}</span>`;
+  const badgeMode = options?.badgeMode ?? "surname";
+  const badgeInner =
+    badgeMode === "initials"
+      ? `<span class="num">${fb.number}</span><span class="ini">${escapePortrait(fb.initials)}</span>`
+      : `<span class="num">${fb.number}</span><span class="sur" style="font-size:${surSize}px;letter-spacing:${tracking}em">${escapePortrait(surname)}</span>`;
   const badge = `<div class="portrait-badge" style="background:${fb.color};color:${escapePortrait(text)}">${badgeInner}</div>`;
   if (!src) return `<div class="portrait">${badge}</div>`;
   return `<div class="portrait"><img alt="" src="${src}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.hidden=false"/><div class="portrait-badge" hidden style="background:${fb.color};color:${escapePortrait(text)}">${badgeInner}</div></div>`;

@@ -1194,10 +1194,10 @@ export class CharacterSelect {
     const list = this.root.querySelector<HTMLElement>(".team-roster-list");
     const rosterScroll = list?.scrollTop ?? 0;
     this.root.hidden = false;
+    // KIT keeps its own panel; PLAYER / SETUP / TEAM all share the formation shell,
+    // with PLAYER SELECT and Flick/Foosball settings replacing the pitch area only.
     if (this.controlMode === "KIT") this.renderKit();
-    else if (this.controlMode === "TEAM") this.renderTeam();
-    else if (this.controlMode === "SETUP" && this.tabletopKind) this.renderTabletopSetup();
-    else this.renderPlayer();
+    else this.renderTeam();
     requestAnimationFrame(() => {
       const restored = this.root.querySelector<HTMLElement>(".team-roster-list");
       if (restored && rosterScroll > 0) restored.scrollTop = rosterScroll;
@@ -1232,48 +1232,38 @@ export class CharacterSelect {
     return `<div class="char-team-title">${badge}<div class="eyebrow">${escapeHtml(text)}</div>${chips}</div>`;
   }
 
-  private renderPlayer(): void {
-    if (this.tabletopKind) {
-      this.controlMode = "SETUP";
-      this.renderTabletopSetup();
-      return;
-    }
+  /** Player details shown in the pitch well during PLAYER SELECT. */
+  private playerSelectPitchHtml(): string {
     const p = this.current();
     const a = p.attrs;
-    this.root.innerHTML = `
-      <div class="char-panel char-panel-player">
-        ${this.teamTitleHtml()}
+    return `
+      <div class="pitch-overlay-card player-pitch-select">
+        <div class="tabletop-setup-kicker">PLAYER SELECT</div>
         ${portraitHtml(p.player, p.shirtNumber, this.teamColor)}
         <div class="char-num">#${p.shirtNumber}</div>
         <h2>${escapeHtml(p.player.name)}</h2>
         <div class="char-meta">${p.player.primaryPosition} · OVR ${p.overall} · ${groupOf(p.player.primaryPosition)}</div>
         ${profileStatsBlock(a, { mode: this.profileView, size: 168 })}
-        ${this.modeNavHtml("PLAYER")}
+        <p class="hint">Use ‹ › or the squad list to change player. Start as Player locks you to this one.</p>
       </div>
     `;
   }
 
-  private renderTabletopSetup(): void {
+  /** Flickball / Foosball options shown in the pitch well. */
+  private tabletopSetupPitchHtml(): string {
     const kind = this.tabletopKind;
-    if (!kind) {
-      this.renderTeam();
-      return;
-    }
+    if (!kind) return "";
     const title = kind === "FLICK" ? "FLICKBALL" : "FOOSBALL";
     const blurb =
       kind === "FLICK"
         ? "Pull back and flick on the real pitch. Set opponent, difficulty, and whether you take turns."
-        : "Rod foosball — pick layout, opponent, and first-to. Formation kits still colour the table sides.";
+        : "Rod foosball — pick layout, opponent, and first-to. Kits still colour each side.";
     const body = kind === "FLICK" ? this.flickSetupFieldsHtml() : this.tableSetupFieldsHtml();
-    this.root.innerHTML = `
-      <div class="char-panel char-panel-player char-panel-tabletop">
-        ${this.teamTitleHtml(`${title} · ${this.teamName}`)}
-        <div class="tabletop-setup">
-          <div class="tabletop-setup-kicker">${title} SETUP</div>
-          <p class="tabletop-setup-blurb">${blurb}</p>
-          ${body}
-        </div>
-        ${this.modeNavHtml("SETUP")}
+    return `
+      <div class="pitch-overlay-card tabletop-setup">
+        <div class="tabletop-setup-kicker">${title} SETUP</div>
+        <p class="tabletop-setup-blurb">${blurb}</p>
+        ${body}
       </div>
     `;
   }
@@ -1454,17 +1444,73 @@ export class CharacterSelect {
   }
 
   private renderTeam(): void {
+    // Tabletop SETUP and football PLAYER SELECT reuse this shell; only the centre well changes.
+    if (this.tabletopKind && this.controlMode === "PLAYER") this.controlMode = "SETUP";
     const form = getFormation(this.formation);
     const bySlot = new Map(this.xi.map((row) => [row.slot, row]));
     const selected = this.current();
     const a = selected.attrs;
     const selectedId = selected.player.id;
+    const overlayMode =
+      this.purpose !== "spot" &&
+      this.context === "select" &&
+      (this.controlMode === "PLAYER" || (this.controlMode === "SETUP" && !!this.tabletopKind));
     const spotHint =
       this.purpose === "spot"
         ? `<p class="hint spot-pick-hint">Select the taker on the pitch or squad list, then confirm with the highlighted button.</p>`
         : "";
     const titleLabel =
       this.purpose === "spot" ? `Spot-kick Practice · ${this.teamName}` : this.teamName;
+    const pitchWell = overlayMode
+      ? `<div class="team-pitch team-pitch-panel" aria-label="${
+          this.controlMode === "SETUP" ? "Match settings" : "Player select"
+        }">${
+          this.controlMode === "SETUP" ? this.tabletopSetupPitchHtml() : this.playerSelectPitchHtml()
+        }</div>`
+      : `<div class="team-pitch${this.chalkMode ? " chalking" : ""}" aria-label="Formation pitch">
+            <span class="pitch-goal-mouth pitch-goal-mouth-own" aria-hidden="true"></span>
+            <span class="pitch-goal-mouth pitch-goal-mouth-opp" aria-hidden="true"></span>
+            <div class="team-pitch-markings" aria-hidden="true">
+              <span class="pitch-penalty pitch-penalty-own"></span>
+              <span class="pitch-penalty pitch-penalty-opp"></span>
+              <span class="pitch-six pitch-six-own"></span>
+              <span class="pitch-six pitch-six-opp"></span>
+            </div>
+            <canvas class="team-pitch-chalk" aria-hidden="true"></canvas>
+            ${(() => {
+              const raw = form.map((slot) => {
+                const off = this.slotOffsets.get(slot.id) ?? { dx: 0, dz: 0 };
+                const pos = formationToPitchPercent(slot.x + off.dx, slot.z + off.dz);
+                return {
+                  id: slot.id,
+                  left: pos.left,
+                  bottom: pos.bottom,
+                  pinned: slot.id === "GK" || slot.role === "GK",
+                };
+              });
+              const laidOut = separatePitchMarkers(raw);
+              return form
+                .map((slot) => {
+                  const pos = laidOut.get(slot.id) ?? formationToPitchPercent(slot.x, slot.z);
+                  const row = bySlot.get(slot.id);
+                  if (!row) {
+                    return `<div class="pitch-slot empty" data-slot="${slot.id}" style="left:${pos.left}%; bottom:${pos.bottom}%"></div>`;
+                  }
+                  const p = row.player;
+                  const on = p.player.id === selectedId ? "on" : "";
+                  const name = escapeHtml(p.player.name);
+                  const nameTip = this.showOverlays ? ` title="${name}"` : "";
+                  return `<div class="pitch-slot ${on}" data-slot="${slot.id}" data-player-id="${p.player.id}" style="left:${pos.left}%; bottom:${pos.bottom}%">
+                  <button type="button" class="pitch-token ${on}" data-char="pick" data-id="${p.player.id}" data-player-id="${p.player.id}" data-from-slot="${slot.id}" aria-label="${name}"${nameTip}>
+                    ${kitMarkerHtml(p.player, p.shirtNumber, {
+                      ...kitMarkerColors(p.player.primaryPosition, this.teamColor, this.teamSecondaryColor),
+                    })}
+                  </button>
+                </div>`;
+                })
+                .join("");
+            })()}
+          </div>`;
     this.root.innerHTML = `
       <div class="char-panel char-panel-team ${this.purpose === "spot" ? "char-panel-spot" : ""}">
         <div class="team-select-head">
@@ -1478,7 +1524,11 @@ export class CharacterSelect {
             </div>`
                 : ""
             }
-            <button type="button" class="formation-chip chalk-chip ${this.chalkMode ? "on" : ""}" data-char="chalk" title="Chalk — draw on the pitch. Right-click to wipe." aria-pressed="${this.chalkMode ? "true" : "false"}">Chalk</button>
+            ${
+              overlayMode
+                ? ""
+                : `<button type="button" class="formation-chip chalk-chip ${this.chalkMode ? "on" : ""}" data-char="chalk" title="Chalk — draw on the pitch. Right-click to wipe." aria-pressed="${this.chalkMode ? "true" : "false"}">Chalk</button>`
+            }
             ${(["auto", ...PLAY_STYLE_IDS] as PlayStyleChoice[])
               .map(
                 (id) =>
@@ -1523,50 +1573,7 @@ export class CharacterSelect {
                 .join("")}
             </div>
           </aside>
-          <div class="team-pitch${this.chalkMode ? " chalking" : ""}" aria-label="Formation pitch">
-            <span class="pitch-goal-mouth pitch-goal-mouth-own" aria-hidden="true"></span>
-            <span class="pitch-goal-mouth pitch-goal-mouth-opp" aria-hidden="true"></span>
-            <div class="team-pitch-markings" aria-hidden="true">
-              <span class="pitch-penalty pitch-penalty-own"></span>
-              <span class="pitch-penalty pitch-penalty-opp"></span>
-              <span class="pitch-six pitch-six-own"></span>
-              <span class="pitch-six pitch-six-opp"></span>
-            </div>
-            <canvas class="team-pitch-chalk" aria-hidden="true"></canvas>
-            ${(() => {
-              const raw = form.map((slot) => {
-                const off = this.slotOffsets.get(slot.id) ?? { dx: 0, dz: 0 };
-                const pos = formationToPitchPercent(slot.x + off.dx, slot.z + off.dz);
-                return {
-                  id: slot.id,
-                  left: pos.left,
-                  bottom: pos.bottom,
-                  pinned: slot.id === "GK" || slot.role === "GK",
-                };
-              });
-              const laidOut = separatePitchMarkers(raw);
-              return form
-                .map((slot) => {
-                  const pos = laidOut.get(slot.id) ?? formationToPitchPercent(slot.x, slot.z);
-                  const row = bySlot.get(slot.id);
-                  if (!row) {
-                    return `<div class="pitch-slot empty" data-slot="${slot.id}" style="left:${pos.left}%; bottom:${pos.bottom}%"></div>`;
-                  }
-                  const p = row.player;
-                  const selected = p.player.id === selectedId ? "on" : "";
-                  const name = escapeHtml(p.player.name);
-                  const nameTip = this.showOverlays ? ` title="${name}"` : "";
-                  return `<div class="pitch-slot ${selected}" data-slot="${slot.id}" data-player-id="${p.player.id}" style="left:${pos.left}%; bottom:${pos.bottom}%">
-                  <button type="button" class="pitch-token ${selected}" data-char="pick" data-id="${p.player.id}" data-player-id="${p.player.id}" data-from-slot="${slot.id}" aria-label="${name}"${nameTip}>
-                    ${kitMarkerHtml(p.player, p.shirtNumber, {
-                      ...kitMarkerColors(p.player.primaryPosition, this.teamColor, this.teamSecondaryColor),
-                    })}
-                  </button>
-                </div>`;
-                })
-                .join("");
-            })()}
-          </div>
+          ${pitchWell}
           <aside class="team-bench">
             <div class="team-bench-title">SUBSTITUTES</div>
             <div class="team-bench-list">
@@ -1591,11 +1598,11 @@ export class CharacterSelect {
             }</p>
           </aside>
         </div>
-        ${this.modeNavHtml("TEAM")}
+        ${this.modeNavHtml(this.controlMode === "KIT" ? "TEAM" : this.controlMode)}
       </div>
       ${this.squadEditDialogHtml()}
     `;
-    this.paintChalkCanvas();
+    if (!overlayMode) this.paintChalkCanvas();
   }
 
   toggleChalkMode(): void {

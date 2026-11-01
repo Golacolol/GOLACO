@@ -1,7 +1,7 @@
 import type { Match } from "../Match";
 import { FootballState } from "../FootballState";
 import { isRestartState, restartLabel } from "../Restarts";
-import { playerInitials, portraitHtml } from "../../ui/Portrait";
+import { portraitHtml } from "../../ui/Portrait";
 import { contrastingKitText } from "../../ui/kitContrast";
 import type { Player } from "../players/Player";
 import { hudFocusPlayers } from "./HudFocus";
@@ -240,6 +240,7 @@ export class MatchHUD {
           team.record.primaryColor,
           {
             surnameOnly: true,
+            badgeMode: "initials",
             className: "kit-marker-hud",
             textColor: contrastingKitText(team.record.primaryColor, team.record.secondaryColor),
           },
@@ -248,7 +249,7 @@ export class MatchHUD {
           <div class="tag">${team.record.abbreviation}</div>
           <div class="row">
             <span class="num">#${player.shirtNumber}</span>
-            <span class="name">${escapeHtml(playerInitials(player.displayName || player.name))}</span>
+            <span class="name">${escapeHtml(player.displayName.toUpperCase())}</span>
             <span class="pos">${player.position}</span>
             <span class="ovr">OVR ${player.overall}</span>
           </div>
@@ -306,12 +307,13 @@ export class MatchHUD {
         team.record.primaryColor,
         {
           surnameOnly: true,
+          badgeMode: "initials",
           className: "kit-marker-hud-sheet",
           textColor: contrastingKitText(team.record.primaryColor, team.record.secondaryColor),
         },
       )}
       <div class="sheet-num">#${player.shirtNumber}</div>
-      <div class="sheet-name">${escapeHtml(playerInitials(player.displayName || player.name))}</div>
+      <div class="sheet-name">${escapeHtml(player.displayName.toUpperCase())}</div>
       <div class="sheet-meta">${team.record.abbreviation} · ${player.position} · OVR ${player.overall}</div>
       ${profileStatsBlock(a, { compact: true, mode: "hex", size: 112 })}
     `;
