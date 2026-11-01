@@ -1146,21 +1146,22 @@ export class Match {
           : 0;
       const secureNeed = dash > 0.35 ? 0.45 : 2.55;
       if (this.possessionTime > secureNeed) {
-      const disturb = tryDefenderDisturbance(
-        this.ball,
-        this.possessing,
-        this.opponentsOf(this.possessing),
-        this.tuning.defenderDisturbMultiplier * (0.32 + dash * 1.15),
-        Math.random,
-        dt,
-      );
-      if (disturb !== "none" && this.ballActor.tryClaim("disturb", this.possessing.id)) {
-        if (disturb === "loose") {
-          this.makeLoose(this.possessing);
-        } else {
-          // Long enough that the magnet cannot snap the ball straight back into the ring.
-          this.possessing.ballControlLockout = Math.max(this.possessing.ballControlLockout, 0.48);
-          this.possessing.firstTouchTimer = Math.max(this.possessing.firstTouchTimer, 0.22);
+        const disturb = tryDefenderDisturbance(
+          this.ball,
+          this.possessing,
+          this.opponentsOf(this.possessing),
+          this.tuning.defenderDisturbMultiplier * (0.32 + dash * 1.15),
+          Math.random,
+          dt,
+        );
+        if (disturb !== "none" && this.ballActor.tryClaim("disturb", this.possessing.id)) {
+          if (disturb === "loose") {
+            this.makeLoose(this.possessing);
+          } else {
+            // Long enough that the magnet cannot snap the ball straight back into the ring.
+            this.possessing.ballControlLockout = Math.max(this.possessing.ballControlLockout, 0.48);
+            this.possessing.firstTouchTimer = Math.max(this.possessing.firstTouchTimer, 0.22);
+          }
         }
       }
     }
