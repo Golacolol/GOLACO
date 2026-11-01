@@ -6,6 +6,9 @@ import {
   erasForClub,
   findTeamOption,
   formatEraRoll,
+  oppositionRollIndex,
+  oppositionRollLabel,
+  oppositionRollOptions,
   secondaryDialLabel,
   teamsInGroup,
   uniqueClubsInGroup,
@@ -143,5 +146,26 @@ describe("menuTeamSelect", () => {
 
     expect(secondaryDialLabel(classic[0]!)).toBe("Classics");
     expect(secondaryDialLabel(options[0]!)).toBe("Premier League");
+  });
+
+  it("builds a continuous opposition roll across leagues, excluding the user club", () => {
+    const options = buildMenuTeamOptions([
+      team({ id: "arsenal", name: "Arsenal", league: "PREMIER_LEAGUE", teamType: "CURRENT_TEAM" }),
+      team({ id: "burnley", name: "Burnley", league: "CHAMPIONSHIP", teamType: "CURRENT_TEAM" }),
+      team({ id: "argyle", name: "Plymouth Argyle", league: "LEAGUE_ONE", teamType: "CURRENT_TEAM" }),
+      team({
+        id: "classic_chelsea_2004_05",
+        name: "Chelsea — 2004/05 Mourinho",
+        teamType: "HISTORIC_TEAM",
+        historicSeason: "2004/05",
+      }),
+    ]);
+    const roll = oppositionRollOptions(options, "argyle");
+    expect(roll.map((o) => o.id)).toEqual(["arsenal", "burnley", "classic_chelsea_2004_05"]);
+    expect(oppositionRollIndex(roll, "burnley")).toBe(1);
+    expect(oppositionRollLabel(roll[2]!)).toBe("Chelsea 04-05");
+    expect(oppositionRollOptions(options, "argyle").every((o) => o.clubKey !== "plymouth argyle")).toBe(
+      true,
+    );
   });
 });

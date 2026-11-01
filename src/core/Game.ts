@@ -106,6 +106,8 @@ export class Game {
   private practice: "none" | "spot" = "none";
   private preMatchT = 0;
   private pendingFixture: FixtureRecord | null = null;
+  /** Menu opposition dial override — null means use the listed/career fixture opponent. */
+  private menuOppositionId: string | null = null;
   private leagueFixtureId: string | null = null;
   private attractHold = 0;
   private simBannerPlayT = 0;
@@ -145,6 +147,7 @@ export class Game {
       this.save.save();
     };
     this.menu.onClubChange = (teamId) => this.setDefaultClub(teamId);
+    this.menu.onOppositionChange = (teamId) => this.setMenuOpposition(teamId);
     this.menu.onPredictionsChange = (state) => {
       this.save.data.predictions = state;
       this.save.save();
@@ -618,7 +621,15 @@ export class Game {
   }
 
   private listedFixture(): FixtureRecord {
-    return this.db.nextFixture(this.defaultClubId(), true);
+    const clubId = this.defaultClubId();
+    if (
+      this.menuOppositionId &&
+      this.db.teams.has(this.menuOppositionId) &&
+      this.menuOppositionId !== clubId
+    ) {
+      return this.db.friendlyVs(clubId, this.menuOppositionId);
+    }
+    return this.db.nextFixture(clubId, true);
   }
 
   private userSideFor(fixture: FixtureRecord): "home" | "away" {
@@ -629,9 +640,23 @@ export class Game {
     // Ignore late dial commits once a match / pre-match flow has begun.
     if (this.appState !== AppState.MAIN_MENU) return;
     if (!this.db.teams.has(teamId)) return;
+    this.menuOppositionId = null;
     this.save.data.settings.defaultTeamId = teamId;
     this.db.userTeamId = teamId;
     this.save.save();
+    this.buildMenuWorld();
+    this.applyMenuEnvironment();
+    this.paintMainMenu();
+  }
+
+  private setMenuOpposition(teamId: string): void {
+    if (this.appState !== AppState.MAIN_MENU) return;
+    const clubId = this.defaultClubId();
+    if (!this.db.teams.has(teamId) || teamId === clubId) return;
+    const natural = this.db.nextFixture(clubId, true);
+    const naturalOpp =
+      natural.homeTeamId === clubId ? natural.awayTeamId : natural.homeTeamId;
+    this.menuOppositionId = teamId === naturalOpp ? null : teamId;
     this.buildMenuWorld();
     this.applyMenuEnvironment();
     this.paintMainMenu();
@@ -707,6 +732,7 @@ export class Game {
     // only stores the choice; Play Next / Simulator / Quick Match launch the engine.
     const wasLeague = this.save.data.settings.leagueProgression;
     if (mode === "LEAGUE") {
+      this.menuOppositionId = null;
       this.save.data.settings.leagueProgression = true;
       this.save.data.settings.gameplayMode = "REAL";
       this.restoreCareerFixtures();

@@ -218,3 +218,37 @@ export function findTeamOption(options: MenuTeamOption[], teamId: string): MenuT
 export function secondaryDialLabel(option: MenuTeamOption): string {
   return MENU_TEAM_GROUP_LABEL[option.group];
 }
+
+/** Continuous opposition roll label — classics keep a short era tag. */
+export function oppositionRollLabel(option: MenuTeamOption): string {
+  if (option.group === "CLASSIC" && option.eraLabel && option.eraLabel !== "—") {
+    return `${option.label} ${option.eraLabel}`;
+  }
+  return option.label;
+}
+
+/**
+ * Flat opposition list in league order, excluding the user's club (all eras).
+ * Already sorted by buildMenuTeamOptions — keep that order for continuous scrolling.
+ */
+export function oppositionRollOptions(
+  options: MenuTeamOption[],
+  userTeamId: string,
+): MenuTeamOption[] {
+  const user = findTeamOption(options, userTeamId);
+  const userKey = user?.clubKey ?? userTeamId;
+  return options.filter((o) => o.id !== userTeamId && o.clubKey !== userKey);
+}
+
+/** Index of the current opposition on the continuous roll (era → club fallback). */
+export function oppositionRollIndex(
+  roll: MenuTeamOption[],
+  oppositionTeamId: string,
+): number {
+  const exact = roll.findIndex((o) => o.id === oppositionTeamId);
+  if (exact >= 0) return exact;
+  const opt = findTeamOption(roll, oppositionTeamId);
+  if (!opt) return 0;
+  const byClub = roll.findIndex((o) => o.clubKey === opt.clubKey);
+  return Math.max(0, byClub);
+}

@@ -691,7 +691,8 @@ html.club-name-glow-off .club-line {
 .team-spin.time-spin,
 .league-spin.time-spin,
 .era-spin.time-spin,
-.kit-spin.time-spin {
+.kit-spin.time-spin,
+.opposition-spin.time-spin {
   flex: 1 1 auto;
   width: 100%;
   min-width: 0;
@@ -714,13 +715,16 @@ html.club-name-glow-off .club-line {
 .era-spin.time-spin:hover,
 .era-spin.time-spin:focus-visible,
 .kit-spin.time-spin:hover,
-.kit-spin.time-spin:focus-visible {
+.kit-spin.time-spin:focus-visible,
+.opposition-spin.time-spin:hover,
+.opposition-spin.time-spin:focus-visible {
   background: transparent;
 }
 .team-spin.time-spin strong,
 .league-spin.time-spin strong,
 .era-spin.time-spin strong,
-.kit-spin.time-spin strong {
+.kit-spin.time-spin strong,
+.opposition-spin.time-spin strong {
   display: block;
   width: 100%;
   /* Fixed type — never JS-fit; long names clip instead of resizing the dial. */
@@ -741,7 +745,8 @@ html.club-name-glow-off .club-line {
 .team-spin .spin-ghost,
 .league-spin .spin-ghost,
 .era-spin .spin-ghost,
-.kit-spin .spin-ghost {
+.kit-spin .spin-ghost,
+.opposition-spin .spin-ghost {
   display: block;
   width: 100%;
   font-size: 10px;
@@ -757,6 +762,14 @@ html.club-name-glow-off .club-line {
 .era-spin.era-locked .spin-ghost {
   opacity: 0.12;
 }
+.opposition-dial-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+}
+.opposition-dial-field {
+  width: 100%;
+}
 @media (max-width: 640px) {
   .team-dials,
   .team-dials.has-era {
@@ -764,7 +777,8 @@ html.club-name-glow-off .club-line {
     gap: 10px;
   }
 }
-.team-dials.team-dials-locked {
+.team-dials.team-dials-locked,
+.opposition-select-fixture.team-dials-locked {
   pointer-events: none;
   opacity: 0.55;
 }

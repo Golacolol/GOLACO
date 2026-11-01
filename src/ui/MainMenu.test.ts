@@ -72,7 +72,9 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector("[data-kit-spin]")?.textContent).toMatch(/Home/);
     expect(menu.root.querySelector(".fixture-section-label")?.textContent).toBe("Gameplay");
     const labels = [...menu.root.querySelectorAll(".fixture-section-label")].map((el) => el.textContent);
-    expect(labels).toEqual(["Gameplay", "Lighting"]);
+    expect(labels).toEqual(["Gameplay", "Lighting", "Opposition"]);
+    expect(menu.root.querySelector("[data-opposition-spin]")).toBeTruthy();
+    expect(menu.root.querySelector(".opposition-select-fixture")).toBeTruthy();
     expect(menu.root.querySelector(".fixture-match > [data-half-spin]")).toBeTruthy();
     expect(menu.root.querySelector(".fixture-teams-row [data-half-spin]")).toBeNull();
     expect(menu.root.querySelector(".fixture-detail-row .meta")?.textContent).toContain("League One");
@@ -214,7 +216,11 @@ describe("MainMenu LEAGUE mode button", () => {
     menu.unlockTeamSelect();
     menu.lockTeamSelect();
     expect(menu.root.querySelector(".team-dials")?.classList.contains("team-dials-locked")).toBe(true);
+    expect(
+      menu.root.querySelector(".opposition-select-fixture")?.classList.contains("team-dials-locked"),
+    ).toBe(true);
     menu.root.querySelector<HTMLElement>("[data-team-spin]")?.click();
+    menu.root.querySelector<HTMLElement>("[data-opposition-spin]")?.click();
     expect(commits).toBe(0);
     menu.hide();
     host.remove();

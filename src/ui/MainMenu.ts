@@ -28,6 +28,9 @@ import {
   findTeamOption,
   MENU_TEAM_GROUP_LABEL,
   MENU_TEAM_GROUPS,
+  oppositionRollIndex,
+  oppositionRollLabel,
+  oppositionRollOptions,
   uniqueClubsInGroup,
   type MenuTeamGroup,
   type MenuTeamOption,
@@ -80,16 +83,21 @@ export class MainMenu {
   private leagueSpinWheel = createSpinWheel();
   private eraSpinWheel = createSpinWheel();
   private kitSpinWheel = createSpinWheel();
+  private oppositionSpinWheel = createSpinWheel();
   private teamOptions: MenuTeamOption[] = [];
+  private oppositionOptions: MenuTeamOption[] = [];
+  private oppositionIndex = 0;
   private teamGroup: MenuTeamGroup = "LEAGUE_ONE";
   private pendingTeamId: string | null = null;
   private clubCommitTimer: ReturnType<typeof setTimeout> | null = null;
+  private oppositionCommitTimer: ReturnType<typeof setTimeout> | null = null;
   /** When true, league/team/era dials ignore input (match launching / left menu). */
   private teamSelectLocked = false;
   private fitObserver: ResizeObserver | null = null;
   onHalf: ((seconds: number) => void) | null = null;
   onKitChange: ((choice: "home" | "away") => void) | null = null;
   onClubChange: ((teamId: string) => void) | null = null;
+  onOppositionChange: ((teamId: string) => void) | null = null;
   onPredictionsChange: ((state: PredictionsState) => void) | null = null;
   onPredictionsRefresh: (() => void) | null = null;
   readonly items = [
@@ -144,6 +152,12 @@ export class MainMenu {
     const leagueIdx = Math.max(0, MENU_TEAM_GROUPS.indexOf(this.teamGroup));
     const leagueDialLabel = MENU_TEAM_GROUP_LABEL[this.teamGroup];
     const showEra = this.teamGroup === "CLASSIC";
+    this.oppositionOptions = oppositionRollOptions(this.teamOptions, club.team.id);
+    const listedOppositionId =
+      fixture.homeTeamId === club.team.id ? fixture.awayTeamId : fixture.homeTeamId;
+    this.oppositionIndex = oppositionRollIndex(this.oppositionOptions, listedOppositionId);
+    const opposition = this.oppositionOptions[this.oppositionIndex];
+    const oppositionLeague = opposition ? MENU_TEAM_GROUP_LABEL[opposition.group] : "Opposition";
     this.root.innerHTML = `
       <div class="menu-shell ${embed ? "panel-open" : ""}">
         <div class="menu-hero">
@@ -207,6 +221,15 @@ export class MainMenu {
                 ${tod("NIGHT", "NIGHT")}
               </span>
             </div>
+            <div class="menu-fixture menu-fixture-labeled opposition-select-fixture">
+              <span class="meta fixture-section-label">Opposition</span>
+              <span class="tod-row opposition-dial-row">
+                <span class="team-dial-field opposition-dial-field">
+                  <span class="team-dial-label">${escapeHtml(oppositionLeague)}</span>
+                  ${oppositionSpinHtml(this.oppositionOptions, this.oppositionIndex)}
+                </span>
+              </span>
+            </div>
             <div class="menu-fixture fixture-match">
               <div class="fixture-match-main">
                 <div class="fixture-detail-row">
@@ -242,8 +265,10 @@ export class MainMenu {
     this.bindPointer();
     this.bindDurationSpin();
     this.bindTeamSelectSpin();
+    this.bindOppositionSpin();
     if (this.teamSelectLocked) {
       this.root.querySelector(".team-dials")?.classList.add("team-dials-locked");
+      this.root.querySelector(".opposition-select-fixture")?.classList.add("team-dials-locked");
     }
     if (this.panel === "predictions") this.bindPredictions(db, predState);
     this.observeFitTargets();
@@ -701,13 +726,89 @@ export class MainMenu {
       clearTimeout(this.clubCommitTimer);
       this.clubCommitTimer = null;
     }
+    if (this.oppositionCommitTimer) {
+      clearTimeout(this.oppositionCommitTimer);
+      this.oppositionCommitTimer = null;
+    }
     this.pendingTeamId = null;
     this.root.querySelector(".team-dials")?.classList.add("team-dials-locked");
+    this.root.querySelector(".opposition-select-fixture")?.classList.add("team-dials-locked");
   }
 
   unlockTeamSelect(): void {
     this.teamSelectLocked = false;
     this.root.querySelector(".team-dials")?.classList.remove("team-dials-locked");
+    this.root.querySelector(".opposition-select-fixture")?.classList.remove("team-dials-locked");
+  }
+
+  private bindOppositionSpin(): void {
+    const spin = this.root.querySelector<HTMLElement>("[data-opposition-spin]");
+    if (!spin || spin.dataset.bound === "1") return;
+    spin.dataset.bound = "1";
+    this.oppositionSpinWheel = createSpinWheel();
+    spin.addEventListener(
+      "wheel",
+      (e) => {
+        e.preventDefault();
+        const dir = consumeSpinWheel(this.oppositionSpinWheel, e.deltaY, {
+          threshold: 52,
+          cooldownMs: 95,
+          eventCap: 48,
+        });
+        if (dir) this.stepOpposition(dir);
+      },
+      { passive: false },
+    );
+    spin.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.stepOpposition(1);
+    });
+  }
+
+  private stepOpposition(delta: number): void {
+    if (this.teamSelectLocked) return;
+    const roll = this.oppositionOptions;
+    if (!roll.length) return;
+    const n = roll.length;
+    const nextIdx = (this.oppositionIndex + delta + n * 8) % n;
+    this.oppositionIndex = nextIdx;
+    this.paintOppositionDial(nextIdx);
+    this.scheduleOppositionCommit(roll[nextIdx]!.id);
+  }
+
+  private paintOppositionDial(index: number): void {
+    const roll = this.oppositionOptions;
+    if (!roll.length) return;
+    const n = roll.length;
+    const i = ((index % n) + n) % n;
+    const cur = roll[i]!;
+    const el = this.root.querySelector<HTMLElement>("[data-opposition-spin]");
+    if (el) {
+      const prev = roll[(i - 1 + n) % n]!;
+      const next = roll[(i + 1) % n]!;
+      el.setAttribute("data-opposition-index", String(i));
+      el.setAttribute("aria-label", `Opposition select ${oppositionRollLabel(cur)}`);
+      el.innerHTML = spinTriplet(
+        oppositionRollLabel(prev),
+        oppositionRollLabel(cur),
+        oppositionRollLabel(next),
+      );
+    }
+    const label = this.root.querySelector<HTMLElement>(
+      ".opposition-dial-field > .team-dial-label",
+    );
+    if (label) label.textContent = MENU_TEAM_GROUP_LABEL[cur.group];
+    scheduleFitMenuLabels(this.root);
+  }
+
+  private scheduleOppositionCommit(teamId: string): void {
+    if (this.teamSelectLocked) return;
+    if (this.oppositionCommitTimer) clearTimeout(this.oppositionCommitTimer);
+    this.oppositionCommitTimer = setTimeout(() => {
+      this.oppositionCommitTimer = null;
+      if (this.teamSelectLocked) return;
+      this.onOppositionChange?.(teamId);
+    }, 140);
   }
 
   private stepTeam(delta: number): void {
@@ -852,6 +953,7 @@ export class MainMenu {
 
   dispose(): void {
     if (this.clubCommitTimer) clearTimeout(this.clubCommitTimer);
+    if (this.oppositionCommitTimer) clearTimeout(this.oppositionCommitTimer);
     this.fitObserver?.disconnect();
     this.fitObserver = null;
     this.root.remove();
@@ -996,6 +1098,18 @@ function leagueSpinHtml(index: number, centerLabel: string): string {
   return `<span class="time-spin league-spin" data-league-spin data-league-index="${i}" tabindex="0" role="button" aria-label="League select ${centerLabel}">${spinTriplet(prev, centerLabel, next)}</span>`;
 }
 
+function oppositionSpinHtml(teams: MenuTeamOption[], index: number): string {
+  if (!teams.length) {
+    return `<span class="time-spin opposition-spin" data-opposition-spin data-opposition-index="0" tabindex="0" role="button" aria-label="Opposition select">—</span>`;
+  }
+  const n = teams.length;
+  const i = ((index % n) + n) % n;
+  const prev = teams[(i - 1 + n) % n]!;
+  const cur = teams[i]!;
+  const next = teams[(i + 1) % n]!;
+  return `<span class="time-spin opposition-spin" data-opposition-spin data-opposition-index="${i}" tabindex="0" role="button" aria-label="Opposition select ${oppositionRollLabel(cur)}">${spinTriplet(oppositionRollLabel(prev), oppositionRollLabel(cur), oppositionRollLabel(next))}</span>`;
+}
+
 function kickCountdownUnit(phase: KickCountdownPhase): string {
   if (phase === "days") return "D";
   if (phase === "hours") return "H";
@@ -1071,29 +1185,31 @@ export function fitMenuLabels(root: HTMLElement): void {
   fitTeamDialLabels(root);
 }
 
-/** Shrink Club dial centre (and ghosts) so long names fit the dial column. */
+/** Shrink Club / Opposition dial centres (and ghosts) so long names fit the dial column. */
 function fitTeamDialLabels(root: HTMLElement): void {
-  const spin = root.querySelector<HTMLElement>("[data-team-spin]");
-  if (!spin) return;
-  const budget = spin.clientWidth || spin.parentElement?.clientWidth || 0;
-  if (budget < 8) return;
-  const strong = spin.querySelector<HTMLElement>("strong");
-  if (strong) {
-    strong.style.fontSize = "";
-    strong.style.letterSpacing = "";
-    fitNowrapToWidth(strong, budget, {
-      minPx: 9,
-      basePx: parseFloat(getComputedStyle(strong).fontSize) || 15,
+  for (const sel of ["[data-team-spin]", "[data-opposition-spin]"]) {
+    const spin = root.querySelector<HTMLElement>(sel);
+    if (!spin) continue;
+    const budget = spin.clientWidth || spin.parentElement?.clientWidth || 0;
+    if (budget < 8) continue;
+    const strong = spin.querySelector<HTMLElement>("strong");
+    if (strong) {
+      strong.style.fontSize = "";
+      strong.style.letterSpacing = "";
+      fitNowrapToWidth(strong, budget, {
+        minPx: 9,
+        basePx: parseFloat(getComputedStyle(strong).fontSize) || 15,
+      });
+    }
+    const fitted = strong ? parseFloat(strong.style.fontSize) || 15 : 15;
+    const ghostPx = Math.max(8, Math.min(10, fitted * 0.68));
+    spin.querySelectorAll<HTMLElement>(".spin-ghost").forEach((g) => {
+      g.style.fontSize = `${ghostPx}px`;
+      g.style.overflow = "hidden";
+      g.style.textOverflow = "clip";
+      g.style.whiteSpace = "nowrap";
     });
   }
-  const fitted = strong ? parseFloat(strong.style.fontSize) || 15 : 15;
-  const ghostPx = Math.max(8, Math.min(10, fitted * 0.68));
-  spin.querySelectorAll<HTMLElement>(".spin-ghost").forEach((g) => {
-    g.style.fontSize = `${ghostPx}px`;
-    g.style.overflow = "hidden";
-    g.style.textOverflow = "clip";
-    g.style.whiteSpace = "nowrap";
-  });
 }
 
 /**

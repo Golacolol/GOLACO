@@ -429,6 +429,19 @@ export class GameDatabase {
       0,
       base?.awayTeamId,
     );
+    return this.friendlyVs(homeId, awayId);
+  }
+
+  /** One-off home friendly against a chosen opposition (menu opposition dial). */
+  friendlyVs(homeTeamId: string, awayTeamId: string): FixtureRecord {
+    const base = this.fixtureTemplate ?? this.fixtures[0];
+    const homeId = this.teams.has(homeTeamId) ? homeTeamId : DEFAULT_TEAM_ID;
+    const awayId = this.teams.has(awayTeamId) && awayTeamId !== homeId ? awayTeamId : cycleAttractOpponent(
+      [...this.teams.values()].map((t) => t.id),
+      homeId,
+      0,
+      base?.awayTeamId,
+    );
     const home = this.getTeam(homeId);
     return {
       ...(base ?? {
