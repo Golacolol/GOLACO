@@ -61,8 +61,8 @@ describe("MainMenu LEAGUE mode button", () => {
   it("hides LEAGUE before the first Play Next Fixture", () => {
     const menu = paint(false);
     expect(menu.root.querySelector('[data-mode="LEAGUE"]')).toBeNull();
-    expect(menu.root.querySelector('[data-mode="REAL"]')).toBeTruthy();
-    expect(menu.root.querySelector('[data-mode="ARCADE"]')).toBeTruthy();
+    expect(menu.root.querySelector('[data-mode="REAL"]')?.textContent).toBe("FOOTBALL");
+    expect(menu.root.querySelector('[data-mode="ARCADE"]')?.textContent).toBe("SOCCER");
     expect(menu.root.querySelector('[data-mode="TABLE"]')?.textContent).toBe("FOOSBALL");
     expect(menu.root.querySelector('[data-mode="FLICK"]')?.textContent).toBe("FLICKBALL");
   });

@@ -194,9 +194,9 @@ export class MainMenu {
             <div class="menu-fixture menu-fixture-labeled">
               <span class="meta fixture-section-label">Gameplay</span>
               <span class="tod-row">
-                ${mode("REAL", "REAL")}
+                ${mode("REAL", "FOOTBALL")}
                 <span class="vs">·</span>
-                ${mode("ARCADE", "ARCADE")}
+                ${mode("ARCADE", "SOCCER")}
                 <span class="vs">·</span>
                 ${mode("TABLE", "FOOSBALL")}
                 <span class="vs">·</span>
