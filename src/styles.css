@@ -763,23 +763,23 @@ html.club-name-glow-off .club-line {
   opacity: 0.12;
 }
 .fixture-match .opposition-dial-field {
-  flex: 1 1 auto;
   min-width: 0;
-  max-width: none;
-  align-self: stretch;
-  justify-content: center;
-  align-items: center;
+  max-width: 11.5rem;
+  width: 100%;
+  justify-self: center;
+  align-self: center;
+  align-items: stretch;
 }
 .fixture-match .opposition-spin.time-spin {
-  width: min(100%, 16rem);
-  max-width: 16rem;
+  width: 100%;
+  max-width: none;
 }
 .fixture-match .opposition-spin.time-spin strong {
-  font-size: 17px;
+  font-size: 16px;
   letter-spacing: 0.04em;
 }
 .fixture-match .opposition-spin .spin-ghost {
-  font-size: 11px;
+  font-size: 10px;
 }
 @media (max-width: 640px) {
   .team-dials,
@@ -787,12 +787,21 @@ html.club-name-glow-off .club-line {
     grid-template-columns: 1fr;
     gap: 10px;
   }
-  .fixture-match .opposition-dial-field {
-    flex: 1 1 100%;
+  .menu-fixture.fixture-match {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "main half"
+      "opp half";
   }
-  .fixture-match .opposition-spin.time-spin {
+  .fixture-match-main {
+    grid-area: main;
+  }
+  .fixture-match .opposition-dial-field {
+    grid-area: opp;
     max-width: none;
-    width: 100%;
+  }
+  .fixture-match > .duration-spin.time-spin {
+    grid-area: half;
   }
 }
 .team-dials.team-dials-locked,
@@ -889,23 +898,21 @@ html.club-name-glow-off .club-line {
   max-height: none;
 }
 .menu-fixture.fixture-match {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(7.5rem, 0.85fr) auto;
   align-items: center; /* opposition + half-length sit on the panel mid-line */
-  gap: 12px;
+  column-gap: 10px;
+  row-gap: 6px;
   padding: 6px 10px 6px 12px;
   overflow: hidden;
 }
 .fixture-match-main {
   display: flex;
   flex-direction: column;
-  /* Shrink-wrap left — opposition takes the remaining centre column. */
-  flex: 0 1 auto;
-  width: max-content;
-  max-width: min(42%, 18rem);
+  /* Left column owns match details — must stay wide enough for crests + abbrs. */
   min-width: 0;
+  width: auto;
+  max-width: none;
   gap: 0;
 }
 .fixture-teams-row {
@@ -921,9 +928,7 @@ html.club-name-glow-off .club-line {
 }
 .fixture-copy {
   display: block;
-  /* Shrink-wrap the teams/countdown — dial lives beside the whole block now. */
-  flex: 0 1 auto;
-  width: auto;
+  width: 100%;
   min-width: 0;
   max-width: 100%;
   margin: 0;
@@ -961,7 +966,7 @@ html.club-name-glow-off .club-line {
   gap: 6px 8px;
   align-items: center;
   justify-content: flex-start;
-  width: max-content;
+  width: 100%;
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
@@ -1041,7 +1046,7 @@ html.club-name-glow-off .club-line {
 .fixture-match > .duration-spin.time-spin {
   /* Y-centre against the full fixture panel (teams + Friendly line). */
   align-self: center;
-  flex: 0 0 auto;
+  justify-self: end;
 }
 .fixture-match > .duration-spin .spin-ghost {
   font-size: 10px;
@@ -2352,14 +2357,13 @@ html.club-name-glow-off .club-line {
   overflow: hidden;
   box-sizing: border-box;
 }
-/* PNG markers on the pitch / bench: framed box; never paint number/name on the image.
-   Match HUD markers keep their own square white frame (see .kit-marker-hud*). */
-.kit-marker-photo:not(.kit-marker-roster):not(.kit-marker-hud):not(.kit-marker-hud-sheet) .portrait {
-  border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.92);
-  box-shadow:
-    0 0 0 1px rgba(197, 165, 114, 0.55),
-    0 6px 16px rgba(0, 0, 0, 0.45);
+/* Formation pitch / bench PNG counters stay circular discs (HUD keeps its own square frames). */
+.team-pitch .kit-marker-photo .portrait,
+.char-panel-team .pitch-token .kit-marker-photo .portrait,
+.bench-card .kit-marker-photo .portrait {
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45);
 }
 .kit-marker-photo .portrait-badge-kit {
   display: none !important;
