@@ -156,8 +156,6 @@ export class MainMenu {
     const listedOppositionId =
       fixture.homeTeamId === club.team.id ? fixture.awayTeamId : fixture.homeTeamId;
     this.oppositionIndex = oppositionRollIndex(this.oppositionOptions, listedOppositionId);
-    const opposition = this.oppositionOptions[this.oppositionIndex];
-    const oppositionLeague = opposition ? MENU_TEAM_GROUP_LABEL[opposition.group] : "Opposition";
     this.root.innerHTML = `
       <div class="menu-shell ${embed ? "panel-open" : ""}">
         <div class="menu-hero">
@@ -221,16 +219,10 @@ export class MainMenu {
                 ${tod("NIGHT", "NIGHT")}
               </span>
             </div>
-            <div class="menu-fixture menu-fixture-labeled opposition-select-fixture">
-              <span class="meta fixture-section-label">Opposition</span>
-              <span class="tod-row opposition-dial-row">
-                <span class="team-dial-field opposition-dial-field">
-                  <span class="team-dial-label">${escapeHtml(oppositionLeague)}</span>
-                  ${oppositionSpinHtml(this.oppositionOptions, this.oppositionIndex)}
-                </span>
-              </span>
-            </div>
             <div class="menu-fixture fixture-match">
+              <span class="team-dial-field opposition-dial-field">
+                ${oppositionSpinHtml(this.oppositionOptions, this.oppositionIndex)}
+              </span>
               <div class="fixture-match-main">
                 <div class="fixture-detail-row">
                   <span class="meta">${fixture.competition} · ${view.kickOffTime || DEFAULT_KICK_OFF_TIME} · ${club.matchGround.name}</span>
@@ -268,7 +260,7 @@ export class MainMenu {
     this.bindOppositionSpin();
     if (this.teamSelectLocked) {
       this.root.querySelector(".team-dials")?.classList.add("team-dials-locked");
-      this.root.querySelector(".opposition-select-fixture")?.classList.add("team-dials-locked");
+      this.root.querySelector(".opposition-dial-field")?.classList.add("team-dials-locked");
     }
     if (this.panel === "predictions") this.bindPredictions(db, predState);
     this.observeFitTargets();
@@ -732,13 +724,13 @@ export class MainMenu {
     }
     this.pendingTeamId = null;
     this.root.querySelector(".team-dials")?.classList.add("team-dials-locked");
-    this.root.querySelector(".opposition-select-fixture")?.classList.add("team-dials-locked");
+    this.root.querySelector(".opposition-dial-field")?.classList.add("team-dials-locked");
   }
 
   unlockTeamSelect(): void {
     this.teamSelectLocked = false;
     this.root.querySelector(".team-dials")?.classList.remove("team-dials-locked");
-    this.root.querySelector(".opposition-select-fixture")?.classList.remove("team-dials-locked");
+    this.root.querySelector(".opposition-dial-field")?.classList.remove("team-dials-locked");
   }
 
   private bindOppositionSpin(): void {
@@ -794,10 +786,6 @@ export class MainMenu {
         oppositionRollLabel(next),
       );
     }
-    const label = this.root.querySelector<HTMLElement>(
-      ".opposition-dial-field > .team-dial-label",
-    );
-    if (label) label.textContent = MENU_TEAM_GROUP_LABEL[cur.group];
     scheduleFitMenuLabels(this.root);
   }
 

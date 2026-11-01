@@ -762,13 +762,12 @@ html.club-name-glow-off .club-line {
 .era-spin.era-locked .spin-ghost {
   opacity: 0.12;
 }
-.opposition-dial-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  width: 100%;
-}
-.opposition-dial-field {
-  width: 100%;
+.fixture-match .opposition-dial-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: min(42%, 14rem);
+  align-self: stretch;
+  justify-content: center;
 }
 @media (max-width: 640px) {
   .team-dials,
@@ -776,9 +775,13 @@ html.club-name-glow-off .club-line {
     grid-template-columns: 1fr;
     gap: 10px;
   }
+  .fixture-match .opposition-dial-field {
+    max-width: none;
+    flex: 1 1 100%;
+  }
 }
 .team-dials.team-dials-locked,
-.opposition-select-fixture.team-dials-locked {
+.opposition-dial-field.team-dials-locked {
   pointer-events: none;
   opacity: 0.55;
 }
