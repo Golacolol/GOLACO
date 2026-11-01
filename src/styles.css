@@ -187,9 +187,14 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 .hud-player-sheet .kit-marker-hud-sheet {
   display: grid;
   justify-items: center;
-  gap: 4px;
+  align-content: start;
+  gap: 0;
   margin: 0 auto 8px;
+  width: 72px;
+  height: 72px;
   max-width: 96px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 .hud-player-sheet .kit-marker-hud-sheet .portrait,
 .hud-player-sheet .kit-marker-hud-sheet.kit-marker-photo .portrait {
@@ -264,9 +269,14 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
 .hud-card .kit-marker-hud {
   display: grid;
   justify-items: center;
+  align-content: start;
   gap: 0;
+  width: 48px;
+  height: 48px;
   max-width: 48px;
   min-width: 48px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 .hud-card .kit-marker-hud .portrait,
 .hud-card .kit-marker-hud.kit-marker-photo .portrait {
@@ -1829,21 +1839,27 @@ html.club-name-glow-off .club-line {
   margin: 0 auto 6px;
 }
 .team-roster-card .kit-marker-roster {
+  /* Fixed square — PNG and badge fallbacks must not resize the card. */
+  --roster-marker: 144px;
   display: grid;
   justify-items: center;
   justify-content: center;
+  align-content: start;
   gap: 0;
   margin: 0 auto 8px;
-  width: 144px;
+  width: var(--roster-marker);
+  height: var(--roster-marker);
   max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 /* Top-left Formation player card: square frame in panel gold/green — never a white circle. */
 .team-roster-card .kit-marker-roster .portrait,
 .team-roster-card .kit-marker-roster.kit-marker-photo .portrait {
   position: relative;
-  width: 144px;
-  height: 144px;
-  margin: 0 auto;
+  width: var(--roster-marker);
+  height: var(--roster-marker);
+  margin: 0;
   padding: 7px;
   border-radius: 4px;
   border: 2px solid rgba(197, 165, 114, 0.85);
@@ -1893,11 +1909,8 @@ html.club-name-glow-off .club-line {
   padding: 0 4px;
   text-align: center;
 }
-.team-roster-card .kit-marker-roster .kit-marker-caption {
-  max-width: 168px;
-  width: 168px;
-}
-/* Top-left card already shows the name in <h3> — never duplicate under the PNG. */
+/* Top-left card already shows the name in <h3> — never a caption under PNG or badge. */
+.team-roster-card .kit-marker-roster .kit-marker-caption,
 .team-roster-card .kit-marker-roster.kit-marker-photo .kit-marker-caption {
   display: none !important;
 }
@@ -2168,15 +2181,11 @@ html.club-name-glow-off .club-line {
 .team-pitch.chalking .pitch-token {
   pointer-events: none;
 }
-.form-side-chips {
-  display: inline-flex;
-  gap: 4px;
-  margin-right: 4px;
-}
-.formation-chip.form-side-chip {
+.formation-chips .form-side-chip {
   min-width: 3.6em;
   padding-left: 8px;
   padding-right: 8px;
+  flex: 0 0 auto;
 }
 .formation-chip.chalk-chip.on {
   border-color: #e8efe4;
@@ -2380,16 +2389,25 @@ html.club-name-glow-off .club-line {
 .kit-marker:not(.kit-marker-roster) .portrait-badge {
   border-radius: 50%;
 }
-.char-panel-team .kit-marker:not(.kit-marker-roster),
+.char-panel-team .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench),
 .team-pitch .kit-marker {
+  /* Disc + caption lane — same box whether PNG caption shows or badge has none. */
+  --counter-disc: 88px;
+  --counter-caption: 22px;
   display: grid;
   justify-items: center;
-  gap: 8px;
+  align-content: start;
+  grid-template-rows: var(--counter-disc) var(--counter-caption);
+  gap: 3px;
+  width: 112px;
+  height: calc(var(--counter-disc) + 3px + var(--counter-caption));
   min-width: 0;
   max-width: 112px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 /* PNG counters: pull number+name caption up under the framed photo. */
-.char-panel-team .kit-marker.kit-marker-photo:not(.kit-marker-roster),
+.char-panel-team .kit-marker.kit-marker-photo:not(.kit-marker-roster):not(.kit-marker-bench),
 .team-pitch .kit-marker.kit-marker-photo {
   gap: 3px;
 }
@@ -2471,7 +2489,9 @@ html.club-name-glow-off .club-line {
   text-align: center;
 }
 .kit-marker:not(.kit-marker-photo) .kit-marker-caption {
-  display: none;
+  /* Keep the caption lane so badge counters match PNG counter height. */
+  visibility: hidden;
+  pointer-events: none;
 }
 .pitch-kit {
   display: grid;
@@ -2550,16 +2570,25 @@ html.club-name-glow-off .club-line {
 .bench-card:active { cursor: grabbing; }
 .bench-card.dragging { opacity: 0.45; }
 .bench-card .kit-marker-bench {
-  width: 100%;
+  --bench-disc: 72px;
+  --bench-caption: 18px;
+  display: grid;
+  width: var(--bench-disc);
   max-width: 100%;
+  height: calc(var(--bench-disc) + 2px + var(--bench-caption));
   margin-inline: auto;
   justify-self: center;
   justify-items: center;
+  align-content: start;
+  grid-template-rows: var(--bench-disc) var(--bench-caption);
   gap: 2px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
-.bench-card .kit-marker-bench .portrait {
-  width: 72px;
-  height: 72px;
+.bench-card .kit-marker-bench .portrait,
+.bench-card .kit-marker-bench.kit-marker-photo .portrait {
+  width: var(--bench-disc);
+  height: var(--bench-disc);
   margin-inline: auto;
 }
 .bench-card .kit-marker-bench .kit-marker-caption {
@@ -2624,11 +2653,14 @@ html.club-name-glow-off .club-line {
     height: 56px;
   }
   .team-roster-card .kit-marker-roster {
-    width: 120px;
+    --roster-marker: 120px;
+    width: var(--roster-marker);
+    height: var(--roster-marker);
   }
-  .team-roster-card .kit-marker-roster .portrait {
-    width: 120px;
-    height: 120px;
+  .team-roster-card .kit-marker-roster .portrait,
+  .team-roster-card .kit-marker-roster.kit-marker-photo .portrait {
+    width: var(--roster-marker);
+    height: var(--roster-marker);
     padding: 6px;
   }
   .team-roster-card .kit-marker-roster .portrait-badge-kit .num {
@@ -2688,9 +2720,14 @@ html.club-name-glow-off .club-line {
     width: 64px;
     height: 64px;
   }
-  .char-panel-team .kit-marker,
+  .char-panel-team .kit-marker:not(.kit-marker-roster):not(.kit-marker-bench),
   .team-pitch .kit-marker {
+    --counter-disc: 64px;
+    --counter-caption: 18px;
+    width: 84px;
     max-width: 84px;
+    height: calc(var(--counter-disc) + 3px + var(--counter-caption));
+    grid-template-rows: var(--counter-disc) var(--counter-caption);
   }
   .char-panel-team .kit-marker-caption,
   .team-pitch .kit-marker-caption {
@@ -2726,11 +2763,14 @@ html.club-name-glow-off .club-line {
     height: 56px;
   }
   .team-roster-card .kit-marker-roster {
-    width: 120px;
+    --roster-marker: 120px;
+    width: var(--roster-marker);
+    height: var(--roster-marker);
   }
-  .team-roster-card .kit-marker-roster .portrait {
-    width: 120px;
-    height: 120px;
+  .team-roster-card .kit-marker-roster .portrait,
+  .team-roster-card .kit-marker-roster.kit-marker-photo .portrait {
+    width: var(--roster-marker);
+    height: var(--roster-marker);
     padding: 6px;
   }
   .team-roster-card .profile-stats,

@@ -102,9 +102,9 @@ describe("full attribute radar spokes", () => {
     expect(svg.match(/profile-hex-shape/g)?.length).toBe(1);
   });
 
-  it("cycles hex → detail → full → hex", () => {
-    expect(nextProfileStatsMode("hex")).toBe("detail");
-    expect(nextProfileStatsMode("detail")).toBe("full");
-    expect(nextProfileStatsMode("full")).toBe("hex");
+  it("cycles hex → full → detail → hex", () => {
+    expect(nextProfileStatsMode("hex")).toBe("full");
+    expect(nextProfileStatsMode("full")).toBe("detail");
+    expect(nextProfileStatsMode("detail")).toBe("hex");
   });
 });

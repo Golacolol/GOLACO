@@ -709,6 +709,12 @@ export class CharacterSelect {
     this.markDirtyIfNeeded();
   }
 
+  /** Flip HOME ↔ AWAY on the single side chip. */
+  toggleFormationSide(): void {
+    if (!this.canSwitchFormationSide()) return;
+    this.setFormationSide(this.formationSide === "home" ? "away" : "home");
+  }
+
   private buildSideDraft(config: FormationSideConfig): FormationSideDraft {
     const teamName = config.teamName;
     const teamColor = config.teamColor ?? "#007A3D";
@@ -927,9 +933,9 @@ export class CharacterSelect {
       this.controlMode = "TEAM";
       return;
     }
-    // Flickball / Foosball: PLAYER SELECT is replaced by SETUP.
+    // Flickball / Foosball: no PLAYER SELECT — map that click to the formation pitch.
     if (this.tabletopKind && mode === "PLAYER") {
-      this.controlMode = "SETUP";
+      this.controlMode = "TEAM";
       return;
     }
     if (mode === "SETUP" && !this.tabletopKind) {
@@ -939,7 +945,7 @@ export class CharacterSelect {
     this.controlMode = mode;
   }
 
-  /** Enable Formation tabletop settings (swaps out PLAYER SELECT). */
+  /** Enable Formation tabletop settings (FLICKBALL / FOOSBALL nav); pitch stays default. */
   setTabletopMode(
     kind: TabletopKind | null,
     drafts?: { flick?: Partial<FlickSetupDraft>; table?: Partial<TableSetupDraft> },
@@ -955,9 +961,10 @@ export class CharacterSelect {
           : this.tableSetup.customMen,
       };
     }
-    if (kind && (this.controlMode === "PLAYER" || this.controlMode === "SETUP")) {
-      this.controlMode = "SETUP";
-    } else if (!kind && this.controlMode === "SETUP") {
+    // Open on the formation pitch (TEAM); settings stay behind the FLICKBALL/FOOSBALL tab.
+    if (kind) {
+      if (this.controlMode === "PLAYER" || this.controlMode === "SETUP") this.controlMode = "TEAM";
+    } else if (this.controlMode === "SETUP") {
       this.controlMode = "TEAM";
     }
   }
@@ -1445,7 +1452,8 @@ export class CharacterSelect {
 
   private renderTeam(): void {
     // Tabletop SETUP and football PLAYER SELECT reuse this shell; only the centre well changes.
-    if (this.tabletopKind && this.controlMode === "PLAYER") this.controlMode = "SETUP";
+    // Flickball / Foosball default to the pitch — never silently jump into SETUP.
+    if (this.tabletopKind && this.controlMode === "PLAYER") this.controlMode = "TEAM";
     const form = getFormation(this.formation);
     const bySlot = new Map(this.xi.map((row) => [row.slot, row]));
     const selected = this.current();
@@ -1517,14 +1525,6 @@ export class CharacterSelect {
           ${this.teamTitleHtml(titleLabel)}
           <div class="play-style-chips" role="group" aria-label="Play style">
             ${
-              this.canSwitchFormationSide()
-                ? `<div class="form-side-chips" role="group" aria-label="Fixture side">
-              <button type="button" class="formation-chip form-side-chip ${this.formationSide === "home" ? "on" : ""}" data-char="form-side" data-side="home" aria-pressed="${this.formationSide === "home" ? "true" : "false"}">HOME</button>
-              <button type="button" class="formation-chip form-side-chip ${this.formationSide === "away" ? "on" : ""}" data-char="form-side" data-side="away" aria-pressed="${this.formationSide === "away" ? "true" : "false"}">AWAY</button>
-            </div>`
-                : ""
-            }
-            ${
               overlayMode
                 ? ""
                 : `<button type="button" class="formation-chip chalk-chip ${this.chalkMode ? "on" : ""}" data-char="chalk" title="Chalk — draw on the pitch. Right-click to wipe." aria-pressed="${this.chalkMode ? "true" : "false"}">Chalk</button>`
@@ -1536,7 +1536,12 @@ export class CharacterSelect {
               )
               .join("")}
           </div>
-          <div class="formation-chips">
+          <div class="formation-chips" role="group" aria-label="Formation">
+            ${
+              this.canSwitchFormationSide()
+                ? `<button type="button" class="formation-chip form-side-chip on" data-char="form-side" data-side-toggle="1" aria-label="Switch fixture side (currently ${this.formationSide === "home" ? "HOME" : "AWAY"})" title="Tap to switch HOME / AWAY">${this.formationSide === "home" ? "HOME" : "AWAY"}</button>`
+                : ""
+            }
             ${FORMATION_NAMES.map(
               (name) =>
                 `<button type="button" class="formation-chip ${name === this.formation ? "on" : ""}" data-char="form" data-form="${name}">${name}</button>`,

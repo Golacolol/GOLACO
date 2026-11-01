@@ -12,18 +12,19 @@ import type { PlayerAttributes } from "../data/schema";
 
 export type ProfileStatsMode = "hex" | "detail" | "full";
 
-const PROFILE_MODE_ORDER: ProfileStatsMode[] = ["hex", "detail", "full"];
+/** Hex → N-gon (all attrs) → six rating bars → hex. */
+const PROFILE_MODE_ORDER: ProfileStatsMode[] = ["hex", "full", "detail"];
 
-/** Cycle hex (6) → bars (6) → full shape (all attrs) → hex. */
+/** Cycle hex (6) → full N-gon → bars (6) → hex. */
 export function nextProfileStatsMode(mode: ProfileStatsMode): ProfileStatsMode {
   const i = PROFILE_MODE_ORDER.indexOf(mode);
   return PROFILE_MODE_ORDER[(i + 1) % PROFILE_MODE_ORDER.length]!;
 }
 
 export function profileModeTitle(mode: ProfileStatsMode): string {
-  if (mode === "hex") return "Shape overview — click for ratings";
-  if (mode === "detail") return "Six ratings — click for full shape";
-  return "All attributes — click for hex overview";
+  if (mode === "hex") return "Shape overview — click for full attributes";
+  if (mode === "full") return "All attributes — click for ratings";
+  return "Six ratings — click for hex overview";
 }
 
 /** Build six-axis overalls from raw attrs. */
@@ -130,7 +131,7 @@ export function profileDetailRows(axes: ProfileAxes): string {
 }
 
 /**
- * Toggleable hex ↔ bars ↔ full attribute shape — one fixed footprint so the panel does not jump.
+ * Toggleable hex ↔ full N-gon ↔ bars — one fixed footprint so the panel does not jump.
  */
 export function profileStatsBlock(
   attrs: PlayerAttributes,

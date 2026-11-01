@@ -95,6 +95,26 @@ describe("character select", () => {
     expect(view.root.querySelector('[data-style="possession"]')?.classList.contains("on")).toBe(true);
   });
 
+  it("opens Flickball / Foosball on the formation pitch, not setup", () => {
+    const host = document.createElement("div");
+    const view = new CharacterSelect(host);
+    view.setSquad("Plymouth Argyle", squad(), "#007A3D", {
+      formation: "4-2-3-1",
+      starterSlots: ["GK", "CAM", "ST"],
+      purpose: "match",
+    });
+    view.setTabletopMode("FLICK");
+    view.setControlMode("TEAM");
+    view.render();
+    expect(view.controlMode).toBe("TEAM");
+    expect(view.root.querySelector(".team-pitch-chalk")).toBeTruthy();
+    expect(view.root.querySelector(".tabletop-setup")).toBeNull();
+    expect(view.root.querySelector('[data-char="mode-setup"]')?.textContent).toBe("FLICKBALL");
+    view.setControlMode("SETUP");
+    view.render();
+    expect(view.root.querySelector(".tabletop-setup")).toBeTruthy();
+  });
+
   it("shows the player card when player select is chosen", () => {
     const host = document.createElement("div");
     const view = new CharacterSelect(host);
@@ -222,18 +242,19 @@ describe("character select", () => {
     expect(view.root.querySelector(".pitch-token img")).toBe(pitchImg);
     expect(view.root.textContent ?? "").not.toMatch(/Click for (shape|details)/i);
     view.toggleProfileView();
-    expect(view.root.querySelector(".profile-detail-bars")).toBeTruthy();
-    expect(view.root.querySelector(".profile-hex-shape")).toBeNull();
-    const detailBox = view.root.querySelector<HTMLElement>(".profile-stats");
-    expect(detailBox?.style.width).toBe(detailBox?.style.height);
-    view.toggleProfileView();
-    // Third click: full attribute polygon in the same fixed box.
+    // Second view: full N-gon attribute shape.
     expect(view.root.querySelector(".profile-hex-full")).toBeTruthy();
     expect(view.root.querySelector(".profile-hex-shape")).toBeTruthy();
     expect(view.root.querySelector(".profile-detail-bars")).toBeNull();
     const fullBox = view.root.querySelector<HTMLElement>(".profile-stats");
-    expect(fullBox?.style.width).toBe(detailBox?.style.width);
-    expect(fullBox?.style.height).toBe(detailBox?.style.height);
+    expect(fullBox?.style.width).toBe(fullBox?.style.height);
+    view.toggleProfileView();
+    // Third view: six rating bars in the same fixed box.
+    expect(view.root.querySelector(".profile-detail-bars")).toBeTruthy();
+    expect(view.root.querySelector(".profile-hex-shape")).toBeNull();
+    const detailBox = view.root.querySelector<HTMLElement>(".profile-stats");
+    expect(detailBox?.style.width).toBe(fullBox?.style.width);
+    expect(detailBox?.style.height).toBe(fullBox?.style.height);
     view.toggleProfileView();
     expect(view.root.querySelector(".profile-hex-six")).toBeTruthy();
     expect(view.root.querySelector(".profile-detail-bars")).toBeNull();
@@ -562,21 +583,24 @@ describe("character select", () => {
     view.render();
     expect(view.canSwitchFormationSide()).toBe(true);
     expect(view.formationSide).toBe("home");
-    expect(view.root.querySelector('[data-char="form-side"][data-side="home"]')?.classList.contains("on")).toBe(true);
-    const chalk = view.root.querySelector('[data-char="chalk"]');
-    const homeChip = view.root.querySelector('[data-char="form-side"][data-side="home"]');
+    const sideChip = view.root.querySelector('[data-char="form-side"][data-side-toggle]');
+    expect(sideChip?.textContent).toBe("HOME");
+    expect(sideChip?.classList.contains("on")).toBe(true);
+    const form442 = view.root.querySelector('[data-char="form"][data-form="4-4-2"]');
     expect(
-      homeChip && chalk && !!(homeChip.compareDocumentPosition(chalk) & Node.DOCUMENT_POSITION_FOLLOWING),
+      sideChip &&
+        form442 &&
+        !!(sideChip.compareDocumentPosition(form442) & Node.DOCUMENT_POSITION_FOLLOWING),
     ).toBe(true);
     expect(view.root.querySelector(".char-team-title")?.textContent).toContain("Home FC");
     view.setFormation("4-3-3");
-    view.setFormationSide("away");
+    view.toggleFormationSide();
     view.render();
     expect(view.formationSide).toBe("away");
     expect(view.formation).toBe("4-4-2");
     expect(view.playStyle).toBe("counter");
     expect(view.root.querySelector(".char-team-title")?.textContent).toContain("Away FC");
-    expect(view.root.querySelector('[data-char="form-side"][data-side="away"]')?.classList.contains("on")).toBe(true);
+    expect(view.root.querySelector('[data-char="form-side"][data-side-toggle]')?.textContent).toBe("AWAY");
     expect(view.xi.some((row) => row.player.player.id === "a_st")).toBe(true);
     view.setPlayStyle("direct");
     const edits = view.getEditedLineups();

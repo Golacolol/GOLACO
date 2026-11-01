@@ -344,10 +344,15 @@ export class Game {
             return;
           }
           if (char === "form-side") {
-            const side = btn.getAttribute("data-side");
-            if (side === "home" || side === "away") {
-              this.chars.setFormationSide(side);
+            if (btn.hasAttribute("data-side-toggle")) {
+              this.chars.toggleFormationSide();
               this.chars.render();
+            } else {
+              const side = btn.getAttribute("data-side");
+              if (side === "home" || side === "away") {
+                this.chars.setFormationSide(side);
+                this.chars.render();
+              }
             }
             return;
           }
@@ -412,10 +417,15 @@ export class Game {
           this.refreshCharacterPreview();
         }
         if (char === "form-side") {
-          const side = btn.getAttribute("data-side");
-          if (side === "home" || side === "away") {
-            this.chars.setFormationSide(side);
+          if (btn.hasAttribute("data-side-toggle")) {
+            this.chars.toggleFormationSide();
             this.chars.render();
+          } else {
+            const side = btn.getAttribute("data-side");
+            if (side === "home" || side === "away") {
+              this.chars.setFormationSide(side);
+              this.chars.render();
+            }
           }
         }
         if (char === "form") {
@@ -1369,7 +1379,8 @@ export class Game {
           customMen: s.tableCustomMen,
         },
       });
-      this.chars.setControlMode("SETUP");
+      // Pitch / TEAM SELECT first — FLICKBALL / FOOSBALL settings stay on their own tab.
+      this.chars.setControlMode("TEAM");
     } else {
       this.chars.setTabletopMode(null);
     }
