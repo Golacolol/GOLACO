@@ -765,9 +765,21 @@ html.club-name-glow-off .club-line {
 .fixture-match .opposition-dial-field {
   flex: 1 1 auto;
   min-width: 0;
-  max-width: min(42%, 14rem);
+  max-width: none;
   align-self: stretch;
   justify-content: center;
+  align-items: center;
+}
+.fixture-match .opposition-spin.time-spin {
+  width: min(100%, 16rem);
+  max-width: 16rem;
+}
+.fixture-match .opposition-spin.time-spin strong {
+  font-size: 17px;
+  letter-spacing: 0.04em;
+}
+.fixture-match .opposition-spin .spin-ghost {
+  font-size: 11px;
 }
 @media (max-width: 640px) {
   .team-dials,
@@ -776,8 +788,11 @@ html.club-name-glow-off .club-line {
     gap: 10px;
   }
   .fixture-match .opposition-dial-field {
-    max-width: none;
     flex: 1 1 100%;
+  }
+  .fixture-match .opposition-spin.time-spin {
+    max-width: none;
+    width: 100%;
   }
 }
 .team-dials.team-dials-locked,
@@ -878,18 +893,18 @@ html.club-name-glow-off .club-line {
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: flex-start;
-  align-items: center; /* half-length dial sits on the panel mid-line */
-  gap: 10px;
+  align-items: center; /* opposition + half-length sit on the panel mid-line */
+  gap: 12px;
   padding: 6px 10px 6px 12px;
   overflow: hidden;
 }
 .fixture-match-main {
   display: flex;
   flex-direction: column;
-  /* Shrink-wrap — do not grow and shove the half-length dial to the right edge. */
+  /* Shrink-wrap left — opposition takes the remaining centre column. */
   flex: 0 1 auto;
   width: max-content;
-  max-width: calc(100% - 5.5em);
+  max-width: min(42%, 18rem);
   min-width: 0;
   gap: 0;
 }
@@ -1016,11 +1031,12 @@ html.club-name-glow-off .club-line {
   flex: 0 0 auto;
   margin: 0;
   padding: 0 4px;
-  cursor: pointer;
+  cursor: ns-resize;
   gap: 1px;
   overflow: hidden;
   text-align: center;
   line-height: 1;
+  background: transparent;
 }
 .fixture-match > .duration-spin.time-spin {
   /* Y-centre against the full fixture panel (teams + Friendly line). */
@@ -1043,6 +1059,10 @@ html.club-name-glow-off .club-line {
 .time-spin:hover, .time-spin:focus-visible {
   background: rgba(0,0,0,0.35);
   outline: none;
+}
+.duration-spin.time-spin:hover,
+.duration-spin.time-spin:focus-visible {
+  background: transparent;
 }
 .time-spin .spin-ghost {
   opacity: 0.28;

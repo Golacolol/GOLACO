@@ -29,7 +29,7 @@ import type { Ball } from "../ball/Ball";
 import { movePlayer } from "../players/PlayerMovement";
 import type { GameplayTuning } from "../gameplay/GameplayTuning";
 import type { SetPieceContext } from "./SetPieceAI";
-import { setPieceTarget } from "./SetPieceAI";
+import { setPieceRole, setPieceTarget } from "./SetPieceAI";
 import { pitchClamp } from "../pitch/PitchZones";
 import { HALF_LENGTH, PITCH_LENGTH } from "../constants";
 
@@ -224,27 +224,58 @@ export function updateTeamAI(
       continue;
     }
     if (extras?.setPiece) {
-      const spot = setPieceTarget(p, extras.setPiece);
+      const ctx = extras.setPiece;
+      const delivery = ctx.phase === "delivery";
+      const land = ctx.landing ?? { x: ball.x, z: ball.z };
+      let spot = setPieceTarget(p, ctx);
+      const goalKick = ctx.kind === "GOAL_KICK";
+      const corner = ctx.kind === "CORNER";
+      const attacking = p.side === ctx.takingSide;
+      if (delivery && corner && !p.isGK) {
+        const role = setPieceRole(p);
+        const distLand = Math.hypot(p.x - land.x, p.z - land.z);
+        // Crash / hold the flight — do not abandon the box for open-play line height.
+        if (attacking) {
+          if (role === "st" || role === "wide" || role === "mid" || distLand < 20) {
+            spot = {
+              x: land.x * 0.72 + spot.x * 0.28,
+              z: land.z * 0.68 + spot.z * 0.32,
+            };
+          }
+        } else if (role === "cb" || role === "fb" || role === "wide" || (role === "mid" && distLand < 18)) {
+          spot = {
+            x: land.x * 0.82 + spot.x * 0.18,
+            z: land.z * 0.78 + spot.z * 0.22,
+          };
+        } else {
+          // Deep outlets stay high enough to clear second balls, not halfway sprint-out.
+          spot = {
+            x: spot.x * 0.78 + land.x * 0.22,
+            z: spot.z * 0.72 + land.z * 0.28,
+          };
+        }
+      }
       p.desiredX = spot.x;
       p.desiredZ = spot.z;
       const dxs = spot.x - p.x;
       const dzs = spot.z - p.z;
       const ds = Math.hypot(dxs, dzs);
-      const goalKick = extras.setPiece.kind === "GOAL_KICK";
-      const corner = extras.setPiece.kind === "CORNER";
-      const attacking = p.side === extras.setPiece.takingSide;
-      // Corners: attackers arrive quickly; defenders are slower so a quick take can catch them out.
-      // Goal kicks: walk to the mark; no sprint toward the six-yard box.
-      const sprint = !goalKick && ds > (corner && !attacking ? 18 : 14);
+      // Corners setup: attackers arrive quickly; defenders slower so a quick take can catch them.
+      // Delivery: both sides contest. Goal kicks: walk to the mark.
+      let sprint = !goalKick && ds > (corner && !attacking && !delivery ? 18 : 14);
       let speedMul = goalKick ? 0.58 : 0.85;
       if (corner) speedMul = attacking ? 0.98 : 0.52;
+      if (delivery && corner) {
+        sprint = ds > 2.8;
+        speedMul = attacking ? 1.06 : 1.02;
+      }
       if (ds > 0.6) {
         movePlayer(p, dt, dxs, dzs, sprint, false, {
           hasBall: p.hasBall,
           pressure: 0,
           ...moveEx,
           speedMul: (moveEx.speedMul ?? 1) * speedMul,
-          drainMul: (moveEx.drainMul ?? 1) * (goalKick ? 0.4 : corner && !attacking ? 0.55 : 0.7),
+          drainMul: (moveEx.drainMul ?? 1) * (goalKick ? 0.4 : delivery ? 0.85 : corner && !attacking ? 0.55 : 0.7),
         });
       } else {
         movePlayer(p, dt, 0, 0, false, false, {

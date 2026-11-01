@@ -386,7 +386,10 @@ export function keeperHandReleaseVector(
   return { vx: (dx / dist) * mag, vz: (dz / dist) * mag, vy };
 }
 
-/** Safer long clearance: aim into a wide channel, not the crowded centre. */
+/**
+ * Safer long clearance: aim into a wide channel, not the crowded centre.
+ * Real hands-punts typically land ~35–50 m upfield (rarely past halfway from the six).
+ */
 export function keeperPuntAim(gk: Player, teammates: Player[], rng: () => number): { x: number; z: number } {
   const fwd = gk.attackSign;
   const fb = teammates.find((p) => isFullBackOutlet(p) && p.id !== gk.id);
@@ -395,7 +398,7 @@ export function keeperPuntAim(gk: Player, teammates: Player[], rng: () => number
     : rng() > 0.5
       ? 16
       : -16;
-  const depth = 52 + rng() * 14;
+  const depth = 38 + rng() * 12; // 38–50 m
   return {
     x: clamp(gk.x + fwd * depth, -HALF_LENGTH + 14, HALF_LENGTH - 14),
     z: clampInboundZ(wideZ + (rng() - 0.5) * 5, 8),
@@ -408,9 +411,14 @@ export function isStrikerOutlet(player: Player): boolean {
   return player.position === "ST" || s.includes("ST") || s.includes("CF");
 }
 
+/** Realistic long goal-kick / punt carry from the six-yard line (~40–55 m). */
+export const GOAL_KICK_LONG_MAX_M = 55;
+export const GOAL_KICK_LONG_TYPICAL_M = 48;
+
 /**
  * Dead-ball goal-kick aim: long services target strikers / the halfway channel;
  * short ones keep the FB/CB outlet nudge so the ball stays on the pitch.
+ * Long aims are capped to real kick lengths so the ball does not sail into the final third.
  */
 export function goalKickAimPoint(
   gk: Player,
@@ -420,29 +428,37 @@ export function goalKickAimPoint(
 ): { x: number; z: number } {
   const fwd = gk.attackSign;
   if (wantLong && target) {
+    const rawX = target.x + fwd * 1.6;
+    const forward = (rawX - gk.x) * fwd;
+    const cappedX =
+      forward > GOAL_KICK_LONG_MAX_M ? gk.x + fwd * GOAL_KICK_LONG_MAX_M : rawX;
     return {
-      x: clamp(target.x + fwd * 3.2, -HALF_LENGTH + 12, HALF_LENGTH - 12),
+      x: clamp(cappedX, -HALF_LENGTH + 12, HALF_LENGTH - 12),
       z: clampInboundZ(target.z * 0.88 + intentZ * 4, 6),
     };
   }
   if (target) return keeperOutletAimPoint(target);
   if (wantLong) {
-    const depth = 54 + Math.abs(intentZ) * 4;
+    const depth = GOAL_KICK_LONG_TYPICAL_M + Math.abs(intentZ) * 2; // ~48–50 m
     return {
-      x: clamp(gk.x + fwd * depth, -HALF_LENGTH + 12, HALF_LENGTH - 12),
+      x: clamp(gk.x + fwd * Math.min(depth, GOAL_KICK_LONG_MAX_M), -HALF_LENGTH + 12, HALF_LENGTH - 12),
       z: clampInboundZ(intentZ * 16 + (Math.sign(intentZ || 1) || 1) * 6, 8),
     };
   }
   return {
-    x: clamp(gk.x + fwd * 26, -HALF_LENGTH + 14, HALF_LENGTH - 14),
+    x: clamp(gk.x + fwd * 22, -HALF_LENGTH + 14, HALF_LENGTH - 14),
     z: clampInboundZ(intentZ * 14, 8),
   };
 }
 
-/** Planted goal kicks need a little more carry than open-play long passes. */
+/**
+ * Soft under-hit on long services — `passKickVector` already solves the landing,
+ * so any scale > 1 overshoots past real kick lengths.
+ */
 export function goalKickPowerScale(distance: number, wantLong: boolean): number {
-  if (!wantLong) return distance > 28 ? 1.04 : 1;
-  return clamp(0.98 + distance / 95, 1.06, 1.24);
+  if (!wantLong) return distance > 28 ? 0.98 : 1;
+  // Slightly short of the marker so bounce/carry does not sail past ~55 m.
+  return clamp(0.92 + Math.min(distance, GOAL_KICK_LONG_MAX_M) / 400, 0.94, 1);
 }
 
 /** Prefer a striker for long goal kicks; fall back to the most advanced teammate. */
@@ -464,12 +480,15 @@ export function chooseGoalKickLongTarget(
     const dz = mate.z - gk.z;
     const dist = Math.hypot(dx, dz);
     const forward = dx * gk.attackSign;
-    if (dist < 28 || forward < 22) continue;
+    if (dist < 26 || forward < 18) continue;
+    // Prefer outlets inside a real long-kick window — do not chase ultra-deep STs.
+    if (dist > GOAL_KICK_LONG_MAX_M + 8) continue;
     const dirLen = dist || 1;
     const align = (intent.x * (dx / dirLen) + intent.z * (dz / dirLen) + 1) / 2;
     if (useStick && align < 0.22) continue;
     const st = isStrikerOutlet(mate) ? 1.35 : mate.slot.includes("AM") || mate.slot.includes("CF") ? 0.55 : 0.1;
-    const score = forward * 0.045 + st + align * 0.7 + clamp(dist / 70, 0, 0.35);
+    const rangeFit = 1 - clamp(Math.abs(dist - GOAL_KICK_LONG_TYPICAL_M) / 28, 0, 0.55);
+    const score = forward * 0.035 + st + align * 0.7 + rangeFit * 0.45;
     if (score > bestScore) {
       bestScore = score;
       best = mate;

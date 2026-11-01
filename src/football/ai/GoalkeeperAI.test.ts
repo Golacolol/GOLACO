@@ -484,19 +484,21 @@ describe("goal kick long delivery", () => {
     expect(target?.id).toBe("st");
   });
 
-  it("aims long goal kicks beyond halfway toward the striker", () => {
+  it("caps long goal kicks near real kick length toward the striker", () => {
     const keeper = gk("home");
     const st = outfield("st", "home", 8, 6, "RST");
     const aim = goalKickAimPoint(keeper, st, true, 0);
-    expect(aim.x).toBeGreaterThan(8);
+    const reach = Math.hypot(aim.x - keeper.x, aim.z - keeper.z);
+    expect(aim.x).toBeGreaterThan(keeper.x + 35);
+    expect(reach).toBeLessThanOrEqual(55.5);
     expect(Math.abs(aim.z)).toBeLessThan(12);
-    expect(goalKickPowerScale(Math.hypot(aim.x - keeper.x, aim.z - keeper.z), true)).toBeGreaterThan(1.05);
+    expect(goalKickPowerScale(reach, true)).toBeLessThanOrEqual(1);
   });
 
-  it("carries a long goal-kick aim into the striker zone under pitch friction", () => {
+  it("carries a long goal-kick aim into the halfway channel under pitch friction", () => {
     const fromX = -HALF_LENGTH + 5.5;
     const fromZ = 9;
-    const toX = 8;
+    const toX = -HALF_LENGTH + 5.5 + 48;
     const toZ = 4;
     const dist = Math.hypot(toX - fromX, toZ - fromZ);
     const kick = passKickVector(fromX, fromZ, toX, toZ, "long");
@@ -504,14 +506,17 @@ describe("goal kick long delivery", () => {
     const ball = new Ball();
     ball.reset(fromX, fromZ);
     ball.y = 0.28;
-    kickBall(ball, kick.vx * scale, kick.vz * scale, Math.max(kick.vy * 1.08 * scale, 7.2));
+    kickBall(ball, kick.vx * scale, kick.vz * scale, Math.min(Math.max(kick.vy * scale, 5.4), 6.8));
     let closest = Infinity;
+    let maxX = fromX;
     for (let i = 0; i < 360; i++) {
       stepBall(ball, 1 / 60);
       closest = Math.min(closest, Math.hypot(ball.x - toX, ball.z - toZ));
+      maxX = Math.max(maxX, ball.x);
       if (Math.hypot(ball.vx, ball.vz) < 1.2 && ball.y < 0.2) break;
     }
-    expect(closest).toBeLessThan(6);
-    expect(ball.x).toBeGreaterThan(-5);
+    expect(closest).toBeLessThan(8);
+    expect(maxX).toBeLessThan(fromX + 58);
+    expect(ball.x).toBeGreaterThan(fromX + 30);
   });
 });

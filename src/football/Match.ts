@@ -38,7 +38,12 @@ import { decisionTelemetry } from "./ai/DecisionTelemetry";
 import { decideFreeKick } from "./ai/FreeKickDecision";
 import { AI_CELEBRATION_SECONDS, chooseKickOffReceiver, KICK_OFF_PASS_DELAY, USER_CELEBRATION_MAX } from "./ai/KickOff";
 import { planReceiveRun, receiveIsAerialOwned } from "./ai/ReceiveModel";
-import { applySetPieceShape, chooseSetPieceScript, type SetPieceKind } from "./ai/SetPieceAI";
+import {
+  applySetPieceShape,
+  chooseSetPieceScript,
+  type SetPieceContext,
+  type SetPieceKind,
+} from "./ai/SetPieceAI";
 import { Ball } from "./ball/Ball";
 import { clampBallSoft, dribbleBall, headerKick, inGoal, kickBall, outOfPitch, stepBall } from "./ball/BallPhysics";
 import {
@@ -351,6 +356,11 @@ export class Match {
   private autoPassStreamT = 0;
   private restartElapsed = 0;
   private restartSpot: { x: number; z: number } | null = null;
+  /**
+   * Post-kick set-piece linger (corners): keep box shape + contest the flight
+   * instead of immediately running open-play push-out.
+   */
+  private setPieceDelivery: (SetPieceContext & { t: number }) | null = null;
   /**
    * Pre-kick ceremony: stands throw-back, GK walk-collect-place for goal kicks,
    * corner taker collect-carry-place, free-kick feed/collect/place.
@@ -1020,6 +1030,7 @@ export class Match {
     this.handleTackles(intent);
     this.updateSlides(dt);
     this.handleInterceptions();
+    this.tickSetPieceDelivery(dt);
 
     const homePoss = this.possessing?.side ?? null;
     const homeSkip = this.userSide === "home" ? new Set(skip) : new Set<string>();
@@ -1037,7 +1048,7 @@ export class Match {
       grip: this.env.playerGripMultiplier,
       kickOff: aiKickOff,
       keeperHold: !!this.possessing?.isGK,
-      setPiece: this.spotHoldContext(),
+      setPiece: this.activeSetPieceContext(),
       forceClosers: userSide === "home" ? forceClosers : undefined,
       autoClosers: userSide !== "home" || this.autoplay,
       aggressivePress: userSide === "home" && forceClosers.length > 0,
@@ -1053,7 +1064,7 @@ export class Match {
       grip: this.env.playerGripMultiplier,
       kickOff: aiKickOff,
       keeperHold: !!this.possessing?.isGK,
-      setPiece: this.spotHoldContext(),
+      setPiece: this.activeSetPieceContext(),
       forceClosers: userSide === "away" ? forceClosers : undefined,
       autoClosers: userSide !== "away" || this.autoplay,
       aggressivePress: userSide === "away" && forceClosers.length > 0,
@@ -2234,12 +2245,12 @@ export class Match {
     const dir = this.aimDir(intent, gk);
     const wantPunt = intent.shoot || intent.passHold > 0.9 || intent.through;
     if (wantPunt) {
-      const aimX = gk.x + gk.attackSign * (48 + intent.passHold * 12);
+      // Real hands-punts ~35–50 m — do not stack post-solver power on top of passKickVector.
+      const aimX = gk.x + gk.attackSign * (38 + intent.passHold * 10);
       const aimZ = clamp((dir.z || 0) * 22, -22, 22);
-      // passKickVector already lands near the aim — the old /1.65 cap truncated deep punts.
       const kick = passKickVector(this.ball.x, this.ball.z, aimX, aimZ, "long");
       this.ball.y = 0.28;
-      kickBall(this.ball, kick.vx * 1.04, kick.vz * 1.04, Math.max(kick.vy * 1.06, 7.0));
+      kickBall(this.ball, kick.vx * 0.97, kick.vz * 0.97, Math.min(Math.max(kick.vy, 5.2), 6.6));
       this.clearOwner();
       gk.handRelease = false;
       gk.kickTimer = 0.95;
@@ -2336,10 +2347,10 @@ export class Match {
     const dx = decided.x - this.ball.x;
     const dz = decided.z - this.ball.z;
     gk.facing = Math.atan2(dx, dz);
-    // Drop from the hands then clear — use the long-pass solver so deep punts actually travel.
+    // Drop from the hands then clear — solver aims the landing; keep impulse at real punt carry.
     const kick = passKickVector(this.ball.x, this.ball.z, decided.x, decided.z, "long");
     this.ball.y = 0.28;
-    kickBall(this.ball, kick.vx * 1.04, kick.vz * 1.04, Math.max(kick.vy * 1.06, 7.0));
+    kickBall(this.ball, kick.vx * 0.97, kick.vz * 0.97, Math.min(Math.max(kick.vy, 5.2), 6.6));
     this.clearOwner();
     gk.handRelease = false;
     gk.kickTimer = 0.95;
@@ -3339,14 +3350,15 @@ export class Match {
     if (!landing) return;
     const passer = this.playerById(this.ball.lastTouchId ?? "");
     if (!passer) return;
+    const cornerDelivery = this.setPieceDelivery?.kind === "CORNER";
     // Only the designated target (or a single nearest support) chases the flight —
-    // stops two teammates swarming the same bounce.
+    // stops two teammates swarming the same bounce. Corners allow a few more contestants.
     const candidates = this.teamOf(passer).players
       .filter((p) => !p.isGK && p.id !== passer.id && !this.offsidePassIds.has(p.id))
       .map((p) => ({ p, d: p.distTo(landing.x, landing.z) }))
       // Always keep the designated outlet — GK kicks often land 20–40 m from release,
       // and the old 16 m gate left them frozen (skipped by TeamAI, never steered).
-      .filter((row) => row.d < 16 || row.p.id === this.passTargetId)
+      .filter((row) => row.d < (cornerDelivery ? 22 : 16) || row.p.id === this.passTargetId)
       .sort((a, b) => a.d - b.d);
     const primary =
       (this.passTargetId ? candidates.find((c) => c.p.id === this.passTargetId) : null) ?? candidates[0];
@@ -3369,7 +3381,7 @@ export class Match {
     }
     // Second runner holds a far-post / secondary pocket — not the same spot.
     const secondary = candidates.find((c) => c.p.id !== primary.p.id);
-    if (secondary && (this.ball.y > 1.2 || this.incomingAerial)) {
+    if (secondary && (this.ball.y > 1.2 || this.incomingAerial || cornerDelivery)) {
       const farZ = landing.z + Math.sign(secondary.p.anchorZ - landing.z || 1) * 6.5;
       secondary.p.desiredX = landing.x - passer.attackSign * 2.5;
       secondary.p.desiredZ = clamp(farZ, -HALF_WIDTH + 3, HALF_WIDTH - 3);
@@ -3555,6 +3567,7 @@ export class Match {
 
   private beginRestart(plan: RestartPlan): void {
     this.clearOffsidePhase();
+    this.setPieceDelivery = null;
     this.throwInOpen = false;
     this.throwInTakerId = null;
     this.state = plan.type;
@@ -4400,6 +4413,17 @@ export class Match {
       this.incomingAerial = true;
       this.longPassLanding = { x: tx, z: tz };
       this.passTargetId = target?.id ?? null;
+      this.setPieceDelivery = {
+        kind: "CORNER",
+        takingSide: taker.side,
+        ballX: this.ball.x,
+        ballZ: this.ball.z,
+        takerId: taker.id,
+        endsFlipped: this.endsFlipped,
+        phase: "delivery",
+        landing: { x: tx, z: tz },
+        t: 2.55,
+      };
     } else if (kind === FootballState.FREE_KICK) {
       const userTake = !this.autoplay && taker.id === this.controlled.id;
       const fk = decideFreeKick({
@@ -4550,7 +4574,7 @@ export class Match {
         intent.through ||
         intent.cross ||
         hold01 > 0.52 ||
-        (!userTake && Math.random() < 0.62);
+        (!userTake && Math.random() < 0.42);
       const mates = this.teamOf(taker).players;
       const opps = this.opponentsOf(taker);
       let target: Player | null = null;
@@ -4572,7 +4596,10 @@ export class Match {
       const kick = passKickVector(this.ball.x, this.ball.z, tx, tz, delivery);
       const reach = Math.max(1, Math.hypot(tx - this.ball.x, tz - this.ball.z));
       const scale = goalKickPowerScale(reach, wantLong || delivery === "long");
-      const loft = wantLong || delivery === "long" ? Math.max(kick.vy * 1.08 * scale, 7.2) : kick.vy;
+      const loft =
+        wantLong || delivery === "long"
+          ? Math.min(Math.max(kick.vy * scale, 5.4), 6.8)
+          : kick.vy;
       kickBall(this.ball, kick.vx * scale, kick.vz * scale, loft);
       this.passTargetId = target?.id ?? null;
       this.longPassLanding = { x: tx, z: tz };
@@ -4670,6 +4697,7 @@ export class Match {
     this.restartPrep = null;
     this.ballState = "loose";
     this.state = this.autoplay ? FootballState.AUTOPLAY : FootballState.PLAYING;
+    // Keep setPieceDelivery when a corner was just taken — cleared by tickSetPieceDelivery.
   }
 
   private holdsAutoplayState(): boolean {
@@ -4688,6 +4716,7 @@ export class Match {
 
   private registerGoal(team: "home" | "away"): void {
     this.clearOffsidePhase();
+    this.setPieceDelivery = null;
     if (team === "home") this.homeScore += 1;
     else this.awayScore += 1;
     const scorer = this.playerById(this.ball.lastTouchId ?? this.controlled.id) ?? this.controlled;
@@ -4912,6 +4941,34 @@ export class Match {
       takerId: this.controlled.id,
       endsFlipped: this.endsFlipped,
     };
+  }
+
+  /** Corner delivery linger, else practice spot hold. */
+  private activeSetPieceContext(): SetPieceContext | null {
+    if (this.setPieceDelivery && this.setPieceDelivery.t > 0) {
+      const predicted = this.ball.y > 0.55 ? predictLanding(this.ball) : null;
+      const landing = predicted ?? this.longPassLanding ?? this.setPieceDelivery.landing;
+      return {
+        ...this.setPieceDelivery,
+        phase: "delivery",
+        landing,
+      };
+    }
+    return this.spotHoldContext();
+  }
+
+  private tickSetPieceDelivery(dt: number): void {
+    if (!this.setPieceDelivery) return;
+    this.setPieceDelivery.t -= dt;
+    if (this.setPieceDelivery.landing && this.longPassLanding) {
+      this.setPieceDelivery.landing = { ...this.longPassLanding };
+    }
+    const outOfContest =
+      !!this.possessing ||
+      this.setPieceDelivery.t <= 0 ||
+      (Math.hypot(this.ball.vx, this.ball.vz) < 1.1 && this.ball.y < 0.35) ||
+      Math.abs(this.ball.x) < HALF_LENGTH - 28;
+    if (outOfContest) this.setPieceDelivery = null;
   }
 
   /** Keep defending GKs on their line for spot kicks / penalties until the ball is live. */

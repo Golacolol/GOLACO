@@ -19,6 +19,10 @@ export interface SetPieceContext {
   endsFlipped?: boolean;
   /** Optional delivery script — shapes attacking runs. */
   script?: SetPieceScript;
+  /** After the kick: hold box shape and contest the flight instead of pushing out. */
+  phase?: "setup" | "delivery";
+  /** Predicted / scripted landing for delivery-phase contests. */
+  landing?: { x: number; z: number } | null;
 }
 
 /** Pick a corner/FK script from taker vision + situation. */
