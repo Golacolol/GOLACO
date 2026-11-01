@@ -123,21 +123,21 @@ export function passArrivalSpeed(passType: PassType): number {
 }
 
 /**
- * Loft for a pass type. Short/through use mid-loft so the ball leaves the carpet;
+ * Loft for a pass type. Short/through stay ground-first (light lift only);
  * chip/long/cross stay high service.
  */
 export function passLoftVy(distance: number, passType: PassType, flightT: number): number {
   const ballistic = 0.5 * BALL_GRAVITY * flightT;
   if (passType === "short") {
-    // Driven mid-loft (modest bump over the old carpet-hugger) — apex ~0.8–2.4 m.
-    const loftMul = distance > 16 ? 0.88 : distance > 11 ? 0.78 : distance > 7 ? 0.68 : 0.58;
-    const floor = distance > 16 ? 5.0 : distance > 11 ? 4.4 : distance > 7 ? 3.8 : 3.4;
-    const ceil = distance > 18 ? 8.0 : distance > 12 ? 6.8 : 5.8;
+    // Carpet-first driven pass — light toe clearance, not a dipped arc.
+    const loftMul = distance > 16 ? 0.42 : distance > 11 ? 0.3 : distance > 7 ? 0.2 : 0.12;
+    const floor = distance > 16 ? 2.55 : distance > 11 ? 2.05 : distance > 7 ? 1.45 : 1.05;
+    const ceil = distance > 18 ? 4.0 : distance > 12 ? 3.25 : 2.45;
     return clamp(ballistic * loftMul, floor, ceil);
   }
   if (passType === "through") {
-    // Weightable through — clears the carpet without a missile arc.
-    return clamp(ballistic * 0.74, 2.8, 6.0);
+    // Weightable through along the grass — clears studs without hanging.
+    return clamp(ballistic * 0.4, 1.55, 3.55);
   }
   if (passType === "chip") {
     return clamp(ballistic * 1.45 + distance * 0.04, 4.8, 11.5);

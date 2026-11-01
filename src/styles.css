@@ -1833,10 +1833,10 @@ html.club-name-glow-off .club-line {
 }
 .team-select-head {
   display: grid;
-  /* Title keeps classic names (e.g. Cameroon — 1990); toolbar flexes into the rest. */
-  grid-template-columns: minmax(10rem, max-content) minmax(0, 1fr);
-  align-items: start;
-  column-gap: 12px;
+  /* Crest + name take the left share; toolbar keeps the right. */
+  grid-template-columns: minmax(16rem, 1.35fr) minmax(0, 1fr);
+  align-items: center;
+  column-gap: 14px;
   row-gap: 8px;
   margin-bottom: 10px;
   flex: 0 0 auto;
@@ -1845,23 +1845,29 @@ html.club-name-glow-off .club-line {
 .team-select-head .spot-pick-hint {
   grid-column: 1 / -1;
 }
+.team-select-head .char-team-title {
+  width: 100%;
+  max-width: 100%;
+}
 .char-team-title {
   display: inline-flex;
   align-items: center;
-  gap: 8px 10px;
+  gap: 10px 12px;
   min-width: 0;
   flex-wrap: nowrap;
   align-self: center;
 }
 .char-team-title .eyebrow {
   margin: 0;
-  line-height: 1.2;
-  font-size: 15px;
-  letter-spacing: 0.07em;
+  line-height: 1.15;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
   min-width: 0;
+  flex: 1 1 auto;
   max-width: 100%;
 }
 .kit-name-chips {
@@ -1872,13 +1878,14 @@ html.club-name-glow-off .club-line {
   margin-left: 4px;
 }
 .char-team-crest.team-badge {
-  width: 28px;
-  height: 28px;
-  border-radius: 5px;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 .char-team-crest .team-badge-fallback {
-  font-size: 9px;
+  font-size: 11px;
 }
 .char-panel-player > .char-team-title {
   margin-left: 0;
@@ -2302,12 +2309,6 @@ select.formation-chip.formation-select option {
   gap: 8px;
   margin-top: 8px;
 }
-.team-roster-title {
-  color: var(--gold);
-  letter-spacing: 0.18em;
-  font-size: 10px;
-  text-align: center;
-}
 .team-roster-list {
   display: flex;
   flex-direction: column;
@@ -2350,7 +2351,8 @@ select.formation-chip.formation-select option {
   letter-spacing: 0.05em;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
+  min-width: 0;
 }
 .roster-pos {
   font-size: 9px;
@@ -2906,14 +2908,6 @@ select.formation-chip.formation-select option {
 .bench-card .kit-marker-caption .kit-marker-num,
 .bench-card .kit-marker-caption .kit-marker-name {
   font-size: 15px;
-  text-align: center;
-}
-.team-bench-hint {
-  margin: 8px 2px 0;
-  opacity: 0.6;
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  line-height: 1.35;
   text-align: center;
 }
 /* Mid widths: keep the desktop triad (roster | pitch | bench), just tighter. */

@@ -273,6 +273,40 @@ export function fitKitSurnameElements(root: ParentNode): void {
     if (numEl && !numEl.style.fontSize) numEl.style.fontSize = `${size}px`;
   }
   fitRosterHeadingElements(root);
+  fitRosterNameElements(root);
+}
+
+/**
+ * Squad-list surnames — shrink to the row name column instead of ellipsis.
+ */
+export function fitRosterNameElements(root: ParentNode): void {
+  const nodes = root.querySelectorAll<HTMLElement>(".roster-row .roster-name");
+  for (const el of nodes) {
+    const maxW = el.clientWidth;
+    if (maxW < 8) continue;
+    el.style.overflow = "hidden";
+    el.style.textOverflow = "clip";
+    el.style.whiteSpace = "nowrap";
+    el.style.fontSize = "";
+    el.style.letterSpacing = "";
+    let size = parseFloat(getComputedStyle(el).fontSize) || 11;
+    let tracking = 0.05;
+    const floor = 7.5;
+    el.style.fontSize = `${size}px`;
+    el.style.letterSpacing = `${tracking}em`;
+    let guard = 0;
+    const over = () => el.scrollWidth > maxW + 0.5;
+    while (over() && size > floor && guard < 40) {
+      size -= 0.5;
+      el.style.fontSize = `${size}px`;
+      guard += 1;
+    }
+    while (over() && tracking > 0.01 && guard < 64) {
+      tracking = Math.max(0.01, tracking - 0.01);
+      el.style.letterSpacing = `${tracking}em`;
+      guard += 1;
+    }
+  }
 }
 
 /**

@@ -50,7 +50,7 @@ function make(id: string, x: number, z: number, heading = 80): Player {
 }
 
 describe("ball flight physics", () => {
-  it("lofts a short pass off the carpet into a mid arc", () => {
+  it("keeps a short pass low along the grass with light lift", () => {
     const ball = new Ball();
     ball.reset(0, 0);
     const kick = passKickVector(0, 0, 15, 0, "short");
@@ -60,9 +60,8 @@ describe("ball flight physics", () => {
       stepBall(ball, 1 / 60);
       maxY = Math.max(maxY, ball.y);
     }
-    // Modestly above the old carpet-hugger (~1.05 m apex at 15 m).
-    expect(maxY).toBeGreaterThan(0.95);
-    expect(maxY).toBeLessThan(3.2);
+    expect(maxY).toBeGreaterThan(0.22);
+    expect(maxY).toBeLessThan(1.55);
   });
 
   it("lofts a cross above head height and keeps it aerial long enough to challenge", () => {

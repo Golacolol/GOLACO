@@ -131,6 +131,24 @@ describe("goalkeeper box claims", () => {
     expect(ball.ownerId).toBe(keeper.id);
   });
 
+  it("does not vacuum a distant loose ball in the box from one frame away", () => {
+    const keeper = gk("home");
+    keeper.x = -HALF_LENGTH + 1.4;
+    keeper.z = 0;
+    const ball = new Ball();
+    ball.x = -HALF_LENGTH + 5.6;
+    ball.z = 2.4;
+    ball.vx = -2.2;
+    ball.vz = -0.4;
+    ball.y = 0.32;
+    ball.ownerId = null;
+    ball.lastTouchSide = "away";
+    expect(inPenaltyArea(ball.x, ball.z, "home")).toBe(true);
+    expect(keeper.distTo(ball.x, ball.z)).toBeGreaterThan(3.5);
+    expect(updateGoalkeeper(keeper, ball, 0.016)).toBeNull();
+    expect(ball.ownerId).toBeNull();
+  });
+
   it("shuffles toward a wide ball to cut the angle", () => {
     const keeper = gk("home");
     keeper.x = -HALF_LENGTH + 1.2;

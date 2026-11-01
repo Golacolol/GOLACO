@@ -87,7 +87,7 @@ describe("GameplayFidelity helpers", () => {
         passes: 200,
         completedPasses: 40,
         possessionDurations: [0.1, 0.15, 0.2],
-        passApexSamples: [0.3, 0.4, 0.35, 0.4, 0.3],
+        passApexSamples: [0.18, 0.22, 0.2, 0.21, 0.19],
         shotApexSamples: [0.2],
         teamWidthSamples: [18, 20, 19],
       }),
@@ -110,19 +110,21 @@ describe("GameplayFidelity helpers", () => {
     expect(good.ok).toBe(true);
   });
 
-  it("short passes leave the carpet under the calibrated kick model", () => {
+  it("short passes stay ground-first under the calibrated kick model", () => {
     const ball = new Ball();
     ball.reset(0, 0);
     const kick = passKickVector(0, 0, 14, 0, "short");
     kickBall(ball, kick.vx, kick.vz, kick.vy);
     const approxApex = BALL_RADIUS + (kick.vy * kick.vy) / (2 * BALL_GRAVITY);
-    expect(approxApex).toBeGreaterThan(0.55);
+    expect(approxApex).toBeGreaterThan(0.2);
+    expect(approxApex).toBeLessThan(0.95);
     let maxY = ball.y;
     for (let i = 0; i < 90; i++) {
       stepBall(ball, 1 / 60);
       maxY = Math.max(maxY, ball.y);
     }
-    expect(maxY).toBeGreaterThan(0.55);
+    expect(maxY).toBeGreaterThan(0.2);
+    expect(maxY).toBeLessThan(1.45);
   });
 });
 

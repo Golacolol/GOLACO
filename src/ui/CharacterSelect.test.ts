@@ -11,6 +11,7 @@ import {
 } from "./CharacterSelect";
 import {
   fitRosterHeadingElements,
+  fitRosterNameElements,
   kitCaptionSurname,
   kitInitialSurnameLabel,
   kitMarkerHtml,
@@ -86,7 +87,8 @@ describe("character select", () => {
     expect(title?.textContent).toContain("Plymouth Argyle");
     expect(view.root.textContent).toContain("START AS TEAM");
     expect(view.root.textContent).toContain("SUBSTITUTES");
-    expect(view.root.textContent).toContain("SQUAD");
+    expect(view.root.textContent).not.toContain("SQUAD");
+    expect(view.root.querySelector(".team-roster-title")).toBeNull();
     expect(view.root.querySelector(".formation-toolbar")).toBeTruthy();
     expect(view.root.querySelector('[data-char="form-side"]')).toBeNull();
     expect(view.root.querySelector('[data-char="chalk"]')).toBeTruthy();
@@ -733,6 +735,23 @@ describe("kitSurnameFromName", () => {
     host.remove();
   });
 
+  it("shrinks squad-list names instead of ellipsis", () => {
+    const host = document.createElement("div");
+    host.innerHTML = `<button class="roster-row"><span class="roster-name" style="font-size:11px">VAN DER VAART</span></button>`;
+    document.body.appendChild(host);
+    const name = host.querySelector(".roster-name") as HTMLElement;
+    Object.defineProperty(name, "clientWidth", { configurable: true, get: () => 72 });
+    Object.defineProperty(name, "scrollWidth", {
+      configurable: true,
+      get: () => (parseFloat(name.style.fontSize || "11") > 8.5 ? 110 : 70),
+    });
+    fitRosterNameElements(host);
+    expect(parseFloat(name.style.fontSize)).toBeLessThan(11);
+    expect(parseFloat(name.style.fontSize)).toBeGreaterThanOrEqual(7.5);
+    expect(name.style.textOverflow).toBe("clip");
+    host.remove();
+  });
+
   it("shrinks pitch counters on narrow boards and leaves wide boards alone", () => {
     const host = document.createElement("div");
     host.innerHTML = `<div class="team-pitch"></div>`;
@@ -752,20 +771,20 @@ describe("kitSurnameFromName", () => {
   it("fits classic team titles without treating the crest as text width", () => {
     const host = document.createElement("div");
     host.className = "char-team-title";
-    host.innerHTML = `<span class="char-team-crest" style="display:inline-block;width:28px;height:28px"></span><div class="eyebrow">Cameroon — 1990</div>`;
+    host.innerHTML = `<span class="char-team-crest" style="display:inline-block;width:44px;height:44px"></span><div class="eyebrow" style="font-size:22px">Cameroon — 1990</div>`;
     document.body.appendChild(host);
-    Object.defineProperty(host, "clientWidth", { configurable: true, get: () => 160 });
+    Object.defineProperty(host, "clientWidth", { configurable: true, get: () => 200 });
     const crest = host.querySelector(".char-team-crest") as HTMLElement;
-    Object.defineProperty(crest, "offsetWidth", { configurable: true, get: () => 28 });
+    Object.defineProperty(crest, "offsetWidth", { configurable: true, get: () => 44 });
     const title = host.querySelector(".eyebrow") as HTMLElement;
     Object.defineProperty(title, "scrollWidth", {
       configurable: true,
-      get: () => (parseFloat(title.style.fontSize || "15") > 11.5 ? 150 : 118),
+      get: () => (parseFloat(title.style.fontSize || "22") > 16.5 ? 190 : 140),
     });
     fitFormationTeamTitle(title);
     expect(title.textContent).toBe("Cameroon — 1990");
-    expect(parseFloat(title.style.fontSize)).toBeLessThan(15);
-    expect(parseFloat(title.style.fontSize)).toBeGreaterThanOrEqual(10);
+    expect(parseFloat(title.style.fontSize)).toBeLessThan(22);
+    expect(parseFloat(title.style.fontSize)).toBeGreaterThanOrEqual(13);
     host.remove();
   });
 });

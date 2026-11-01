@@ -682,7 +682,9 @@ export function updateGoalkeeper(
   const look = clamp((0.1 + reflexes * 0.06 + (1 - reflexes) * 0.04) * reactionMul, 0.07, 0.3);
   const predX = ball.x + ball.vx * look;
   const predZ = ball.z + ball.vz * look;
-  const dist = Math.min(gk.distTo(ball.x, ball.z), gk.distTo(predX, predZ));
+  const distActual = gk.distTo(ball.x, ball.z);
+  const distPred = gk.distTo(predX, predZ);
+  const dist = Math.min(distActual, distPred);
   const inBox = inBoxEarly || inPenaltyArea(predX, predZ, gk.side, endsFlipped);
   const inSix = inSixYardArea(ball.x, ball.z, gk.side, endsFlipped);
   const shotThreat =
@@ -693,28 +695,36 @@ export function updateGoalkeeper(
   if (teammateTouch && !inSix) return null;
 
   const diveReach = keeperDiveReach(diving, reflexes, opts?.diveReachMul ?? 1);
-  const softClaim = loose && inBox && speed < 9.5;
+  // Soft box gather only for truly slow bobbles — mid-pace rolls need a real close / dive.
+  const softClaim = loose && inBox && speed < 6.6;
+  // Soft claims: actual ball only. Prediction was vacuuming distant rolls into the gloves.
+  const claimDist = softClaim ? distActual : dist;
+  // Dive stretch is for live shots — do not gift soft gathers half a dive radius.
+  const stretch =
+    shotThreat ? diveReach * 0.58 : softClaim ? diveReach * 0.06 : diveReach * 0.2;
   const catchRange =
     (softClaim
       ? inSix
-        ? 2.65
-        : 2.25
+        ? 1.48
+        : 1.22
       : speed > 15
-        ? 1.35
+        ? 1.12
         : speed > 11
-          ? 1.62
+          ? 1.28
           : inSix
-            ? 2.35
+            ? 1.52
             : inBox
-              ? 2.0
-              : 1.45) +
-    handling * 0.55 +
-    reflexes * 0.22 +
-    (shotThreat ? diveReach * 0.82 : diveReach * 0.32) +
-    (aim.rush ? 0.35 : 0);
-  if (!inBox && dist > 1.55 + diveReach * 0.3) return null;
-  const maxY = softClaim ? 2.35 + diving * 0.45 : 2.95 + diving * 0.4 + handling * 0.25 + reflexes * 0.15;
-  if (dist > catchRange || ball.y > maxY) return null;
+              ? 1.32
+              : 1.12) +
+    handling * 0.28 +
+    reflexes * 0.1 +
+    stretch +
+    (aim.rush && softClaim ? 0.1 : 0);
+  if (!inBox && claimDist > 1.35 + diveReach * 0.22) return null;
+  const maxY = softClaim
+    ? 1.55 + diving * 0.28
+    : 2.85 + diving * 0.35 + handling * 0.2 + reflexes * 0.12;
+  if (claimDist > catchRange || ball.y > maxY) return null;
 
   const canSmother = loose || ball.lastTouchSide !== gk.side || speed > 3.5;
   if (!canSmother && ball.ownerId && ball.ownerId !== gk.id) return null;
@@ -739,10 +749,10 @@ export function updateGoalkeeper(
     traffic: opts?.traffic ?? 0,
   });
   // Prefer holding soft loose balls / six-yard claims over punching them away.
-  const forceHold = softClaim && ball.y < 1.85 && (opts?.traffic ?? 0) < 2;
+  const forceHold = softClaim && ball.y < 1.45 && (opts?.traffic ?? 0) < 2;
   const kind = forceHold
     ? "hold"
-    : keeperSaveKind(speed, handling, inSix, dist, {
+    : keeperSaveKind(speed, handling, inSix, claimDist, {
         reflexes,
         diving,
         ballY: ball.y,

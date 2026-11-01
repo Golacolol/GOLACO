@@ -69,8 +69,9 @@ describe("passing model", () => {
     expect(closest).toBeLessThan(2.5);
     expect(ball.x).toBeGreaterThan(12);
     expect(speedAtClosest).toBeLessThan(11.5);
-    expect(maxY).toBeGreaterThan(0.9);
-    expect(maxY).toBeLessThan(3.5);
+    // Ground-first: light lift, not a dipped mid-arc.
+    expect(maxY).toBeGreaterThan(0.35);
+    expect(maxY).toBeLessThan(1.65);
   });
 
   it("carries a 24m long pass into the landing area", () => {

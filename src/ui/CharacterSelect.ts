@@ -217,12 +217,12 @@ export function fitFormationTeamTitle(title: HTMLElement): void {
   title.style.fontSize = "";
   title.style.letterSpacing = "";
   title.style.whiteSpace = "nowrap";
-  let size = parseFloat(getComputedStyle(title).fontSize) || 15;
-  let tracking = parseFloat(getComputedStyle(title).letterSpacing) || 0.07;
+  let size = parseFloat(getComputedStyle(title).fontSize) || 22;
+  let tracking = parseFloat(getComputedStyle(title).letterSpacing) || 0.06;
   // letterSpacing from computed style is px — prefer the CSS em default.
-  if (getComputedStyle(title).letterSpacing.endsWith("px")) tracking = 0.07;
+  if (getComputedStyle(title).letterSpacing.endsWith("px")) tracking = 0.06;
   let guard = 0;
-  while (title.scrollWidth > maxW + 0.5 && size > 10 && guard < 48) {
+  while (title.scrollWidth > maxW + 0.5 && size > 13 && guard < 48) {
     size -= 0.5;
     title.style.fontSize = `${size}px`;
     guard += 1;
@@ -1346,7 +1346,7 @@ export class CharacterSelect {
             primaryColor: this.teamBadge.primaryColor ?? this.teamColor,
             secondaryColor: this.teamBadge.secondaryColor ?? this.teamSecondaryColor,
           },
-          { className: "char-team-crest", size: 28 },
+          { className: "char-team-crest", size: 44 },
         )
       : "";
     const chips = opts?.withKitChips ? this.kitChoiceChipsHtml() : "";
@@ -1707,7 +1707,6 @@ export class CharacterSelect {
               <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
               ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
             </div>
-            <div class="team-roster-title">SQUAD</div>
             <div class="team-roster-list">
               ${this.players
                 .map((p) => {
@@ -1742,11 +1741,6 @@ export class CharacterSelect {
                 })
                 .join("")}
             </div>
-            <p class="team-bench-hint">${
-              this.context === "pause"
-                ? "Drag starters to swap. Drag subs onto the pitch to substitute. Change formation above, then Apply."
-                : "Drag one starter onto another to swap. Drag on the grass to nudge. Drag subs onto the pitch to replace."
-            }</p>
           </aside>
         </div>
         ${this.modeNavHtml(this.controlMode === "KIT" ? "TEAM" : this.controlMode)}
