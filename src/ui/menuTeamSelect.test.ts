@@ -144,7 +144,7 @@ describe("menuTeamSelect", () => {
     expect(clubs.map((o) => o.label)).toEqual(["Chelsea", "Plymouth Argyle", "Real Madrid"]);
     expect(clubs.find((o) => o.clubKey === "chelsea")?.id).toBe("classic_chelsea_2004_05");
 
-    expect(secondaryDialLabel(classic[0]!)).toBe("Classics");
+    expect(secondaryDialLabel(classic[0]!)).toBe("Classic");
     expect(secondaryDialLabel(options[0]!)).toBe("Premier League");
   });
 
