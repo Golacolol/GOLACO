@@ -63,6 +63,14 @@ describe("PoseMotion", () => {
     expect(gk.diveDuration).toBe(0.5);
   });
 
+  it("does not re-extend an almost-finished dive into a long flop", () => {
+    const gk = stub();
+    startDive(gk, 1, 0.5);
+    gk.diveTimer = 0.08;
+    startDive(gk, 1, 0.58);
+    expect(gk.diveTimer).toBeLessThanOrEqual(0.58 * 0.85);
+  });
+
   it("phases kick windup → strike → follow with peaking plant", () => {
     expect(kickPhase(0.1)).toBe("windup");
     expect(kickPhase(0.4)).toBe("strike");

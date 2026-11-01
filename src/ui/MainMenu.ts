@@ -1203,34 +1203,56 @@ function fitGameplayModeRow(root: HTMLElement): void {
   });
 }
 
-/** Shrink next-match abbrs / countdown so the row fits the details column. */
+/** Shrink next-match abbrs only when the row actually overflows — leave countdown sized separately. */
 function fitFixtureMatchLabels(root: HTMLElement): void {
   const main = root.querySelector<HTMLElement>(".fixture-match-main");
   const teams = root.querySelector<HTMLElement>(".fixture-teams");
   if (!teams) return;
   const budget =
+    teams.clientWidth ||
     main?.clientWidth ||
     teams.parentElement?.clientWidth ||
-    teams.clientWidth ||
     0;
   if (budget < 8) return;
 
   teams.style.fontSize = "";
   teams.style.letterSpacing = "";
-  teams.querySelectorAll<HTMLElement>("strong").forEach((s) => {
+  const strongs = [...teams.querySelectorAll<HTMLElement>(":scope > strong")];
+  strongs.forEach((s) => {
     s.style.fontSize = "";
     s.style.letterSpacing = "";
   });
 
-  const basePx = parseFloat(getComputedStyle(teams).fontSize) || 15;
-  fitNowrapToWidth(teams, budget, { minPx: 9, basePx });
+  // Typical 3-letter abbrs should stay at the CSS size; only shrink when the row overflows.
+  const basePx = parseFloat(getComputedStyle(strongs[0] ?? teams).fontSize) || 15;
+  let size = basePx;
+  let tracking = 0.06;
+  let guard = 0;
+  const apply = () => {
+    for (const s of strongs) {
+      s.style.fontSize = `${size}px`;
+      s.style.letterSpacing = `${tracking}em`;
+    }
+  };
+  apply();
+  const over = () => measureNowrapWidth(teams) > budget + 2;
+  while (over() && size > 12 && guard < 48) {
+    size -= 0.5;
+    apply();
+    guard += 1;
+  }
+  while (over() && tracking > 0.02 && guard < 72) {
+    tracking = Math.max(0.02, tracking - 0.01);
+    apply();
+    guard += 1;
+  }
 
   const detail = root.querySelector<HTMLElement>(".fixture-detail-row .meta");
   if (detail) {
     detail.style.fontSize = "";
     detail.style.letterSpacing = "";
     const detailBase = parseFloat(getComputedStyle(detail).fontSize) || 12;
-    fitNowrapToWidth(detail, budget, { minPx: 8, basePx: detailBase });
+    fitNowrapToWidth(detail, budget, { minPx: 9, basePx: detailBase });
   }
 }
 

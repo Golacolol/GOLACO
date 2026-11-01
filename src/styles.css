@@ -991,7 +991,7 @@ html.club-name-glow-off .club-line {
   overflow: visible;
   text-overflow: clip;
   white-space: nowrap;
-  font-size: 1em;
+  font-size: 15px;
   letter-spacing: 0.06em;
 }
 .fixture-teams .vs {
@@ -1105,21 +1105,23 @@ html.club-name-glow-off .club-line {
   display: inline-flex;
   align-items: baseline;
   justify-content: flex-start;
-  gap: 2px;
+  gap: 1px;
   margin: 0;
   padding: 0;
   user-select: none;
   line-height: 1;
+  /* Fixed face — do not inherit fixture-teams shrink (kept D/H larger than the digits). */
+  font-size: 16px;
 }
 .kick-countdown strong {
-  font-size: 0.82em;
+  font-size: 1em;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
-  line-height: inherit;
+  line-height: 1;
   font-weight: 800;
 }
 .kick-countdown .kick-unit {
-  font-size: 8px;
+  font-size: 0.55em;
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1;
@@ -1714,8 +1716,8 @@ html.club-name-glow-off .club-line {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+  justify-content: flex-start;
+  gap: 8px 10px;
   margin-bottom: 10px;
   flex: 0 0 auto;
 }
@@ -1725,8 +1727,9 @@ html.club-name-glow-off .club-line {
   align-items: center;
   gap: 8px 10px;
   min-width: 0;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
+  flex: 0 1 auto;
+  max-width: min(42%, 320px);
+  flex-wrap: nowrap;
 }
 .char-team-title .eyebrow {
   margin: 0;
@@ -1735,8 +1738,9 @@ html.club-name-glow-off .club-line {
   letter-spacing: 0.07em;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: min(36vw, 280px);
+  text-overflow: clip;
+  min-width: 0;
+  max-width: 100%;
 }
 .kit-name-chips {
   display: inline-flex;
@@ -1758,20 +1762,36 @@ html.club-name-glow-off .club-line {
   margin-left: 0;
   margin-bottom: 8px;
 }
+.play-style-chips {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
 .formation-chips {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: 6px;
+  flex: 1 0 100%;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 .formation-chip {
   width: auto !important;
   margin: 0 !important;
+  flex: 0 0 auto;
   border: 1px solid rgba(197, 165, 114, 0.4);
   background: transparent;
   color: var(--paper);
   padding: 6px 10px;
   letter-spacing: 0.08em;
   font-size: 11px;
+  white-space: nowrap;
   cursor: pointer;
 }
 .formation-chip.on {
@@ -1891,15 +1911,18 @@ html.club-name-glow-off .club-line {
   border-radius: 2px;
   padding: 6px 4px;
   box-sizing: border-box;
+  gap: 4px;
 }
+/* No-PNG roster square: surname above number (DOM order from kitMarkerHtml). */
 .team-roster-card .kit-marker-roster .portrait-badge-kit .num {
-  font-size: 34px;
+  font-size: 30px;
   font-weight: 800;
   line-height: 1;
+  order: 2;
 }
 .team-roster-card .kit-marker-roster .portrait-badge-kit .sur {
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 18px;
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: 0.03em;
   line-height: 1.05;
@@ -1908,6 +1931,7 @@ html.club-name-glow-off .club-line {
   white-space: nowrap;
   padding: 0 4px;
   text-align: center;
+  order: 1;
 }
 /* Top-left card already shows the name in <h3> — never a caption under PNG or badge. */
 .team-roster-card .kit-marker-roster .kit-marker-caption,
@@ -1915,16 +1939,18 @@ html.club-name-glow-off .club-line {
   display: none !important;
 }
 .team-roster-card h3 {
-  margin: 4px 0 8px;
-  font-size: 17px;
+  margin: 6px 0 8px;
+  font-size: 20px;
   letter-spacing: 0.04em;
-  line-height: 1.2;
+  line-height: 1.15;
   color: inherit;
+  width: 100%;
   max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
   box-sizing: border-box;
+  text-align: center;
 }
 .team-roster-card .char-meta {
   opacity: 0.75;
@@ -2186,6 +2212,7 @@ html.club-name-glow-off .club-line {
 .team-pitch.chalking .pitch-token {
   pointer-events: none;
 }
+.play-style-chips .form-side-chip,
 .formation-chips .form-side-chip {
   min-width: 3.6em;
   padding-left: 8px;
@@ -2696,10 +2723,10 @@ html.club-name-glow-off .club-line {
     padding: 6px;
   }
   .team-roster-card .kit-marker-roster .portrait-badge-kit .num {
-    font-size: 28px;
+    font-size: 26px;
   }
   .team-roster-card .kit-marker-roster .portrait-badge-kit .sur {
-    font-size: 15px;
+    font-size: 20px;
   }
   .team-roster-card .profile-stats,
   .team-roster-card .profile-stats-compact {

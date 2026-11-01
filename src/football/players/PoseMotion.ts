@@ -88,8 +88,9 @@ export function startJump(player: Player, duration: number): void {
 export function startDive(player: Player, side: number, duration: number): void {
   const d = Math.max(0.18, duration);
   player.diveDirZ = Math.sign(side) || player.diveDirZ || 1;
-  if (player.diveTimer > 0.1 && player.diveDuration > 0) {
-    player.diveTimer = Math.max(player.diveTimer, Math.min(d, player.diveDuration * 0.9));
+  // Mirror jump anti-rehang: never fully re-arm a dive that's already in flight.
+  if (player.diveTimer > 0.02 && player.diveDuration > 0) {
+    player.diveTimer = Math.min(player.diveTimer, d * 0.85);
     return;
   }
   player.diveDuration = d;

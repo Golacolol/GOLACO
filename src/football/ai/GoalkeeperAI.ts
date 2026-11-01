@@ -39,10 +39,10 @@ export interface KeeperTargetOpts {
 
 /** Dive stretch in metres from diving / reflexes (SWOS-style reach table). */
 export function keeperDiveReach(diving: number, reflexes: number, diveReachMul = 1): number {
-  // Elite keepers stretch further — cubic-ish bonus so 80+ gloves pull clear of average.
-  const elite = Math.max(0, (diving + reflexes) * 0.5 - 0.58);
-  const base = diving * 1.9 + reflexes * 1.05 + diving * reflexes * 0.6 + elite * elite * 2.6;
-  return base * clamp(diveReachMul, 0.7, 1.55);
+  // Soft elite bonus — v15 cubic stretch made gloves flail across half the six-yard box.
+  const elite = Math.max(0, (diving + reflexes) * 0.5 - 0.62);
+  const base = diving * 1.72 + reflexes * 0.95 + diving * reflexes * 0.55 + elite * elite * 1.4;
+  return clamp(base * clamp(diveReachMul, 0.7, 1.55), 0.85, 2.55);
 }
 
 /**
@@ -263,7 +263,8 @@ export function goalkeeperTarget(gk: Player, ball: Ball, reactionMul = 1, opts?:
 
 export const KEEPER_DISTRIBUTE_MIN = 0.72;
 export const KEEPER_DISTRIBUTE_MAX = 5;
-const OUTLET_MIN_DIST = 10;
+/** Close CB/FB after a rush claim must still be a valid roll/throw target. */
+const OUTLET_MIN_DIST = 6;
 const OUTLET_MAX_DIST = 46;
 
 export type KeeperDistAction =
@@ -374,12 +375,12 @@ export function chooseKeeperOutlet(gk: Player, teammates: Player[], opponents: P
 
 /** Aim at the outlet's feet, pulled inbound so wide FB throws/kicks stay on the pitch. */
 export function keeperOutletAimPoint(target: Player): { x: number; z: number } {
-  // Nudge slightly into the pitch and ahead of the FB so the meet isn't on the touchline
-  // (wide LBs/RBs were leaving balls that strikers could claim before play started).
+  // Soft inbound nudge only — a large ahead lead made FBs run past underhit rolls/throws
+  // and "leave" the ball for the first attacker onto it.
   const inbound = clampInboundZ(target.z, TOUCHLINE_SAFE_MARGIN + 2.2);
-  const towardMiddle = inbound * 0.82;
+  const towardMiddle = inbound * 0.88;
   return {
-    x: target.x + target.attackSign * 1.8,
+    x: target.x + target.attackSign * 0.55,
     z: towardMiddle,
   };
 }
@@ -452,10 +453,11 @@ export function keeperPuntAim(
     }
   }
   if (best) {
-    const aim = keeperOutletAimPoint(best);
+    // Long punt landing — do not reuse short-outlet feet aim (under-aimed / pulled inside).
+    const depth = clamp((best.x - gk.x) * fwd, 32, 50);
     return {
-      x: clamp(aim.x, -HALF_LENGTH + 14, HALF_LENGTH - 14),
-      z: clampInboundZ(aim.z, 8),
+      x: clamp(gk.x + fwd * depth, -HALF_LENGTH + 14, HALF_LENGTH - 14),
+      z: clampInboundZ(best.z * 0.72 + (rng() - 0.5) * 4, 8),
       targetId: best.id,
     };
   }
@@ -717,10 +719,14 @@ export function updateGoalkeeper(
   const canSmother = loose || ball.lastTouchSide !== gk.side || speed > 3.5;
   if (!canSmother && ball.ownerId && ball.ownerId !== gk.id) return null;
 
-  // Dive laterally toward the flight when the ball is outside the body.
+  // Dive only on a real stretch / live shot — re-arming every frame looked like constant jumping.
   const lateral = predZ - gk.z;
-  if ((shotThreat || speed > 10) && Math.abs(lateral) > 0.28) {
-    const step = Math.min(Math.abs(lateral), diveReach * (0.75 + reflexes * 0.2)) * Math.sign(lateral);
+  const absLat = Math.abs(lateral);
+  const liveShot = !!opts?.incomingShot;
+  const hotDrive = shotThreat && speed > 13.5 && absLat > 0.7;
+  const wantDive = gk.diveTimer <= 0.05 && absLat > 0.5 && (liveShot || hotDrive) && !softClaim;
+  if (wantDive) {
+    const step = Math.min(absLat, diveReach * (0.75 + reflexes * 0.2)) * Math.sign(lateral);
     gk.z += step * clamp(0.68 + diving * 0.4 + reflexes * 0.24, 0.55, 1.2);
     startDive(gk, Math.sign(lateral) || 1, DIVE_DURATION_FULL * (0.82 + diving * 0.18 + reflexes * 0.1));
   }

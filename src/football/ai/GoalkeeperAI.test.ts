@@ -483,6 +483,53 @@ describe("goalkeeper distribution", () => {
       }),
     ).toBe("parry");
   });
+
+  it("does not re-dive every frame on a moderate ball in the box", () => {
+    const keeper = gk("home");
+    keeper.x = -HALF_LENGTH + 2.2;
+    keeper.z = 0;
+    const ball = new Ball();
+    ball.x = keeper.x + 1.1;
+    ball.z = 1.2;
+    ball.vx = -11;
+    ball.vz = -0.4;
+    ball.y = 0.55;
+    ball.ownerId = null;
+    ball.lastTouchId = "st";
+    ball.lastTouchSide = "away";
+    let diveArms = 0;
+    let prev = 0;
+    for (let i = 0; i < 24; i++) {
+      updateGoalkeeper(keeper, ball, 1 / 60, 1, { incomingShot: false });
+      if (keeper.diveTimer > prev + 0.08) diveArms += 1;
+      prev = keeper.diveTimer;
+      keeper.diveTimer = Math.max(0, keeper.diveTimer - 1 / 60);
+      ball.x += ball.vx * (1 / 60);
+      ball.z += ball.vz * (1 / 60);
+    }
+    expect(diveArms).toBeLessThanOrEqual(1);
+  });
+
+  it("aims outlet releases near the full-back's feet, not far ahead", () => {
+    const rb = outfield("rb", "home", -HALF_LENGTH + 18, 18, "RB");
+    const aim = keeperOutletAimPoint(rb);
+    expect(aim.x).toBeGreaterThan(rb.x);
+    expect(aim.x - rb.x).toBeLessThan(1.2);
+    expect(Math.abs(aim.z)).toBeLessThan(Math.abs(rb.z));
+  });
+
+  it("accepts a close CB after a rush claim as a roll outlet", () => {
+    const keeper = gk("home");
+    keeper.x = -HALF_LENGTH + 10;
+    const cb = outfield("cb", "home", -HALF_LENGTH + 17, 5, "CB");
+    expect(keeper.distTo(cb.x, cb.z)).toBeLessThan(10);
+    expect(chooseKeeperOutlet(keeper, [keeper, cb], [])?.id).toBe("cb");
+  });
+
+  it("caps elite dive reach so gloves cannot flail across the six", () => {
+    expect(keeperDiveReach(0.95, 0.95, 1.22)).toBeLessThanOrEqual(2.55);
+    expect(keeperDiveReach(0.78, 0.8, 1)).toBeLessThan(2.5);
+  });
 });
 
 describe("goal kick long delivery", () => {

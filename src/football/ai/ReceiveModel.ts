@@ -71,5 +71,10 @@ export function planReceiveRun(
 export function receiveIsAerialOwned(ball: Ball, incomingAerial: boolean, _hasLanding = false): boolean {
   // Ground passes always set a landing marker for the camera — that must NOT disable steerPassReceiver.
   void _hasLanding;
-  return incomingAerial || ball.y > 1.12;
+  // Align with isAerialBall height. Do NOT keep ownership solely because the
+  // lofted flag is still set after the ball has settled — that parked LB/RB
+  // outlets on a stale marker while the ball died short of their feet.
+  if (ball.y > 1.28) return true;
+  if (incomingAerial && (ball.y > 0.85 || ball.vy > 1.15)) return true;
+  return false;
 }

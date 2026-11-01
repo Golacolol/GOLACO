@@ -536,7 +536,7 @@ export function updateTeamAI(
           const ballProg = clamp((ball.x * dir + HALF_LENGTH) / PITCH_LENGTH, 0, 1);
           const sameFlank =
             Math.sign(p.anchorZ || 1) === Math.sign(ball.z || 1) || Math.abs(ball.z) < 14;
-          // Same-flank overlaps start earlier; weak-side still steps into the final third late.
+          // Soft floors in deep build so FBs can show to feet instead of living in the final third.
           const floorProg =
             attackPhase === "chance" || attackPhase === "transition"
               ? sameFlank
@@ -546,20 +546,22 @@ export function updateTeamAI(
                 ? sameFlank
                   ? 0.86
                   : 0.78
-                : ballProg > 0.35
+                : ballProg > 0.4
                   ? sameFlank
-                    ? 0.8
-                    : 0.7
-                  : ballProg > 0.25
+                    ? 0.72
+                    : 0.62
+                  : ballProg > 0.28
                     ? sameFlank
-                      ? 0.7
-                      : 0.58
-                    : 0.54;
+                      ? 0.52
+                      : 0.42
+                    : sameFlank
+                      ? 0.4
+                      : 0.32;
           const floor = dir * (floorProg * PITCH_LENGTH - HALF_LENGTH);
           if ((floor - target.x) * dir > 0) {
             target.x =
-              attackPhase === "build" && ballProg < 0.35 && !sameFlank
-                ? target.x * 0.15 + floor * 0.85
+              attackPhase === "build" && ballProg < 0.4
+                ? target.x * 0.45 + floor * 0.55
                 : floor;
           }
         }

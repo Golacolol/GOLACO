@@ -11,6 +11,7 @@ import {
   keeperOutletAimPoint,
   keeperPassDelivery,
   chooseGoalKickLongTarget,
+  chooseKeeperOutlet,
   goalKickAimPoint,
   goalKickPowerScale,
 } from "./ai/GoalkeeperAI";
@@ -2272,17 +2273,37 @@ export class Match {
       this.pendingPassFrom = gk.id;
       return;
     }
-    const target = choosePassTarget(
-      gk,
-      this.teamOf(gk).players,
-      this.opponentsOf(gk),
-      this.ball,
-      dir.x || gk.attackSign,
-      dir.z,
-      intent.cross ? "long" : "short",
-      { forbidIds: this.passForbidIds(gk), style: "buildup" },
-    );
-    if (!target) return;
+    const forbid = this.passForbidIds(gk);
+    const target =
+      choosePassTarget(
+        gk,
+        this.teamOf(gk).players,
+        this.opponentsOf(gk),
+        this.ball,
+        dir.x || gk.attackSign,
+        dir.z,
+        intent.cross ? "long" : "short",
+        { forbidIds: forbid, style: "buildup" },
+      ) ?? chooseKeeperOutlet(gk, this.teamOf(gk).players, this.opponentsOf(gk), forbid);
+    if (!target) {
+      // Never swallow a pass press — clear long if no outlet is on.
+      const aimX = gk.x + gk.attackSign * 36;
+      const aimZ = clamp((dir.z || 0) * 16, -18, 18);
+      const kick = passKickVector(this.ball.x, this.ball.z, aimX, aimZ, "long");
+      this.ball.y = 0.28;
+      kickBall(this.ball, kick.vx * 0.97, kick.vz * 0.97, Math.min(Math.max(kick.vy, 5.2), 6.6));
+      this.clearOwner();
+      gk.handRelease = false;
+      gk.kickTimer = 0.95;
+      this.ball.lastTouchId = gk.id;
+      this.ball.lastTouchSide = gk.side;
+      this.ballState = "loose";
+      this.incomingAerial = true;
+      this.longPassLanding = { x: aimX, z: aimZ };
+      this.stats.longPasses += 1;
+      this.pendingPassFrom = gk.id;
+      return;
+    }
     const dist = gk.distTo(target.x, target.z);
     const delivery = keeperPassDelivery(dist, this.pressure);
     gk.facing = Math.atan2(target.x - gk.x, target.z - gk.z);
@@ -2528,15 +2549,30 @@ export class Match {
       result.powerError = result.powerError * 1.4 - 1.8;
     }
     // Aim into the receiver's run (desired / velocity), not static feet + oversized empty lead.
+    // Full-backs are overlap-first — leading 35% into desiredX parks the ball in an empty
+    // channel while the FB sprints past an underhit meet. Recycle/build goes to feet.
+    const fbTarget =
+      !!target &&
+      (target.slot === "LB" ||
+        target.slot === "RB" ||
+        target.slot === "LWB" ||
+        target.slot === "RWB");
+    const feetFirst =
+      fbTarget &&
+      delivery !== "through" &&
+      delivery !== "chip" &&
+      (passer.isGK || (target!.x - passer.x) * passer.attackSign < 14);
+    const desireW = feetFirst ? 0.08 : 0.35;
+    const velW = feetFirst ? 0.1 : 0.25;
     let destX = target
       ? target.x +
-        (target.desiredX !== 0 ? (target.desiredX - target.x) * 0.35 : target.vx * 0.45) +
-        target.vx * 0.25
+        (target.desiredX !== 0 ? (target.desiredX - target.x) * desireW : target.vx * 0.45) +
+        target.vx * velW
       : passer.x + dir.x * distance;
     let destZ = target
       ? target.z +
-        (target.desiredZ !== 0 ? (target.desiredZ - target.z) * 0.35 : target.vz * 0.45) +
-        target.vz * 0.25
+        (target.desiredZ !== 0 ? (target.desiredZ - target.z) * desireW : target.vz * 0.45) +
+        target.vz * velW
       : passer.z + dir.z * distance;
     if (passer.isGK && target) {
       const aim = keeperOutletAimPoint(target);
@@ -3358,12 +3394,22 @@ export class Match {
     if (this.possessing) return;
     // Prefer live bounce prediction so underhit GK / lofted services still get chased —
     // longPassLanding alone left outlets parked on a marker the ball never reached.
+    const ballSpd = Math.hypot(this.ball.vx, this.ball.vz);
+    const settled = this.ball.y < 0.7 && ballSpd < 4.5;
+    // Once the loft settles, drop the aerial flag so ground receive steering resumes.
+    if (this.incomingAerial && this.ball.y < 0.55 && this.ball.vy <= 0.35 && ballSpd < 6) {
+      this.incomingAerial = false;
+    }
     const predicted = this.ball.y > 0.7 ? predictLanding(this.ball) : null;
     const marker = this.longPassLanding;
     let landing = predicted ?? marker;
     if (predicted && marker) {
       const shortOfMarker = Math.hypot(predicted.x - marker.x, predicted.z - marker.z) > 3.5;
       if (shortOfMarker) landing = predicted;
+    }
+    // Dying / underhit services: chase the live ball, not a stale ahead marker (FB leave-ball).
+    if (settled || (!predicted && ballSpd < 5.5 && this.ball.y < 1.05)) {
+      landing = { x: this.ball.x, z: this.ball.z };
     }
     if (!landing) return;
     const passer = this.playerById(this.ball.lastTouchId ?? "");
@@ -3390,11 +3436,12 @@ export class Match {
       !receiveIsAerialOwned(this.ball, this.incomingAerial, !!this.longPassLanding);
     if (!groundOwned) {
       const moveEx = this.moveExtras();
-      const sprint = primary.d > 8;
+      const designated = !!this.passTargetId && primary.p.id === this.passTargetId;
+      const sprint = designated || primary.d > 6 || settled || ballSpd < 3.5;
       movePlayer(primary.p, dt, landing.x - primary.p.x, landing.z - primary.p.z, sprint, false, {
         ...moveEx,
-        speedMul: (moveEx.speedMul ?? 1) * 0.94,
-        accelMul: (moveEx.accelMul ?? 1) * 0.88,
+        speedMul: (moveEx.speedMul ?? 1) * (designated || settled ? 1.02 : 0.94),
+        accelMul: (moveEx.accelMul ?? 1) * (designated || settled ? 1.12 : 0.88),
       });
     }
     // Second runner holds a far-post / secondary pocket — not the same spot.

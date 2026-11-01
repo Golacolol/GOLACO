@@ -80,12 +80,17 @@ describe("ReceiveModel", () => {
     expect(plan.speedMul).toBeGreaterThan(1);
   });
 
-  it("hands aerial runs to the lofted path; ground landing markers stay steerable", () => {
+  it("hands aerial runs to the lofted path; settled lofted flags resume ground steering", () => {
     const ball = new Ball();
     ball.y = 1.5;
     expect(receiveIsAerialOwned(ball, false, false)).toBe(true);
     ball.y = 0.2;
+    ball.vy = 0;
     expect(receiveIsAerialOwned(ball, false, true)).toBe(false);
+    // Stale lofted flag with the ball on the carpet must NOT park FB outlets.
+    expect(receiveIsAerialOwned(ball, true, true)).toBe(false);
+    ball.y = 1.0;
+    ball.vy = 2;
     expect(receiveIsAerialOwned(ball, true, true)).toBe(true);
     expect(receiveIsAerialOwned(ball, false, false)).toBe(false);
   });

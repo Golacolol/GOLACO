@@ -86,9 +86,14 @@ export function supportTarget(
     // Full-backs / wingers stretch the channel first — overlap when space opens upfield.
     const sameFlank = Math.sign(player.anchorZ || 1) === Math.sign(ballZ || 1) || Math.abs(ballZ) < 10;
     if (fb) {
-      // Prefer overlap whenever the flank is free — weak-side still offers a high outlet.
-      if (progress > 0.18 && sameFlank) role = progress > 0.28 || ballWide ? "OVERLAP" : "WIDE_OUTLET";
-      else if (progress > 0.32) role = sameFlank ? "OVERLAP" : "WIDE_OUTLET";
+      // Deep build / ball behind the FB: show to feet instead of forced overlap.
+      const ballBehind = (ballX - player.x) * dir < -1.5;
+      const deepBuild = phase === "build" || progress < 0.28;
+      if (deepBuild && (ballBehind || progress < 0.2 || !sameFlank)) {
+        role = "CHECK_TO_BALL";
+      } else if (progress > 0.18 && sameFlank) {
+        role = progress > 0.28 || ballWide ? "OVERLAP" : "WIDE_OUTLET";
+      } else if (progress > 0.32) role = sameFlank ? "OVERLAP" : "WIDE_OUTLET";
       else role = idx % 2 === 0 ? "WIDE_OUTLET" : "OVERLAP";
     } else if (progress > 0.55) {
       role = ballWide ? "OVERLAP" : idx % 2 === 0 ? "UNDERLAP" : "OVERLAP";
@@ -181,15 +186,21 @@ export function supportTarget(
     }
     z = player.anchorZ + (ballZ - player.anchorZ) * 0.18;
   } else if (role === "CHECK_TO_BALL") {
-    // Between ball and goal line but short of the last defender — ready to receive and lay off.
-    x = carrier.x + dir * (st ? 3.6 : 3.5);
-    if (st) {
-      // Meet high — stay an attacking outlet, not a midfield drop.
-      const meetProg = Math.max(0.64, Math.min(0.82, progress + 0.22));
-      const meetX = dir * (meetProg * PITCH_LENGTH - HALF_LENGTH);
-      x = x * 0.22 + meetX * 0.78;
+    if (fb) {
+      // Pocket beside the ball on the FB's flank — receive and recycle, don't ghost upfield.
+      x = ballX + dir * 2.2;
+      z = Math.sign(player.anchorZ || 1) * Math.max(18, Math.min(26, Math.abs(player.anchorZ) * 0.88 + 2));
+    } else {
+      // Between ball and goal line but short of the last defender — ready to receive and lay off.
+      x = carrier.x + dir * (st ? 3.6 : 3.5);
+      if (st) {
+        // Meet high — stay an attacking outlet, not a midfield drop.
+        const meetProg = Math.max(0.64, Math.min(0.82, progress + 0.22));
+        const meetX = dir * (meetProg * PITCH_LENGTH - HALF_LENGTH);
+        x = x * 0.22 + meetX * 0.78;
+      }
+      z = carrier.z + Math.sign(player.anchorZ - carrier.z || 1) * (st ? 5.4 : 5.2);
     }
-    z = carrier.z + Math.sign(player.anchorZ - carrier.z || 1) * (st ? 5.4 : 5.2);
   } else if (role === "PENALTY_AREA_RUN") {
     x = carrier.x + dir * (st ? 12.5 : 11.5) * aheadMul;
     if (st) {

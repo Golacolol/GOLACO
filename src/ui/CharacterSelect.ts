@@ -219,6 +219,59 @@ function kitHeadingName(player: { displayName?: string; name?: string }): string
   return kitInitialSurnameLabel(player.displayName, player.name);
 }
 
+/** Keep play-style / formation chip rows on one line; shrink type when the team name is long. */
+export function fitFormationHeaderChips(root: ParentNode): void {
+  const title = root.querySelector<HTMLElement>(".char-team-title .eyebrow");
+  if (title) {
+    const host = title.parentElement;
+    const maxW = Math.max(64, Math.min(title.clientWidth || 280, host?.clientWidth || 280));
+    title.style.fontSize = "";
+    title.style.letterSpacing = "";
+    let size = parseFloat(getComputedStyle(title).fontSize) || 15;
+    let guard = 0;
+    title.style.whiteSpace = "nowrap";
+    while (title.scrollWidth > maxW + 0.5 && size > 10 && guard < 40) {
+      size -= 0.5;
+      title.style.fontSize = `${size}px`;
+      guard += 1;
+    }
+  }
+  for (const sel of [".play-style-chips", ".formation-chips"]) {
+    const row = root.querySelector<HTMLElement>(sel);
+    if (!row) continue;
+    const budget = row.clientWidth || row.parentElement?.clientWidth || 0;
+    if (budget < 8) continue;
+    const chips = [...row.querySelectorAll<HTMLElement>(".formation-chip")];
+    if (!chips.length) continue;
+    for (const chip of chips) {
+      chip.style.fontSize = "";
+      chip.style.paddingLeft = "";
+      chip.style.paddingRight = "";
+      chip.style.letterSpacing = "";
+    }
+    let size = parseFloat(getComputedStyle(chips[0]!).fontSize) || 11;
+    let pad = 10;
+    let tracking = 0.08;
+    let guard = 0;
+    const over = () => row.scrollWidth > budget + 1;
+    while (over() && size > 8 && guard < 48) {
+      size -= 0.5;
+      pad = Math.max(4, pad - 0.5);
+      for (const chip of chips) {
+        chip.style.fontSize = `${size}px`;
+        chip.style.paddingLeft = `${pad}px`;
+        chip.style.paddingRight = `${pad}px`;
+      }
+      guard += 1;
+    }
+    while (over() && tracking > 0.02 && guard < 72) {
+      tracking = Math.max(0.02, tracking - 0.01);
+      for (const chip of chips) chip.style.letterSpacing = `${tracking}em`;
+      guard += 1;
+    }
+  }
+}
+
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
@@ -1190,6 +1243,7 @@ export class CharacterSelect {
     requestAnimationFrame(() => {
       if (list) list.scrollTop = scrollTop;
       fitKitSurnameElements(this.root);
+      fitFormationHeaderChips(this.root);
     });
   }
 
@@ -1221,6 +1275,7 @@ export class CharacterSelect {
       const restored = this.root.querySelector<HTMLElement>(".team-roster-list");
       if (restored && rosterScroll > 0) restored.scrollTop = rosterScroll;
       fitKitSurnameElements(this.root);
+      fitFormationHeaderChips(this.root);
     });
   }
 
@@ -1537,6 +1592,11 @@ export class CharacterSelect {
           ${this.teamTitleHtml(titleLabel)}
           <div class="play-style-chips" role="group" aria-label="Play style">
             ${
+              this.canSwitchFormationSide()
+                ? `<button type="button" class="formation-chip form-side-chip on" data-char="form-side" data-side-toggle="1" aria-label="Switch fixture side (currently ${this.formationSide === "home" ? "HOME" : "AWAY"})" title="Tap to switch HOME / AWAY">${this.formationSide === "home" ? "HOME" : "AWAY"}</button>`
+                : ""
+            }
+            ${
               overlayMode
                 ? ""
                 : `<button type="button" class="formation-chip chalk-chip ${this.chalkMode ? "on" : ""}" data-char="chalk" title="Chalk — draw on the pitch. Right-click to wipe." aria-pressed="${this.chalkMode ? "true" : "false"}">Chalk</button>`
@@ -1549,11 +1609,6 @@ export class CharacterSelect {
               .join("")}
           </div>
           <div class="formation-chips" role="group" aria-label="Formation">
-            ${
-              this.canSwitchFormationSide()
-                ? `<button type="button" class="formation-chip form-side-chip on" data-char="form-side" data-side-toggle="1" aria-label="Switch fixture side (currently ${this.formationSide === "home" ? "HOME" : "AWAY"})" title="Tap to switch HOME / AWAY">${this.formationSide === "home" ? "HOME" : "AWAY"}</button>`
-                : ""
-            }
             ${FORMATION_NAMES.map(
               (name) =>
                 `<button type="button" class="formation-chip ${name === this.formation ? "on" : ""}" data-char="form" data-form="${name}">${name}</button>`,

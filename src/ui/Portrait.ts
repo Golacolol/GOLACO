@@ -250,7 +250,9 @@ export function fitKitSurnameElements(root: ParentNode): void {
     el.style.letterSpacing = `${tracking}em`;
     let guard = 0;
     // Caption under disc: shrink earlier so long names never crowd the counter.
-    const floor = caption ? 10 : 9;
+    // Roster square surname is the hero line — keep it large.
+    const rosterSur = !!el.closest(".kit-marker-roster");
+    const floor = caption ? 10 : rosterSur ? 14 : 9;
     const over = () => el.scrollWidth > maxW + 0.5;
     while (over() && size > floor && guard < 48) {
       size -= 0.5;
@@ -269,25 +271,28 @@ export function fitKitSurnameElements(root: ParentNode): void {
 }
 
 /**
- * Formation top-left `12. R. HARDIE` — shrink to stay on one line inside the card.
+ * Formation top-left `12. R. HARDIE` — use the card line width; shrink only when needed.
  */
 export function fitRosterHeadingElements(root: ParentNode): void {
   const nodes = root.querySelectorAll<HTMLElement>(".team-roster-card h3");
   for (const el of nodes) {
-    const host = el.parentElement;
-    const maxW = Math.max(48, (host?.clientWidth ?? el.clientWidth ?? 160) - 12);
+    const card = el.closest<HTMLElement>(".team-roster-card");
+    const maxW = Math.max(64, (card?.clientWidth ?? el.clientWidth ?? 168) - 8);
     if (maxW < 8) continue;
     el.style.overflow = "hidden";
     el.style.textOverflow = "clip";
     el.style.whiteSpace = "nowrap";
-    let size = parseFloat(el.style.fontSize) || parseFloat(getComputedStyle(el).fontSize) || 17;
-    const trackingMatch = /^([\d.]+)em$/.exec(el.style.letterSpacing.trim());
-    let tracking = trackingMatch ? Number(trackingMatch[1]) : 0.04;
+    el.style.fontSize = "";
+    el.style.letterSpacing = "";
+    // Prefer a large face that fills the line; only step down when it overflows.
+    let size = 22;
+    let tracking = 0.04;
+    const floor = 13;
     el.style.fontSize = `${size}px`;
     el.style.letterSpacing = `${tracking}em`;
     let guard = 0;
     const over = () => el.scrollWidth > maxW + 0.5;
-    while (over() && size > 11 && guard < 48) {
+    while (over() && size > floor && guard < 48) {
       size -= 0.5;
       el.style.fontSize = `${size}px`;
       guard += 1;
@@ -324,7 +329,9 @@ export function kitMarkerHtml(
     !trustedSrc && player.id ? resolvePlayerPortraitUrl(player.id, null) : null;
   const src = trustedSrc ?? speculativeSrc;
   const bench = (options.className ?? "").includes("kit-marker-bench");
-  const surSize = surnameFitPx(surname, bench ? 15 : 17);
+  const roster = (options.className ?? "").includes("kit-marker-roster");
+  // Roster square (no PNG): name is the hero line above the number.
+  const surSize = surnameFitPx(surname, roster ? 26 : bench ? 15 : 17);
   const captionSize = surnameFitPx(captionLabel, bench ? 14 : 16);
   const tracking = surnameLetterSpacingEm(surname);
   const captionTracking = surnameLetterSpacingEm(captionLabel);
@@ -336,8 +343,11 @@ export function kitMarkerHtml(
     badgeMode === "initials"
       ? `<span class="ini">${escapePortrait(initials)}</span>`
       : `<span class="sur" style="${surStyle}">${escapePortrait(surname)}</span>`;
-  const badge = `<div class="portrait-badge portrait-badge-kit" style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span>${badgeLabel}</div>`;
-  const badgeHidden = `<div class="portrait-badge portrait-badge-kit" hidden style="background:${escapePortrait(primary)};color:${escapePortrait(text)}"><span class="num">${shirtNumber}</span>${badgeLabel}</div>`;
+  const numSpan = `<span class="num">${shirtNumber}</span>`;
+  // Top-left formation card only: surname above number. Pitch / bench / HUD keep number first.
+  const badgeInner = roster ? `${badgeLabel}${numSpan}` : `${numSpan}${badgeLabel}`;
+  const badge = `<div class="portrait-badge portrait-badge-kit" style="background:${escapePortrait(primary)};color:${escapePortrait(text)}">${badgeInner}</div>`;
+  const badgeHidden = `<div class="portrait-badge portrait-badge-kit" hidden style="background:${escapePortrait(primary)};color:${escapePortrait(text)}">${badgeInner}</div>`;
 
   if (!src) {
     return `<div class="${wrapClass}"><div class="portrait">${badge}</div></div>`;

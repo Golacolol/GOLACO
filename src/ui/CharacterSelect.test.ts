@@ -92,6 +92,7 @@ describe("character select", () => {
     const chalk = view.root.querySelector('[data-char="chalk"]');
     const auto = view.root.querySelector('[data-char="play-style"][data-style="auto"]');
     expect(chalk && auto && !!(chalk.compareDocumentPosition(auto) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(true);
+    expect(view.root.querySelector(".play-style-chips [data-char='form-side']")).toBeNull();
     expect(view.root.querySelector('[data-char="play-style"][data-style="auto"]')).toBeTruthy();
     expect(view.root.querySelector('[data-char="play-style"][data-style="counter"]')).toBeTruthy();
     expect(view.playStyle).toBe("auto");
@@ -612,10 +613,16 @@ describe("character select", () => {
     view.render();
     expect(view.canSwitchFormationSide()).toBe(true);
     expect(view.formationSide).toBe("home");
-    const sideChip = view.root.querySelector('[data-char="form-side"][data-side-toggle]');
+    const sideChip = view.root.querySelector('.play-style-chips [data-char="form-side"][data-side-toggle]');
     expect(sideChip?.textContent).toBe("HOME");
     expect(sideChip?.classList.contains("on")).toBe(true);
+    const chalk = view.root.querySelector('.play-style-chips [data-char="chalk"]');
     const form442 = view.root.querySelector('[data-char="form"][data-form="4-4-2"]');
+    expect(
+      sideChip &&
+        chalk &&
+        !!(sideChip.compareDocumentPosition(chalk) & Node.DOCUMENT_POSITION_FOLLOWING),
+    ).toBe(true);
     expect(
       sideChip &&
         form442 &&
@@ -679,14 +686,15 @@ describe("kitSurnameFromName", () => {
   it("shrinks formation roster headings to one line", () => {
     const host = document.createElement("div");
     host.style.width = "120px";
-    host.innerHTML = `<div class="team-roster-card" style="width:120px"><h3 style="font-size:17px;letter-spacing:0.04em">99. E. VAN DER SAR</h3></div>`;
+    host.innerHTML = `<div class="team-roster-card" style="width:120px"><h3>99. E. VAN DER SAR</h3></div>`;
     document.body.appendChild(host);
     const h3 = host.querySelector("h3") as HTMLElement;
     // jsdom often reports scrollWidth === clientWidth; stub an overflow.
     Object.defineProperty(h3, "scrollWidth", { configurable: true, get: () => 200 });
     Object.defineProperty(h3, "clientWidth", { configurable: true, get: () => 120 });
     fitRosterHeadingElements(host);
-    expect(parseFloat(h3.style.fontSize)).toBeLessThan(17);
+    expect(parseFloat(h3.style.fontSize)).toBeLessThan(22);
+    expect(parseFloat(h3.style.fontSize)).toBeGreaterThanOrEqual(13);
     expect(h3.style.whiteSpace).toBe("nowrap");
     host.remove();
   });
@@ -700,7 +708,17 @@ describe("kitMarkerHtml", () => {
     });
     expect(html).toContain('class="num">8<');
     expect(html).toContain(">COOPER</span>");
+    expect(html.indexOf('class="num">8<')).toBeLessThan(html.indexOf(">COOPER</span>"));
     expect(html).not.toContain("kit-marker-photo");
+  });
+
+  it("puts surname above number on the formation roster card badge", () => {
+    const html = kitMarkerHtml({ name: "M. Cooper" }, 8, {
+      primaryColor: "#007A3D",
+      textColor: "#ffffff",
+      className: "kit-marker-roster",
+    });
+    expect(html.indexOf(">COOPER</span>")).toBeLessThan(html.indexOf('class="num">8<'));
   });
 
   it("renders full compound surnames on kit badges", () => {
