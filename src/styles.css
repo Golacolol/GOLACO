@@ -517,9 +517,14 @@ html, body, #app { margin: 0; height: 100%; overflow: hidden; background: #04110
   min-width: 0;
   min-height: 0;
   flex: 1 1 auto;
-  overflow-y: auto;
+  /* Main screen: both columns must fit — no bottom / side scrollbars. */
+  overflow: hidden;
   box-sizing: border-box;
   --menu-fixture-height: 72px;
+}
+.menu-shell.panel-open .menu-hero-stack {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .menu-hero-stack > h1 {
   width: 100%;
@@ -656,7 +661,7 @@ html.club-name-glow-off .club-line {
   min-height: var(--menu-fixture-height);
   max-height: var(--menu-fixture-height);
   box-sizing: border-box;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 .team-dials {
   /* League · Club · Kit — Club takes the wide column. */
@@ -971,11 +976,13 @@ html.club-name-glow-off .club-line {
   height: 28px;
 }
 .fixture-teams > strong {
-  flex: 0 1 auto;
+  flex: 0 0 auto;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  text-overflow: clip;
   white-space: nowrap;
+  font-size: 1em;
+  letter-spacing: 0.06em;
 }
 .fixture-teams .vs {
   flex: 0 0 auto;
@@ -1141,19 +1148,26 @@ html.club-name-glow-off .club-line {
   align-items: baseline;
   width: 100%;
 }
-/* Gameplay / Lighting chips — slightly larger, all-caps options. */
+/* Gameplay / Lighting chips — all-caps; Gameplay row must fit FOOTBALL…FLICKBALL. */
 .menu-fixture-labeled .tod-row {
-  gap: 12px;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
 }
 .menu-fixture-labeled .tod-opt {
-  font-size: 15px;
+  flex: 0 1 auto;
+  min-width: 0;
+  font-size: 13px;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 .menu-fixture-labeled .vs {
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  flex: 0 0 auto;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  opacity: 0.55;
 }
 .sim-timer {
   display: inline-flex;
@@ -1197,6 +1211,7 @@ html.club-name-glow-off .club-line {
   flex-direction: column;
   justify-content: space-between;
   gap: 0;
+  overflow: hidden;
 }
 .menu-shell .menu-list:not(.menu-embed) > .menu-item {
   margin: 0;

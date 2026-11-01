@@ -1136,8 +1136,8 @@ function scheduleFitMenuLabels(root: HTMLElement): void {
 }
 
 /**
- * Fit title to the equal menu column, shrink stadium·team club line, and
- * scale long Club dial names down to the dial width.
+ * Fit title to the equal menu column, shrink stadium·team club line,
+ * scale long Club dial names, and shrink next-match abbreviations to the panel.
  */
 export function fitMenuLabels(root: HTMLElement): void {
   const stack = root.querySelector<HTMLElement>(".menu-hero-stack");
@@ -1172,6 +1172,66 @@ export function fitMenuLabels(root: HTMLElement): void {
   }
 
   fitTeamDialLabels(root);
+  fitFixtureMatchLabels(root);
+  fitGameplayModeRow(root);
+}
+
+/** Shrink Gameplay chips (FOOTBALL · … · FLICKBALL) so the row fits the column. */
+function fitGameplayModeRow(root: HTMLElement): void {
+  const labeled = [...root.querySelectorAll<HTMLElement>(".menu-fixture-labeled")].find(
+    (el) => el.querySelector(".fixture-section-label")?.textContent?.trim() === "Gameplay",
+  );
+  const row = labeled?.querySelector<HTMLElement>(".tod-row");
+  if (!row) return;
+  const budget = labeled!.clientWidth || row.clientWidth || 0;
+  if (budget < 8) return;
+
+  row.style.fontSize = "";
+  row.style.letterSpacing = "";
+  row.querySelectorAll<HTMLElement>(".tod-opt").forEach((opt) => {
+    opt.style.fontSize = "";
+    opt.style.letterSpacing = "";
+  });
+
+  const basePx = parseFloat(getComputedStyle(row.querySelector(".tod-opt") ?? row).fontSize) || 13;
+  fitNowrapToWidth(row, budget, { minPx: 9, basePx });
+  const fitted = parseFloat(row.style.fontSize) || basePx;
+  const tracking = row.style.letterSpacing || "0.06em";
+  row.querySelectorAll<HTMLElement>(".tod-opt").forEach((opt) => {
+    opt.style.fontSize = `${fitted}px`;
+    opt.style.letterSpacing = tracking;
+  });
+}
+
+/** Shrink next-match abbrs / countdown so the row fits the details column. */
+function fitFixtureMatchLabels(root: HTMLElement): void {
+  const main = root.querySelector<HTMLElement>(".fixture-match-main");
+  const teams = root.querySelector<HTMLElement>(".fixture-teams");
+  if (!teams) return;
+  const budget =
+    main?.clientWidth ||
+    teams.parentElement?.clientWidth ||
+    teams.clientWidth ||
+    0;
+  if (budget < 8) return;
+
+  teams.style.fontSize = "";
+  teams.style.letterSpacing = "";
+  teams.querySelectorAll<HTMLElement>("strong").forEach((s) => {
+    s.style.fontSize = "";
+    s.style.letterSpacing = "";
+  });
+
+  const basePx = parseFloat(getComputedStyle(teams).fontSize) || 15;
+  fitNowrapToWidth(teams, budget, { minPx: 9, basePx });
+
+  const detail = root.querySelector<HTMLElement>(".fixture-detail-row .meta");
+  if (detail) {
+    detail.style.fontSize = "";
+    detail.style.letterSpacing = "";
+    const detailBase = parseFloat(getComputedStyle(detail).fontSize) || 12;
+    fitNowrapToWidth(detail, budget, { minPx: 8, basePx: detailBase });
+  }
 }
 
 /** Shrink Club / Opposition dial centres (and ghosts) so long names fit the dial column. */

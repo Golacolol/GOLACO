@@ -1,5 +1,5 @@
 import { clamp, stat01 } from "../../core/math";
-import { GOAL_WIDTH, HALF_LENGTH, PENALTY_AREA_LENGTH, PENALTY_AREA_WIDTH } from "../constants";
+import { GOAL_WIDTH, HALF_LENGTH, HALF_WIDTH, PENALTY_AREA_LENGTH, PENALTY_AREA_WIDTH } from "../constants";
 import type { Player } from "../players/Player";
 import type { GameplayTuning } from "../gameplay/GameplayTuning";
 import { canShoot, choosePassTarget, isBackwardPass, passingLaneQuality } from "./PassingAI";
@@ -186,7 +186,8 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
       (building && wide && progress < 0.58) ||
       footRole === "CB" ||
       footRole === "DM" ||
-      footRole === "FB" ||
+      // Full-backs only recycle deep — once advanced, attack first.
+      (footRole === "FB" && progress < 0.52) ||
       footRole === "CM");
   const forbid = new Set(ctx.forbidIds ?? []);
   const passOpts = {
@@ -410,6 +411,49 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   if (footRole === "CB" || footRole === "DM") longPassScore += pressure > 0.4 ? 0.12 : -0.05;
   if (footRole === "FB" || footRole === "W" || footRole === "WM") {
     if (Math.abs(carrier.z) > 12 && distGoal < 40) crossScore += 0.14;
+  }
+  // Full-back first phase: take the ball, then attack — line run / progressive pass / recycle only if closed.
+  if (footRole === "FB") {
+    const nearTouch = Math.abs(carrier.z) > HALF_WIDTH - 7;
+    if (pressure < 0.48 && progress < 0.72) {
+      runScore += 0.34 + pace * 0.16 + drib * 0.1;
+      if (forwardMate > 2 && lane > 0.48) passScore += 0.22;
+      throughBallScore += 0.14 + vision * 0.08;
+      holdScore *= 0.55;
+      // Prefer cutting inside off the touchline rather than dribbling out of play.
+      if (nearTouch) {
+        runScore += 0.12;
+        if (shortT && Math.abs(shortT.z) < Math.abs(carrier.z)) passScore += 0.16;
+      }
+    } else if (pressure > 0.55 && recycleTarget) {
+      passScore += 0.2;
+    }
+    // Crossing window: wide + advanced with a box target — realistic, not spam.
+    if (crossT && Math.abs(carrier.z) > 13.5 && progress > 0.56 && distGoal < 40) {
+      const crossWindow = 0.26 + passing * 0.1 + (boxMate ? 0.16 : 0.04) + (1 - pressure) * 0.08;
+      crossScore += crossWindow;
+      // Final-third / byline: deliver rather than keep driving the flag.
+      if (progress > 0.66 && distGoal < 34) {
+        crossScore += 0.18;
+        runScore *= 0.62;
+      } else if (progress < 0.6) {
+        // Early half-way crosses stay occasional.
+        crossScore *= 0.62;
+      }
+    }
+  }
+  // In the box: create a shot — cutbacks / near-post passes, and take the shot when clear enough.
+  if (distGoal < PENALTY_AREA_LENGTH + 2 && Math.abs(carrier.z) < 18) {
+    shotScore = Math.max(shotScore, 0.36 + shoot * 0.38 + (1 - pressure) * 0.2);
+    if (shortT && lane > 0.5 && Math.abs(shortT.z) < 12) {
+      passScore += 0.28 + lane * 0.16;
+    }
+    // Stop endless byline carries that end out of play.
+    if (Math.abs(carrier.z) > 14) {
+      runScore *= 0.55;
+      if (shortT) passScore += 0.2;
+      else shotScore += 0.12;
+    }
   }
 
   // Gilt-edged / near-open-goal: shoot — keeper may still dive, but pass is wrong.

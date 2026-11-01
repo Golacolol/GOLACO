@@ -144,25 +144,31 @@ export function shouldHeaderContest(opts: {
   headerCooldown?: number;
 }): boolean {
   if ((opts.headerCooldown ?? 0) > 0.05) return false;
-  if (opts.ballY < 1.28 && !opts.incomingAerial) return false;
+  if (opts.ballY < 1.18 && !opts.incomingAerial) return false;
 
   const speed = opts.ballSpeed ?? 0;
   const descending = (opts.ballVy ?? -1) < 1.2;
   // Trap window: ball dropping into body height with enough control.
   const canTrap =
-    opts.ballY < 1.78 &&
+    opts.ballY < 1.68 &&
     descending &&
-    opts.control >= 0.36 &&
-    speed < 11.5 + opts.control * 5;
+    opts.control >= 0.42 &&
+    speed < 10.2 + opts.control * 4 &&
+    !opts.incomingAerial;
   if (canTrap && !opts.contested) return false;
-  if (canTrap && opts.contested && opts.control + 0.06 >= opts.heading) return false;
+  if (canTrap && opts.contested && opts.control + 0.1 >= opts.heading) return false;
 
+  // Incoming set-piece / lofted service: prefer the header once it hangs or is contested.
+  if (opts.incomingAerial && opts.ballY > 1.35) {
+    if (opts.contested || opts.ballY > 1.72) return true;
+    if (opts.heading + 0.08 >= opts.control && opts.ballY > 1.55) return true;
+  }
   // Truly high / hot aerials: header is the only honest option.
-  if (opts.ballY > 2.15) return opts.heading > 0.32 || opts.contested || opts.incomingAerial;
-  if (opts.contested && opts.ballY > 1.62) return true;
-  if (opts.ballY > 1.85) return opts.heading > opts.control + 0.08 || opts.incomingAerial;
-  // Soft loft: only nod on if heading clearly beats control.
-  return opts.heading > opts.control + 0.2 && opts.ballY > 1.55;
+  if (opts.ballY > 2.05) return opts.heading > 0.28 || opts.contested || opts.incomingAerial;
+  if (opts.contested && opts.ballY > 1.48) return true;
+  if (opts.ballY > 1.72) return opts.heading > opts.control + 0.02 || opts.incomingAerial;
+  // Soft loft: nod on when heading is competitive.
+  return opts.heading > opts.control + 0.1 && opts.ballY > 1.42;
 }
 
 export function pickAerialFlickTarget(

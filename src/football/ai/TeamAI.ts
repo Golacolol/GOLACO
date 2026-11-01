@@ -71,6 +71,8 @@ export function updateTeamAI(
     minute01?: number;
     /** Team play-style (route one vs possession). */
     playStyle?: PlayStyleProfile;
+    /** Sticky presser id from the previous tick for this side. */
+    previousPressingId?: string | null;
   },
 ): TeamAIResult {
   const us = players.filter((p) => p.side === side);
@@ -80,7 +82,9 @@ export function updateTeamAI(
   const inFlightAttack = looseBall && ball.lastTouchSide === side;
   const defending = possessingSide !== side && !inFlightAttack;
   const autoClosers = extras?.autoClosers !== false;
-  const forced = (extras?.forceClosers ?? []).filter((p) => p.side === side && !p.isGK && !p.celebrating);
+  const forced = (extras?.forceClosers ?? []).filter(
+    (p) => p.side === side && !p.isGK && !p.celebrating && !p.sentOff && !skipIds.has(p.id),
+  );
   const playStyle = extras?.playStyle ?? playStyleProfile("balanced");
   const pressWindow = 3.4 * (extras?.tuning?.counterPressWindowMultiplier ?? 1);
   const pressAggro = extras?.tuning?.counterPressAggressionMultiplier ?? 1;
@@ -105,12 +109,17 @@ export function updateTeamAI(
     (counterPress && pressAggro >= 1.0) ||
     (touchlineTrap && pressAggro >= 0.9);
   const closerSlots = intentionalDouble ? 2 : 1;
+  const closingOpts = {
+    skipIds,
+    previousId: extras?.previousPressingId ?? null,
+    requireCloser: defending && !looseBall,
+  };
   let closers =
     defending && !extras?.kickOff && !extras?.keeperHold
       ? forced.length > 0
         ? forced.slice(0, closerSlots)
         : autoClosers
-          ? selectClosingPlayers(us, ball, closerSlots)
+          ? selectClosingPlayers(us, ball, closerSlots, closingOpts)
           : []
       : [];
   if (
@@ -122,19 +131,30 @@ export function updateTeamAI(
     !extras?.keeperHold
   ) {
     const have = new Set(closers.map((p) => p.id));
-    for (const p of selectClosingPlayers(us, ball, closerSlots)) {
+    for (const p of selectClosingPlayers(us, ball, closerSlots, closingOpts)) {
       if (!have.has(p.id) && closers.length < closerSlots) closers = [...closers, p];
     }
   }
   // Loose ball: designated pursuers, capped at the closer slots (one unless intentional double).
   // Skip when this is OUR pass in flight — teammates should offer support, not swarm the ball.
   if (looseBall && !inFlightAttack && !extras?.kickOff && !extras?.keeperHold && autoClosers) {
-    const pursuers = designatePursuers(us, ball, closerSlots);
+    const pursuers = designatePursuers(us, ball, closerSlots).filter((p) => !skipIds.has(p.id));
     const ids = new Set(closers.map((p) => p.id));
     for (const p of pursuers) {
       if (!ids.has(p.id)) closers = [...closers, p].slice(0, closerSlots);
     }
     if (!closers.length) closers = pursuers;
+  }
+  // Invariant: while an opponent carries, someone eligible must react to the ball.
+  if (
+    defending &&
+    !looseBall &&
+    !extras?.kickOff &&
+    !extras?.keeperHold &&
+    autoClosers &&
+    !closers.length
+  ) {
+    closers = selectClosingPlayers(us, ball, 1, { ...closingOpts, requireCloser: true });
   }
   if (closers.length > closerSlots) closers = closers.slice(0, closerSlots);
   const primaryPursuer = closers[0] ?? null;
@@ -152,8 +172,14 @@ export function updateTeamAI(
           .sort((a, b) => a.distTo(ball.x, ball.z) - b.distTo(ball.x, ball.z))[0] ?? null
       : null);
   const markedIds = new Set<string>();
-  const coveringCbs = us.filter((p) => p.slot.includes("CB") && !closerIds.has(p.id) && !p.celebrating);
-  const cbLineX = defending ? centreBackLineX(coveringCbs, ball.x, { blockDepth }) : null;
+  const allCbs = us.filter((p) => p.slot.includes("CB") && !p.celebrating && !p.sentOff);
+  const coveringCbs = allCbs.filter((p) => !closerIds.has(p.id));
+  // Use the full CB unit for line depth so a pressing centre-back doesn't collapse the rest.
+  const cbLineX = defending ? centreBackLineX(allCbs.length ? allCbs : coveringCbs, ball.x, { blockDepth }) : null;
+  const shadowCbId =
+    defending && presser && coveringCbs.length
+      ? [...coveringCbs].sort((a, b) => a.distTo(presser.x, presser.z) - b.distTo(presser.x, presser.z))[0]!.id
+      : null;
   // Buckland support-spot refresh (~3 Hz) when we have the ball.
   const supportSpot =
     !defending && carrier ? bestSupportSpot(carrier, them, { buildup: block === "low" || ball.x * attackSign < 0 }) : null;
@@ -399,14 +425,14 @@ export function updateTeamAI(
       // Cover + role block — attackers lean on mid-block shape so they actually drop.
       let shapeW =
         shape.role === "CB" || shape.role === "DM"
-          ? 0.55
+          ? 0.62
           : shape.role === "W" || shape.role === "WM" || shape.role === "FB"
             ? 0.9
             : shape.role === "CF" || shape.role === "AM"
               ? 0.82
               : shape.role === "CM"
-                ? 0.52
-                : 0.4;
+                ? 0.58
+                : 0.42;
       const widthW =
         shape.role === "W" || shape.role === "WM" || shape.role === "FB" ? Math.min(0.96, shapeW + 0.12) : shapeW;
       target = {
@@ -431,10 +457,16 @@ export function updateTeamAI(
         const floorZ = side * Math.min(14, Math.abs(p.anchorZ) * 0.68);
         if (Math.abs(target.z) < Math.abs(floorZ)) target.z = target.z * 0.4 + floorZ * 0.6;
       }
-      // Cover shadow: CB sits behind the lead presser.
-      if (shape.role === "CB" && presser && closerIds.has(presser.id)) {
+      // Cover shadow: only the nearest covering CB sits behind the lead presser.
+      if (shape.role === "CB" && presser && closerIds.has(presser.id) && p.id === shadowCbId) {
         const shadow = coverShadowTarget(p, presser, ball.x, ball.z);
-        target = { x: target.x * 0.55 + shadow.x * 0.45, z: target.z * 0.55 + shadow.z * 0.45 };
+        target = { x: target.x * 0.62 + shadow.x * 0.38, z: target.z * 0.62 + shadow.z * 0.38 };
+        if (cbLineX != null) {
+          target.x = clamp(target.x, cbLineX - 1.5, cbLineX + 1.5);
+        }
+      } else if (shape.role === "CB" && cbLineX != null) {
+        // Remaining CBs stay glued to the shared line depth.
+        target.x = target.x * 0.35 + cbLineX * 0.65;
       }
     } else if (p.hasBall) {
       const dir = p.attackSign;

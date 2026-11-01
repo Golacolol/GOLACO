@@ -48,9 +48,30 @@ export function selectPressingPlayer(
   return selectClosingPlayers(defenders, ball, 1)[0] ?? null;
 }
 
-export function selectClosingPlayers(defenders: Player[], ball: Ball, max = 2): Player[] {
+export interface ClosingSelectOpts {
+  /** Match skip set (user control, set-piece takers, etc.). */
+  skipIds?: Set<string>;
+  /** Sticky presser from last tick — avoid frame-to-frame handoff flicker. */
+  previousId?: string | null;
+  /** Always return a hunter even when everyone is far from the ball. */
+  requireCloser?: boolean;
+}
+
+function canCloseDown(p: Player, skipIds?: Set<string>): boolean {
+  if (p.isGK || p.celebrating || p.sentOff) return false;
+  if (p.sliding || p.slideRecoverTimer > 0) return false;
+  if (skipIds?.has(p.id)) return false;
+  return true;
+}
+
+export function selectClosingPlayers(
+  defenders: Player[],
+  ball: Ball,
+  max = 2,
+  opts?: ClosingSelectOpts,
+): Player[] {
   const pool = defenders
-    .filter((p) => !p.isGK && !p.celebrating)
+    .filter((p) => canCloseDown(p, opts?.skipIds))
     .map((p) => {
       const aw = awareness01(p);
       const ag = aggression01(p);
@@ -73,17 +94,34 @@ export function selectClosingPlayers(defenders: Player[], ball: Ball, max = 2): 
       const score = d * (1.12 - aw * 0.32) - aw * 6 - ag * 4.5 - roleBias + (wingStuckHigh ? 5.5 : 0);
       return { p, d, engage, score };
     });
+  if (!pool.length) return [];
   const ranked = pool.filter((row) => row.d < row.engage).sort((a, b) => a.score - b.score);
   let picked = ranked.slice(0, max).map((row) => row.p);
-  const nearest = [...pool].sort((a, b) => a.d - b.d)[0];
-  if (!picked.length && nearest && nearest.d < 36) return [nearest.p];
-  // If someone is clearly nearer the ball than the role pick, they must lead the chase.
-  if (nearest && nearest.d < 28 && !picked.some((p) => p.id === nearest.p.id)) {
+  const nearest = [...pool].sort((a, b) => a.d - b.d)[0]!;
+  // Live defence / far recovery: always have someone reacting to the ball.
+  if (!picked.length) {
+    if (opts?.requireCloser || nearest.d < 42) return [nearest.p];
+    return [];
+  }
+  // Absolute nearest leads when clearly closer than the role pick.
+  if (!picked.some((p) => p.id === nearest.p.id)) {
     const leadDist = picked[0]?.distTo(ball.x, ball.z) ?? 99;
     if (nearest.d + 1.6 < leadDist) {
       picked = [nearest.p, ...picked].slice(0, max);
     } else if (picked.length < max) {
       picked.push(nearest.p);
+    }
+  }
+  // Hysteresis: keep the previous hunter while still near the lead.
+  const prevId = opts?.previousId ?? null;
+  if (prevId && picked[0]?.id !== prevId) {
+    const prev = pool.find((row) => row.p.id === prevId);
+    if (prev) {
+      const lead = picked[0]!;
+      const leadD = lead.distTo(ball.x, ball.z);
+      if (prev.d <= leadD + 1.45) {
+        picked = [prev.p, ...picked.filter((p) => p.id !== prevId)].slice(0, max);
+      }
     }
   }
   return picked;
@@ -148,13 +186,17 @@ export function coverTarget(
   const d = Math.hypot(ballX - player.x, ballZ - player.z);
   const engage = closeDownRange(player);
   const loose = !!opts?.looseBall;
-  const compact = loose
-    ? d < engage
-      ? 0.1 + aw * 0.12
-      : 0.05 + aw * 0.06
-    : d < engage
-      ? 0.28 + aw * 0.42
-      : 0.12 + aw * 0.14;
+  // Cap ball-magnet so covering players hold formation lines instead of swarming.
+  const compact = Math.min(
+    loose
+      ? d < engage
+        ? 0.1 + aw * 0.12
+        : 0.05 + aw * 0.06
+      : d < engage
+        ? 0.28 + aw * 0.42
+        : 0.12 + aw * 0.14,
+    loose ? 0.22 : 0.48,
+  );
   let x = player.anchorX + (ballX - player.anchorX) * compact;
   // Wide anchors keep channel — ball Z pull was collapsing the block after kick-off.
   const lateral =

@@ -465,7 +465,7 @@ export function mustChaseLoose(
 /** Ranked pursuers for a side — prefer natural defenders, always include nearest. */
 export function designatePursuers(sidePlayers: Player[], ball: Ball, max = 2): Player[] {
   const pool = sidePlayers
-    .filter((p) => !p.isGK && !p.celebrating && !p.sentOff)
+    .filter((p) => !p.isGK && !p.celebrating && !p.sentOff && !p.sliding && p.slideRecoverTimer <= 0)
     .map((p) => {
       const role = classifyFootballRole(p);
       const d = p.distTo(ball.x, ball.z);

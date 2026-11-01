@@ -59,7 +59,7 @@
   },
   {
     "id": "central_park_pitch",
-    "name": "Central Park Pitch",
+    "name": "Central Park",
     "venueType": "COMMUNITY_PITCH",
     "pitchLength": 100,
     "pitchWidth": 64,

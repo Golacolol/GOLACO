@@ -348,38 +348,38 @@ export function shouldAiSlideTackle(opts: {
   if (opts.ballLoose) {
     if (!opts.opponentPassInFlight) return no;
     if (!defensiveRole) return no;
-    if (opts.ballDistance > 3.2 || opts.ballDistance < 0.7) return no;
+    if (opts.ballDistance > 3.6 || opts.ballDistance < 0.55) return no;
     const skill = stat01(opts.tackling);
-    const urge = clamp((2.8 - opts.ballDistance) * 0.22 + skill * 0.12 + aggression * 0.14, 0, 1);
-    if (urge > 0.55 && rng() < 0.1 + skill * 0.08 + aggression * 0.08) return { attempt: true, forBall: true };
+    const urge = clamp((3.1 - opts.ballDistance) * 0.26 + skill * 0.14 + aggression * 0.16, 0, 1);
+    if (urge > 0.42 && rng() < 0.22 + skill * 0.12 + aggression * 0.1) return { attempt: true, forBall: true };
     return no;
   }
 
-  if (opts.distance > SLIDE_COMMIT_RANGE) return no;
+  if (opts.distance > SLIDE_COMMIT_RANGE + 0.35) return no;
   // Prefer the sweet-spot window — don't dive from too far or when already on top.
   const timingQ = slideTimingQuality(opts.distance);
-  if (timingQ < 0.28 && !opts.throughOnGoal) return no;
+  if (timingQ < 0.2 && !opts.throughOnGoal) return no;
 
-  if (opts.fromBehind > 0.42 && !opts.throughOnGoal) return no;
+  if (opts.fromBehind > 0.52 && !opts.throughOnGoal) return no;
   // Through-on-goal: prefer a standing challenge — don't auto-slide every breakaway.
-  if (opts.throughOnGoal && opts.fromBehind > 0.45 && rng() < 0.85) return no;
-  if (opts.fromBehind > 0.62 && opts.throughOnGoal && rng() < 0.9) return no;
+  if (opts.throughOnGoal && opts.fromBehind > 0.55 && rng() < 0.72) return no;
+  if (opts.fromBehind > 0.7 && opts.throughOnGoal && rng() < 0.82) return no;
 
   let urge = 0;
   if (opts.throughOnGoal && opts.distance < 2.8) {
-    urge = 0.14 + (1 - opts.distance / 2.8) * 0.12 + (1 - opts.fromBehind) * 0.05;
-    if (!defensiveRole) urge *= 0.4;
-  } else if (defensiveRole && opts.distance < 1.7 && opts.pressure > 0.68 && opts.possessionTime > 1.15) {
-    urge = 0.1 + opts.pressure * 0.08 + (1.7 - opts.distance) * 0.07 + aggression * 0.08;
+    urge = 0.2 + (1 - opts.distance / 2.8) * 0.16 + (1 - opts.fromBehind) * 0.06;
+    if (!defensiveRole) urge *= 0.45;
+  } else if (defensiveRole && opts.distance < 2.05 && opts.pressure > 0.52 && opts.possessionTime > 0.85) {
+    urge = 0.16 + opts.pressure * 0.12 + (2.05 - opts.distance) * 0.09 + aggression * 0.12;
   } else {
     return no;
   }
 
   // Tackling = technical willingness to complete; aggression = propensity to dive in.
-  urge *= 0.38 + stat01(opts.tackling) * 0.18 + aggression * 0.14;
-  urge *= 0.6 + timingQ * 0.35;
-  if (opts.fromBehind > 0.4) urge *= 0.28;
-  if (rng() > clamp(urge, 0, 0.42)) return no;
+  urge *= 0.48 + stat01(opts.tackling) * 0.22 + aggression * 0.18;
+  urge *= 0.65 + timingQ * 0.4;
+  if (opts.fromBehind > 0.45) urge *= 0.4;
+  if (rng() > clamp(urge, 0, 0.62)) return no;
   return { attempt: true, forBall: false };
 }
 

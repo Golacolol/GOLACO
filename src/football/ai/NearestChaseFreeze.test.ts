@@ -100,4 +100,42 @@ describe("nearest player chase freeze", () => {
     expect(Math.hypot(carrier.vx, carrier.vz)).toBeGreaterThan(0.45);
     expect(carrier.x).toBeGreaterThan(0.15);
   });
+
+  it("skips a sliding nearest man and promotes the next eligible closer", () => {
+    const ball = new Ball();
+    ball.x = 12;
+    ball.z = 0;
+    const sliding = make("slide", 10, 0, "RCM", "away");
+    sliding.sliding = true;
+    const next = make("cb", 6, 2, "RCB", "away");
+    const picked = selectClosingPlayers([sliding, next], ball, 1);
+    expect(picked[0]?.id).toBe("cb");
+  });
+
+  it("always assigns a presser against a live carrier even when far", () => {
+    const ball = new Ball();
+    ball.x = 40;
+    ball.z = 0;
+    const carrier = make("st", 40, 0, "RST", "home");
+    carrier.hasBall = true;
+    ball.ownerId = carrier.id;
+    const farCb = make("cb", -20, 8, "LCB", "away");
+    const cover = make("cb2", -22, -8, "RCB", "away");
+    const result = updateTeamAI([carrier, farCb, cover], "away", ball, "home", 0.05, new Set());
+    expect(result.pressingId).toBe("cb");
+  });
+
+  it("keeps the previous presser sticky unless someone is clearly nearer", () => {
+    const ball = new Ball();
+    ball.x = 10;
+    ball.z = 0;
+    const a = make("a", 7, 1, "RCM", "away");
+    const b = make("b", 6.5, -1, "LCM", "away");
+    const first = selectClosingPlayers([a, b], ball, 1, { previousId: "a" });
+    expect(first[0]?.id).toBe("a");
+    b.x = 9.2;
+    b.z = 0;
+    const handoff = selectClosingPlayers([a, b], ball, 1, { previousId: "a" });
+    expect(handoff[0]?.id).toBe("b");
+  });
 });

@@ -1,8 +1,7 @@
 import * as THREE from "three";
 import {
   CENTRE_CIRCLE_RADIUS,
-  HALF_LENGTH,
-  HALF_WIDTH,
+  CORNER_ARC_RADIUS,
   PENALTY_AREA_LENGTH,
   PENALTY_AREA_WIDTH,
   PENALTY_SPOT,
@@ -49,6 +48,9 @@ export function createPitch(
   grass.name = "grass";
   group.add(grass);
 
+  // Markings follow THIS pitch size — community parks (e.g. Fans XI) are not always 105×68.
+  const halfL = length / 2;
+  const halfW = width / 2;
   const lineMat = new THREE.MeshStandardMaterial({ color: 0xf5f8f2, roughness: 0.45, emissive: 0x222222, emissiveIntensity: 0.08 });
   const addLine = (w: number, d: number, x: number, z: number) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, 0.03, d), lineMat);
@@ -56,10 +58,10 @@ export function createPitch(
     m.receiveShadow = true;
     group.add(m);
   };
-  addLine(length, 0.12, 0, HALF_WIDTH);
-  addLine(length, 0.12, 0, -HALF_WIDTH);
-  addLine(0.12, width, HALF_LENGTH, 0);
-  addLine(0.12, width, -HALF_LENGTH, 0);
+  addLine(length, 0.12, 0, halfW);
+  addLine(length, 0.12, 0, -halfW);
+  addLine(0.12, width, halfL, 0);
+  addLine(0.12, width, -halfL, 0);
   addLine(0.12, width, 0, 0);
 
   const circle = new THREE.Mesh(
@@ -75,30 +77,50 @@ export function createPitch(
   group.add(spot);
 
   const addBox = (dir: number) => {
-    const x = dir * (HALF_LENGTH - PENALTY_AREA_LENGTH / 2);
+    const x = dir * (halfL - PENALTY_AREA_LENGTH / 2);
     addLine(PENALTY_AREA_LENGTH, 0.12, x, PENALTY_AREA_WIDTH / 2);
     addLine(PENALTY_AREA_LENGTH, 0.12, x, -PENALTY_AREA_WIDTH / 2);
-    addLine(0.12, PENALTY_AREA_WIDTH, dir * (HALF_LENGTH - PENALTY_AREA_LENGTH), 0);
-    const sx = dir * (HALF_LENGTH - SIX_YARD_LENGTH / 2);
+    addLine(0.12, PENALTY_AREA_WIDTH, dir * (halfL - PENALTY_AREA_LENGTH), 0);
+    const sx = dir * (halfL - SIX_YARD_LENGTH / 2);
     addLine(SIX_YARD_LENGTH, 0.12, sx, SIX_YARD_WIDTH / 2);
     addLine(SIX_YARD_LENGTH, 0.12, sx, -SIX_YARD_WIDTH / 2);
-    addLine(0.12, SIX_YARD_WIDTH, dir * (HALF_LENGTH - SIX_YARD_LENGTH), 0);
+    addLine(0.12, SIX_YARD_WIDTH, dir * (halfL - SIX_YARD_LENGTH), 0);
     const p = new THREE.Mesh(new THREE.CircleGeometry(0.16, 12), lineMat);
     p.rotation.x = -Math.PI / 2;
-    p.position.set(dir * (HALF_LENGTH - PENALTY_SPOT), 0.03, 0);
+    p.position.set(dir * (halfL - PENALTY_SPOT), 0.03, 0);
     group.add(p);
     const sweep = penaltyArcSweep(dir);
+    // Penalty arcs stay on the FIFA geometry (HALF_LENGTH); for short parks, scale to halfL.
+    const spotX = dir * (halfL - PENALTY_SPOT);
     const arc = new THREE.Mesh(
       new THREE.RingGeometry(ARC_R - LINE / 2, ARC_R + LINE / 2, 48, 1, sweep.thetaStart, sweep.thetaLength),
       lineMat,
     );
     arc.rotation.x = -Math.PI / 2;
-    arc.position.set(dir * (HALF_LENGTH - PENALTY_SPOT), 0.04, 0);
+    arc.position.set(spotX, 0.04, 0);
     arc.name = dir > 0 ? "penalty-arc-plus" : "penalty-arc-minus";
     group.add(arc);
   };
   addBox(1);
   addBox(-1);
+
+  // Corner quarter-circles — were missing entirely (especially obvious on park pitches).
+  const cornerR = CORNER_ARC_RADIUS;
+  const addCorner = (cx: number, cz: number, thetaStart: number) => {
+    const arc = new THREE.Mesh(
+      new THREE.RingGeometry(cornerR - LINE / 2, cornerR + LINE / 2, 24, 1, thetaStart, Math.PI / 2),
+      lineMat,
+    );
+    arc.rotation.x = -Math.PI / 2;
+    arc.position.set(cx, 0.035, cz);
+    arc.name = "corner-arc";
+    group.add(arc);
+  };
+  // θ=0 is +X on RingGeometry; arcs open onto the pitch from each corner flag.
+  addCorner(halfL, halfW, Math.PI);
+  addCorner(halfL, -halfW, Math.PI / 2);
+  addCorner(-halfL, halfW, -Math.PI / 2);
+  addCorner(-halfL, -halfW, 0);
 
   const surround = new THREE.Mesh(
     new THREE.PlaneGeometry(surroundLen, surroundWid),

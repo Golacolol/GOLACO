@@ -14,6 +14,7 @@ import {
   keeperHandReleaseVector,
   keeperOutletAimPoint,
   keeperPassDelivery,
+  keeperPuntAim,
   keeperRestartReady,
   keeperDiveReach,
   keeperSaveKind,
@@ -340,6 +341,15 @@ describe("goalkeeper distribution", () => {
       expect(decided.x).toBeGreaterThan(keeper.x + 40);
       expect(Math.abs(decided.z)).toBeGreaterThan(8);
     }
+  });
+
+  it("aims long clearances toward a free teammate when one is available", () => {
+    const keeper = gk("home");
+    const st = outfield("st", "home", -HALF_LENGTH + 48, 10, "RST");
+    const aim = keeperPuntAim(keeper, [keeper, st], () => 0.5, []);
+    expect(aim.targetId).toBe("st");
+    expect(aim.x).toBeGreaterThan(keeper.x + 20);
+    expect(Math.abs(aim.z - st.z)).toBeLessThan(14);
   });
 
   it("does not return the ball to the defender who just passed it in", () => {

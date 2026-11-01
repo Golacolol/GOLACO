@@ -226,6 +226,9 @@ export class Match {
   userSide: "home" | "away";
   possessing: Player | null = null;
   pressingId: string | null = null;
+  /** Per-side sticky presser for TeamAI hysteresis. */
+  homePressingId: string | null = null;
+  awayPressingId: string | null = null;
   lastGoal: GoalEvent | null = null;
   goals: GoalEvent[] = [];
   kickOffTime: string;
@@ -1058,6 +1061,7 @@ export class Match {
       drainMul: this.tuning.staminaDrainMultiplier,
       matchDrainScale: staminaMatchDrainScale(this.clock.duration),
       playStyle: this.homePlayStyle ?? undefined,
+      previousPressingId: this.homePressingId,
     });
     const awayAI = updateTeamAI(this.allPlayers(), "away", this.ball, homePoss, dt, awaySkip, {
       tuning: this.tuning,
@@ -1074,8 +1078,11 @@ export class Match {
       drainMul: this.tuning.staminaDrainMultiplier,
       matchDrainScale: staminaMatchDrainScale(this.clock.duration),
       playStyle: this.awayPlayStyle ?? undefined,
+      previousPressingId: this.awayPressingId,
     });
     this.sampleFidelityMetrics(dt, homePoss);
+    this.homePressingId = homeAI.pressingId;
+    this.awayPressingId = awayAI.pressingId;
     this.pressingId =
       primaryPresser?.id ??
       secondaryPresser?.id ??
@@ -1290,8 +1297,10 @@ export class Match {
     // Single ball-actor: a kick/header already claimed this frame, or ball still ripping.
     if (this.ballActor.resolved || this.ballActor.ballBusy(this.ball, this.ball.ownerId)) return;
     const speed = Math.hypot(this.ball.vx, this.ball.vz);
-    if (speed > 14 && this.ball.y > 1.85) return;
-    const aerial = isAerialBall(this.ball, this.incomingAerial);
+    const aerialEarly = isAerialBall(this.ball, this.incomingAerial);
+    // Flat lasers can skip collect — lofted corners / crosses must still enter aerial contests.
+    if (speed > 16 && this.ball.y < 1.35 && !aerialEarly) return;
+    const aerial = aerialEarly;
     const challengers = this.aerialChallengers();
     // Cue jump poses for anyone contesting the flight.
     if (aerial && challengers.length) {
@@ -1324,7 +1333,7 @@ export class Match {
     const designated = !!this.passTargetId && contest.id === this.passTargetId;
     const yCap = aerial ? Math.min(3.35, 1.55 + heightM * 0.85) : Math.min(1.72, 0.55 + heightM * 0.55);
     const speedCap = aerial
-      ? 14 + (contest.attrs.jumping ?? contest.attrs.heading ?? 50) * 0.045
+      ? 22 + (contest.attrs.jumping ?? contest.attrs.heading ?? 50) * 0.06
       : (designated ? 13.5 : 10) + contest.attrs.control * 0.06;
     const { reach } = aerial
       ? aerialContestReach(contest, speed)
@@ -2317,9 +2326,10 @@ export class Match {
     });
     if (decided.action === "wait") return;
     if (decided.action === "pass") {
-      const dir = normalize2(decided.target.x - gk.x, decided.target.z - gk.z);
+      const aim = keeperOutletAimPoint(decided.target);
+      const dir = normalize2(aim.x - gk.x, aim.z - gk.z);
       gk.facing = Math.atan2(dir.x, dir.z);
-      const dist = gk.distTo(decided.target.x, decided.target.z);
+      const dist = gk.distTo(aim.x, aim.z);
       if (decided.delivery === "roll" || decided.delivery === "throw") {
         this.executeKeeperHandRelease(gk, decided.target, decided.delivery);
         return;
@@ -2340,6 +2350,8 @@ export class Match {
         shootHold: 0,
       } as InputIntent;
       this.executePass(gk, decided.target, fake, passType, dir);
+      this.passTargetId = decided.target.id;
+      this.longPassLanding = { x: aim.x, z: aim.z };
       gk.handRelease = false;
       gk.kickTimer = 0.95;
       return;
@@ -2359,6 +2371,7 @@ export class Match {
     this.ballState = "loose";
     this.incomingAerial = true;
     this.longPassLanding = { x: decided.x, z: decided.z };
+    this.passTargetId = decided.targetId ?? null;
     this.stats.longPasses += 1;
     this.pendingPassFrom = gk.id;
     void dt;
@@ -3070,6 +3083,8 @@ export class Match {
     }
     if (this.preferredPlayerId === player.id) this.preferredPlayerId = this.controlled.id;
     if (this.pressingId === player.id) this.pressingId = null;
+    if (this.homePressingId === player.id) this.homePressingId = null;
+    if (this.awayPressingId === player.id) this.awayPressingId = null;
   }
 
   private handleInterceptions(): void {
@@ -3917,14 +3932,16 @@ export class Match {
     this.toast("GOAL KICK");
   }
 
-  /** Corner plant: just inside the arc, facing the box. */
+  /** Corner plant: just outside the flag, facing into the box. */
   private cornerPlantPose(taker: Player, spot: { x: number; z: number }): { x: number; z: number; facing: number } {
     const takingDir = taker.side === "home" ? (this.endsFlipped ? -1 : 1) : this.endsFlipped ? 1 : -1;
     const zSign = Math.sign(spot.z || 1) || 1;
-    const x = spot.x - Math.sign(spot.x || takingDir) * 0.7;
-    const z = spot.z - zSign * 0.55;
+    const xSign = Math.sign(spot.x || takingDir) || 1;
+    const x = spot.x + xSign * 0.95;
+    const z = spot.z + zSign * 0.95;
     const boxX = takingDir * (HALF_LENGTH - 11);
-    return { x, z, facing: Math.atan2(boxX - x, 0 - z) };
+    const aimZ = zSign * 4.5;
+    return { x, z, facing: Math.atan2(boxX - x, aimZ - z) };
   }
 
   /**
@@ -4221,16 +4238,18 @@ export class Match {
         this.ball.reset(spot.x, spot.z);
         this.ball.ownerId = taker.id;
       } else if (corner && spot) {
-        // Plant on the arc facing the box — never dribble before the kick.
+        // Plant just outside the flag, facing into the box — never behind the ball on-pitch.
         const takingDir = taker.side === "home" ? (this.endsFlipped ? -1 : 1) : this.endsFlipped ? 1 : -1;
         const boxX = takingDir * (HALF_LENGTH - 11);
-        const zSign = Math.sign(spot.z || 1);
+        const zSign = Math.sign(spot.z || 1) || 1;
+        const xSign = Math.sign(spot.x || takingDir) || 1;
         if (!userTake) {
-          taker.x = spot.x - Math.sign(spot.x || takingDir) * 0.7;
-          taker.z = spot.z - zSign * 0.55;
+          taker.x = spot.x + xSign * 0.95;
+          taker.z = spot.z + zSign * 0.95;
           taker.vx = 0;
           taker.vz = 0;
-          taker.facing = Math.atan2(boxX - taker.x, 0 - taker.z);
+          const aimZ = zSign * 4.5;
+          taker.facing = Math.atan2(boxX - taker.x, aimZ - taker.z);
         } else {
           controlPlayer(taker, intent, dt, 0, moveEx);
           const dist = Math.hypot(taker.x - spot.x, taker.z - spot.z);
@@ -4408,7 +4427,8 @@ export class Match {
       const speed = Math.hypot(kick.vx, kick.vz);
       const need = clamp(reach / 1.35, 22, 34);
       const scale = speed > 0.1 ? need / speed : 1.35;
-      kickBall(this.ball, kick.vx * scale, kick.vz * scale, Math.max(kick.vy * 1.12, 5.6));
+      // Hang the delivery for headers — flat corners skipped the aerial contest window.
+      kickBall(this.ball, kick.vx * scale, kick.vz * scale, Math.max(kick.vy * 1.28, 6.6));
       this.stats.crosses += 1;
       this.incomingAerial = true;
       this.longPassLanding = { x: tx, z: tz };
@@ -4422,7 +4442,7 @@ export class Match {
         endsFlipped: this.endsFlipped,
         phase: "delivery",
         landing: { x: tx, z: tz },
-        t: 2.55,
+        t: 3.35,
       };
     } else if (kind === FootballState.FREE_KICK) {
       const userTake = !this.autoplay && taker.id === this.controlled.id;

@@ -75,4 +75,14 @@ describe("defensive cover shape", () => {
     coverTarget(other, 0, 0, [runner], { markedIds: marked });
     expect(marked.size).toBe(before);
   });
+
+  it("caps cover ball-magnet so the block does not fully collapse onto the ball", () => {
+    const cm = make("cm", -8, 10, "LCM");
+    cm.anchorX = -10;
+    cm.anchorZ = 12;
+    const cover = coverTarget(cm, 20, 0, []);
+    // Still shifts toward the ball, but keeps a meaningful share of the channel anchor.
+    expect(cover.z).toBeGreaterThan(5);
+    expect(cover.x).toBeLessThan(8);
+  });
 });

@@ -74,15 +74,16 @@ export function applyLighting(scene: THREE.Scene, stadium: StadiumRecord, env: E
       group.add(light);
       group.add(light.target);
     }
-  } else if ((stadium.standConfiguration === "one" || stadium.environment === "park") && (evening || night)) {
-    addParkLighting(group, night);
+  } else if (stadium.standConfiguration === "one" || stadium.environment === "park") {
+    // Fans / community parks: always wash the pitch a bit brighter (day included).
+    addParkLighting(group, night, evening, env.timeOfDay === "DAY");
   }
   return group;
 }
 
-/** Soft community flood wash for Central Park evening/night — not full pro banks. */
-function addParkLighting(group: THREE.Group, night: boolean): void {
-  const strength = night ? 1.15 : 0.72;
+/** Soft community flood wash for Central Park — day boost + evening/night fill. */
+function addParkLighting(group: THREE.Group, night: boolean, evening: boolean, day: boolean): void {
+  const strength = night ? 1.45 : evening ? 1.05 : day ? 0.55 : 0.72;
   const standZ = -HALF_WIDTH - ONE_STAND_CROWD_INSET;
   const beams: { pos: [number, number, number]; aim: [number, number, number]; mul?: number }[] = [
     { pos: [-32, 12.2, standZ - 0.2], aim: [-18, 0, -8], mul: 1.1 },
@@ -98,7 +99,11 @@ function addParkLighting(group: THREE.Group, night: boolean): void {
     group.add(light);
     group.add(light.target);
   }
-  const glow = new THREE.PointLight(0xffe6b0, night ? 0.55 : 0.32, 70, 2);
+  const glow = new THREE.PointLight(0xffe6b0, night ? 0.72 : evening ? 0.48 : day ? 0.28 : 0.32, 80, 2);
   glow.position.set(0, 9, standZ + 2);
   group.add(glow);
+  if (day || evening) {
+    const fill = new THREE.HemisphereLight(0xfff6e0, 0x2a4a32, day ? 0.28 : 0.22);
+    group.add(fill);
+  }
 }

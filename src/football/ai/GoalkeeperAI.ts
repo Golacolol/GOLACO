@@ -40,8 +40,8 @@ export interface KeeperTargetOpts {
 /** Dive stretch in metres from diving / reflexes (SWOS-style reach table). */
 export function keeperDiveReach(diving: number, reflexes: number, diveReachMul = 1): number {
   // Elite keepers stretch further — cubic-ish bonus so 80+ gloves pull clear of average.
-  const elite = Math.max(0, (diving + reflexes) * 0.5 - 0.62);
-  const base = diving * 1.72 + reflexes * 0.95 + diving * reflexes * 0.55 + elite * elite * 2.4;
+  const elite = Math.max(0, (diving + reflexes) * 0.5 - 0.58);
+  const base = diving * 1.9 + reflexes * 1.05 + diving * reflexes * 0.6 + elite * elite * 2.6;
   return base * clamp(diveReachMul, 0.7, 1.55);
 }
 
@@ -194,11 +194,12 @@ export function goalkeeperTarget(gk: Player, ball: Ball, reactionMul = 1, opts?:
     (opponentBall || (loose && ball.lastTouchSide !== gk.side && towardGoal)) &&
     ballDepth > 2.5 &&
     ballDepth < 44 &&
-    Math.abs(readZ) < 15 &&
-    distBall < 40;
+    Math.abs(readZ) < 24 &&
+    distBall < 42;
   if (throughThreat) {
     const clearRun = ballDepth > 22 && speed > 4.5 && Math.abs(readZ) < 10;
-    const closeMix = inBox ? 0.78 : clearRun ? 0.58 : 0.48;
+    const wideByline = Math.abs(readZ) > 10;
+    const closeMix = inBox ? (wideByline ? 0.62 : 0.78) : clearRun ? 0.58 : 0.48;
     let x = readX * closeMix + goalX * (1 - closeMix);
     // Never leave the box unless a clear long through-ball forces it.
     if (!clearRun || ballDepth < 28) x = clampBoxX(x);
@@ -206,30 +207,32 @@ export function goalkeeperTarget(gk: Player, ball: Ball, reactionMul = 1, opts?:
       const softEdge = goalX < 0 ? boxEdge + 3.5 : boxEdge - 3.5;
       x = goalX < boxEdge ? clamp(x, goalX, softEdge) : clamp(x, softEdge, goalX);
     }
-    const rushDepth = clamp((x - goalX) * gk.attackSign, 1.4, 9.5);
+    // Wide/byline threats: step further out to shrink the near-post window.
+    const rushDepth = clamp((x - goalX) * gk.attackSign + (wideByline ? 1.4 : 0), 1.4, 9.5);
     const cover = keeperAngleStand(readX, readZ, goalX, gk.attackSign, rushDepth);
     const wide = Math.abs(readZ) > 8;
-    const zMix = wide ? 0.32 : 0.58;
+    const zMix = wide ? 0.48 : 0.58;
     return {
       x,
-      z: clamp(readZ * zMix + cover.z * (1 - zMix), -GOAL_WIDTH / 2 - 1.4, GOAL_WIDTH / 2 + 1.4),
-      rush: inBox && (speed > 5 || ballDepth < 16 || loose) && Math.abs(readZ) < 12,
+      z: clamp(readZ * zMix + cover.z * (1 - zMix), -GOAL_WIDTH / 2 - (wide ? 2.4 : 1.4), GOAL_WIDTH / 2 + (wide ? 2.4 : 1.4)),
+      rush: inBox && (speed > 5 || ballDepth < 16 || loose) && Math.abs(readZ) < 14,
     };
   }
 
   // Loose / contested ball in the box: claim it — come off the line hard.
   if (inSix || (inBox && (loose || opponentBall) && !teammateTouch)) {
     const commit = inSix || loose || opponentBall || speed > 4.5;
-    const mix = commit ? (inSix ? 0.95 : loose ? 0.88 : 0.8) : 0.58;
-    const x = (loose ? ball.x : readX) * mix + goalX * (1 - mix);
     const wide = Math.abs(ball.z) > 9;
-    const cover = keeperAngleStand(ball.x, ball.z, goalX, gk.attackSign, clamp((x - goalX) * gk.attackSign, 1, 9));
-    const ballZMix = wide ? (commit ? 0.42 : 0.22) : commit ? 0.72 : 0.42;
+    const mix = commit ? (inSix ? 0.95 : loose ? 0.88 : wide ? 0.58 : 0.8) : 0.58;
+    const x = (loose ? ball.x : readX) * mix + goalX * (1 - mix);
+    const coverDepth = clamp((x - goalX) * gk.attackSign + (wide ? 1.8 : 0), 1.2, 9);
+    const cover = keeperAngleStand(ball.x, ball.z, goalX, gk.attackSign, coverDepth);
+    const ballZMix = wide ? (commit ? 0.55 : 0.38) : commit ? 0.72 : 0.42;
     const z = ball.z * ballZMix + cover.z * (1 - ballZMix);
     return {
       x: clampBoxX(x),
-      z: clamp(z, -GOAL_WIDTH / 2 - (wide ? 1.1 : 2.8), GOAL_WIDTH / 2 + (wide ? 1.1 : 2.8)),
-      rush: commit && Math.abs(ball.z) < 14,
+      z: clamp(z, -GOAL_WIDTH / 2 - (wide ? 2.6 : 2.8), GOAL_WIDTH / 2 + (wide ? 2.6 : 2.8)),
+      rush: commit && Math.abs(ball.z) < 16,
     };
   }
 
@@ -244,11 +247,13 @@ export function goalkeeperTarget(gk: Player, ball: Ball, reactionMul = 1, opts?:
   }
 
   if (inBox) {
-    const soft = keeperAngleStand(readX, readZ, goalX, gk.attackSign, 2.6 + positioning * 1.1);
+    const wide = Math.abs(readZ) > 8;
+    // Cut the angle off the line — do not park on the posts for wide box carriers.
+    const soft = keeperAngleStand(readX, readZ, goalX, gk.attackSign, (wide ? 4.2 : 3.1) + positioning * 1.3);
     return {
-      x: clampBoxX(readX * 0.35 + soft.x * 0.65),
-      z: clamp(soft.z, -GOAL_WIDTH / 2 + 0.2, GOAL_WIDTH / 2 - 0.2),
-      rush: opponentBall && distBall < 12,
+      x: clampBoxX(readX * (wide ? 0.22 : 0.35) + soft.x * (wide ? 0.78 : 0.65)),
+      z: clamp(soft.z, -GOAL_WIDTH / 2 - (wide ? 2.2 : 0.35), GOAL_WIDTH / 2 + (wide ? 2.2 : 0.35)),
+      rush: opponentBall && distBall < 14,
     };
   }
 
@@ -264,7 +269,7 @@ const OUTLET_MAX_DIST = 46;
 export type KeeperDistAction =
   | { action: "wait" }
   | { action: "pass"; target: Player; delivery: "throw" | "roll" | "kick" }
-  | { action: "punt"; x: number; z: number };
+  | { action: "punt"; x: number; z: number; targetId?: string };
 
 /** How the keeper should release a claimed ball to an outlet. */
 export function keeperPassDelivery(dist: number, pressure: number): "throw" | "roll" | "kick" {
@@ -278,6 +283,8 @@ export function isDefensiveOutlet(player: Player): boolean {
   const s = player.slot;
   if (s.includes("CB") || s === "LB" || s === "RB" || s === "LWB" || s === "RWB") return true;
   if (s === "LW" || s === "RW") return true;
+  // Holding mids are valid short outlets when the back line is closed.
+  if (s.includes("DM") || (s.includes("CM") && !s.includes("CAM") && !s.includes("AM"))) return true;
   return false;
 }
 
@@ -306,40 +313,55 @@ function crowding(player: Player, teammates: Player[]): number {
 export function chooseKeeperOutlet(gk: Player, teammates: Player[], opponents: Player[], skipIds: string[] = []): Player | null {
   const fwd = gk.attackSign;
   const skip = new Set(skipIds);
-  let best: Player | null = null;
-  let bestScore = -Infinity;
-  for (const mate of teammates) {
-    if (mate.id === gk.id || !isDefensiveOutlet(mate)) continue;
-    if (skip.has(mate.id)) continue;
+  const scoreOutlet = (mate: Player, soft: boolean): number | null => {
     const dx = mate.x - gk.x;
     const dz = mate.z - gk.z;
     const dist = Math.hypot(dx, dz);
-    if (dist < OUTLET_MIN_DIST || dist > OUTLET_MAX_DIST) continue;
+    if (dist < OUTLET_MIN_DIST || dist > OUTLET_MAX_DIST) return null;
     const forward = dx * fwd;
     // Allow slightly deeper square outlets to full-backs; never recycle into the six.
-    if (forward < (isFullBackOutlet(mate) ? 3.5 : 6)) continue;
+    if (forward < (isFullBackOutlet(mate) ? 3.5 : soft ? 4 : 6)) return null;
     const lane = passingLaneQuality(gk, mate.x, mate.z, opponents);
-    if (lane < 0.28) continue;
+    if (lane < (soft ? 0.16 : 0.28)) return null;
     let marked = 12;
     for (const op of opponents) {
       if (op.isGK) continue;
       marked = Math.min(marked, mate.distTo(op.x, op.z));
     }
-    if (marked < 2.8) continue;
+    if (marked < (soft ? 2.05 : 2.8)) return null;
     const crowd = crowding(mate, teammates);
-    if (crowd >= 2 && !isFullBackOutlet(mate)) continue;
-    if (crowd >= 3) continue;
+    if (!soft && crowd >= 2 && !isFullBackOutlet(mate)) return null;
+    if (crowd >= 3) return null;
     // Prefer FBs, but not when they hug the touchline — those releases go out constantly.
     const tooWide = Math.abs(mate.z) > HALF_WIDTH - TOUCHLINE_SAFE_MARGIN - 1;
-    const fb = isFullBackOutlet(mate) ? (tooWide ? 0.18 : 0.7) : mate.slot.includes("CB") ? 0.28 : 0.2;
+    const role =
+      isFullBackOutlet(mate) ? (tooWide ? 0.18 : 0.7)
+      : mate.slot.includes("CB") ? 0.28
+      : mate.slot.includes("DM") || mate.slot.includes("CM") ? 0.22
+      : 0.12;
     const wideLane = Math.abs(mate.z) > 10 && Math.abs(mate.z) < HALF_WIDTH - 10 ? 0.18 : -0.12;
     const touchlineRisk = Math.max(0, Math.abs(mate.z) - (HALF_WIDTH - 8)) * 0.45;
-    const score =
-      marked * 0.62 + lane * 1.15 + fb + wideLane - crowd * 0.55 + clamp(dist / 28, 0, 1) * 0.12 - touchlineRisk;
-    if (score > bestScore) {
-      bestScore = score;
-      best = mate;
-    }
+    return marked * 0.62 + lane * 1.15 + role + wideLane - crowd * 0.55 + clamp(dist / 28, 0, 1) * 0.12 - touchlineRisk;
+  };
+
+  let best: Player | null = null;
+  let bestScore = -Infinity;
+  for (const mate of teammates) {
+    if (mate.id === gk.id || !isDefensiveOutlet(mate) || skip.has(mate.id)) continue;
+    const score = scoreOutlet(mate, false);
+    if (score == null || score <= bestScore) continue;
+    bestScore = score;
+    best = mate;
+  }
+  if (best) return best;
+
+  // Soft fallback: still aim at a free teammate rather than an empty punt.
+  for (const mate of teammates) {
+    if (mate.id === gk.id || mate.isGK || skip.has(mate.id)) continue;
+    const score = scoreOutlet(mate, true);
+    if (score == null || score <= bestScore) continue;
+    bestScore = score;
+    best = mate;
   }
   return best;
 }
@@ -387,11 +409,50 @@ export function keeperHandReleaseVector(
 }
 
 /**
- * Safer long clearance: aim into a wide channel, not the crowded centre.
+ * Safer long clearance: prefer the freest teammate upfield so the kick is contested,
+ * not dumped into empty space for the opposition. Fallback is a wide channel.
  * Real hands-punts typically land ~35–50 m upfield (rarely past halfway from the six).
  */
-export function keeperPuntAim(gk: Player, teammates: Player[], rng: () => number): { x: number; z: number } {
+export function keeperPuntAim(
+  gk: Player,
+  teammates: Player[],
+  rng: () => number,
+  opponents: Player[] = [],
+): { x: number; z: number; targetId?: string } {
   const fwd = gk.attackSign;
+  let best: Player | null = null;
+  let bestScore = -Infinity;
+  for (const mate of teammates) {
+    if (mate.id === gk.id || mate.isGK) continue;
+    const dx = mate.x - gk.x;
+    const dist = Math.hypot(dx, mate.z - gk.z);
+    const forward = dx * fwd;
+    if (forward < 16 || dist < 22 || dist > 58) continue;
+    let marked = 14;
+    for (const op of opponents) {
+      if (op.isGK) continue;
+      marked = Math.min(marked, mate.distTo(op.x, op.z));
+    }
+    const lane = opponents.length ? passingLaneQuality(gk, mate.x, mate.z, opponents) : 0.7;
+    const role =
+      isStrikerOutlet(mate) ? 0.55
+      : isFullBackOutlet(mate) ? 0.35
+      : mate.slot.includes("CM") || mate.slot.includes("AM") ? 0.4
+      : 0.2;
+    const score = marked * 0.55 + lane * 0.9 + role + clamp(forward / 40, 0, 1) * 0.25;
+    if (score > bestScore) {
+      bestScore = score;
+      best = mate;
+    }
+  }
+  if (best) {
+    const aim = keeperOutletAimPoint(best);
+    return {
+      x: clamp(aim.x, -HALF_LENGTH + 14, HALF_LENGTH - 14),
+      z: clampInboundZ(aim.z, 8),
+      targetId: best.id,
+    };
+  }
   const fb = teammates.find((p) => isFullBackOutlet(p) && p.id !== gk.id);
   const wideZ = fb
     ? Math.sign(fb.z || 1) * Math.min(18, Math.max(12, Math.abs(fb.z) * 0.55))
@@ -512,10 +573,10 @@ export function decideKeeperDistribution(opts: {
   const outlet = chooseKeeperOutlet(gk, teammates, opponents, skipIds);
   const rng = opts.rng ?? Math.random;
   // Prefer a short/build-up pass. Punt only under heavy pressure or when forced by the clock.
-  const puntChance = clamp(0.08 + pressure * 0.22 + (outlet ? 0 : 0.35), 0.08, 0.55);
+  const puntChance = clamp(0.05 + pressure * 0.18 + (outlet ? 0 : 0.28), 0.05, 0.48);
   const wantPunt = rng() < puntChance;
-  const puntAim = keeperPuntAim(gk, teammates, rng);
-  const punt = { action: "punt" as const, x: puntAim.x, z: puntAim.z };
+  const puntAim = keeperPuntAim(gk, teammates, rng, opponents);
+  const punt = { action: "punt" as const, x: puntAim.x, z: puntAim.z, targetId: puntAim.targetId };
 
   if (possessionTime < min) return { action: "wait" };
   if (!ready && possessionTime < KEEPER_DISTRIBUTE_MAX) return { action: "wait" };
@@ -652,10 +713,10 @@ export function updateGoalkeeper(
 
   // Dive laterally toward the flight when the ball is outside the body.
   const lateral = predZ - gk.z;
-  if (shotThreat && Math.abs(lateral) > 0.35) {
-    const step = Math.min(Math.abs(lateral), diveReach * (0.68 + reflexes * 0.18)) * Math.sign(lateral);
-    gk.z += step * clamp(0.62 + diving * 0.38 + reflexes * 0.22, 0.55, 1.15);
-    startDive(gk, Math.sign(lateral) || 1, DIVE_DURATION_FULL * (0.78 + diving * 0.16 + reflexes * 0.08));
+  if ((shotThreat || speed > 10) && Math.abs(lateral) > 0.28) {
+    const step = Math.min(Math.abs(lateral), diveReach * (0.75 + reflexes * 0.2)) * Math.sign(lateral);
+    gk.z += step * clamp(0.68 + diving * 0.4 + reflexes * 0.24, 0.55, 1.2);
+    startDive(gk, Math.sign(lateral) || 1, DIVE_DURATION_FULL * (0.82 + diving * 0.18 + reflexes * 0.1));
   }
 
   const punch = preferKeeperPunch({
