@@ -209,7 +209,7 @@ export class MainMenu {
                 }
               </span>
             </div>
-            <div class="menu-fixture menu-fixture-labeled">
+            <div class="menu-fixture menu-fixture-labeled lighting-fixture">
               <span class="meta fixture-section-label">Lighting</span>
               <span class="tod-row">
                 ${tod("DAY", "DAY")}
@@ -217,6 +217,9 @@ export class MainMenu {
                 ${tod("EVENING", "EVENING")}
                 <span class="vs">·</span>
                 ${tod("NIGHT", "NIGHT")}
+              </span>
+              <span class="lighting-half-row">
+                ${halfSpinHtml(this.matchDuration)}
               </span>
             </div>
             <div class="menu-fixture fixture-match">
@@ -242,7 +245,6 @@ export class MainMenu {
                 <span class="team-dial-field opposition-dial-field">
                   ${oppositionSpinHtml(this.oppositionOptions, this.oppositionIndex)}
                 </span>
-                ${halfSpinHtml(this.matchDuration)}
               </div>
             </div>
           </div>

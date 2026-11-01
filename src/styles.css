@@ -778,9 +778,9 @@ html.club-name-glow-off .club-line {
   opacity: 0.12;
 }
 .fixture-match .opposition-dial-field {
-  flex: 0 1 11.5rem;
+  flex: 1 1 16rem;
   min-width: 0;
-  max-width: 11.5rem;
+  max-width: 18rem;
   width: auto;
   align-self: center;
   align-items: stretch;
@@ -796,6 +796,20 @@ html.club-name-glow-off .club-line {
 .fixture-match .opposition-spin .spin-ghost {
   font-size: 10px;
 }
+.lighting-fixture {
+  gap: 8px;
+}
+.lighting-half-row {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+.lighting-half-row .duration-spin.time-spin {
+  align-self: center;
+}
 @media (max-width: 640px) {
   .team-dials,
   .team-dials.has-era {
@@ -806,7 +820,7 @@ html.club-name-glow-off .club-line {
     flex-wrap: wrap;
   }
   .fixture-match .opposition-dial-field {
-    flex: 1 1 8rem;
+    flex: 1 1 10rem;
     max-width: none;
   }
 }
@@ -898,7 +912,7 @@ html.club-name-glow-off .club-line {
   width: 100%;
 }
 .menu-hero-stack > .menu-fixture.fixture-match {
-  /* Teams + detail line beside a vertically centred half-length dial. */
+  /* Teams + detail line beside a vertically centred opposition dial. */
   height: auto;
   min-height: var(--menu-fixture-height);
   max-height: none;
@@ -908,7 +922,7 @@ html.club-name-glow-off .club-line {
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: flex-start;
-  align-items: center; /* opposition + half-length sit on the panel mid-line */
+  align-items: center; /* opposition dial sits on the panel mid-line */
   gap: 10px;
   padding: 6px 10px 6px 12px;
   overflow: hidden;
@@ -1064,17 +1078,16 @@ html.club-name-glow-off .club-line {
   line-height: 1;
   background: transparent;
 }
-.fixture-match-dials > .duration-spin.time-spin,
-.fixture-match > .duration-spin.time-spin {
+.lighting-half-row > .duration-spin.time-spin {
   flex: 0 0 auto;
   align-self: center;
 }
-.fixture-match > .duration-spin .spin-ghost {
+.lighting-half-row .duration-spin .spin-ghost {
   font-size: 10px;
   line-height: 1;
   opacity: 0.34;
 }
-.fixture-match > .duration-spin strong {
+.lighting-half-row .duration-spin strong {
   display: block;
   width: 100%;
   text-align: center;

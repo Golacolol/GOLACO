@@ -74,14 +74,19 @@ describe("MainMenu LEAGUE mode button", () => {
     const labels = [...menu.root.querySelectorAll(".fixture-section-label")].map((el) => el.textContent);
     expect(labels).toEqual(["Gameplay", "Lighting"]);
     expect(menu.root.querySelector(".fixture-match [data-opposition-spin]")).toBeTruthy();
-    expect(menu.root.querySelector(".fixture-match-dials [data-half-spin]")).toBeTruthy();
+    expect(menu.root.querySelector(".lighting-fixture .lighting-half-row [data-half-spin]")).toBeTruthy();
+    expect(menu.root.querySelector(".fixture-match [data-half-spin]")).toBeNull();
     expect(menu.root.querySelector(".fixture-teams-row [data-half-spin]")).toBeNull();
+    const lightingKids = [...menu.root.querySelector(".lighting-fixture")!.children].map((el) => el.className);
+    expect(lightingKids[0]).toContain("fixture-section-label");
+    expect(lightingKids[1]).toContain("tod-row");
+    expect(lightingKids[2]).toContain("lighting-half-row");
     const matchKids = [...menu.root.querySelector(".fixture-match")!.children];
     expect(matchKids[0]?.classList.contains("fixture-match-main")).toBe(true);
     expect(matchKids[1]?.classList.contains("fixture-match-dials")).toBe(true);
     const dialKids = [...menu.root.querySelector(".fixture-match-dials")!.children];
+    expect(dialKids).toHaveLength(1);
     expect(dialKids[0]?.classList.contains("opposition-dial-field")).toBe(true);
-    expect(dialKids[1]?.hasAttribute("data-half-spin")).toBe(true);
     expect(menu.root.querySelector(".fixture-detail-row .meta")?.textContent).toContain("League One");
   });
 
