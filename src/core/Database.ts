@@ -90,6 +90,10 @@ export class GameDatabase {
     db.applyArgyle101();
     db.applyClassicTeams();
     db.applySave(save);
+    // Re-assert Argyle classic/fans display names after save — old saves used
+    // "101" / "FANSXI" (and variants) that forked the Classics Club dial.
+    db.applyArgyleFansXi();
+    db.applyArgyle101();
     await db.applyAssetPack();
     return db;
   }

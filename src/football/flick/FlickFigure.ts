@@ -46,7 +46,41 @@ export function createFigure(
   };
 }
 
-/** Apply pull-back flick: drag vector is opposite desired travel. */
+/** Minimum drag (m) before a flick registers. */
+export const FLICK_MIN_PULL = 0.55;
+/**
+ * Cap on launch speed (m/s). With FLICK_FIGURE_FRICTION this coasts ~63m —
+ * enough for a strong flick from deep in one's half into the far box.
+ */
+export const FLICK_MAX_POWER = 118;
+/** Drag metres → launch speed. ~7.5m pull hits the cap; ~4m still covers ~30m. */
+export const FLICK_POWER_SCALE = 14;
+
+/** Launch speed from a pull-back vector (before applying to a figure). */
+export function flickPowerFromPull(
+  pullDx: number,
+  pullDz: number,
+  opts?: { maxPower?: number; powerScale?: number },
+): number {
+  const pull = Math.hypot(pullDx, pullDz);
+  if (pull < FLICK_MIN_PULL) return 0;
+  const maxPower = opts?.maxPower ?? FLICK_MAX_POWER;
+  const scale = opts?.powerScale ?? FLICK_POWER_SCALE;
+  return Math.min(maxPower, pull * scale);
+}
+
+/** Pull length (m) that yields the given launch speed (ignores min-pull). */
+export function pullLengthForPower(
+  power: number,
+  opts?: { maxPower?: number; powerScale?: number },
+): number {
+  const maxPower = opts?.maxPower ?? FLICK_MAX_POWER;
+  const scale = opts?.powerScale ?? FLICK_POWER_SCALE;
+  const capped = Math.min(maxPower, Math.max(0, power));
+  return capped / scale;
+}
+
+/** Apply pull-back flick: drag vector is opposite desired travel. Tuned for full-pitch scale. */
 export function applyFlickImpulse(
   fig: FlickFigureState,
   pullDx: number,
@@ -54,11 +88,9 @@ export function applyFlickImpulse(
   opts?: { maxPower?: number; powerScale?: number },
 ): boolean {
   const pull = Math.hypot(pullDx, pullDz);
-  const minPull = 0.08;
-  if (pull < minPull) return false;
-  const maxPower = opts?.maxPower ?? 9.5;
-  const scale = opts?.powerScale ?? 14;
-  const power = Math.min(maxPower, pull * scale);
+  if (pull < FLICK_MIN_PULL) return false;
+  const power = flickPowerFromPull(pullDx, pullDz, opts);
+  if (power <= 0) return false;
   const inv = 1 / pull;
   // Travel = opposite of pull-back.
   fig.vx = -pullDx * inv * power;
@@ -73,7 +105,8 @@ export function figureSpeed(fig: FlickFigureState): number {
 }
 
 /**
- * 1-2-3-1-ish Subbuteo kick-off layout (11 per side) on tabletop pitch.
+ * 1-2-3-1-ish Subbuteo kick-off layout (11 per side) on the REAL pitch.
+ * Positions are fractions of half-length / half-width so they track dims.
  * Home attacks +X.
  */
 export function kickoffFormation(dims: FlickPitchDims = FLICK_PITCH): FlickFigureState[] {
@@ -85,31 +118,31 @@ export function kickoffFormation(dims: FlickPitchDims = FLICK_PITCH): FlickFigur
     figures.push(createFigure(`${side}_${slot}_${n++}`, side, slot, x, z, gk, dims));
   };
 
-  // Home (left half → attack +X)
-  add("home", "GK", -hl + 0.55, 0, true);
-  add("home", "LB", -hl + 2.2, -hw * 0.55);
-  add("home", "CB", -hl + 2.0, -0.55);
-  add("home", "CB", -hl + 2.0, 0.55);
-  add("home", "RB", -hl + 2.2, hw * 0.55);
-  add("home", "LM", -hl + 4.0, -hw * 0.42);
-  add("home", "CM", -hl + 3.7, -0.35);
-  add("home", "CM", -hl + 3.7, 0.35);
-  add("home", "RM", -hl + 4.0, hw * 0.42);
-  add("home", "ST", -0.85, -0.45);
-  add("home", "ST", -0.85, 0.45);
+  // Home (own half → attack +X)
+  add("home", "GK", -hl + hl * 0.08, 0, true);
+  add("home", "LB", -hl + hl * 0.32, -hw * 0.55);
+  add("home", "CB", -hl + hl * 0.28, -hw * 0.14);
+  add("home", "CB", -hl + hl * 0.28, hw * 0.14);
+  add("home", "RB", -hl + hl * 0.32, hw * 0.55);
+  add("home", "LM", -hl + hl * 0.58, -hw * 0.42);
+  add("home", "CM", -hl + hl * 0.52, -hw * 0.1);
+  add("home", "CM", -hl + hl * 0.52, hw * 0.1);
+  add("home", "RM", -hl + hl * 0.58, hw * 0.42);
+  add("home", "ST", -hl * 0.12, -hw * 0.12);
+  add("home", "ST", -hl * 0.12, hw * 0.12);
 
-  // Away (right half → attack −X)
-  add("away", "GK", hl - 0.55, 0, true);
-  add("away", "LB", hl - 2.2, hw * 0.55);
-  add("away", "CB", hl - 2.0, 0.55);
-  add("away", "CB", hl - 2.0, -0.55);
-  add("away", "RB", hl - 2.2, -hw * 0.55);
-  add("away", "LM", hl - 4.0, hw * 0.42);
-  add("away", "CM", hl - 3.7, 0.35);
-  add("away", "CM", hl - 3.7, -0.35);
-  add("away", "RM", hl - 4.0, -hw * 0.42);
-  add("away", "ST", 0.85, 0.45);
-  add("away", "ST", 0.85, -0.45);
+  // Away (own half → attack −X)
+  add("away", "GK", hl - hl * 0.08, 0, true);
+  add("away", "LB", hl - hl * 0.32, hw * 0.55);
+  add("away", "CB", hl - hl * 0.28, hw * 0.14);
+  add("away", "CB", hl - hl * 0.28, -hw * 0.14);
+  add("away", "RB", hl - hl * 0.32, -hw * 0.55);
+  add("away", "LM", hl - hl * 0.58, hw * 0.42);
+  add("away", "CM", hl - hl * 0.52, hw * 0.1);
+  add("away", "CM", hl - hl * 0.52, -hw * 0.1);
+  add("away", "RM", hl - hl * 0.58, -hw * 0.42);
+  add("away", "ST", hl * 0.12, hw * 0.12);
+  add("away", "ST", hl * 0.12, -hw * 0.12);
 
   return figures;
 }

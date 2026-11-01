@@ -86,16 +86,17 @@ export class MainMenu {
   private clubCommitTimer: ReturnType<typeof setTimeout> | null = null;
   /** When true, league/team/era dials ignore input (match launching / left menu). */
   private teamSelectLocked = false;
+  private fitObserver: ResizeObserver | null = null;
   onHalf: ((seconds: number) => void) | null = null;
   onKitChange: ((choice: "home" | "away") => void) | null = null;
   onClubChange: ((teamId: string) => void) | null = null;
   onPredictionsChange: ((state: PredictionsState) => void) | null = null;
   onPredictionsRefresh: (() => void) | null = null;
   readonly items = [
-    { id: "sim", label: "Simulator", hint: "Your club vs a random side · autoplay" },
-    { id: "next", label: "Play Next Fixture", hint: "Kick off the listed match" },
+    { id: "sim", label: "Simulator", hint: "Uses selected gameplay · random side when football" },
+    { id: "next", label: "Play Next Fixture", hint: "Listed match in the selected gameplay mode" },
     { id: "league-fixtures", label: "League Fixtures", hint: "Tables and week-to-week matches" },
-    { id: "quick", label: "Quick Match", hint: "Pick teams, weather and length" },
+    { id: "quick", label: "Quick Match", hint: "Football setup, or Foosball / Flickball from Options" },
     { id: "spot", label: "Spot-kick Practice", hint: "Place a free kick or penalty on the pitch" },
     { id: "predictions", label: "Predictions", hint: "Ten gold fixtures · score rollers · weekly points" },
     { id: "database", label: "Database", hint: "Teams and player ratings" },
@@ -185,9 +186,9 @@ export class MainMenu {
                 <span class="vs">·</span>
                 ${mode("ARCADE", "ARCADE")}
                 <span class="vs">·</span>
-                ${mode("TABLE", "Foosball")}
+                ${mode("TABLE", "FOOSBALL")}
                 <span class="vs">·</span>
-                ${mode("FLICK", "Flickball")}
+                ${mode("FLICK", "FLICKBALL")}
                 ${
                   view.showLeague === true
                     ? `<span class="vs">·</span>
@@ -208,6 +209,9 @@ export class MainMenu {
             </div>
             <div class="menu-fixture fixture-match">
               <div class="fixture-match-main">
+                <div class="fixture-detail-row">
+                  <span class="meta">${fixture.competition} · ${view.kickOffTime || DEFAULT_KICK_OFF_TIME} · ${club.matchGround.name}</span>
+                </div>
                 <div class="fixture-teams-row">
                   <button type="button" class="fixture-copy" data-id="next" aria-label="Play next fixture ${home.abbreviation} vs ${away.abbreviation}">
                     <div class="fixture-teams">
@@ -220,9 +224,6 @@ export class MainMenu {
                       ${kickCountdownHtml(fixture.date, view.kickOffTime || DEFAULT_KICK_OFF_TIME)}
                     </div>
                   </button>
-                </div>
-                <div class="fixture-detail-row">
-                  <span class="meta">${fixture.competition} · ${view.kickOffTime || DEFAULT_KICK_OFF_TIME} · ${club.matchGround.name}</span>
                 </div>
               </div>
               ${halfSpinHtml(this.matchDuration)}
@@ -245,7 +246,23 @@ export class MainMenu {
       this.root.querySelector(".team-dials")?.classList.add("team-dials-locked");
     }
     if (this.panel === "predictions") this.bindPredictions(db, predState);
+    this.observeFitTargets();
     scheduleFitMenuLabels(this.root);
+  }
+
+  /** Re-fit title / club line whenever the hero column gains a real width (show, resize). */
+  private observeFitTargets(): void {
+    if (typeof ResizeObserver === "undefined") {
+      scheduleFitMenuLabels(this.root);
+      return;
+    }
+    if (!this.fitObserver) {
+      this.fitObserver = new ResizeObserver(() => scheduleFitMenuLabels(this.root));
+    }
+    this.fitObserver.disconnect();
+    this.fitObserver.observe(this.root);
+    const stack = this.root.querySelector(".menu-hero-stack");
+    if (stack) this.fitObserver.observe(stack);
   }
 
   setPanel(panel: MenuPanel, fade = true, clubLeague?: EnglishLeague): void {
@@ -835,6 +852,8 @@ export class MainMenu {
 
   dispose(): void {
     if (this.clubCommitTimer) clearTimeout(this.clubCommitTimer);
+    this.fitObserver?.disconnect();
+    this.fitObserver = null;
     this.root.remove();
   }
 }
@@ -1000,11 +1019,17 @@ function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 }
 
-/** Double-rAF so flex widths / web fonts settle before measuring. */
+/** Double-rAF so flex widths / web fonts settle before measuring; refit after fonts load. */
 function scheduleFitMenuLabels(root: HTMLElement): void {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => fitMenuLabels(root));
   });
+  const fonts = document.fonts;
+  if (fonts?.ready) {
+    void fonts.ready.then(() => {
+      if (root.isConnected) fitMenuLabels(root);
+    });
+  }
 }
 
 /**
@@ -1014,12 +1039,13 @@ function scheduleFitMenuLabels(root: HTMLElement): void {
 export function fitMenuLabels(root: HTMLElement): void {
   const stack = root.querySelector<HTMLElement>(".menu-hero-stack");
   const h1 = root.querySelector<HTMLElement>(".menu-hero-stack > h1");
-  const colW = stack?.clientWidth || 0;
+  const colW = stack?.clientWidth || root.clientWidth || 0;
   if (h1 && colW > 8) {
     h1.style.fontSize = "";
     h1.style.letterSpacing = "";
     const basePx = parseFloat(getComputedStyle(h1).fontSize) || 52;
-    fitNowrapToWidth(h1, colW, { minPx: 18, basePx });
+    const titleLine = h1.querySelector<HTMLElement>(".title-line");
+    fitNowrapToWidth(h1, colW, { minPx: 18, basePx, measureEl: titleLine ?? h1 });
   }
 
   const line = root.querySelector<HTMLElement>(".club-line");
@@ -1027,14 +1053,19 @@ export function fitMenuLabels(root: HTMLElement): void {
     const meta = line.closest<HTMLElement>(".club-meta");
     const crest = meta?.querySelector<HTMLElement>(".club-crest");
     const gap = 12;
-    const stackW = stack?.clientWidth ?? 0;
+    const stackW = stack?.clientWidth || root.clientWidth || 0;
+    // Crest may still be 0×0 before the image lays out — reserve the authored 52px slot.
+    const crestW = crest ? Math.max(crest.offsetWidth, 52) : 0;
     const metaBudget =
-      stackW > 0 && crest
-        ? Math.max(24, stackW - crest.offsetWidth - gap)
-        : meta && crest
-          ? Math.max(24, meta.clientWidth - crest.offsetWidth - gap)
-          : line.clientWidth || meta?.clientWidth || 0;
-    fitNowrapToWidth(line, metaBudget, { minPx: 10, basePx: parseFloat(getComputedStyle(line).fontSize) || 20 });
+      stackW > 0
+        ? Math.max(24, stackW - crestW - gap)
+        : meta
+          ? Math.max(24, meta.clientWidth - crestW - gap)
+          : line.clientWidth || 0;
+    line.style.fontSize = "";
+    line.style.letterSpacing = "";
+    const basePx = parseFloat(getComputedStyle(line).fontSize) || 20;
+    fitNowrapToWidth(line, metaBudget, { minPx: 10, basePx });
   }
 
   fitTeamDialLabels(root);
@@ -1065,15 +1096,44 @@ function fitTeamDialLabels(root: HTMLElement): void {
   });
 }
 
+/**
+ * scrollWidth under overflow:hidden equals the box, and flex children with
+ * min-width:0 shrink — temporarily unlock both so we measure real text width.
+ */
+function measureNowrapWidth(el: HTMLElement): number {
+  const prevOverflow = el.style.overflow;
+  el.style.overflow = "visible";
+  const kids = [...el.children].filter((n): n is HTMLElement => n instanceof HTMLElement);
+  const saved = kids.map((k) => ({
+    flex: k.style.flex,
+    minWidth: k.style.minWidth,
+    overflow: k.style.overflow,
+  }));
+  for (const k of kids) {
+    k.style.flex = "0 0 auto";
+    k.style.minWidth = "max-content";
+    k.style.overflow = "visible";
+  }
+  const w = el.scrollWidth;
+  el.style.overflow = prevOverflow;
+  kids.forEach((k, i) => {
+    k.style.flex = saved[i]!.flex;
+    k.style.minWidth = saved[i]!.minWidth;
+    k.style.overflow = saved[i]!.overflow;
+  });
+  return w;
+}
+
 function fitNowrapToWidth(
   el: HTMLElement,
   maxW: number,
-  opts: { minPx: number; basePx: number },
+  opts: { minPx: number; basePx: number; measureEl?: HTMLElement },
 ): void {
   if (maxW < 8) return;
-  el.style.overflow = "hidden";
+  const measure = opts.measureEl ?? el;
   el.style.textOverflow = "clip";
   el.style.whiteSpace = "nowrap";
+  measure.style.whiteSpace = "nowrap";
   el.style.fontSize = "";
   let size = opts.basePx;
   let tracking = 0.08;
@@ -1083,14 +1143,17 @@ function fitNowrapToWidth(
   el.style.fontSize = `${size}px`;
   el.style.letterSpacing = `${tracking}em`;
   let guard = 0;
-  while (el.scrollWidth > maxW + 0.5 && size > opts.minPx && guard < 48) {
+  while (measureNowrapWidth(measure) > maxW + 0.5 && size > opts.minPx && guard < 64) {
     size -= 0.5;
     el.style.fontSize = `${size}px`;
     guard += 1;
   }
-  while (el.scrollWidth > maxW + 0.5 && tracking > 0 && guard < 72) {
+  while (measureNowrapWidth(measure) > maxW + 0.5 && tracking > 0 && guard < 96) {
     tracking = Math.max(0, tracking - 0.01);
     el.style.letterSpacing = `${tracking}em`;
     guard += 1;
   }
+  el.style.overflow = "hidden";
+  measure.style.overflow = "hidden";
+  measure.style.textOverflow = "clip";
 }

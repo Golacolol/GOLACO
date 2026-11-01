@@ -44,8 +44,8 @@ const FORMATIONS: Record<FormationName, FormationSlot[]> = {
     { id: "RCM", role: "MID", x: 0.5, z: 0.1 },
     { id: "LCM", role: "MID", x: 0.5, z: -0.1 },
     { id: "LM", role: "MID", x: 0.5, z: -0.36 },
-    { id: "RST", role: "FWD", x: 0.82, z: 0.1 },
-    { id: "LST", role: "FWD", x: 0.82, z: -0.1 },
+    { id: "RST", role: "FWD", x: 0.82, z: 0.15 },
+    { id: "LST", role: "FWD", x: 0.82, z: -0.15 },
   ],
   "3-4-2-1": [
     { id: "GK", role: "GK", x: 0.07, z: 0 },
@@ -70,8 +70,8 @@ const FORMATIONS: Record<FormationName, FormationSlot[]> = {
     { id: "LCM", role: "MID", x: 0.5, z: -0.1 },
     { id: "RCM", role: "MID", x: 0.5, z: 0.1 },
     { id: "RM", role: "MID", x: 0.5, z: 0.36 },
-    { id: "LST", role: "FWD", x: 0.82, z: -0.1 },
-    { id: "RST", role: "FWD", x: 0.82, z: 0.1 },
+    { id: "LST", role: "FWD", x: 0.82, z: -0.15 },
+    { id: "RST", role: "FWD", x: 0.82, z: 0.15 },
   ],
 };
 

@@ -53,6 +53,7 @@ export class FlickHUD {
     difficulty?: string;
     view: string;
     turn: string;
+    turnBased?: boolean;
     gkWindow?: boolean;
     winner?: "home" | "away" | null;
     phase?: string;
@@ -68,11 +69,16 @@ export class FlickHUD {
         opts.opponent === "AI" ? `vs AI · ${opts.difficulty ?? "NORMAL"}` : "2P hotseat";
       const win = opts.winner ? ` · ${opts.winner.toUpperCase()} wins` : "";
       const gk = opts.gkWindow ? ` · <span class="gk-cue">Your GK — flick to save</span>` : "";
-      meta.innerHTML = `First to ${opts.firstTo} · ${opp} · ${opts.turn} flick · ${opts.view}${gk}${win}`;
+      const turnBit =
+        opts.turnBased === false ? "OPEN PLAY" : `${opts.turn} flick`;
+      meta.innerHTML = `First to ${opts.firstTo} · ${opp} · ${turnBit} · ${opts.view}${gk}${win}`;
     }
     if (help) {
+      const gkHint = "GK: WASD/arrows or drag to position (no flick)";
       help.textContent =
-        "Click a figure, pull back opposite the aim, release to flick · Right-click cancel · V view · Esc pause";
+        opts.turnBased === false
+          ? `Open play — flick anytime settled; AI reacts on its timer · ${gkHint} · V view · Esc pause`
+          : `Click outfield, pull back, release to flick · ${gkHint} · V view · Esc pause`;
     }
   }
 

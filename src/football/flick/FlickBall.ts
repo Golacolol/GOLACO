@@ -32,15 +32,18 @@ export function ballSpeed(ball: FlickBallState): number {
   return Math.hypot(ball.vx, ball.vz);
 }
 
-/** Goal if ball centre fully past goal line within goal mouth. */
+/**
+ * Goal when the whole of the ball has crossed the goal line in the mouth
+ * (FIFA-style). Slight post tolerance so grazes still count.
+ */
 export function checkFlickGoal(
   ball: FlickBallState,
   dims: FlickPitchDims = FLICK_PITCH,
 ): "home" | "away" | null {
   const hl = dims.length / 2;
-  const halfG = dims.goalWidth / 2;
+  const halfG = dims.goalWidth / 2 + ball.radius * 0.35;
   if (Math.abs(ball.z) > halfG) return null;
-  if (ball.x - ball.radius > hl) return "home";
-  if (ball.x + ball.radius < -hl) return "away";
+  if (ball.x - ball.radius >= hl) return "home";
+  if (ball.x + ball.radius <= -hl) return "away";
   return null;
 }

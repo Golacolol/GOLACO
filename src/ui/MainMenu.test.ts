@@ -63,8 +63,8 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector('[data-mode="LEAGUE"]')).toBeNull();
     expect(menu.root.querySelector('[data-mode="REAL"]')).toBeTruthy();
     expect(menu.root.querySelector('[data-mode="ARCADE"]')).toBeTruthy();
-    expect(menu.root.querySelector('[data-mode="TABLE"]')?.textContent).toMatch(/Foosball/i);
-    expect(menu.root.querySelector('[data-mode="FLICK"]')?.textContent).toMatch(/Flickball/i);
+    expect(menu.root.querySelector('[data-mode="TABLE"]')?.textContent).toBe("FOOSBALL");
+    expect(menu.root.querySelector('[data-mode="FLICK"]')?.textContent).toBe("FLICKBALL");
   });
 
   it("shows KIT dial after Team Select and Gameplay / Lighting section labels", () => {
@@ -115,13 +115,16 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector(".menu-badge")).toBeNull();
   });
 
-  it("scales the club line to fit, and leaves team dials at fixed CSS size", () => {
+  it("scales the club line and title to fit, and shrinks long Club dial names", () => {
     const host = document.createElement("div");
     document.body.appendChild(host);
     host.innerHTML = `
-      <div class="club-meta">
-        <div class="club-crest"></div>
-        <span class="club-line">Very Long Stadium Name · Very Long United Football Club</span>
+      <div class="menu-hero-stack">
+        <h1><span class="title-line">GOLAÇO<span class="title-emoji">⚽️</span>SOCCER</span></h1>
+        <div class="club-meta">
+          <div class="club-crest"></div>
+          <span class="club-line"><span class="club-ground">Very Long Stadium Name</span><span class="club-sep">·</span><span class="club-team">Very Long United Football Club</span></span>
+        </div>
       </div>
       <span class="time-spin team-spin" data-team-spin>
         <span class="spin-ghost">Prev</span>
@@ -129,14 +132,22 @@ describe("MainMenu LEAGUE mode button", () => {
         <span class="spin-ghost">Next</span>
       </span>
     `;
+    const stack = host.querySelector<HTMLElement>(".menu-hero-stack")!;
+    const h1 = host.querySelector<HTMLElement>("h1")!;
+    const titleLine = host.querySelector<HTMLElement>(".title-line")!;
     const meta = host.querySelector<HTMLElement>(".club-meta")!;
     const crest = host.querySelector<HTMLElement>(".club-crest")!;
     const line = host.querySelector<HTMLElement>(".club-line")!;
     const spin = host.querySelector<HTMLElement>("[data-team-spin]")!;
     const strong = spin.querySelector<HTMLElement>("strong")!;
+    Object.defineProperty(stack, "clientWidth", { configurable: true, get: () => 220 });
     Object.defineProperty(meta, "clientWidth", { configurable: true, get: () => 200 });
     Object.defineProperty(crest, "offsetWidth", { configurable: true, get: () => 52 });
     Object.defineProperty(spin, "clientWidth", { configurable: true, get: () => 140 });
+    vi.spyOn(titleLine, "scrollWidth", "get").mockImplementation(() => {
+      const px = parseFloat(h1.style.fontSize) || 52;
+      return Math.max(100, 420 * (px / 52));
+    });
     vi.spyOn(line, "scrollWidth", "get").mockImplementation(() => {
       const px = parseFloat(line.style.fontSize) || 16;
       return Math.max(120, 340 * (px / 16));
@@ -148,9 +159,9 @@ describe("MainMenu LEAGUE mode button", () => {
 
     fitMenuLabels(host);
 
+    expect(parseFloat(h1.style.fontSize)).toBeLessThan(52);
     expect(parseFloat(line.style.fontSize)).toBeLessThan(16);
     expect(line.style.textOverflow).toBe("clip");
-    // Long club dial names shrink to the dial width.
     expect(parseFloat(strong.style.fontSize)).toBeLessThan(15);
 
     host.remove();

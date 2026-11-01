@@ -172,6 +172,20 @@ export class FlickInput {
     return this.aim;
   }
 
+  /**
+   * Keyboard axes for GK positioning (−1..1).
+   * +X toward attack for home (= pitch +X); +Z = screen/pitch +Z.
+   */
+  gkMoveAxes(): { x: number; z: number } {
+    let x = 0;
+    let z = 0;
+    if (this.keys.has("KeyW") || this.keys.has("ArrowUp")) x += 1;
+    if (this.keys.has("KeyS") || this.keys.has("ArrowDown")) x -= 1;
+    if (this.keys.has("KeyA") || this.keys.has("ArrowLeft")) z -= 1;
+    if (this.keys.has("KeyD") || this.keys.has("ArrowRight")) z += 1;
+    return { x, z };
+  }
+
   /** Mark which figure is being flicked while pointer is down. */
   setSelectedFigure(id: string | null): void {
     this.aim.figureId = id;

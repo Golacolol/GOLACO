@@ -216,7 +216,7 @@ export class SettingsMenu {
               <option value="FLICK" ${settings.gameplayMode === "FLICK" ? "selected" : ""}>FLICK</option>
             </select>
           </label>
-          <p class="hint">Also on the main menu. ARCADE = football AI multipliers. TABLE = foosball. FLICK = Subbuteo Flickball (setup on launch).</p>
+          <p class="hint">Also on the main menu. TABLE = foosball, FLICK = Flickball. Play Next opens Formation — settings live where PLAYER SELECT normally is (and below as defaults).</p>
           <label>TABLE layout
             <select id="table-layout">
               <option value="FRENCH_CLASSIC" ${settings.tableLayoutId === "FRENCH_CLASSIC" ? "selected" : ""}>French classic</option>
@@ -256,6 +256,8 @@ export class SettingsMenu {
           <label>FLICK first to
             <input id="flick-first" type="number" min="1" max="21" value="${settings.flickFirstTo}"/>
           </label>
+          <label class="check"><input id="flick-turns" type="checkbox" ${settings.flickTurnBased !== false ? "checked" : ""}/> FLICK take turns</label>
+          <p class="hint">Off = open play: flick anytime the pitch is settled. AI reacts and shoots on its difficulty timer.</p>
           <label class="check"><input id="invertY" type="checkbox" ${settings.invertShotY ? "checked" : ""}/> Invert vertical aim</label>
           <label class="check"><input id="pass-target" type="checkbox" ${settings.showPassTargetHighlight ? "checked" : ""}/> Highlight pass target</label>
           <p class="hint">Shows a ring under the intended receiver while you aim a pass. Off by default.</p>
@@ -554,6 +556,8 @@ export class SettingsMenu {
     }
     const flickFirst = root.querySelector("#flick-first") as HTMLInputElement | null;
     if (flickFirst) out.flickFirstTo = Math.max(1, Math.min(21, Number(flickFirst.value) || 5));
+    const flickTurns = root.querySelector("#flick-turns") as HTMLInputElement | null;
+    if (flickTurns) out.flickTurnBased = flickTurns.checked;
     const invertY = root.querySelector("#invertY") as HTMLInputElement | null;
     if (invertY) out.invertShotY = invertY.checked;
     const passTarget = root.querySelector("#pass-target") as HTMLInputElement | null;

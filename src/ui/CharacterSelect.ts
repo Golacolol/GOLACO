@@ -349,7 +349,8 @@ function toDisplayX(x: number): number {
   const outfieldAtJoin = outfieldBase(GK_JOIN_X);
   if (x <= GK_JOIN_X) {
     const t = clamp(x / GK_JOIN_X, 0, 1);
-    const eased = t * t * t * t;
+    // Steeper ease so the default GK (x≈0.07) sits on the pitch-floor stop.
+    const eased = t ** 6;
     return GK_FLOOR_DISPLAY + eased * (outfieldAtJoin - GK_FLOOR_DISPLAY);
   }
   return withMidLift(x, outfieldBase(x));
@@ -362,15 +363,32 @@ function fromDisplayX(displayX: number): number {
   const outfieldAtJoin = outfieldBase(GK_JOIN_X);
   if (displayX <= outfieldAtJoin) {
     const u = clamp((displayX - GK_FLOOR_DISPLAY) / (outfieldAtJoin - GK_FLOOR_DISPLAY), 0, 1);
-    return Math.pow(u, 0.25) * GK_JOIN_X;
+    return Math.pow(u, 1 / 6) * GK_JOIN_X;
   }
   // Approximate inverse ignoring the small mid / outfield lift (nudge still stays in-band).
   return 0.02 + ((displayX - 0.055 - OUTFIELD_LIFT) / (ATTACK_JOIN_DISPLAY - 0.055)) * (ATTACK_JOIN_X - 0.02);
 }
 
-export type ControlMode = "PLAYER" | "TEAM" | "KIT";
+export type ControlMode = "PLAYER" | "TEAM" | "KIT" | "SETUP";
 export type CharacterSelectContext = "select" | "pause";
 export type FormationSide = "home" | "away";
+/** When set, Formation swaps PLAYER SELECT for tabletop match settings. */
+export type TabletopKind = "FLICK" | "TABLE";
+
+export type FlickSetupDraft = {
+  opponent: "AI" | "HUMAN";
+  difficulty: "EASY" | "NORMAL" | "HARD" | "EXPERT";
+  firstTo: number;
+  turnBased: boolean;
+};
+
+export type TableSetupDraft = {
+  layoutId: "FRENCH_CLASSIC" | "TOURNAMENT_MODERN" | "OPEN_CUSTOM";
+  opponent: "AI" | "HUMAN";
+  difficulty: "EASY" | "NORMAL" | "HARD" | "EXPERT";
+  firstTo: number;
+  customMen: [number, number, number, number];
+};
 
 export interface TeamSelectSlot {
   slot: string;
@@ -450,6 +468,26 @@ export class CharacterSelect {
   context: CharacterSelectContext = "select";
   /** Match kick-off vs spot-kick practice (pick a taker on the formation). */
   purpose: "match" | "spot" = "match";
+  /**
+   * Flickball / Foosball: replace PLAYER SELECT with mode settings.
+   * Null for normal football Formation.
+   */
+  tabletopKind: TabletopKind | null = null;
+  flickSetup: FlickSetupDraft = {
+    opponent: "AI",
+    difficulty: "NORMAL",
+    firstTo: 5,
+    turnBased: true,
+  };
+  tableSetup: TableSetupDraft = {
+    layoutId: "FRENCH_CLASSIC",
+    opponent: "AI",
+    difficulty: "NORMAL",
+    firstTo: 5,
+    customMen: [1, 2, 5, 3],
+  };
+  /** Fired whenever Formation tabletop settings change (persist into Options). */
+  onTabletopSettingsChange: (() => void) | null = null;
   /** Prematch only — AUTO follows clash rules; HOME/AWAY force the strip. */
   kitChoice: KitChoice = "auto";
   /** Opponent home kit for clash preview on the Kit Select row. */
@@ -519,6 +557,7 @@ export class CharacterSelect {
     this.root.addEventListener("pointermove", (e) => this.onPitchPointerMove(e));
     this.root.addEventListener("pointerup", (e) => this.onPitchPointerUp(e));
     this.root.addEventListener("pointercancel", (e) => this.onPitchPointerUp(e));
+    this.root.addEventListener("change", (e) => this.onTabletopFieldChange(e));
     this.root.addEventListener("contextmenu", (e) => {
       const chalkBtn = (e.target as HTMLElement).closest<HTMLElement>("[data-char='chalk']");
       if (chalkBtn && this.root.contains(chalkBtn)) {
@@ -888,7 +927,43 @@ export class CharacterSelect {
       this.controlMode = "TEAM";
       return;
     }
+    // Flickball / Foosball: PLAYER SELECT is replaced by SETUP.
+    if (this.tabletopKind && mode === "PLAYER") {
+      this.controlMode = "SETUP";
+      return;
+    }
+    if (mode === "SETUP" && !this.tabletopKind) {
+      this.controlMode = "TEAM";
+      return;
+    }
     this.controlMode = mode;
+  }
+
+  /** Enable Formation tabletop settings (swaps out PLAYER SELECT). */
+  setTabletopMode(
+    kind: TabletopKind | null,
+    drafts?: { flick?: Partial<FlickSetupDraft>; table?: Partial<TableSetupDraft> },
+  ): void {
+    this.tabletopKind = kind;
+    if (drafts?.flick) this.flickSetup = { ...this.flickSetup, ...drafts.flick };
+    if (drafts?.table) {
+      this.tableSetup = {
+        ...this.tableSetup,
+        ...drafts.table,
+        customMen: drafts.table.customMen
+          ? ([...(drafts.table.customMen)] as [number, number, number, number])
+          : this.tableSetup.customMen,
+      };
+    }
+    if (kind && (this.controlMode === "PLAYER" || this.controlMode === "SETUP")) {
+      this.controlMode = "SETUP";
+    } else if (!kind && this.controlMode === "SETUP") {
+      this.controlMode = "TEAM";
+    }
+  }
+
+  isTabletopMode(): boolean {
+    return this.tabletopKind === "FLICK" || this.tabletopKind === "TABLE";
   }
 
   setKitChoice(choice: KitChoice): void {
@@ -1121,6 +1196,7 @@ export class CharacterSelect {
     this.root.hidden = false;
     if (this.controlMode === "KIT") this.renderKit();
     else if (this.controlMode === "TEAM") this.renderTeam();
+    else if (this.controlMode === "SETUP" && this.tabletopKind) this.renderTabletopSetup();
     else this.renderPlayer();
     requestAnimationFrame(() => {
       const restored = this.root.querySelector<HTMLElement>(".team-roster-list");
@@ -1157,6 +1233,11 @@ export class CharacterSelect {
   }
 
   private renderPlayer(): void {
+    if (this.tabletopKind) {
+      this.controlMode = "SETUP";
+      this.renderTabletopSetup();
+      return;
+    }
     const p = this.current();
     const a = p.attrs;
     this.root.innerHTML = `
@@ -1170,6 +1251,156 @@ export class CharacterSelect {
         ${this.modeNavHtml("PLAYER")}
       </div>
     `;
+  }
+
+  private renderTabletopSetup(): void {
+    const kind = this.tabletopKind;
+    if (!kind) {
+      this.renderTeam();
+      return;
+    }
+    const title = kind === "FLICK" ? "FLICKBALL" : "FOOSBALL";
+    const blurb =
+      kind === "FLICK"
+        ? "Pull back and flick on the real pitch. Set opponent, difficulty, and whether you take turns."
+        : "Rod foosball — pick layout, opponent, and first-to. Formation kits still colour the table sides.";
+    const body = kind === "FLICK" ? this.flickSetupFieldsHtml() : this.tableSetupFieldsHtml();
+    this.root.innerHTML = `
+      <div class="char-panel char-panel-player char-panel-tabletop">
+        ${this.teamTitleHtml(`${title} · ${this.teamName}`)}
+        <div class="tabletop-setup">
+          <div class="tabletop-setup-kicker">${title} SETUP</div>
+          <p class="tabletop-setup-blurb">${blurb}</p>
+          ${body}
+        </div>
+        ${this.modeNavHtml("SETUP")}
+      </div>
+    `;
+  }
+
+  private flickSetupFieldsHtml(): string {
+    const s = this.flickSetup;
+    const diffs = ["EASY", "NORMAL", "HARD", "EXPERT"] as const;
+    return `
+      <div class="tabletop-fields">
+        <label>Opponent
+          <select data-tt="flick-opp">
+            <option value="AI" ${s.opponent === "AI" ? "selected" : ""}>Computer (AI)</option>
+            <option value="HUMAN" ${s.opponent === "HUMAN" ? "selected" : ""}>Hotseat 2P</option>
+          </select>
+        </label>
+        <label>AI difficulty
+          <select data-tt="flick-diff" ${s.opponent !== "AI" ? "disabled" : ""}>
+            ${diffs
+              .map((d) => `<option value="${d}" ${s.difficulty === d ? "selected" : ""}>${d}</option>`)
+              .join("")}
+          </select>
+        </label>
+        <label>First to (goals)
+          <input data-tt="flick-first" type="number" min="1" max="21" value="${s.firstTo}"/>
+        </label>
+        <label class="check"><input data-tt="flick-turns" type="checkbox" ${s.turnBased ? "checked" : ""}/> Take turns</label>
+        <p class="hint">Off = open play — flick anytime the pitch settles; AI reacts on its difficulty timer.</p>
+      </div>
+    `;
+  }
+
+  private tableSetupFieldsHtml(): string {
+    const s = this.tableSetup;
+    const diffs = ["EASY", "NORMAL", "HARD", "EXPERT"] as const;
+    const custom =
+      s.layoutId === "OPEN_CUSTOM"
+        ? `<label>Custom men (DEF · MID · ATT)
+            <span class="tabletop-men-row">
+              <input data-tt="table-men-1" type="number" min="1" max="5" value="${s.customMen[1]}"/>
+              <input data-tt="table-men-2" type="number" min="1" max="5" value="${s.customMen[2]}"/>
+              <input data-tt="table-men-3" type="number" min="1" max="5" value="${s.customMen[3]}"/>
+            </span>
+          </label>
+          <p class="hint">GK is always 1.</p>`
+        : "";
+    return `
+      <div class="tabletop-fields">
+        <label>Table layout
+          <select data-tt="table-layout">
+            <option value="FRENCH_CLASSIC" ${s.layoutId === "FRENCH_CLASSIC" ? "selected" : ""}>French classic</option>
+            <option value="TOURNAMENT_MODERN" ${s.layoutId === "TOURNAMENT_MODERN" ? "selected" : ""}>Tournament modern</option>
+            <option value="OPEN_CUSTOM" ${s.layoutId === "OPEN_CUSTOM" ? "selected" : ""}>Open custom</option>
+          </select>
+        </label>
+        ${custom}
+        <label>Opponent
+          <select data-tt="table-opp">
+            <option value="AI" ${s.opponent === "AI" ? "selected" : ""}>Computer (AI)</option>
+            <option value="HUMAN" ${s.opponent === "HUMAN" ? "selected" : ""}>Hotseat 2P</option>
+          </select>
+        </label>
+        <label>AI difficulty
+          <select data-tt="table-diff" ${s.opponent !== "AI" ? "disabled" : ""}>
+            ${diffs
+              .map((d) => `<option value="${d}" ${s.difficulty === d ? "selected" : ""}>${d}</option>`)
+              .join("")}
+          </select>
+        </label>
+        <label>First to (goals)
+          <input data-tt="table-first" type="number" min="1" max="21" value="${s.firstTo}"/>
+        </label>
+      </div>
+    `;
+  }
+
+  private onTabletopFieldChange(e: Event): void {
+    const el = e.target as HTMLElement | null;
+    if (!el || !this.root.contains(el)) return;
+    const key = el.getAttribute("data-tt");
+    if (!key) return;
+    if (this.tabletopKind === "FLICK") {
+      const s = this.flickSetup;
+      if (key === "flick-opp" && el instanceof HTMLSelectElement) {
+        s.opponent = el.value === "HUMAN" ? "HUMAN" : "AI";
+      } else if (key === "flick-diff" && el instanceof HTMLSelectElement) {
+        if (el.value === "EASY" || el.value === "NORMAL" || el.value === "HARD" || el.value === "EXPERT") {
+          s.difficulty = el.value;
+        }
+      } else if (key === "flick-first" && el instanceof HTMLInputElement) {
+        s.firstTo = Math.max(1, Math.min(21, Number(el.value) || 5));
+      } else if (key === "flick-turns" && el instanceof HTMLInputElement) {
+        s.turnBased = el.checked;
+      } else return;
+      this.onTabletopSettingsChange?.();
+      if (key === "flick-opp") this.render();
+      return;
+    }
+    if (this.tabletopKind === "TABLE") {
+      const s = this.tableSetup;
+      if (key === "table-layout" && el instanceof HTMLSelectElement) {
+        if (
+          el.value === "FRENCH_CLASSIC" ||
+          el.value === "TOURNAMENT_MODERN" ||
+          el.value === "OPEN_CUSTOM"
+        ) {
+          s.layoutId = el.value;
+        }
+      } else if (key === "table-opp" && el instanceof HTMLSelectElement) {
+        s.opponent = el.value === "HUMAN" ? "HUMAN" : "AI";
+      } else if (key === "table-diff" && el instanceof HTMLSelectElement) {
+        if (el.value === "EASY" || el.value === "NORMAL" || el.value === "HARD" || el.value === "EXPERT") {
+          s.difficulty = el.value;
+        }
+      } else if (key === "table-first" && el instanceof HTMLInputElement) {
+        s.firstTo = Math.max(1, Math.min(21, Number(el.value) || 5));
+      } else if (key.startsWith("table-men-") && el instanceof HTMLInputElement) {
+        const idx = Number(key.slice("table-men-".length));
+        if (idx >= 1 && idx <= 3) {
+          const next = [...s.customMen] as [number, number, number, number];
+          next[0] = 1;
+          next[idx] = Math.max(1, Math.min(5, Number(el.value) || 2));
+          s.customMen = next;
+        }
+      } else return;
+      this.onTabletopSettingsChange?.();
+      if (key === "table-layout" || key === "table-opp") this.render();
+    }
   }
 
   private renderKit(): void {
@@ -1706,15 +1937,30 @@ export class CharacterSelect {
         <button type="button" data-char="mode-player" class="on" aria-pressed="true">PLAYER SELECT</button>
       </div>
       <div class="char-nav char-nav-spot">
-        <button type="button" data-char="prev">PREVIOUS</button>
+        <button type="button" class="char-nav-step" data-char="prev" aria-label="Previous">‹</button>
         <button type="button" data-char="start" class="on primary spot-select-btn">SELECT ${escapeHtml(name).toUpperCase()}</button>
-        <button type="button" data-char="next">NEXT</button>
+        <button type="button" class="char-nav-step" data-char="next" aria-label="Next">›</button>
       </div>
     `;
     }
     const kitMode = this.showKitUi()
       ? `<button type="button" data-char="mode-kit" class="${mode === "KIT" ? "on" : ""}">KIT SELECT</button>`
       : "";
+    if (this.tabletopKind) {
+      const setupLabel = this.tabletopKind === "FLICK" ? "FLICKBALL" : "FOOSBALL";
+      const startLabel = this.tabletopKind === "FLICK" ? "START FLICKBALL" : "START FOOSBALL";
+      return `
+      <div class="char-modes">
+        <button type="button" data-char="mode-setup" class="${mode === "SETUP" ? "on" : ""}">${setupLabel}</button>
+        <button type="button" data-char="mode-team" class="${mode === "TEAM" ? "on" : ""}">TEAM SELECT</button>
+        ${kitMode}
+      </div>
+      <div class="char-nav">
+        <button type="button" data-char="back">BACK</button>
+        <button type="button" data-char="start" class="primary">${startLabel}</button>
+      </div>
+    `;
+    }
     const startLabel = mode === "PLAYER" ? "START AS PLAYER" : "START AS TEAM";
     return `
       <div class="char-modes">
@@ -1723,11 +1969,11 @@ export class CharacterSelect {
         ${kitMode}
       </div>
       <div class="char-nav">
-        <button type="button" data-char="prev">PREVIOUS</button>
-        <button type="button" data-char="start">${startLabel}</button>
+        <button type="button" class="char-nav-step" data-char="prev" aria-label="Previous">‹</button>
         <button type="button" data-char="back">BACK</button>
+        <button type="button" data-char="start">${startLabel}</button>
         <button type="button" data-char="simulate">SIMULATE</button>
-        <button type="button" data-char="next">NEXT</button>
+        <button type="button" class="char-nav-step" data-char="next" aria-label="Next">›</button>
       </div>
     `;
   }

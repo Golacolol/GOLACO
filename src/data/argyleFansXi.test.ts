@@ -10,8 +10,8 @@ import {
 } from "./argyleFansXi";
 
 describe("Argyle Fans XI", () => {
-  it("uses the Plymouth Argyle — FANSXI display name", () => {
-    expect(ARGYLE_FANS_NAME).toBe("Plymouth Argyle — FANSXI");
+  it("uses the Plymouth Argyle — FANS display name", () => {
+    expect(ARGYLE_FANS_NAME).toBe("Plymouth Argyle — FANS");
   });
   it("starts the named 4-4-2-W eleven with the listed shirt numbers", () => {
     expect(ARGYLE_FANS_LINEUP.formation).toBe(ARGYLE_FANS_FORMATION);

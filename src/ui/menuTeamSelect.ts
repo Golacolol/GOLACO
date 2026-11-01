@@ -44,9 +44,42 @@ export const MENU_TEAM_GROUP_LABEL: Record<MenuTeamGroup, string> = {
   CLASSIC: "Classics",
 };
 
-/** Strip era / em-dash suffixes: "Arsenal — 2003/04" → "Arsenal". */
+/**
+ * Strip era suffixes: "Arsenal — 2003/04" → "Arsenal".
+ * Accepts em/en dashes and space-hyphen-space (not hyphenated club names like Saint-Germain).
+ */
 export function clubBaseName(name: string): string {
-  return name.split(/\s*[—–]\s*/)[0]!.trim();
+  return name.split(/\s*[—–]\s*|\s+-\s+/)[0]!.trim();
+}
+
+/** Authored Argyle classic / fans sides — always one Classics Club dial entry. */
+const PLYMOUTH_ARGYLE_CLUB_IDS = new Set([
+  "argyle_historic_sample",
+  "argyle_fans_xi",
+  "classic_plymouth_argyle_1995_96",
+  "classic_plymouth_argyle_2003_04",
+  "classic_plymouth_argyle_2016_17",
+]);
+
+/**
+ * Classics Club dial identity. Argyle historic / fans ids (and "Argyle…" name aliases)
+ * share Plymouth Argyle even if a stale save renamed the display string.
+ */
+export function classicClubIdentity(team: TeamRecord): { key: string; label: string } {
+  const id = team.id.toLowerCase();
+  if (
+    PLYMOUTH_ARGYLE_CLUB_IDS.has(team.id) ||
+    id.includes("plymouth_argyle") ||
+    id.startsWith("argyle_")
+  ) {
+    return { key: "plymouth argyle", label: "Plymouth Argyle" };
+  }
+  const base = clubBaseName(team.name);
+  const key = base.toLowerCase();
+  if (key === "argyle" || key === "pafc" || key.startsWith("argyle ")) {
+    return { key: "plymouth argyle", label: "Plymouth Argyle" };
+  }
+  return { key, label: base };
 }
 
 /**
@@ -71,15 +104,15 @@ export function formatEraRoll(season: string | null | undefined): string {
   if (decade) return `${decade[1]!.slice(2)}s`;
   // Already a short date token like "04-05" / "91/92"
   if (/^\d{2}[\/\-–]\d{2}$/.test(raw)) return raw.replace(/[\/–]/g, "-");
-  // Short era codes (101, FAN) — not calendar seasons
+  // Short era codes (FANS, LEG) — not calendar seasons
   if (/^[A-Za-z0-9]{2,6}$/.test(raw) && !/^\d{4}$/.test(raw)) return raw.toUpperCase();
   return "";
 }
 
-/** Prefer historicSeason; else parse from "Club — 2003/04 …" or "Club — 101". */
+/** Prefer historicSeason; else parse from "Club — 2003/04 …" or "Club — FANS". */
 export function eraFromTeam(team: TeamRecord): string {
   if (team.historicSeason?.trim()) return team.historicSeason.trim();
-  const parts = team.name.split(/\s*[—–]\s*/);
+  const parts = team.name.split(/\s*[—–]\s*|\s+-\s+/);
   if (parts.length < 2) return "";
   const tail = parts.slice(1).join(" — ").trim();
   const m = /^(\d{4}(?:\s*[\/\-–]\s*\d{2,4})?|\d{4}s?)/.exec(tail);
@@ -129,13 +162,14 @@ export function buildMenuTeamOptions(teams: TeamRecord[]): MenuTeamOption[] {
   for (const team of teams) {
     if (!isSelectableClub(team)) continue;
     const group = groupFor(team);
-    const base = clubBaseName(team.name);
+    const classic = group === "CLASSIC" ? classicClubIdentity(team) : null;
+    const base = classic?.label ?? clubBaseName(team.name);
     const eraRaw = group === "CLASSIC" ? eraFromTeam(team) : "";
     options.push({
       id: team.id,
       label: base,
       group,
-      clubKey: group === "CLASSIC" ? base.toLowerCase() : team.id,
+      clubKey: classic ? classic.key : team.id,
       eraLabel: group === "CLASSIC" ? formatEraRoll(eraRaw) || formatEraRoll(team.name) || "—" : "",
       eraSort: eraRaw || team.name,
     });

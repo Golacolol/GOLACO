@@ -30,6 +30,8 @@ export interface SavedSettings {
   flickOpponent: "AI" | "HUMAN";
   flickDifficulty: "EASY" | "NORMAL" | "HARD" | "EXPERT";
   flickFirstTo: number;
+  /** Classic alternate flicks when true; open reactive play when false. */
+  flickTurnBased: boolean;
   /** Main menu Team Select kit dial — HOME or AWAY for the user club. */
   menuKitChoice: "home" | "away";
   timeOfDay: "DAY" | "EVENING" | "NIGHT";
@@ -113,6 +115,7 @@ export const DEFAULT_SETTINGS: SavedSettings = {
   flickOpponent: "AI",
   flickDifficulty: "NORMAL",
   flickFirstTo: 5,
+  flickTurnBased: true,
   menuKitChoice: "home",
   timeOfDay: "EVENING",
   weather: "MILD",
@@ -208,6 +211,7 @@ export class SaveManager {
         settings.flickDifficulty = "NORMAL";
       }
       settings.flickFirstTo = Math.max(1, Math.min(21, Number(settings.flickFirstTo) || 5));
+      if (typeof settings.flickTurnBased !== "boolean") settings.flickTurnBased = true;
       if (settings.menuKitChoice !== "home" && settings.menuKitChoice !== "away") {
         settings.menuKitChoice = "home";
       }

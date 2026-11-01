@@ -12,8 +12,8 @@ import {
 
 describe("Argyle 101", () => {
   it("starts the named 4-4-2 eleven with the listed shirt numbers", () => {
-    expect(ARGYLE_101_NAME).toBe("Plymouth Argyle — 101");
-    expect(ARGYLE_101_ABBREVIATION).toBe("101");
+    expect(ARGYLE_101_NAME).toBe("Plymouth Argyle — 2021/22");
+    expect(ARGYLE_101_ABBREVIATION).toBe("ARG");
     expect(ARGYLE_101_LINEUP.formation).toBe(ARGYLE_101_FORMATION);
     expect(ARGYLE_101_XI).toHaveLength(11);
     const byShirt = new Map(ARGYLE_101_MEMBERSHIPS.map((m) => [m.shirtNumber, m.playerId]));

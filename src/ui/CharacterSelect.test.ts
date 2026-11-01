@@ -256,12 +256,12 @@ describe("character select", () => {
     expect(view.root.querySelector(".spot-select-btn")?.textContent).toContain(surname);
   });
 
-  it("keeps goalkeeper tokens above the pitch floor so kit text stays visible", () => {
+  it("keeps goalkeeper tokens on the pitch-floor stop so kit text stays visible", () => {
     const { bottom: gk } = formationToPitchPercent(0.07, 0);
     const { bottom: mid } = formationToPitchPercent(0.5, 0);
     const { bottom: st } = formationToPitchPercent(0.82, 0);
     expect(gk).toBeGreaterThanOrEqual(1);
-    expect(gk).toBeLessThan(3);
+    expect(gk).toBeLessThan(1.4);
     expect(mid).toBeGreaterThan(38);
     expect(mid).toBeLessThan(st - 10);
     expect(st).toBeGreaterThan(64);
