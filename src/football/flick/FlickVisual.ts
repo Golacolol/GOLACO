@@ -11,7 +11,8 @@ interface FigureMesh {
 }
 
 /**
- * Tabletop pitch + figures on half-sphere bases (planar physics; lean is cosmetic only).
+ * Flick pieces only — the REAL Stadium supplies pitch, goals, stands, and lighting.
+ * Subbuteo bases: curved shell on the pitch, flat top for the figure (planar physics).
  */
 export class FlickVisual {
   readonly group = new THREE.Group();
@@ -23,17 +24,22 @@ export class FlickVisual {
   private homeColor: number;
   private awayColor: number;
 
+  /** Slightly under a hemisphere so the shell sits on its curve, flat shelf on top. */
+  private static readonly BASE_PHI = Math.PI * 0.48;
+
   constructor(homeColor: number, awayColor: number, dims: FlickPitchDims = FLICK_PITCH) {
     this.dims = dims;
     this.homeColor = homeColor;
     this.awayColor = awayColor;
-    this.buildPitch();
+    this.group.name = "flickPieces";
+
     const ballGeo = new THREE.SphereGeometry(dims.ballRadius, 20, 16);
     this.ballMesh = new THREE.Mesh(
       ballGeo,
       new THREE.MeshStandardMaterial({ color: 0xf4f4f4, roughness: 0.42 }),
     );
     this.ballMesh.castShadow = true;
+    this.ballMesh.name = "flickBall";
     this.group.add(this.ballMesh);
 
     const aimMat = new THREE.LineBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.85 });
@@ -41,8 +47,10 @@ export class FlickVisual {
     this.aimLine.visible = false;
     this.group.add(this.aimLine);
 
+    const ringInner = dims.figureRadius * 0.45;
+    const ringOuter = dims.figureRadius * 0.7;
     this.aimRing = new THREE.Mesh(
-      new THREE.RingGeometry(0.12, 0.18, 24),
+      new THREE.RingGeometry(ringInner, ringOuter, 28),
       new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.55, side: THREE.DoubleSide }),
     );
     this.aimRing.rotation.x = -Math.PI / 2;
@@ -50,69 +58,9 @@ export class FlickVisual {
     this.group.add(this.aimRing);
   }
 
-  private buildPitch(): void {
-    const { dims } = this;
-    const board = new THREE.Mesh(
-      new THREE.BoxGeometry(dims.length + 0.7, 0.28, dims.width + 0.7),
-      new THREE.MeshStandardMaterial({ color: 0x3a2a18, roughness: 0.78 }),
-    );
-    board.position.y = dims.playY - 0.16;
-    this.group.add(board);
-
-    const play = new THREE.Mesh(
-      new THREE.BoxGeometry(dims.length, 0.05, dims.width),
-      new THREE.MeshStandardMaterial({ color: 0x2f6b3a, roughness: 0.9 }),
-    );
-    play.position.y = dims.playY - 0.02;
-    play.receiveShadow = true;
-    this.group.add(play);
-
-    // Centre line / circle
-    const lineMat = new THREE.MeshBasicMaterial({ color: 0xe8efe8 });
-    const mid = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.02, dims.width), lineMat);
-    mid.position.y = dims.playY;
-    this.group.add(mid);
-    const circle = new THREE.Mesh(
-      new THREE.RingGeometry(1.05, 1.12, 48),
-      new THREE.MeshBasicMaterial({ color: 0xe8efe8, side: THREE.DoubleSide }),
-    );
-    circle.rotation.x = -Math.PI / 2;
-    circle.position.y = dims.playY + 0.01;
-    this.group.add(circle);
-
-    const railMat = new THREE.MeshStandardMaterial({ color: 0x5c3a1e, roughness: 0.55 });
-    const h = dims.wallHeight;
-    const specs: [number, number, number, number, number, number][] = [
-      [dims.length + 0.15, h, 0.1, 0, dims.playY + h / 2, dims.width / 2 + 0.05],
-      [dims.length + 0.15, h, 0.1, 0, dims.playY + h / 2, -dims.width / 2 - 0.05],
-      [0.1, h, dims.width + 0.15, dims.length / 2 + 0.05, dims.playY + h / 2, 0],
-      [0.1, h, dims.width + 0.15, -dims.length / 2 - 0.05, dims.playY + h / 2, 0],
-    ];
-    for (const [w, hh, d, x, y, z] of specs) {
-      const m = new THREE.Mesh(new THREE.BoxGeometry(w, hh, d), railMat);
-      m.position.set(x, y, z);
-      this.group.add(m);
-    }
-
-    const goalMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0a, roughness: 0.02 });
-    for (const sign of [-1, 1] as const) {
-      const g = new THREE.Mesh(
-        new THREE.BoxGeometry(dims.goalDepth * 1.1, h * 1.1, dims.goalWidth * 1.05),
-        goalMat,
-      );
-      g.position.set(sign * (dims.length / 2 + dims.goalDepth * 0.4), dims.playY + 0.02, 0);
-      this.group.add(g);
-      // Goal posts
-      const postMat = new THREE.MeshStandardMaterial({ color: 0xf0f0f0, roughness: 0.35 });
-      for (const z of [-dims.goalWidth / 2, dims.goalWidth / 2]) {
-        const post = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.55, 0.06), postMat);
-        post.position.set(sign * (dims.length / 2), dims.playY + 0.28, z);
-        this.group.add(post);
-      }
-      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, dims.goalWidth), postMat);
-      bar.position.set(sign * (dims.length / 2), dims.playY + 0.55, 0);
-      this.group.add(bar);
-    }
+  /** True when this visual did not build a private tabletop board (Stadium hosts the pitch). */
+  hasPrivatePitchBoard(): boolean {
+    return this.group.children.some((c) => c.name === "flickTabletopBoard" || c.name === "flickTabletopPlay");
   }
 
   ensureFigures(figures: FlickFigureState[]): void {
@@ -124,47 +72,69 @@ export class FlickVisual {
 
   private buildFigure(f: FlickFigureState): FigureMesh {
     const color = f.side === "home" ? this.homeColor : this.awayColor;
+    const r = f.radius;
+    const phi = FlickVisual.BASE_PHI;
+    // Cap height from curved tip to flat rim (just under a hemisphere).
+    const baseH = r * (1 - Math.cos(phi));
+    const rimR = r * Math.sin(phi);
     const root = new THREE.Group();
     root.name = f.id;
 
-    // Half-sphere base (dome) — flat cut on pitch; no physics tip.
-    const baseGeo = new THREE.SphereGeometry(f.radius, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2);
     const baseMat = new THREE.MeshStandardMaterial({
       color: f.isGK ? 0x222222 : 0x1a1a1a,
       roughness: 0.55,
       metalness: 0.15,
     });
+    // Spherical cap from +Y pole; flip so the curve sits on the pitch and the flat faces up.
+    const baseGeo = new THREE.SphereGeometry(r, 24, 14, 0, Math.PI * 2, 0, phi);
     const base = new THREE.Mesh(baseGeo, baseMat);
-    base.position.y = this.dims.playY;
+    base.name = "flickBase";
+    base.rotation.x = Math.PI;
+    // Pole (curve) on playY; flat rim at playY + baseH.
+    base.position.y = this.dims.playY + r;
     base.castShadow = true;
     root.add(base);
 
+    // Flat shelf on the rim so the figure clearly stands on the base top.
+    const shelf = new THREE.Mesh(
+      new THREE.CircleGeometry(rimR * 0.98, 28),
+      new THREE.MeshStandardMaterial({
+        color: f.isGK ? 0x2a2a2a : 0x222222,
+        roughness: 0.7,
+        metalness: 0.08,
+      }),
+    );
+    shelf.rotation.x = -Math.PI / 2;
+    shelf.position.y = this.dims.playY + baseH + 0.01;
+    shelf.receiveShadow = true;
+    root.add(shelf);
+
     const body = new THREE.Group();
-    body.position.y = this.dims.playY + f.radius * 0.35;
+    body.position.y = this.dims.playY + baseH;
     const torso = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.1, 0.12, 0.38, 10),
+      new THREE.CylinderGeometry(r * 0.28, r * 0.34, r * 0.95, 10),
       new THREE.MeshStandardMaterial({ color, roughness: 0.48 }),
     );
-    torso.position.y = 0.28;
+    torso.position.y = r * 0.55;
     torso.castShadow = true;
     const head = new THREE.Mesh(
-      new THREE.SphereGeometry(0.09, 12, 10),
+      new THREE.SphereGeometry(r * 0.26, 12, 10),
       new THREE.MeshStandardMaterial({ color: 0xc4a07a, roughness: 0.62 }),
     );
-    head.position.y = 0.55;
+    head.position.y = r * 1.2;
     body.add(torso, head);
     if (f.isGK) {
       const gloves = new THREE.Mesh(
-        new THREE.BoxGeometry(0.22, 0.06, 0.08),
+        new THREE.BoxGeometry(r * 0.65, r * 0.16, r * 0.24),
         new THREE.MeshStandardMaterial({ color: 0xf0d060 }),
       );
-      gloves.position.y = 0.22;
+      gloves.position.y = r * 0.5;
       body.add(gloves);
     }
     root.add(body);
 
     const select = new THREE.Mesh(
-      new THREE.RingGeometry(f.radius * 1.05, f.radius * 1.25, 28),
+      new THREE.RingGeometry(r * 1.05, r * 1.25, 28),
       new THREE.MeshBasicMaterial({ color: 0xffe08a, transparent: true, opacity: 0.7, side: THREE.DoubleSide }),
     );
     select.rotation.x = -Math.PI / 2;
@@ -193,19 +163,21 @@ export class FlickVisual {
       // Cosmetic lean only — never accumulates; settled figures are upright.
       mesh.body.rotation.x = f.leanX;
       mesh.body.rotation.z = f.leanZ;
-      mesh.base.rotation.set(0, 0, 0);
+      // Keep Subbuteo orientation: curved shell down, flat top up.
+      mesh.base.rotation.set(Math.PI, 0, 0);
       mesh.select.visible = f.id === selectedId;
     }
 
     if (aim) {
-      const pts = new Float32Array([aim.fromX, this.dims.playY + 0.05, aim.fromZ, aim.toX, this.dims.playY + 0.05, aim.toZ]);
+      const y = this.dims.playY + 0.08;
+      const pts = new Float32Array([aim.fromX, y, aim.fromZ, aim.toX, y, aim.toZ]);
       this.aimLine.geometry.setAttribute("position", new THREE.BufferAttribute(pts, 3));
       this.aimLine.geometry.computeBoundingSphere();
       this.aimLine.visible = true;
       const pull = Math.hypot(aim.toX - aim.fromX, aim.toZ - aim.fromZ);
       this.aimRing.visible = true;
-      this.aimRing.position.set(aim.fromX, this.dims.playY + 0.03, aim.fromZ);
-      const s = 1 + Math.min(2.5, pull * 2.2);
+      this.aimRing.position.set(aim.fromX, this.dims.playY + 0.04, aim.fromZ);
+      const s = 1 + Math.min(2.5, pull * 0.08);
       this.aimRing.scale.setScalar(s);
     } else {
       this.aimLine.visible = false;

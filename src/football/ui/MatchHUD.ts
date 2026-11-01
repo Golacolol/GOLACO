@@ -232,13 +232,15 @@ export class MatchHUD {
         ${portraitHtml(
           {
             id: player.id,
-            name: player.displayName,
+            name: player.name,
+            displayName: player.displayName,
             appearance: { portraitAsset: player.appearance.portraitAsset },
           },
           player.shirtNumber,
           team.record.primaryColor,
           {
             surnameOnly: true,
+            badgeMode: "initials",
             className: "kit-marker-hud",
             textColor: contrastingKitText(team.record.primaryColor, team.record.secondaryColor),
           },
@@ -297,13 +299,15 @@ export class MatchHUD {
       ${portraitHtml(
         {
           id: player.id,
-          name: player.displayName,
+          name: player.name,
+          displayName: player.displayName,
           appearance: { portraitAsset: player.appearance.portraitAsset },
         },
         player.shirtNumber,
         team.record.primaryColor,
         {
           surnameOnly: true,
+          badgeMode: "initials",
           className: "kit-marker-hud-sheet",
           textColor: contrastingKitText(team.record.primaryColor, team.record.secondaryColor),
         },

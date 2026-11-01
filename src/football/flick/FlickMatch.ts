@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { hexColor } from "../../core/math";
+import { Stadium } from "../stadium/Stadium";
 import { FlickAI } from "./FlickAI";
 import { checkFlickGoal, createFlickBall, resetFlickBall, type FlickBallState } from "./FlickBall";
 import { FlickCamera } from "./FlickCamera";
@@ -10,9 +12,13 @@ import {
 } from "./FlickFigure";
 import { FlickHUD } from "./FlickHUD";
 import { FlickInput, pickFigureAt } from "./FlickInput";
-import { ballThreatensGoal, FLICK_PITCH } from "./FlickPitch";
+import { ballThreatensGoal, clampGkPosition, FLICK_PITCH } from "./FlickPitch";
 import { everythingSettled, FLICK_SETTLE_HOLD, stepFlickWorld } from "./FlickPhysics";
-import { normalizeFlickConfig, type FlickMatchConfig } from "./FlickSetup";
+import {
+  normalizeFlickConfig,
+  type FlickMatchConfig,
+  type FlickWorldContext,
+} from "./FlickSetup";
 import { FlickVisual } from "./FlickVisual";
 
 export type FlickMatchPhase = "kickoff" | "aim" | "moving" | "settle" | "goal" | "over";
@@ -33,6 +39,7 @@ export class FlickMatch {
   readonly input: FlickInput;
   readonly ai: FlickAI;
   readonly hud: FlickHUD;
+  readonly stadium: Stadium;
 
   homeScore = 0;
   awayScore = 0;
@@ -56,17 +63,22 @@ export class FlickMatch {
   private flickedGkFromWindow = false;
   /** Seconds left to flick GK before the window auto-skips. */
   private gkWindowT = 0;
-  private light: THREE.DirectionalLight;
-  private amb: THREE.AmbientLight;
+  /** Side that last scored — conceding side takes the next kickoff. */
+  private lastScorer: FlickSide | null = null;
   private disposed = false;
 
   constructor(
     private scene: THREE.Scene,
     aspect: number,
     uiParent: HTMLElement,
-    config?: Partial<FlickMatchConfig>,
+    config: Partial<FlickMatchConfig> | undefined,
+    world: FlickWorldContext,
   ) {
-    this.config = normalizeFlickConfig(config);
+    this.config = normalizeFlickConfig({
+      ...config,
+      homeColor: hexColor(world.homePrimary),
+      awayColor: hexColor(world.awayPrimary),
+    });
     this.camera = new FlickCamera(aspect);
     this.figures = kickoffFormation(FLICK_PITCH);
     this.ball = createFlickBall(FLICK_PITCH);
@@ -75,14 +87,19 @@ export class FlickMatch {
     this.ai = new FlickAI(this.config.difficulty);
     this.hud = new FlickHUD(uiParent);
 
-    this.amb = new THREE.AmbientLight(0xfff5e8, 0.58);
-    this.light = new THREE.DirectionalLight(0xffe8cc, 1.1);
-    this.light.position.set(3, 12, 5);
-    this.light.castShadow = true;
-    this.scene.add(this.amb);
-    this.scene.add(this.light);
+    this.stadium = new Stadium(
+      this.scene,
+      world.stadium,
+      world.advertising,
+      world.homePrimary,
+      world.awayPrimary,
+      world.env,
+      { home: world.homeKit, away: world.awayKit },
+    );
+    this.stadium.applyEnvironment(world.env, world.graphicsPreset);
+
+    // Pieces only — Stadium already owns pitch, goals, lights, and sky.
     this.scene.add(this.visual.group);
-    this.scene.background = new THREE.Color(0x1a1510);
 
     this.hud.show();
     this.beginKickoff("home");
@@ -124,39 +141,58 @@ export class FlickMatch {
     this.phase = "aim";
     this.selectedId = null;
     this.input.clearSelection();
-    if (this.pendingGkAfterAi) {
+    // GK window is turn-based only — open play lets the human flick GK anytime.
+    if (this.config.turnBased && this.pendingGkAfterAi) {
       this.controlMode = "gkWindow";
       this.gkWindowT = 7;
       this.ai.resetThink();
       return;
     }
+    this.pendingGkAfterAi = false;
     this.controlMode = "outfield";
-    if (this.isAiOutfieldTurn()) this.ai.resetThink();
+    if (this.shouldRunAi()) this.ai.resetThink();
   }
 
   private isAiOutfieldTurn(): boolean {
     return this.config.opponent === "AI" && this.turnSide === this.aiSide();
   }
 
+  /** AI may flick now: its turn in classic mode, or anytime settled in open play. */
+  private shouldRunAi(): boolean {
+    if (this.config.opponent !== "AI") return false;
+    if (this.phase !== "aim") return false;
+    if (this.controlMode === "gkWindow") return false;
+    if (!this.config.turnBased) return true;
+    return this.turnSide === this.aiSide();
+  }
+
+  /** Outfield flick targets only — GKs are positioned, never flicked. */
   canSelectFigure(f: FlickFigureState): boolean {
     if (this.phase !== "aim") return false;
-    if (this.controlMode === "gkWindow") {
-      return f.side === this.humanSide() && f.isGK;
+    if (f.isGK) return false;
+    if (this.controlMode === "gkWindow") return false;
+    if (!this.config.turnBased) {
+      if (this.config.opponent === "HUMAN") return true;
+      return f.side === this.humanSide();
     }
     if (f.side !== this.turnSide) return false;
     if (this.isAiOutfieldTurn()) return false;
-    // Own turn: outfield always; GK allowed for human side / hotseat.
-    if (f.isGK) {
-      if (this.config.opponent === "HUMAN") return true;
-      return this.turnSide === this.humanSide();
-    }
     return true;
   }
 
+  /** Drag-to-place the keeper inside their goal area. */
+  canDragGk(f: FlickFigureState): boolean {
+    if (!f.isGK) return false;
+    if (this.phase === "goal" || this.phase === "over" || this.phase === "kickoff") return false;
+    if (this.config.opponent === "HUMAN") return true;
+    return f.side === this.humanSide();
+  }
+
   private applyFlick(fig: FlickFigureState, pullDx: number, pullDz: number): void {
+    if (fig.isGK) return;
     if (!applyFlickImpulse(fig, pullDx, pullDz)) return;
     this.flickedGkFromWindow = this.controlMode === "gkWindow";
-    this.lastFlickKind = this.flickedGkFromWindow || fig.isGK ? "gk" : "outfield";
+    this.lastFlickKind = this.flickedGkFromWindow ? "gk" : "outfield";
     if (this.controlMode === "gkWindow") this.pendingGkAfterAi = false;
     this.phase = "moving";
     this.settleT = 0;
@@ -165,22 +201,97 @@ export class FlickMatch {
     this.controlMode = "outfield";
   }
 
+  /**
+   * Keepers do not flick — slide them in the box with WASD/arrows, or drag.
+   * Called every frame during live play so the human can save while the AI attacks.
+   */
+  private updateGkControl(dt: number): void {
+    for (const f of this.figures) {
+      if (!f.isGK) continue;
+      f.vx = 0;
+      f.vz = 0;
+      f.settled = true;
+      const pinned = clampGkPosition(f.x, f.z, f.side, FLICK_PITCH);
+      f.x = pinned.x;
+      f.z = pinned.z;
+    }
+
+    // Drag place: follow pointer while a GK is selected.
+    const aim = this.input.getAim();
+    if (this.selectedId && aim.active) {
+      const fig = this.figures.find((f) => f.id === this.selectedId);
+      if (fig?.isGK && this.canDragGk(fig)) {
+        const placed = clampGkPosition(aim.dragX, aim.dragZ, fig.side, FLICK_PITCH);
+        fig.x = placed.x;
+        fig.z = placed.z;
+        return;
+      }
+    }
+
+    const axes = this.input.gkMoveAxes();
+    if (axes.x === 0 && axes.z === 0) return;
+    const speed = 16;
+    const selectedGk = this.selectedId
+      ? this.figures.find((f) => f.id === this.selectedId && f.isGK)
+      : null;
+    for (const f of this.figures) {
+      if (!f.isGK || !this.canDragGk(f)) continue;
+      // Hotseat: keys drive the selected keeper, otherwise home.
+      if (this.config.opponent === "HUMAN") {
+        if (selectedGk ? f.id !== selectedGk.id : f.side !== "home") continue;
+      }
+      // Away defends +X: "forward" (W) steps toward midfield (−X).
+      const dx = (f.side === "home" ? axes.x : -axes.x) * speed * dt;
+      const dz = axes.z * speed * dt;
+      const next = clampGkPosition(f.x + dx, f.z + dz, f.side, FLICK_PITCH);
+      f.x = next.x;
+      f.z = next.z;
+    }
+  }
+
   private advanceTurn(): void {
     this.turnSide = this.turnSide === "home" ? "away" : "home";
     this.pendingGkAfterAi = false;
     this.enterAim();
   }
 
-  private afterSettle(): void {
+  /** Award a goal as soon as the ball is over the line (do not wait for settle). */
+  private tryRegisterGoal(): boolean {
+    if (this.phase === "goal" || this.phase === "over" || this.phase === "kickoff") return false;
     const scored = checkFlickGoal(this.ball, FLICK_PITCH);
-    if (scored) {
-      if (scored === "home") this.homeScore += 1;
-      else this.awayScore += 1;
-      this.phase = "goal";
-      this.goalT = 1.2;
+    if (!scored) return false;
+    if (scored === "home") this.homeScore += 1;
+    else this.awayScore += 1;
+    this.lastScorer = scored;
+    // Pin the ball in the net so it cannot wander and skip the reset.
+    const hl = FLICK_PITCH.length / 2;
+    this.ball.vx = 0;
+    this.ball.vz = 0;
+    for (const f of this.figures) {
+      f.vx = 0;
+      f.vz = 0;
+      f.settled = true;
+    }
+    if (scored === "home") this.ball.x = Math.max(this.ball.x, hl + this.ball.radius + 0.15);
+    else this.ball.x = Math.min(this.ball.x, -hl - this.ball.radius - 0.15);
+    this.phase = "goal";
+    this.goalT = 1.2;
+    this.pendingGkAfterAi = false;
+    this.selectedId = null;
+    this.input.clearSelection();
+    if (this.homeScore >= this.config.firstTo) this.winner = "home";
+    else if (this.awayScore >= this.config.firstTo) this.winner = "away";
+    return true;
+  }
+
+  private afterSettle(): void {
+    if (this.tryRegisterGoal()) return;
+
+    // Open play: no turns — reopen aim so human and AI can both contest the next flick.
+    if (!this.config.turnBased) {
+      this.flickedGkFromWindow = false;
       this.pendingGkAfterAi = false;
-      if (this.homeScore >= this.config.firstTo) this.winner = "home";
-      else if (this.awayScore >= this.config.firstTo) this.winner = "away";
+      this.enterAim();
       return;
     }
 
@@ -213,8 +324,10 @@ export class FlickMatch {
       this.phase = "over";
       return;
     }
-    // Kickoff toward the side that conceded (they receive).
-    const next: FlickSide = this.ball.x > 0 ? "away" : "home";
+    // Conceding side always restarts (including after an own goal).
+    const scorer: FlickSide =
+      this.lastScorer ?? (this.ball.x > 0 ? "home" : "away");
+    const conceded: FlickSide = scorer === "home" ? "away" : "home";
     // Respawn formation for clean restart.
     const fresh = kickoffFormation(FLICK_PITCH);
     for (let i = 0; i < this.figures.length; i++) {
@@ -230,7 +343,8 @@ export class FlickMatch {
       dst.facing = src.facing;
       dst.settled = true;
     }
-    this.beginKickoff(next === "home" ? "away" : "home");
+    this.lastScorer = null;
+    this.beginKickoff(conceded);
   }
 
   update(dt: number): { pauseRequested: boolean } {
@@ -248,10 +362,14 @@ export class FlickMatch {
       this.goalT -= dt;
       if (this.goalT <= 0) this.onGoalDone();
     } else if (this.phase === "aim") {
+      this.updateGkControl(dt);
       this.updateAim(dt, poll);
     } else if (this.phase === "moving" || this.phase === "settle") {
       stepFlickWorld(this.figures, this.ball, dt, FLICK_PITCH);
-      if (everythingSettled(this.figures, this.ball)) {
+      this.updateGkControl(dt);
+      if (this.tryRegisterGoal()) {
+        // scored mid-flight
+      } else if (everythingSettled(this.figures, this.ball)) {
         this.settleT += dt;
         this.phase = "settle";
         if (this.settleT >= FLICK_SETTLE_HOLD) this.afterSettle();
@@ -259,12 +377,11 @@ export class FlickMatch {
         this.settleT = 0;
         this.phase = "moving";
       }
-      // Allow human GK flick mid-motion if ball becomes a threat during AI attack? Plan says
-      // after AI flick while threatening — handled on settle via gkWindow on re-aim.
     }
 
     this.syncVisual();
     this.camera.update(FLICK_PITCH, this.ball.x, this.ball.z);
+    this.stadium.update(dt, this.camera.camera.position);
     this.hud.update({
       home: this.homeScore,
       away: this.awayScore,
@@ -273,6 +390,7 @@ export class FlickMatch {
       difficulty: this.config.difficulty,
       view: this.camera.view,
       turn: this.turnLabel(),
+      turnBased: this.config.turnBased,
       gkWindow: this.controlMode === "gkWindow" && this.phase === "aim",
       winner: this.winner,
       phase: this.phase,
@@ -282,54 +400,84 @@ export class FlickMatch {
   }
 
   private turnLabel(): string {
+    if (!this.config.turnBased) return "OPEN PLAY";
     if (this.controlMode === "gkWindow") return `${this.humanSide().toUpperCase()} GK`;
     return this.turnSide.toUpperCase();
   }
 
   private updateAim(dt: number, poll: ReturnType<FlickInput["poll"]>): void {
-    // AI outfield flick (never during human GK window).
-    if (this.isAiOutfieldTurn() && this.controlMode === "outfield") {
-      const decision = this.ai.update(dt, this.figures, this.ball, this.aiSide());
-      if (decision) {
-        const fig = this.figures.find((f) => f.id === decision.figureId);
-        if (fig) this.applyFlick(fig, decision.pullDx, decision.pullDz);
-      }
-      return;
-    }
+    const aim = this.input.getAim();
+    const down = aim.active;
+    const selected = this.selectedId
+      ? this.figures.find((f) => f.id === this.selectedId) ?? null
+      : null;
+    const draggingGk = !!(selected?.isGK);
 
+    // GK window: position the keeper (keys/drag), then auto-advance — no flick.
     if (this.controlMode === "gkWindow") {
       this.ai.resetThink();
       this.gkWindowT -= dt;
+      this.handleGkOrOutfieldPick(down);
+      if (!down && this.pointerWasDown && draggingGk) {
+        this.selectedId = null;
+        this.input.clearSelection();
+      }
+      this.pointerWasDown = down;
       if (this.gkWindowT <= 0) {
         this.pendingGkAfterAi = false;
         this.turnSide = this.humanSide();
         this.enterAim();
-        return;
       }
+      return;
     }
 
-    const aim = this.input.getAim();
-    const down = aim.active;
-
-    if (down && !this.pointerWasDown) {
-      // Fresh press — pick figure.
-      const hit = { x: aim.dragX, z: aim.dragZ };
-      const fig = pickFigureAt(this.figures, hit.x, hit.z, (f) => this.canSelectFigure(f));
-      if (fig) {
-        this.selectedId = fig.id;
-        this.input.setSelectedFigure(fig.id);
+    // Classic turn-based: AI exclusively owns outfield flicks on its turn (GK still movable).
+    if (this.config.turnBased && this.isAiOutfieldTurn()) {
+      this.handleGkOrOutfieldPick(down);
+      if (!down && this.pointerWasDown && draggingGk) {
+        this.selectedId = null;
+        this.input.clearSelection();
       }
+      this.pointerWasDown = down;
+      if (draggingGk) return;
+      const decision = this.ai.update(dt, this.figures, this.ball, this.aiSide());
+      if (decision) {
+        const fig = this.figures.find((f) => f.id === decision.figureId);
+        if (fig && !fig.isGK) this.applyFlick(fig, decision.pullDx, decision.pullDz);
+      }
+      return;
     }
+
+    // Open play: AI reacts on its difficulty timer while the human can also aim.
+    if (!this.config.turnBased && this.shouldRunAi() && !this.selectedId) {
+      const decision = this.ai.update(dt, this.figures, this.ball, this.aiSide());
+      if (decision) {
+        const fig = this.figures.find((f) => f.id === decision.figureId);
+        if (fig && !fig.isGK) {
+          this.applyFlick(fig, decision.pullDx, decision.pullDz);
+          this.pointerWasDown = false;
+          return;
+        }
+      }
+    } else if (!this.config.turnBased && this.shouldRunAi() && this.selectedId) {
+      this.ai.resetThink();
+    }
+
+    this.handleGkOrOutfieldPick(down);
 
     if (poll.cancelled) {
       this.selectedId = null;
       this.input.clearSelection();
+      if (!this.config.turnBased && this.shouldRunAi()) this.ai.resetThink();
     }
 
-    // Release: if we had a selection and pointer went up.
+    // Release: flick outfield, or finish GK place.
     if (!down && this.pointerWasDown && this.selectedId) {
       const fig = this.figures.find((f) => f.id === this.selectedId);
-      if (fig) {
+      if (fig?.isGK) {
+        this.selectedId = null;
+        this.input.clearSelection();
+      } else if (fig) {
         const pullDx = aim.dragX - fig.x;
         const pullDz = aim.dragZ - fig.z;
         this.applyFlick(fig, pullDx, pullDz);
@@ -339,13 +487,32 @@ export class FlickMatch {
     this.pointerWasDown = down;
   }
 
+  private handleGkOrOutfieldPick(down: boolean): void {
+    if (!down || this.pointerWasDown) return;
+    const aim = this.input.getAim();
+    const hit = { x: aim.dragX, z: aim.dragZ };
+    const pad = FLICK_PITCH.figureRadius * 0.45;
+    const gk = pickFigureAt(this.figures, hit.x, hit.z, (f) => this.canDragGk(f), pad);
+    if (gk) {
+      this.selectedId = gk.id;
+      this.input.setSelectedFigure(gk.id);
+      return;
+    }
+    if (this.controlMode === "gkWindow") return;
+    const fig = pickFigureAt(this.figures, hit.x, hit.z, (f) => this.canSelectFigure(f), pad);
+    if (fig) {
+      this.selectedId = fig.id;
+      this.input.setSelectedFigure(fig.id);
+    }
+  }
+
   private syncVisual(): void {
     let aim: { fromX: number; fromZ: number; toX: number; toZ: number } | null = null;
     const raw = this.input.getAim();
     if (this.phase === "aim" && this.selectedId && raw.active) {
       const fig = this.figures.find((f) => f.id === this.selectedId);
-      if (fig) {
-        // Show intended travel (opposite pull).
+      // Aim line only for outfield flicks — GK drag is a place, not a pull-back.
+      if (fig && !fig.isGK) {
         const pullDx = raw.dragX - fig.x;
         const pullDz = raw.dragZ - fig.z;
         aim = {
@@ -369,7 +536,6 @@ export class FlickMatch {
     this.input.dispose();
     this.hud.dispose();
     this.visual.dispose();
-    this.scene.remove(this.amb);
-    this.scene.remove(this.light);
+    this.scene.remove(this.stadium.group);
   }
 }

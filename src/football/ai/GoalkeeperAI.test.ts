@@ -8,6 +8,7 @@ import {
   decideKeeperDistribution,
   goalkeeperTarget,
   keeperAngleStand,
+  keeperHandReleaseVector,
   keeperOutletAimPoint,
   keeperPassDelivery,
   keeperRestartReady,
@@ -16,6 +17,7 @@ import {
   KEEPER_DISTRIBUTE_MAX,
   updateGoalkeeper,
 } from "../ai/GoalkeeperAI";
+import { kickBall, stepBall } from "../ball/BallPhysics";
 import { inPenaltyArea, inSixYardArea } from "../pitch/PitchZones";
 import { movePlayer } from "../players/PlayerMovement";
 import { TOUCHLINE_SAFE_MARGIN } from "../ThrowIn";
@@ -248,6 +250,27 @@ describe("goalkeeper distribution", () => {
     expect(keeperPassDelivery(10, 0.2)).toBe("roll");
     expect(keeperPassDelivery(20, 0.3)).toBe("throw");
     expect(keeperPassDelivery(32, 0.4)).toBe("kick");
+  });
+
+  it("rolls and throws reach typical outlet distances under pitch friction", () => {
+    const travel = (delivery: "roll" | "throw", dist: number) => {
+      const impulse = keeperHandReleaseVector(0, 0, dist, 0, delivery, 0.75);
+      const ball = new Ball();
+      ball.x = 0;
+      ball.y = 0.28;
+      ball.z = 0;
+      kickBall(ball, impulse.vx, impulse.vz, impulse.vy);
+      let closest = Infinity;
+      for (let i = 0; i < 240; i++) {
+        stepBall(ball, 1 / 60);
+        closest = Math.min(closest, Math.abs(ball.x - dist));
+        if (ball.x > dist + 4 && Math.hypot(ball.vx, ball.vz) < 1.5) break;
+      }
+      return closest;
+    };
+    // Old caps died ~8–12 m short; allow a couple metres of miss for bounce/roll.
+    expect(travel("roll", 12)).toBeLessThan(3.5);
+    expect(travel("throw", 22)).toBeLessThan(4.5);
   });
 
   it("aims outlet releases inbound of the touchline", () => {

@@ -3,15 +3,30 @@ import type { FlickFigureState } from "./FlickFigure";
 import { figureSpeed } from "./FlickFigure";
 import { FLICK_PITCH, halfLength, halfWidth, type FlickPitchDims } from "./FlickPitch";
 
-export const FLICK_REST_SPEED = 0.12;
+/** Rest threshold — slightly higher on full-pitch scale so settle still feels snappy. */
+export const FLICK_REST_SPEED = 0.45;
 export const FLICK_SETTLE_HOLD = 0.35;
 
-const FIGURE_FRICTION = 3.8;
-const BALL_FRICTION = 1.65;
+/**
+ * Exponential damp rate for figures (1/s). Tuned so a max-power flick coasts
+ * past half a REAL pitch (~52m); the old 2.4 left strong flicks short at ~30m.
+ */
+export const FLICK_FIGURE_FRICTION = 1.85;
+const BALL_FRICTION = 1.05;
 const MAX_LEAN = 0.18;
 
+/** Coasting distance until speed drops below rest (matches stepFlickFriction). */
+export function estimateFlickCoastDistance(
+  speed: number,
+  friction: number = FLICK_FIGURE_FRICTION,
+  rest: number = FLICK_REST_SPEED,
+): number {
+  if (speed <= rest) return 0;
+  return (speed - rest) / friction;
+}
+
 export function stepFlickFriction(fig: FlickFigureState, dt: number): void {
-  const damp = Math.exp(-FIGURE_FRICTION * dt);
+  const damp = Math.exp(-FLICK_FIGURE_FRICTION * dt);
   fig.vx *= damp;
   fig.vz *= damp;
   if (figureSpeed(fig) < FLICK_REST_SPEED) {
@@ -95,22 +110,24 @@ export function collideFigureBall(fig: FlickFigureState, ball: FlickBallState): 
   fig.z -= hit.oz * push * 0.35;
   ball.x += hit.ox * push * 0.65;
   ball.z += hit.oz * push * 0.65;
+  // Normal points fig → ball. vn > 0 means the figure is closing on the ball.
   const relVx = fig.vx - ball.vx;
   const relVz = fig.vz - ball.vz;
   const vn = relVx * hit.ox + relVz * hit.oz;
-  if (vn <= 0) {
-    // Transfer flick energy into ball.
-    const transfer = 0.85;
-    ball.vx += fig.vx * transfer;
-    ball.vz += fig.vz * transfer;
-    fig.vx *= 0.55;
-    fig.vz *= 0.55;
-  } else {
-    const j = vn * 0.6;
-    ball.vx += hit.ox * j;
-    ball.vz += hit.oz * j;
-    fig.vx -= hit.ox * j * 0.4;
-    fig.vz -= hit.oz * j * 0.4;
+  if (vn > 0.05) {
+    // Flick strike: ball takes the bulk of the figure's velocity (plus closing boost).
+    const transfer = 1.08;
+    ball.vx = fig.vx * transfer + hit.ox * vn * 0.25;
+    ball.vz = fig.vz * transfer + hit.oz * vn * 0.25;
+    fig.vx *= 0.38;
+    fig.vz *= 0.38;
+  } else if (vn < -0.05) {
+    // Separating — light restitution only.
+    const j = -vn * 0.35;
+    ball.vx -= hit.ox * j;
+    ball.vz -= hit.oz * j;
+    fig.vx += hit.ox * j * 0.25;
+    fig.vz += hit.oz * j * 0.25;
   }
   fig.settled = false;
 }

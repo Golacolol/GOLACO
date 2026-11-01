@@ -136,15 +136,15 @@ export class TableInput {
     let homeSlide = 0;
     if (this.held("KeyA") || this.held("ArrowLeft")) homeSlide -= 1;
     if (this.held("KeyD") || this.held("ArrowRight")) homeSlide += 1;
-    // W / ↑ slide toward −Z (screen-up on the default table view).
-    if (this.held("KeyW") || this.held("ArrowUp")) homeSlide += 0.85;
-    if (this.held("KeyS") || this.held("ArrowDown")) homeSlide -= 0.85;
+    // W / ↑ → −Z (screen-up on the default table view); was inverted.
+    if (this.held("KeyW") || this.held("ArrowUp")) homeSlide -= 0.85;
+    if (this.held("KeyS") || this.held("ArrowDown")) homeSlide += 0.85;
 
     let awaySlide = 0;
     if (this.held("KeyJ")) awaySlide -= 1;
     if (this.held("KeyL")) awaySlide += 1;
-    if (this.held("KeyI")) awaySlide += 0.85;
-    if (this.held("KeyK")) awaySlide -= 0.85;
+    if (this.held("KeyI")) awaySlide -= 0.85;
+    if (this.held("KeyK")) awaySlide += 0.85;
 
     const homeKick = this.held("Space");
     const awayKick = this.held("Enter") || this.held("NumpadEnter");

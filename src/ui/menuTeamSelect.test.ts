@@ -37,7 +37,40 @@ describe("menuTeamSelect", () => {
     expect(formatEraRoll("2021-22")).toBe("21-22");
     expect(formatEraRoll("Chelsea — 2004/05 Mourinho")).toBe("04-05");
     expect(formatEraRoll("101")).toBe("101");
-    expect(formatEraRoll("FANSXI")).toBe("FANSXI");
+    expect(formatEraRoll("FANS")).toBe("FANS");
+  });
+
+  it("keeps Argyle fans / historic sides under Plymouth Argyle even with stale names", () => {
+    const options = buildMenuTeamOptions([
+      team({
+        id: "classic_plymouth_argyle_1995_96",
+        name: "Plymouth Argyle — 1995/96",
+        teamType: "HISTORIC_TEAM",
+        historicSeason: "1995/96",
+      }),
+      team({
+        id: "argyle_historic_sample",
+        name: "Argyle 101 Legends",
+        teamType: "HISTORIC_TEAM",
+        historicSeason: "101",
+      }),
+      team({
+        id: "argyle_fans_xi",
+        name: "Argyle Fans XI",
+        teamType: "FANS_TEAM",
+        historicSeason: "FANSXI",
+        fanTeam: true,
+      }),
+    ]);
+    const clubs = uniqueClubsInGroup(options, "CLASSIC");
+    expect(clubs).toHaveLength(1);
+    expect(clubs[0]!.clubKey).toBe("plymouth argyle");
+    expect(clubs[0]!.label).toBe("Plymouth Argyle");
+    expect(erasForClub(options, "plymouth argyle").map((o) => o.id)).toEqual([
+      "argyle_historic_sample",
+      "classic_plymouth_argyle_1995_96",
+      "argyle_fans_xi",
+    ]);
   });
 
   it("lists club-only Classic dial labels with date eras; keeps full TeamRecord names elsewhere", () => {
@@ -63,15 +96,15 @@ describe("menuTeamSelect", () => {
       }),
       team({
         id: "argyle_historic_sample",
-        name: "Plymouth Argyle — 101",
+        name: "Plymouth Argyle — 2021/22",
         teamType: "HISTORIC_TEAM",
-        historicSeason: "101",
+        historicSeason: "2021/22",
       }),
       team({
         id: "argyle_fans_xi",
-        name: "Plymouth Argyle — FANSXI",
+        name: "Plymouth Argyle — FANS",
         teamType: "FANS_TEAM",
-        historicSeason: "FANSXI",
+        historicSeason: "FANS",
         fanTeam: true,
       }),
     ]);
@@ -89,7 +122,7 @@ describe("menuTeamSelect", () => {
       "Plymouth Argyle",
       "Real Madrid",
     ]);
-    expect(classic.map((o) => o.eraLabel)).toEqual(["04-05", "11-12", "101", "FANSXI", "02-03"]);
+    expect(classic.map((o) => o.eraLabel)).toEqual(["04-05", "11-12", "21-22", "FANS", "02-03"]);
     expect(classic.every((o) => !o.eraLabel.includes("Mourinho"))).toBe(true);
     expect(classic.every((o) => !o.label.includes("Mourinho"))).toBe(true);
 
@@ -101,7 +134,7 @@ describe("menuTeamSelect", () => {
     ]);
 
     const argyleEras = erasForClub(options, "plymouth argyle");
-    expect(argyleEras.map((o) => o.eraLabel)).toEqual(["101", "FANSXI"]);
+    expect(argyleEras.map((o) => o.eraLabel)).toEqual(["21-22", "FANS"]);
     expect(argyleEras.map((o) => o.id)).toEqual(["argyle_historic_sample", "argyle_fans_xi"]);
 
     const clubs = uniqueClubsInGroup(options, "CLASSIC");

@@ -42,7 +42,7 @@ export type { OptionsSection };
 /** Short tab labels + menu-item titles/hints for the Options hub. */
 export const OPTIONS_SECTIONS: { id: OptionsSection; label: string; title: string; hint: string }[] = [
   { id: "match", label: "Match", title: "Match Settings", hint: "Length, weather and time of day defaults" },
-  { id: "gameplay", label: "Gameplay", title: "Gameplay", hint: "REAL / ARCADE mode and aim" },
+  { id: "gameplay", label: "Gameplay", title: "Gameplay", hint: "FOOTBALL / SOCCER mode and aim" },
   { id: "controls", label: "Controls", title: "Controls", hint: "Keyboard bindings" },
   { id: "audio", label: "Audio", title: "Audio", hint: "Master volume and mute" },
   { id: "display", label: "Display", title: "Display", hint: "Graphics, camera, HUD and boards" },
@@ -210,13 +210,13 @@ export class SettingsMenu {
           <h3>Gameplay</h3>
           <label>Default gameplay mode
             <select id="gplay">
-              <option value="REAL" ${settings.gameplayMode === "REAL" ? "selected" : ""}>REAL</option>
-              <option value="ARCADE" ${settings.gameplayMode === "ARCADE" ? "selected" : ""}>ARCADE</option>
+              <option value="REAL" ${settings.gameplayMode === "REAL" ? "selected" : ""}>FOOTBALL</option>
+              <option value="ARCADE" ${settings.gameplayMode === "ARCADE" ? "selected" : ""}>SOCCER</option>
               <option value="TABLE" ${settings.gameplayMode === "TABLE" ? "selected" : ""}>TABLE</option>
               <option value="FLICK" ${settings.gameplayMode === "FLICK" ? "selected" : ""}>FLICK</option>
             </select>
           </label>
-          <p class="hint">Also on the main menu. ARCADE = football AI multipliers. TABLE = foosball. FLICK = Subbuteo Flickball (setup on launch).</p>
+          <p class="hint">Also on the main menu. TABLE = foosball, FLICK = Flickball. Play Next opens Formation — settings live where PLAYER SELECT normally is (and below as defaults).</p>
           <label>TABLE layout
             <select id="table-layout">
               <option value="FRENCH_CLASSIC" ${settings.tableLayoutId === "FRENCH_CLASSIC" ? "selected" : ""}>French classic</option>
@@ -256,6 +256,8 @@ export class SettingsMenu {
           <label>FLICK first to
             <input id="flick-first" type="number" min="1" max="21" value="${settings.flickFirstTo}"/>
           </label>
+          <label class="check"><input id="flick-turns" type="checkbox" ${settings.flickTurnBased !== false ? "checked" : ""}/> FLICK take turns</label>
+          <p class="hint">Off = open play: flick anytime the pitch is settled. AI reacts and shoots on its difficulty timer.</p>
           <label class="check"><input id="invertY" type="checkbox" ${settings.invertShotY ? "checked" : ""}/> Invert vertical aim</label>
           <label class="check"><input id="pass-target" type="checkbox" ${settings.showPassTargetHighlight ? "checked" : ""}/> Highlight pass target</label>
           <p class="hint">Shows a ring under the intended receiver while you aim a pass. Off by default.</p>
@@ -554,6 +556,8 @@ export class SettingsMenu {
     }
     const flickFirst = root.querySelector("#flick-first") as HTMLInputElement | null;
     if (flickFirst) out.flickFirstTo = Math.max(1, Math.min(21, Number(flickFirst.value) || 5));
+    const flickTurns = root.querySelector("#flick-turns") as HTMLInputElement | null;
+    if (flickTurns) out.flickTurnBased = flickTurns.checked;
     const invertY = root.querySelector("#invertY") as HTMLInputElement | null;
     if (invertY) out.invertShotY = invertY.checked;
     const passTarget = root.querySelector("#pass-target") as HTMLInputElement | null;
