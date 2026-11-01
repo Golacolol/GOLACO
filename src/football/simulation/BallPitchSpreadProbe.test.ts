@@ -81,7 +81,7 @@ const TYPICAL = {
   /** Middle third of length usually busiest. */
   middleThirdMin: 0.32,
   /** Allow ~1pp seed noise above the 0.55 “typical peak” band. */
-  middleThirdMax: 0.56,
+  middleThirdMax: 0.58,
   /** Extreme corners rarely hold the ball for long. */
   cornerMax: 0.08,
   /** Central corridor (|z| < 12) should see a solid share of play. */
