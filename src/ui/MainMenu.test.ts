@@ -77,8 +77,9 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector(".fixture-match > [data-half-spin]")).toBeTruthy();
     expect(menu.root.querySelector(".fixture-teams-row [data-half-spin]")).toBeNull();
     const matchKids = [...menu.root.querySelector(".fixture-match")!.children];
-    expect(matchKids[0]?.classList.contains("opposition-dial-field")).toBe(true);
-    expect(matchKids[matchKids.length - 1]?.hasAttribute("data-half-spin")).toBe(true);
+    expect(matchKids[0]?.classList.contains("fixture-match-main")).toBe(true);
+    expect(matchKids[1]?.classList.contains("opposition-dial-field")).toBe(true);
+    expect(matchKids[2]?.hasAttribute("data-half-spin")).toBe(true);
     expect(menu.root.querySelector(".fixture-detail-row .meta")?.textContent).toContain("League One");
   });
 

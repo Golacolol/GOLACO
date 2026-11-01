@@ -220,9 +220,6 @@ export class MainMenu {
               </span>
             </div>
             <div class="menu-fixture fixture-match">
-              <span class="team-dial-field opposition-dial-field">
-                ${oppositionSpinHtml(this.oppositionOptions, this.oppositionIndex)}
-              </span>
               <div class="fixture-match-main">
                 <div class="fixture-detail-row">
                   <span class="meta">${fixture.competition} · ${view.kickOffTime || DEFAULT_KICK_OFF_TIME} · ${club.matchGround.name}</span>
@@ -241,6 +238,9 @@ export class MainMenu {
                   </button>
                 </div>
               </div>
+              <span class="team-dial-field opposition-dial-field">
+                ${oppositionSpinHtml(this.oppositionOptions, this.oppositionIndex)}
+              </span>
               ${halfSpinHtml(this.matchDuration)}
             </div>
           </div>
