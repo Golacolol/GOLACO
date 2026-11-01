@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { applyOverride } from "../football/players/PlayerStats";
 import type { TeamMembership } from "./schema";
-import { cycleAttractOpponent } from "../core/Database";
+import { cycleAttractOpponent, GameDatabase, isClassicMenuTeam } from "../core/Database";
+import { SaveManager } from "../core/SaveManager";
 import { clampMatchDuration, DEFAULT_MATCH_DURATION, MAX_MATCH_DURATION } from "../football/constants";
 
 describe("membership model", () => {
@@ -26,6 +27,21 @@ describe("attract fixture rotation", () => {
     expect(cycleAttractOpponent(ids, "plymouth_argyle_current", 1, "barnsley_current")).toBe("liverpool_current");
     expect(cycleAttractOpponent(ids, "plymouth_argyle_current", 2, "barnsley_current")).toBe("leeds_united_current");
     expect(cycleAttractOpponent(ids, "plymouth_argyle_current", 3, "barnsley_current")).toBe("barnsley_current");
+  });
+});
+
+describe("classic next fixture", () => {
+  it("pairs a Classic club with another Classic side instead of the league template away", async () => {
+    const db = await GameDatabase.load(new SaveManager());
+    const classicHome = [...db.teams.values()].find((t) => isClassicMenuTeam(t));
+    expect(classicHome).toBeTruthy();
+    const fixture = db.nextFixture(classicHome!.id, true);
+    const awayId = fixture.homeTeamId === classicHome!.id ? fixture.awayTeamId : fixture.homeTeamId;
+    expect(awayId).not.toBe("barnsley_current");
+    expect(isClassicMenuTeam(db.getTeam(awayId))).toBe(true);
+    expect(awayId).not.toBe(classicHome!.id);
+    // Stable across repaints so the opposition dial does not flicker.
+    expect(db.nextFixture(classicHome!.id, true).awayTeamId).toBe(fixture.awayTeamId);
   });
 });
 

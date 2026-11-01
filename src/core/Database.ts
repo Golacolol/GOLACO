@@ -63,6 +63,8 @@ export class GameDatabase {
   userTeamId = DEFAULT_TEAM_ID;
   private attractIndex = 0;
   private fixtureTemplate: FixtureRecord | null = null;
+  /** Stable casual opponent for Classic sides (no league calendar). */
+  private classicFriendlyAwayByHome = new Map<string, string>();
 
   static async load(save: SaveManager): Promise<GameDatabase> {
     const db = new GameDatabase();
@@ -420,15 +422,46 @@ export class GameDatabase {
     }
   }
 
-  private friendlyFor(teamId: string): FixtureRecord {
-    const base = this.fixtureTemplate ?? this.fixtures[0];
-    const homeId = this.teams.has(teamId) ? teamId : DEFAULT_TEAM_ID;
-    const awayId = cycleAttractOpponent(
+  private classicOpponentIds(homeId: string): string[] {
+    return [...this.teams.values()]
+      .filter((t) => t.id !== homeId && isClassicMenuTeam(t))
+      .map((t) => t.id);
+  }
+
+  /** Pick (and cache) another Classic side for menu friendlies — never the league template default. */
+  private resolveClassicFriendlyAway(homeId: string): string {
+    const pool = this.classicOpponentIds(homeId);
+    const cached = this.classicFriendlyAwayByHome.get(homeId);
+    if (cached && pool.includes(cached)) return cached;
+    if (!pool.length) {
+      const base = this.fixtureTemplate ?? this.fixtures[0];
+      return cycleAttractOpponent(
+        [...this.teams.values()].map((t) => t.id),
+        homeId,
+        0,
+        base?.awayTeamId,
+      );
+    }
+    const awayId = pool[Math.floor(Math.random() * pool.length)]!;
+    this.classicFriendlyAwayByHome.set(homeId, awayId);
+    return awayId;
+  }
+
+  private friendlyAwayFallback(homeId: string, preferredAwayId?: string): string {
+    const home = this.teams.get(homeId);
+    if (home && isClassicMenuTeam(home)) return this.resolveClassicFriendlyAway(homeId);
+    return cycleAttractOpponent(
       [...this.teams.values()].map((t) => t.id),
       homeId,
       0,
-      base?.awayTeamId,
+      preferredAwayId,
     );
+  }
+
+  private friendlyFor(teamId: string): FixtureRecord {
+    const base = this.fixtureTemplate ?? this.fixtures[0];
+    const homeId = this.teams.has(teamId) ? teamId : DEFAULT_TEAM_ID;
+    const awayId = this.friendlyAwayFallback(homeId, base?.awayTeamId);
     return this.friendlyVs(homeId, awayId);
   }
 
@@ -436,12 +469,10 @@ export class GameDatabase {
   friendlyVs(homeTeamId: string, awayTeamId: string): FixtureRecord {
     const base = this.fixtureTemplate ?? this.fixtures[0];
     const homeId = this.teams.has(homeTeamId) ? homeTeamId : DEFAULT_TEAM_ID;
-    const awayId = this.teams.has(awayTeamId) && awayTeamId !== homeId ? awayTeamId : cycleAttractOpponent(
-      [...this.teams.values()].map((t) => t.id),
-      homeId,
-      0,
-      base?.awayTeamId,
-    );
+    const awayId =
+      this.teams.has(awayTeamId) && awayTeamId !== homeId
+        ? awayTeamId
+        : this.friendlyAwayFallback(homeId, base?.awayTeamId);
     const home = this.getTeam(homeId);
     return {
       ...(base ?? {
@@ -519,4 +550,17 @@ export function cycleAttractOpponent(teamIds: string[], homeId: string, index: n
   if (!rest.length) return homeId;
   const ordered = preferredAwayId && rest.includes(preferredAwayId) ? [preferredAwayId, ...rest.filter((id) => id !== preferredAwayId)] : rest;
   return ordered[((index % ordered.length) + ordered.length) % ordered.length];
+}
+
+/** Menu Classic / historic / fans / international sides (no English league calendar). */
+export function isClassicMenuTeam(team: TeamRecord): boolean {
+  return (
+    team.id.startsWith("classic_") ||
+    team.teamType === "HISTORIC_TEAM" ||
+    team.teamType === "HISTORIC_OPPONENT" ||
+    team.teamType === "INTERNATIONAL" ||
+    team.teamType === "LEGENDS_TEAM" ||
+    team.teamType === "FANS_TEAM" ||
+    !!team.fanTeam
+  );
 }
