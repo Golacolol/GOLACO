@@ -1497,9 +1497,9 @@
       "hairStyle": "short",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "San Sebastián",
+      "birthplace": "San Sebasti\u00e1n",
       "heightScale": 1.006,
-      "fullName": "Martín Zubimendi"
+      "fullName": "Mart\u00edn Zubimendi"
     },
     "age": 27,
     "weightKg": 76
@@ -1630,7 +1630,7 @@
       "portraitAsset": null,
       "birthplace": "Stockholm",
       "heightScale": 1.046,
-      "fullName": "Viktor Gyökeres"
+      "fullName": "Viktor Gy\u00f6keres"
     },
     "age": 28,
     "weightKg": 76
@@ -2319,7 +2319,7 @@
       "portraitAsset": null,
       "birthplace": "Santander",
       "heightScale": 1.011,
-      "fullName": "Edu Martínez"
+      "fullName": "Edu Mart\u00ednez"
     },
     "age": 27,
     "weightKg": 76
@@ -2384,9 +2384,9 @@
       "hairColor": "#1a1410",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Västerås",
+      "birthplace": "V\u00e4ster\u00e5s",
       "heightScale": 1.046,
-      "fullName": "Victor Lindelöf"
+      "fullName": "Victor Lindel\u00f6f"
     },
     "age": 32,
     "weightKg": 81
@@ -2421,7 +2421,7 @@
       "portraitAsset": null,
       "birthplace": "Mar del Plata",
       "heightScale": 0.949,
-      "fullName": "Emi Buendía"
+      "fullName": "Emi Buend\u00eda"
     },
     "age": 29,
     "weightKg": 71
@@ -2454,9 +2454,9 @@
       "hairColor": "#3b2a18",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "birthplace": "Medellín",
+      "birthplace": "Medell\u00edn",
       "heightScale": 1.034,
-      "fullName": "Jhon Durán"
+      "fullName": "Jhon Dur\u00e1n"
     },
     "age": 22,
     "weightKg": 75
@@ -2633,7 +2633,7 @@
       "portraitAsset": null,
       "birthplace": "Toulouse",
       "heightScale": 1.017,
-      "fullName": "Bafodé Diakité"
+      "fullName": "Bafod\u00e9 Diakit\u00e9"
     },
     "age": 25,
     "weightKg": 78
@@ -2692,7 +2692,7 @@
       "hairStyle": "short",
       "hairColor": "#111111",
       "portraitAsset": null,
-      "birthplace": "Liège",
+      "birthplace": "Li\u00e8ge",
       "heightScale": 0.966,
       "fullName": "Adrien Truffert"
     },
@@ -2929,9 +2929,9 @@
       "skinTone": 0.28,
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Požarevac",
+      "birthplace": "Po\u017earevac",
       "heightScale": 1.086,
-      "fullName": "Djordje Petrović"
+      "fullName": "Djordje Petrovi\u0107"
     },
     "age": 27,
     "weightKg": 85
@@ -2963,7 +2963,7 @@
       "portraitAsset": null,
       "birthplace": "Porto Alegre",
       "heightScale": 1,
-      "fullName": "João Araújo"
+      "fullName": "Jo\u00e3o Ara\u00fajo"
     },
     "age": 28,
     "weightKg": 72
@@ -3464,7 +3464,7 @@
     "appearance": {
       "skinTone": 0.62,
       "portraitAsset": null,
-      "birthplace": "Tucuruí",
+      "birthplace": "Tucuru\u00ed",
       "heightScale": 1.051,
       "fullName": "Igor Thiago"
     },
@@ -4365,7 +4365,7 @@
       "portraitAsset": null,
       "birthplace": "Mar del Plata",
       "heightScale": 1.091,
-      "fullName": "Emiliano Martínez"
+      "fullName": "Emiliano Mart\u00ednez"
     },
     "age": 34,
     "weightKg": 86
@@ -4502,7 +4502,7 @@
       "portraitAsset": null,
       "birthplace": "25 de Mayo",
       "heightScale": 0.937,
-      "fullName": "Valentín Barco"
+      "fullName": "Valent\u00edn Barco"
     },
     "age": 22,
     "weightKg": 73
@@ -4690,7 +4690,7 @@
       "portraitAsset": null,
       "birthplace": "Ponta Delgada",
       "heightScale": 1.034,
-      "fullName": "João Pedro"
+      "fullName": "Jo\u00e3o Pedro"
     },
     "age": 29,
     "weightKg": 75
@@ -4728,7 +4728,7 @@
       "portraitAsset": null,
       "birthplace": "Lomma",
       "heightScale": 1.063,
-      "fullName": "Filip Jörgensen"
+      "fullName": "Filip J\u00f6rgensen"
     },
     "age": 24,
     "weightKg": 84
@@ -4761,7 +4761,7 @@
       "hairColor": "#1a1410",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "birthplace": "Décines-Charpieu",
+      "birthplace": "D\u00e9cines-Charpieu",
       "heightScale": 1,
       "fullName": "Malo Gusto"
     },
@@ -5715,9 +5715,9 @@
       "hairColor": "#5a4330",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Santa Perpètua de Mogoda",
+      "birthplace": "Santa Perp\u00e8tua de Mogoda",
       "heightScale": 1.029,
-      "fullName": "Óscar Mingueza"
+      "fullName": "\u00d3scar Mingueza"
     },
     "age": 27,
     "weightKg": 79
@@ -5785,7 +5785,7 @@
       "portraitAsset": null,
       "birthplace": "Bamako",
       "heightScale": 1.006,
-      "fullName": "Cheick Doucouré"
+      "fullName": "Cheick Doucour\u00e9"
     },
     "age": 26,
     "weightKg": 76
@@ -5853,7 +5853,7 @@
       "hairColor": "#111111",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Guédiawaye",
+      "birthplace": "Gu\u00e9diawaye",
       "heightScale": 1.063,
       "fullName": "Ibrahima Sarr"
     },
@@ -6091,7 +6091,7 @@
       "portraitAsset": null,
       "birthplace": "Rio de Janeiro",
       "heightScale": 0.994,
-      "fullName": "Matheus França"
+      "fullName": "Matheus Fran\u00e7a"
     },
     "age": 22,
     "weightKg": 75
@@ -6156,7 +6156,7 @@
       "portraitAsset": null,
       "birthplace": "Las Palmas",
       "heightScale": 0.96,
-      "fullName": "Yéremi Pino"
+      "fullName": "Y\u00e9remi Pino"
     },
     "age": 24,
     "weightKg": 69
@@ -6975,7 +6975,7 @@
       "skinTone": 0.28,
       "hairColor": "#111111",
       "portraitAsset": null,
-      "birthplace": "Bærum",
+      "birthplace": "B\u00e6rum",
       "heightScale": 1.063,
       "fullName": "Sander Berge"
     },
@@ -7144,7 +7144,7 @@
     "appearance": {
       "skinTone": 0.52,
       "portraitAsset": null,
-      "birthplace": "São Domingos do Prata",
+      "birthplace": "S\u00e3o Domingos do Prata",
       "heightScale": 1.017,
       "fullName": "Rodrigo Muniz"
     },
@@ -7351,7 +7351,7 @@
       "portraitAsset": null,
       "birthplace": "L'Hospitalet de Llobregat",
       "heightScale": 0.994,
-      "fullName": "Adama Traoré"
+      "fullName": "Adama Traor\u00e9"
     },
     "age": 30,
     "weightKg": 72
@@ -7959,7 +7959,7 @@
       "portraitAsset": null,
       "birthplace": "Grand-Bereby",
       "heightScale": 0.92,
-      "fullName": "Jean Michaël Seri"
+      "fullName": "Jean Micha\u00ebl Seri"
     },
     "age": 35,
     "weightKg": 69
@@ -8431,7 +8431,7 @@
       "portraitAsset": null,
       "birthplace": "Paris",
       "heightScale": 1.063,
-      "fullName": "Cédric Kipré"
+      "fullName": "C\u00e9dric Kipr\u00e9"
     },
     "age": 29,
     "weightKg": 82
@@ -8770,7 +8770,7 @@
       "bodyType": "lean",
       "portraitAsset": null,
       "fullName": "Gabriel Gudmundsson",
-      "birthplace": "Malmö",
+      "birthplace": "Malm\u00f6",
       "heightScale": 1.011
     },
     "age": 27,
@@ -9348,7 +9348,7 @@
       "portraitAsset": null,
       "birthplace": "Paris",
       "heightScale": 1.08,
-      "fullName": "Ibrahima Konaté"
+      "fullName": "Ibrahima Konat\u00e9"
     },
     "age": 27,
     "weightKg": 83
@@ -9917,7 +9917,7 @@
       "portraitAsset": null,
       "birthplace": "Amadora",
       "heightScale": 1.046,
-      "fullName": "Rúben Dias"
+      "fullName": "R\u00faben Dias"
     },
     "age": 29,
     "weightKg": 81
@@ -9984,7 +9984,7 @@
       "portraitAsset": null,
       "birthplace": "Montreuil",
       "heightScale": 1,
-      "fullName": "Rayan Aït-Nouri"
+      "fullName": "Rayan A\u00eft-Nouri"
     },
     "age": 25,
     "weightKg": 77
@@ -10049,9 +10049,9 @@
       "hairColor": "#2a2018",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "birthplace": "San Martín",
+      "birthplace": "San Mart\u00edn",
       "heightScale": 0.994,
-      "fullName": "Enzo Fernández"
+      "fullName": "Enzo Fern\u00e1ndez"
     },
     "age": 25,
     "weightKg": 75
@@ -10118,7 +10118,7 @@
       "portraitAsset": null,
       "birthplace": "Borgerhout",
       "heightScale": 1,
-      "fullName": "Jérémy Doku"
+      "fullName": "J\u00e9r\u00e9my Doku"
     },
     "age": 24,
     "weightKg": 72
@@ -10217,7 +10217,7 @@
       "portraitAsset": null,
       "birthplace": "La Plata",
       "heightScale": 1.057,
-      "fullName": "Gerónimo Rulli"
+      "fullName": "Ger\u00f3nimo Rulli"
     },
     "age": 34,
     "weightKg": 83
@@ -10249,7 +10249,7 @@
       "portraitAsset": null,
       "birthplace": "Zagreb",
       "heightScale": 1.034,
-      "fullName": "Joško Gvardiol"
+      "fullName": "Jo\u0161ko Gvardiol"
     },
     "age": 24,
     "weightKg": 80
@@ -10284,7 +10284,7 @@
       "portraitAsset": null,
       "birthplace": "Linz",
       "heightScale": 1.011,
-      "fullName": "Mateo Kovačić"
+      "fullName": "Mateo Kova\u010di\u0107"
     },
     "age": 32,
     "weightKg": 76
@@ -10558,7 +10558,7 @@
       "portraitAsset": null,
       "birthplace": "Gualeguay",
       "heightScale": 0.994,
-      "fullName": "Lisandro Martínez"
+      "fullName": "Lisandro Mart\u00ednez"
     },
     "age": 28,
     "weightKg": 77
@@ -10763,7 +10763,7 @@
       "hairColor": "#2a2018",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "João Pessoa",
+      "birthplace": "Jo\u00e3o Pessoa",
       "heightScale": 1.029,
       "fullName": "Matheus Cunha"
     },
@@ -10829,7 +10829,7 @@
       "portraitAsset": null,
       "birthplace": "Nkol Ngok",
       "heightScale": 1.063,
-      "fullName": "André Onana"
+      "fullName": "Andr\u00e9 Onana"
     },
     "age": 30,
     "weightKg": 84
@@ -11144,7 +11144,7 @@
       "portraitAsset": null,
       "birthplace": "Wil",
       "heightScale": 1.051,
-      "fullName": "Fabian Schär"
+      "fullName": "Fabian Sch\u00e4r"
     },
     "age": 34,
     "weightKg": 81
@@ -11276,7 +11276,7 @@
       "skinTone": 0.62,
       "hairColor": "#111111",
       "portraitAsset": null,
-      "birthplace": "Aliança",
+      "birthplace": "Alian\u00e7a",
       "heightScale": 1.063,
       "fullName": "Joelinton"
     },
@@ -11482,7 +11482,7 @@
     "appearance": {
       "skinTone": 0.72,
       "portraitAsset": null,
-      "birthplace": "Düsseldorf",
+      "birthplace": "D\u00fcsseldorf",
       "heightScale": 1.086,
       "fullName": "Malick Thiaw"
     },
@@ -11652,7 +11652,7 @@
       "hairColor": "#1a1410",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "birthplace": "Zürich",
+      "birthplace": "Z\u00fcrich",
       "heightScale": 1.034,
       "fullName": "Axel Bamba"
     },
@@ -11762,7 +11762,7 @@
       "portraitAsset": null,
       "birthplace": "Belgrade",
       "heightScale": 1.091,
-      "fullName": "Nikola Milenković"
+      "fullName": "Nikola Milenkovi\u0107"
     },
     "age": 29,
     "weightKg": 84
@@ -11795,7 +11795,7 @@
       "hairColor": "#3b2a18",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "birthplace": "Malagón",
+      "birthplace": "Malag\u00f3n",
       "heightScale": 1,
       "fullName": "Diego Murillo"
     },
@@ -11902,7 +11902,7 @@
       "portraitAsset": null,
       "birthplace": "Haedo",
       "heightScale": 1,
-      "fullName": "Nicolás Domínguez"
+      "fullName": "Nicol\u00e1s Dom\u00ednguez"
     },
     "age": 28,
     "weightKg": 75
@@ -12243,7 +12243,7 @@
       "portraitAsset": null,
       "birthplace": "Abidjan",
       "heightScale": 1.069,
-      "fullName": "Ibrahim Sangaré"
+      "fullName": "Ibrahim Sangar\u00e9"
     },
     "age": 28,
     "weightKg": 80
@@ -12277,7 +12277,7 @@
       "portraitAsset": null,
       "birthplace": "Amalfi",
       "heightScale": 1.023,
-      "fullName": "Daniel Muñoz"
+      "fullName": "Daniel Mu\u00f1oz"
     },
     "age": 30,
     "weightKg": 79
@@ -12586,7 +12586,7 @@
       "portraitAsset": null,
       "birthplace": "Lorient",
       "heightScale": 0.949,
-      "fullName": "Enzo Le Fée"
+      "fullName": "Enzo Le F\u00e9e"
     },
     "age": 26,
     "weightKg": 71
@@ -12828,7 +12828,7 @@
       "hairColor": "#3b2a18",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Guédiawaye",
+      "birthplace": "Gu\u00e9diawaye",
       "heightScale": 1,
       "fullName": "Habib Diarra"
     },
@@ -13610,7 +13610,7 @@
       "hairColor": "#1a1410",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Böheimkirchen",
+      "birthplace": "B\u00f6heimkirchen",
       "heightScale": 1.069,
       "fullName": "Christoph Klarer"
     },
@@ -16032,7 +16032,7 @@
       "portraitAsset": null,
       "birthplace": "Montpellier",
       "heightScale": 1.08,
-      "fullName": "Maxime Estève"
+      "fullName": "Maxime Est\u00e8ve"
     },
     "age": 24,
     "weightKg": 83
@@ -16099,7 +16099,7 @@
       "hairColor": "#1a1410",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "birthplace": "São Paulo",
+      "birthplace": "S\u00e3o Paulo",
       "heightScale": 1.017,
       "fullName": "Lucas Pires"
     },
@@ -17764,7 +17764,7 @@
       "portraitAsset": null,
       "birthplace": "Stockholm",
       "heightScale": 1.091,
-      "fullName": "Jacob Widell Zetterström"
+      "fullName": "Jacob Widell Zetterstr\u00f6m"
     },
     "age": 28,
     "weightKg": 86
@@ -19593,7 +19593,7 @@
       "hairColor": "#3b2a18",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Helsingør",
+      "birthplace": "Helsing\u00f8r",
       "heightScale": 1.109,
       "fullName": "Lukas Jensen"
     },
@@ -19898,7 +19898,7 @@
       "portraitAsset": null,
       "birthplace": "Novi Sad",
       "heightScale": 0.989,
-      "fullName": "Mihailo Ivanović"
+      "fullName": "Mihailo Ivanovi\u0107"
     },
     "age": 21,
     "weightKg": 71
@@ -20726,9 +20726,9 @@
       "skinTone": 0.28,
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Morón",
+      "birthplace": "Mor\u00f3n",
       "heightScale": 0.96,
-      "fullName": "Onel Hernández"
+      "fullName": "Onel Hern\u00e1ndez"
     },
     "age": 33,
     "weightKg": 72
@@ -22285,7 +22285,7 @@
       "hairColor": "#111111",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "fullName": "Karamoko Dembélé",
+      "fullName": "Karamoko Demb\u00e9l\u00e9",
       "birthplace": "Lambeth",
       "heightScale": 0.897
     },
@@ -22320,7 +22320,7 @@
       "hairColor": "#3b2a18",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "birthplace": "Münsingen",
+      "birthplace": "M\u00fcnsingen",
       "heightScale": 1.051,
       "fullName": "Michael Frey"
     },
@@ -24051,7 +24051,7 @@
       "skinTone": 0.62,
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Corumbá",
+      "birthplace": "Corumb\u00e1",
       "heightScale": 0.989,
       "fullName": "Ronald"
     },
@@ -24251,7 +24251,7 @@
       "portraitAsset": null,
       "birthplace": "Porto",
       "heightScale": 0.983,
-      "fullName": "Gonçalo Franco"
+      "fullName": "Gon\u00e7alo Franco"
     },
     "age": 25,
     "weightKg": 74
@@ -24656,7 +24656,7 @@
       "hairColor": "#1a1410",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Bajo Baudó",
+      "birthplace": "Bajo Baud\u00f3",
       "heightScale": 1.034,
       "fullName": "Yaser Asprilla"
     },
@@ -24898,7 +24898,7 @@
       "bodyType": "stocky",
       "portraitAsset": null,
       "heightScale": 1.057,
-      "fullName": "Mileta Rajović"
+      "fullName": "Mileta Rajovi\u0107"
     },
     "age": 27,
     "weightKg": 76
@@ -25133,7 +25133,7 @@
       "portraitAsset": null,
       "birthplace": "Paris",
       "heightScale": 1.063,
-      "fullName": "Cédric Kipré"
+      "fullName": "C\u00e9dric Kipr\u00e9"
     },
     "age": 29,
     "weightKg": 82
@@ -25605,7 +25605,7 @@
       "portraitAsset": null,
       "birthplace": "Trondheim",
       "heightScale": 1.034,
-      "fullName": "Torbjørn Heggem"
+      "fullName": "Torbj\u00f8rn Heggem"
     },
     "age": 27,
     "weightKg": 80
@@ -25830,7 +25830,7 @@
       "portraitAsset": null,
       "birthplace": "Rio de Janeiro",
       "heightScale": 1.006,
-      "fullName": "Lucas Paquetá"
+      "fullName": "Lucas Paquet\u00e1"
     },
     "age": 29,
     "weightKg": 76
@@ -25965,7 +25965,7 @@
       "portraitAsset": null,
       "birthplace": "Hannover",
       "heightScale": 1.051,
-      "fullName": "Niclas Füllkrug"
+      "fullName": "Niclas F\u00fcllkrug"
     },
     "age": 33,
     "weightKg": 76
@@ -26093,9 +26093,9 @@
       "hairColor": "#5a4330",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Poções",
+      "birthplace": "Po\u00e7\u00f5es",
       "heightScale": 0.926,
-      "fullName": "Marcos Antônio"
+      "fullName": "Marcos Ant\u00f4nio"
     },
     "age": 26,
     "weightKg": 70
@@ -26160,9 +26160,9 @@
       "hairColor": "#111111",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Sáenz Peña",
+      "birthplace": "S\u00e1enz Pe\u00f1a",
       "heightScale": 1.034,
-      "fullName": "Guido Rodríguez"
+      "fullName": "Guido Rodr\u00edguez"
     },
     "age": 32,
     "weightKg": 78
@@ -26235,7 +26235,7 @@
       "portraitAsset": null,
       "birthplace": "Braga",
       "heightScale": 1.074,
-      "fullName": "José Sá"
+      "fullName": "Jos\u00e9 S\u00e1"
     },
     "age": 33,
     "weightKg": 85
@@ -26373,7 +26373,7 @@
       "portraitAsset": null,
       "birthplace": "Montreuil",
       "heightScale": 1,
-      "fullName": "Rayan Aït-Nouri"
+      "fullName": "Rayan A\u00eft-Nouri"
     },
     "age": 25,
     "weightKg": 77
@@ -26435,7 +26435,7 @@
       "portraitAsset": null,
       "birthplace": "Rio de Janeiro",
       "heightScale": 0.983,
-      "fullName": "João Gomes"
+      "fullName": "Jo\u00e3o Gomes"
     },
     "age": 25,
     "weightKg": 74
@@ -26500,7 +26500,7 @@
       "hairColor": "#5a4330",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "João Pessoa",
+      "birthplace": "Jo\u00e3o Pessoa",
       "heightScale": 1.029,
       "fullName": "Matheus Cunha"
     },
@@ -26566,7 +26566,7 @@
       "portraitAsset": null,
       "birthplace": "Halden",
       "heightScale": 1.08,
-      "fullName": "Jörgen Strand Larsen"
+      "fullName": "J\u00f6rgen Strand Larsen"
     },
     "age": 26,
     "weightKg": 78
@@ -26745,7 +26745,7 @@
       "portraitAsset": null,
       "birthplace": "Vienna",
       "heightScale": 1.12,
-      "fullName": "Saša Kalajdžić"
+      "fullName": "Sa\u0161a Kalajd\u017ei\u0107"
     },
     "age": 29,
     "weightKg": 81
@@ -26815,7 +26815,7 @@
       "portraitAsset": null,
       "birthplace": "Benavente",
       "heightScale": 1,
-      "fullName": "Gonçalo Guedes"
+      "fullName": "Gon\u00e7alo Guedes"
     },
     "age": 29,
     "weightKg": 75
@@ -27886,7 +27886,7 @@
       "hairColor": "#1a1410",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Słupca",
+      "birthplace": "S\u0142upca",
       "heightScale": 1.057,
       "fullName": "Jan Bednarek"
     },
@@ -27988,8 +27988,8 @@
       "hairColor": "#3b2a18",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "fullName": "Brahim Díaz",
-      "birthplace": "Málaga",
+      "fullName": "Brahim D\u00edaz",
+      "birthplace": "M\u00e1laga",
       "heightScale": 0.949
     },
     "age": 27,
@@ -28167,7 +28167,7 @@
       "portraitAsset": null,
       "birthplace": "Poissy",
       "heightScale": 1.04,
-      "fullName": "Maël de Gevigney"
+      "fullName": "Ma\u00ebl de Gevigney"
     },
     "age": 27,
     "weightKg": 80
@@ -30301,7 +30301,7 @@
       "portraitAsset": null,
       "birthplace": "Dublin",
       "heightScale": 1.034,
-      "fullName": "Ciarán Kelly"
+      "fullName": "Ciar\u00e1n Kelly"
     },
     "age": 28,
     "weightKg": 80
@@ -32917,9 +32917,9 @@
       "hairColor": "#111111",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Chorzów",
+      "birthplace": "Chorz\u00f3w",
       "heightScale": 1.069,
-      "fullName": "Michał Helik"
+      "fullName": "Micha\u0142 Helik"
     },
     "age": 31,
     "weightKg": 82
@@ -33091,7 +33091,7 @@
       "portraitAsset": null,
       "birthplace": "Lleida",
       "heightScale": 1.069,
-      "fullName": "Bojan Radulović"
+      "fullName": "Bojan Radulovi\u0107"
     },
     "age": 26,
     "weightKg": 77
@@ -33780,7 +33780,7 @@
       "hairColor": "#111111",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Pérez",
+      "birthplace": "P\u00e9rez",
       "heightScale": 0.971,
       "fullName": "Facundo Buonanotte"
     },
@@ -37375,7 +37375,7 @@
       "bodyType": "standard",
       "portraitAsset": null,
       "heightScale": 0.949,
-      "fullName": "Siriki Dembélé"
+      "fullName": "Siriki Demb\u00e9l\u00e9"
     },
     "age": 30,
     "weightKg": 71
@@ -37574,9 +37574,9 @@
       "skinTone": 0.28,
       "hairStyle": "short",
       "portraitAsset": null,
-      "birthplace": "Oliveira de Azeméis",
+      "birthplace": "Oliveira de Azem\u00e9is",
       "heightScale": 1.011,
-      "fullName": "Rúben Rodrigues"
+      "fullName": "R\u00faben Rodrigues"
     },
     "age": 30,
     "weightKg": 73
@@ -39191,7 +39191,7 @@
       "portraitAsset": null,
       "birthplace": "Lewisham",
       "heightScale": 1.04,
-      "fullName": "Iké Ugbo"
+      "fullName": "Ik\u00e9 Ugbo"
     },
     "age": 28,
     "weightKg": 75
@@ -39371,8 +39371,8 @@
   },
   {
     "id": "player_sheffield_wed_pol_valentin_21",
-    "name": "Pol Valentín",
-    "displayName": "P. Valentín",
+    "name": "Pol Valent\u00edn",
+    "displayName": "P. Valent\u00edn",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 60,
@@ -39395,9 +39395,9 @@
       "skinTone": 0.62,
       "hairStyle": "short",
       "portraitAsset": null,
-      "birthplace": "Avinyonet de Puigventós",
+      "birthplace": "Avinyonet de Puigvent\u00f3s",
       "heightScale": 1.006,
-      "fullName": "Pol Valentín"
+      "fullName": "Pol Valent\u00edn"
     },
     "age": 29,
     "weightKg": 78
@@ -41591,7 +41591,7 @@
       "skinTone": 0.62,
       "portraitAsset": null,
       "heightScale": 1.04,
-      "fullName": "Richard Koné"
+      "fullName": "Richard Kon\u00e9"
     },
     "age": 23,
     "weightKg": 75
@@ -41912,8 +41912,8 @@
   },
   {
     "id": "player_fan_argyletweet",
-    "name": "Argyletweet",
-    "displayName": "Argyletweet",
+    "name": "A. Tweets",
+    "displayName": "A. Tweets",
     "primaryPosition": "LB",
     "secondaryPositions": [
       "LWB",
@@ -42010,8 +42010,8 @@
   },
   {
     "id": "player_fan_a_tweets",
-    "name": "A. Tweets",
-    "displayName": "A. Tweets",
+    "name": "A. Memes",
+    "displayName": "A. Memes",
     "primaryPosition": "RB",
     "secondaryPositions": [
       "RWB",
@@ -43610,8 +43610,8 @@
   },
   {
     "id": "player_arsenal_martin_degaard_8",
-    "name": "Martin Ødegaard",
-    "displayName": "M. Ødegaard",
+    "name": "Martin \u00d8degaard",
+    "displayName": "M. \u00d8degaard",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 77,
@@ -43637,7 +43637,7 @@
       "portraitAsset": null,
       "birthplace": "Drammen",
       "heightScale": 0.983,
-      "fullName": "Martin Ødegaard"
+      "fullName": "Martin \u00d8degaard"
     },
     "age": 27,
     "weightKg": 74
@@ -44068,7 +44068,7 @@
       "hairColor": "#3b2a18",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Guédiawaye",
+      "birthplace": "Gu\u00e9diawaye",
       "heightScale": 1.046,
       "fullName": "Ibrahima Mbaye"
     },
@@ -44149,8 +44149,8 @@
   },
   {
     "id": "player_aston_villa_victor_lindelof_3",
-    "name": "Victor Lindelöf",
-    "displayName": "V. Lindelöf",
+    "name": "Victor Lindel\u00f6f",
+    "displayName": "V. Lindel\u00f6f",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 68,
@@ -44175,9 +44175,9 @@
       "hairColor": "#111111",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Västerås",
+      "birthplace": "V\u00e4ster\u00e5s",
       "heightScale": 1.046,
-      "fullName": "Victor Lindelöf"
+      "fullName": "Victor Lindel\u00f6f"
     },
     "age": 32,
     "weightKg": 81
@@ -44254,8 +44254,8 @@
   },
   {
     "id": "player_bournemouth_or_e_petrovic_1",
-    "name": "[[Đorđe Petrović",
-    "displayName": "[. Petrović",
+    "name": "[[\u0110or\u0111e Petrovi\u0107",
+    "displayName": "[. Petrovi\u0107",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 52,
@@ -44316,8 +44316,8 @@
   },
   {
     "id": "player_bournemouth_bafode_diakite_18",
-    "name": "Bafodé Diakité",
-    "displayName": "B. Diakité",
+    "name": "Bafod\u00e9 Diakit\u00e9",
+    "displayName": "B. Diakit\u00e9",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 77,
@@ -44341,15 +44341,15 @@
       "portraitAsset": null,
       "birthplace": "Toulouse",
       "heightScale": 1.017,
-      "fullName": "Bafodé Diakité"
+      "fullName": "Bafod\u00e9 Diakit\u00e9"
     },
     "age": 25,
     "weightKg": 78
   },
   {
     "id": "player_bournemouth_juanlu_sanchez_24",
-    "name": "Juanlu Sánchez",
-    "displayName": "J. Sánchez",
+    "name": "Juanlu S\u00e1nchez",
+    "displayName": "J. S\u00e1nchez",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 85,
@@ -44373,7 +44373,7 @@
       "portraitAsset": null,
       "birthplace": "Seville",
       "heightScale": 1.04,
-      "fullName": "Juanlu Sánchez"
+      "fullName": "Juanlu S\u00e1nchez"
     },
     "age": 23,
     "weightKg": 78
@@ -44542,7 +44542,7 @@
   },
   {
     "id": "player_bournemouth_antonio_silva_14",
-    "name": "[[António Silva",
+    "name": "[[Ant\u00f3nio Silva",
     "displayName": "[. Silva",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -44572,8 +44572,8 @@
   },
   {
     "id": "player_bournemouth_alex_toth_27",
-    "name": "Alex Tóth",
-    "displayName": "A. Tóth",
+    "name": "Alex T\u00f3th",
+    "displayName": "A. T\u00f3th",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 76,
@@ -44625,7 +44625,7 @@
       "hairStyle": "short",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Béziers",
+      "birthplace": "B\u00e9ziers",
       "heightScale": 0.971,
       "fullName": "Amine Adli"
     },
@@ -44658,7 +44658,7 @@
       "skinTone": 0.72,
       "hairColor": "#111111",
       "portraitAsset": null,
-      "birthplace": "Rælingen",
+      "birthplace": "R\u00e6lingen",
       "heightScale": 1.097,
       "fullName": "Kristoffer Ajer"
     },
@@ -44906,8 +44906,8 @@
   },
   {
     "id": "player_brighton_ferdi_kad_oglu_24",
-    "name": "Ferdi Kadıoğlu",
-    "displayName": "F. Kadıoğlu",
+    "name": "Ferdi Kad\u0131o\u011flu",
+    "displayName": "F. Kad\u0131o\u011flu",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 77,
@@ -44932,7 +44932,7 @@
       "hairColor": "#5a4330",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "fullName": "Ferdi Kadıoğlu",
+      "fullName": "Ferdi Kad\u0131o\u011flu",
       "birthplace": "Arnhem",
       "heightScale": 0.966
     },
@@ -44974,8 +44974,8 @@
   },
   {
     "id": "player_brighton_luka_vuskovic_44",
-    "name": "Luka Vušković",
-    "displayName": "L. Vušković",
+    "name": "Luka Vu\u0161kovi\u0107",
+    "displayName": "L. Vu\u0161kovi\u0107",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 92,
@@ -44999,15 +44999,15 @@
       "portraitAsset": null,
       "birthplace": "Split",
       "heightScale": 1.08,
-      "fullName": "Luka Vušković"
+      "fullName": "Luka Vu\u0161kovi\u0107"
     },
     "age": 19,
     "weightKg": 83
   },
   {
     "id": "player_brighton_pascal_gro_13",
-    "name": "Pascal Groß",
-    "displayName": "P. Groß",
+    "name": "Pascal Gro\u00df",
+    "displayName": "P. Gro\u00df",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 80,
@@ -45032,7 +45032,7 @@
       "portraitAsset": null,
       "birthplace": "Bad Salzungen",
       "heightScale": 0.954,
-      "fullName": "Pascal Groß"
+      "fullName": "Pascal Gro\u00df"
     },
     "age": 35,
     "weightKg": 72
@@ -45104,8 +45104,8 @@
   },
   {
     "id": "player_brighton_malick_yalcouye_35",
-    "name": "Malick Yalcouyé",
-    "displayName": "M. Yalcouyé",
+    "name": "Malick Yalcouy\u00e9",
+    "displayName": "M. Yalcouy\u00e9",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 87,
@@ -45132,15 +45132,15 @@
       "portraitAsset": null,
       "birthplace": "Bandiagara",
       "heightScale": 0.954,
-      "fullName": "Malick Yalcouyé"
+      "fullName": "Malick Yalcouy\u00e9"
     },
     "age": 20,
     "weightKg": 72
   },
   {
     "id": "player_brighton_chema_andres_14",
-    "name": "Chema Andrés",
-    "displayName": "C. Andrés",
+    "name": "Chema Andr\u00e9s",
+    "displayName": "C. Andr\u00e9s",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 89,
@@ -45391,7 +45391,7 @@
   },
   {
     "id": "player_chelsea_valentin_barco_4",
-    "name": "Valentín Barco",
+    "name": "Valent\u00edn Barco",
     "displayName": "V. Barco",
     "primaryPosition": "DM",
     "secondaryPositions": [],
@@ -45419,7 +45419,7 @@
       "portraitAsset": null,
       "birthplace": "25 de Mayo",
       "heightScale": 0.937,
-      "fullName": "Valentín Barco"
+      "fullName": "Valent\u00edn Barco"
     },
     "age": 22,
     "weightKg": 73
@@ -45639,8 +45639,8 @@
   },
   {
     "id": "player_chelsea_pep_chavarria_29",
-    "name": "Pep Chavarría",
-    "displayName": "P. Chavarría",
+    "name": "Pep Chavarr\u00eda",
+    "displayName": "P. Chavarr\u00eda",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 73,
@@ -46195,7 +46195,7 @@
   },
   {
     "id": "player_crystal_palace_j_rgen_strand_larsen_22",
-    "name": "Jørgen Strand Larsen",
+    "name": "J\u00f8rgen Strand Larsen",
     "displayName": "J. Strand Larsen",
     "primaryPosition": "ST",
     "secondaryPositions": [],
@@ -46227,8 +46227,8 @@
   },
   {
     "id": "player_crystal_palace_walter_benitez_44",
-    "name": "[[Walter Benítez",
-    "displayName": "[. Benítez",
+    "name": "[[Walter Ben\u00edtez",
+    "displayName": "[. Ben\u00edtez",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 57,
@@ -46350,8 +46350,8 @@
   },
   {
     "id": "player_crystal_palace_oscar_mingueza_30",
-    "name": "Óscar Mingueza",
-    "displayName": "Ó. Mingueza",
+    "name": "\u00d3scar Mingueza",
+    "displayName": "\u00d3. Mingueza",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 65,
@@ -46376,9 +46376,9 @@
       "hairColor": "#5a4330",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "birthplace": "Santa Perpètua de Mogoda",
+      "birthplace": "Santa Perp\u00e8tua de Mogoda",
       "heightScale": 1.029,
-      "fullName": "Óscar Mingueza"
+      "fullName": "\u00d3scar Mingueza"
     },
     "age": 27,
     "weightKg": 79
@@ -46420,8 +46420,8 @@
   },
   {
     "id": "player_crystal_palace_daniel_munoz_2",
-    "name": "[[Daniel Muñoz",
-    "displayName": "[. Muñoz",
+    "name": "[[Daniel Mu\u00f1oz",
+    "displayName": "[. Mu\u00f1oz",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 66,
@@ -46609,8 +46609,8 @@
   },
   {
     "id": "player_everton_merlin_rohl_34",
-    "name": "Merlin Röhl",
-    "displayName": "M. Röhl",
+    "name": "Merlin R\u00f6hl",
+    "displayName": "M. R\u00f6hl",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 79,
@@ -46637,7 +46637,7 @@
       "portraitAsset": null,
       "birthplace": "Potsdam",
       "heightScale": 1.069,
-      "fullName": "Merlin Röhl"
+      "fullName": "Merlin R\u00f6hl"
     },
     "age": 24,
     "weightKg": 80
@@ -46870,8 +46870,8 @@
   },
   {
     "id": "player_everton_christian_n_rgaard_23",
-    "name": "Christian Nørgaard",
-    "displayName": "C. Nørgaard",
+    "name": "Christian N\u00f8rgaard",
+    "displayName": "C. N\u00f8rgaard",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 81,
@@ -46898,7 +46898,7 @@
       "portraitAsset": null,
       "birthplace": "Copenhagen",
       "heightScale": 1.04,
-      "fullName": "Christian Nørgaard"
+      "fullName": "Christian N\u00f8rgaard"
     },
     "age": 32,
     "weightKg": 78
@@ -47203,8 +47203,8 @@
   },
   {
     "id": "player_fulham_manuel_angel_20",
-    "name": "Manuel Ángel",
-    "displayName": "M. Ángel",
+    "name": "Manuel \u00c1ngel",
+    "displayName": "M. \u00c1ngel",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 79,
@@ -47226,9 +47226,9 @@
     "appearance": {
       "skinTone": 0.62,
       "portraitAsset": null,
-      "birthplace": "Casas-Ibáñez",
+      "birthplace": "Casas-Ib\u00e1\u00f1ez",
       "heightScale": 0.983,
-      "fullName": "Miguel Ángel"
+      "fullName": "Miguel \u00c1ngel"
     },
     "age": 28,
     "weightKg": 71
@@ -47326,7 +47326,7 @@
     "appearance": {
       "skinTone": 0.52,
       "portraitAsset": null,
-      "birthplace": "Guédiawaye",
+      "birthplace": "Gu\u00e9diawaye",
       "heightScale": 1.046,
       "fullName": "Nobel Mendy"
     },
@@ -47655,8 +47655,8 @@
   },
   {
     "id": "player_ipswich_cedric_kipre_4",
-    "name": "Cédric Kipré",
-    "displayName": "C. Kipré",
+    "name": "C\u00e9dric Kipr\u00e9",
+    "displayName": "C. Kipr\u00e9",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 73,
@@ -47680,7 +47680,7 @@
       "portraitAsset": null,
       "birthplace": "Paris",
       "heightScale": 1.063,
-      "fullName": "Cédric Kipré"
+      "fullName": "C\u00e9dric Kipr\u00e9"
     },
     "age": 29,
     "weightKg": 82
@@ -47714,8 +47714,8 @@
   },
   {
     "id": "player_ipswich_florentino_luis_12",
-    "name": "Florentino Luís",
-    "displayName": "F. Luís",
+    "name": "Florentino Lu\u00eds",
+    "displayName": "F. Lu\u00eds",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 87,
@@ -48231,7 +48231,7 @@
       "skinTone": 0.52,
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Écully",
+      "birthplace": "\u00c9cully",
       "heightScale": 0.966,
       "fullName": "Melvin Bard"
     },
@@ -48263,7 +48263,7 @@
     "appearance": {
       "skinTone": 0.28,
       "portraitAsset": null,
-      "birthplace": "Zürich",
+      "birthplace": "Z\u00fcrich",
       "heightScale": 1.051,
       "fullName": "Nico Elvedi"
     },
@@ -48307,7 +48307,7 @@
   },
   {
     "id": "player_liverpool_jeremy_jacquet_5",
-    "name": "Jérémy Jacquet",
+    "name": "J\u00e9r\u00e9my Jacquet",
     "displayName": "J. Jacquet",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -48333,15 +48333,15 @@
       "portraitAsset": null,
       "birthplace": "Bondy",
       "heightScale": 1.051,
-      "fullName": "Jérémy Jacquet"
+      "fullName": "J\u00e9r\u00e9my Jacquet"
     },
     "age": 21,
     "weightKg": 81
   },
   {
     "id": "player_liverpool_ronald_araujo_33",
-    "name": "Ronald Araújo",
-    "displayName": "R. Araújo",
+    "name": "Ronald Ara\u00fajo",
+    "displayName": "R. Ara\u00fajo",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 87,
@@ -48368,7 +48368,7 @@
       "portraitAsset": null,
       "birthplace": "Rivera",
       "heightScale": 1.069,
-      "fullName": "Ronald Araújo"
+      "fullName": "Ronald Ara\u00fajo"
     },
     "age": 27,
     "weightKg": 82
@@ -48480,8 +48480,8 @@
   },
   {
     "id": "player_liverpool_vitezslav_jaros_56",
-    "name": "Vítězslav Jaroš",
-    "displayName": "V. Jaroš",
+    "name": "V\u00edt\u011bzslav Jaro\u0161",
+    "displayName": "V. Jaro\u0161",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 45,
@@ -48616,8 +48616,8 @@
   },
   {
     "id": "player_man_city_mateo_kovacic_8",
-    "name": "Mateo Kovačić",
-    "displayName": "M. Kovačić",
+    "name": "Mateo Kova\u010di\u0107",
+    "displayName": "M. Kova\u010di\u0107",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 83,
@@ -48641,7 +48641,7 @@
       "portraitAsset": null,
       "birthplace": "Linz",
       "heightScale": 1.011,
-      "fullName": "Mateo Kovačić"
+      "fullName": "Mateo Kova\u010di\u0107"
     },
     "age": 32,
     "weightKg": 76
@@ -48720,7 +48720,7 @@
   },
   {
     "id": "player_man_city_geronimo_rulli_28",
-    "name": "Gerónimo Rulli",
+    "name": "Ger\u00f3nimo Rulli",
     "displayName": "G. Rulli",
     "primaryPosition": "GK",
     "secondaryPositions": [],
@@ -48753,7 +48753,7 @@
       "portraitAsset": null,
       "birthplace": "La Plata",
       "heightScale": 1.057,
-      "fullName": "Gerónimo Rulli"
+      "fullName": "Ger\u00f3nimo Rulli"
     },
     "age": 34,
     "weightKg": 83
@@ -49177,8 +49177,8 @@
   },
   {
     "id": "player_newcastle_lukas_hornicek_21",
-    "name": "Lukáš Horníček",
-    "displayName": "L. Horníček",
+    "name": "Luk\u00e1\u0161 Horn\u00ed\u010dek",
+    "displayName": "L. Horn\u00ed\u010dek",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 54,
@@ -49209,8 +49209,8 @@
   },
   {
     "id": "player_newcastle_amar_dedic_37",
-    "name": "Amar Dedić",
-    "displayName": "A. Dedić",
+    "name": "Amar Dedi\u0107",
+    "displayName": "A. Dedi\u0107",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 90,
@@ -49432,7 +49432,7 @@
       "portraitAsset": null,
       "birthplace": "Abidjan",
       "heightScale": 1.063,
-      "fullName": "Ousmande Diomandé"
+      "fullName": "Ousmande Diomand\u00e9"
     },
     "age": 22,
     "weightKg": 82
@@ -49474,8 +49474,8 @@
   },
   {
     "id": "player_forest_ibrahim_sangare_6",
-    "name": "[[Ibrahim Sangaré",
-    "displayName": "[. Sangaré",
+    "name": "[[Ibrahim Sangar\u00e9",
+    "displayName": "[. Sangar\u00e9",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 78,
@@ -49501,8 +49501,8 @@
   },
   {
     "id": "player_forest_nicolas_dominguez_8",
-    "name": "Nicolás Domínguez",
-    "displayName": "N. Domínguez",
+    "name": "Nicol\u00e1s Dom\u00ednguez",
+    "displayName": "N. Dom\u00ednguez",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 83,
@@ -49529,7 +49529,7 @@
       "portraitAsset": null,
       "birthplace": "Haedo",
       "heightScale": 1,
-      "fullName": "Nicolás Domínguez"
+      "fullName": "Nicol\u00e1s Dom\u00ednguez"
     },
     "age": 28,
     "weightKg": 75
@@ -49759,8 +49759,8 @@
   },
   {
     "id": "player_forest_daniel_munoz_27",
-    "name": "[[Daniel Muñoz",
-    "displayName": "[. Muñoz",
+    "name": "[[Daniel Mu\u00f1oz",
+    "displayName": "[. Mu\u00f1oz",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 65,
@@ -49988,8 +49988,8 @@
   },
   {
     "id": "player_sunderland_enzo_le_fee_28",
-    "name": "Enzo Le Fée",
-    "displayName": "E. Le Fée",
+    "name": "Enzo Le F\u00e9e",
+    "displayName": "E. Le F\u00e9e",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 80,
@@ -50014,7 +50014,7 @@
       "portraitAsset": null,
       "birthplace": "Lorient",
       "heightScale": 0.949,
-      "fullName": "Enzo Le Fée"
+      "fullName": "Enzo Le F\u00e9e"
     },
     "age": 26,
     "weightKg": 71
@@ -50433,7 +50433,7 @@
     "appearance": {
       "skinTone": 0.72,
       "portraitAsset": null,
-      "birthplace": "Nova Venécia",
+      "birthplace": "Nova Ven\u00e9cia",
       "heightScale": 1,
       "fullName": "Richarlison"
     },
@@ -50442,8 +50442,8 @@
   },
   {
     "id": "player_spurs_savio_17",
-    "name": "[[Sávio",
-    "displayName": "[. [[Sávio",
+    "name": "[[S\u00e1vio",
+    "displayName": "[. [[S\u00e1vio",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 85,
@@ -50470,8 +50470,8 @@
   },
   {
     "id": "player_spurs_martin_dubravka_39",
-    "name": "Martin Dúbravka",
-    "displayName": "M. Dúbravka",
+    "name": "Martin D\u00fabravka",
+    "displayName": "M. D\u00fabravka",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 53,
@@ -50502,7 +50502,7 @@
   },
   {
     "id": "player_spurs_kota_takai_25",
-    "name": "Kōta Takai",
+    "name": "K\u014dta Takai",
     "displayName": "K. Takai",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -50944,8 +50944,8 @@
   },
   {
     "id": "player_birmingham_jhon_solis_14",
-    "name": "[[Jhon Solís",
-    "displayName": "[. Solís",
+    "name": "[[Jhon Sol\u00eds",
+    "displayName": "[. Sol\u00eds",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 65,
@@ -51108,7 +51108,7 @@
   },
   {
     "id": "player_blackburn_ryoya_morishita_25",
-    "name": "Ryōya Morishita",
+    "name": "Ry\u014dya Morishita",
     "displayName": "R. Morishita",
     "primaryPosition": "DM",
     "secondaryPositions": [],
@@ -51228,8 +51228,8 @@
   },
   {
     "id": "player_blackburn_andri_gu_johnsen_9",
-    "name": "Andri Guðjohnsen",
-    "displayName": "A. Guðjohnsen",
+    "name": "Andri Gu\u00f0johnsen",
+    "displayName": "A. Gu\u00f0johnsen",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 79,
@@ -51258,8 +51258,8 @@
   },
   {
     "id": "player_blackburn_balazs_toth_22",
-    "name": "[[Balázs Tóth",
-    "displayName": "[. Tóth",
+    "name": "[[Bal\u00e1zs T\u00f3th",
+    "displayName": "[. T\u00f3th",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 42,
@@ -51812,7 +51812,7 @@
       "hairColor": "#3b2a18",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Évry-Courcouronnes",
+      "birthplace": "\u00c9vry-Courcouronnes",
       "heightScale": 0.994,
       "fullName": "Kyliane Dong"
     },
@@ -52023,8 +52023,8 @@
   },
   {
     "id": "player_bolton_atsuki_ito_17",
-    "name": "Atsuki Itō",
-    "displayName": "A. Itō",
+    "name": "Atsuki It\u014d",
+    "displayName": "A. It\u014d",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 63,
@@ -52587,8 +52587,8 @@
   },
   {
     "id": "player_burnley_max_wei_1",
-    "name": "[[Max Weiß",
-    "displayName": "[. Weiß",
+    "name": "[[Max Wei\u00df",
+    "displayName": "[. Wei\u00df",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 44,
@@ -52953,7 +52953,7 @@
   },
   {
     "id": "player_burnley_gregoire_coudert_37",
-    "name": "Grégoire Coudert",
+    "name": "Gr\u00e9goire Coudert",
     "displayName": "G. Coudert",
     "primaryPosition": "GK",
     "secondaryPositions": [],
@@ -52993,8 +52993,8 @@
   },
   {
     "id": "player_burnley_anel_ahmedhodzic_15",
-    "name": "Anel Ahmedhodžić",
-    "displayName": "A. Ahmedhodžić",
+    "name": "Anel Ahmedhod\u017ei\u0107",
+    "displayName": "A. Ahmedhod\u017ei\u0107",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 59,
@@ -53109,7 +53109,7 @@
       "hairColor": "#5a4330",
       "bodyType": "stocky",
       "portraitAsset": null,
-      "birthplace": "Herfølge",
+      "birthplace": "Herf\u00f8lge",
       "heightScale": 1.029,
       "fullName": "Oliver Sonne"
     },
@@ -54019,8 +54019,8 @@
   },
   {
     "id": "player_charlton_ivan_mesik_18",
-    "name": "Ivan Mesík",
-    "displayName": "I. Mesík",
+    "name": "Ivan Mes\u00edk",
+    "displayName": "I. Mes\u00edk",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 56,
@@ -54629,8 +54629,8 @@
   },
   {
     "id": "player_lincoln_andrei_coubis_4",
-    "name": "Andrei Coubiș",
-    "displayName": "A. Coubiș",
+    "name": "Andrei Coubi\u0219",
+    "displayName": "A. Coubi\u0219",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 64,
@@ -55042,8 +55042,8 @@
   },
   {
     "id": "player_middlesbrough_radek_vitek_1",
-    "name": "Radek Vítek",
-    "displayName": "R. Vítek",
+    "name": "Radek V\u00edtek",
+    "displayName": "R. V\u00edtek",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 47,
@@ -55659,7 +55659,7 @@
       "skinTone": 0.72,
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Béziers",
+      "birthplace": "B\u00e9ziers",
       "heightScale": 1.074,
       "fullName": "Tristan Crama"
     },
@@ -56018,8 +56018,8 @@
   },
   {
     "id": "player_norwich_vladan_kovacevic_1",
-    "name": "Vladan Kovačević",
-    "displayName": "V. Kovačević",
+    "name": "Vladan Kova\u010devi\u0107",
+    "displayName": "V. Kova\u010devi\u0107",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 41,
@@ -56051,8 +56051,8 @@
   },
   {
     "id": "player_norwich_jakov_medic_5",
-    "name": "Jakov Medić",
-    "displayName": "J. Medić",
+    "name": "Jakov Medi\u0107",
+    "displayName": "J. Medi\u0107",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 63,
@@ -56076,7 +56076,7 @@
       "portraitAsset": null,
       "birthplace": "Zagreb",
       "heightScale": 1.08,
-      "fullName": "Jakov Medić"
+      "fullName": "Jakov Medi\u0107"
     },
     "age": 28,
     "weightKg": 83
@@ -56212,8 +56212,8 @@
   },
   {
     "id": "player_norwich_matej_jurasek_10",
-    "name": "Matěj Jurásek",
-    "displayName": "M. Jurásek",
+    "name": "Mat\u011bj Jur\u00e1sek",
+    "displayName": "M. Jur\u00e1sek",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 81,
@@ -56717,8 +56717,8 @@
   },
   {
     "id": "player_portsmouth_adrian_segecic_10",
-    "name": "Adrian Segečić",
-    "displayName": "A. Segečić",
+    "name": "Adrian Sege\u010di\u0107",
+    "displayName": "A. Sege\u010di\u0107",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 80,
@@ -57031,7 +57031,7 @@
       "hairColor": "#3b2a18",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Gørding",
+      "birthplace": "G\u00f8rding",
       "heightScale": 1.08,
       "fullName": "Daniel Iversen"
     },
@@ -57040,8 +57040,8 @@
   },
   {
     "id": "player_preston_andrija_vukcevic_3",
-    "name": "Andrija Vukčević",
-    "displayName": "A. Vukčević",
+    "name": "Andrija Vuk\u010devi\u0107",
+    "displayName": "A. Vuk\u010devi\u0107",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 77,
@@ -57169,7 +57169,7 @@
   },
   {
     "id": "player_preston_leo_leroy_27",
-    "name": "Léo Leroy",
+    "name": "L\u00e9o Leroy",
     "displayName": "L. Leroy",
     "primaryPosition": "DM",
     "secondaryPositions": [],
@@ -57197,7 +57197,7 @@
       "portraitAsset": null,
       "birthplace": "Marseille",
       "heightScale": 1.034,
-      "fullName": "Léo Leroy"
+      "fullName": "L\u00e9o Leroy"
     },
     "age": 26,
     "weightKg": 78
@@ -57433,8 +57433,8 @@
   },
   {
     "id": "player_preston_pol_valentin_2",
-    "name": "Pol Valentín",
-    "displayName": "P. Valentín",
+    "name": "Pol Valent\u00edn",
+    "displayName": "P. Valent\u00edn",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 63,
@@ -57459,9 +57459,9 @@
       "hairColor": "#111111",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Avinyonet de Puigventós",
+      "birthplace": "Avinyonet de Puigvent\u00f3s",
       "heightScale": 1.006,
-      "fullName": "Pol Valentín"
+      "fullName": "Pol Valent\u00edn"
     },
     "age": 29,
     "weightKg": 78
@@ -58289,8 +58289,8 @@
   },
   {
     "id": "player_sheffield_utd_ben_brereton_diaz_22",
-    "name": "Ben Brereton Díaz",
-    "displayName": "B. Brereton Díaz",
+    "name": "Ben Brereton D\u00edaz",
+    "displayName": "B. Brereton D\u00edaz",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 74,
@@ -58315,8 +58315,8 @@
       "hairColor": "#3b2a18",
       "bodyType": "lean",
       "portraitAsset": null,
-      "fullName": "Brahim Díaz",
-      "birthplace": "Málaga",
+      "fullName": "Brahim D\u00edaz",
+      "birthplace": "M\u00e1laga",
       "heightScale": 0.949
     },
     "age": 27,
@@ -58778,8 +58778,8 @@
   },
   {
     "id": "player_stoke_robert_bozenik_9",
-    "name": "Róbert Boženík",
-    "displayName": "R. Boženík",
+    "name": "R\u00f3bert Bo\u017een\u00edk",
+    "displayName": "R. Bo\u017een\u00edk",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 89,
@@ -59117,8 +59117,8 @@
   },
   {
     "id": "player_swansea_marko_stamenic_6",
-    "name": "Marko Stamenić",
-    "displayName": "M. Stamenić",
+    "name": "Marko Stameni\u0107",
+    "displayName": "M. Stameni\u0107",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 67,
@@ -59400,8 +59400,8 @@
   },
   {
     "id": "player_swansea_stephen_eustaquio_46",
-    "name": "Stephen Eustáquio",
-    "displayName": "S. Eustáquio",
+    "name": "Stephen Eust\u00e1quio",
+    "displayName": "S. Eust\u00e1quio",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 71,
@@ -59428,7 +59428,7 @@
       "portraitAsset": null,
       "birthplace": "Leamington (CAN)",
       "heightScale": 0.994,
-      "fullName": "Stephen Eustáquio"
+      "fullName": "Stephen Eust\u00e1quio"
     },
     "age": 29,
     "weightKg": 75
@@ -59505,7 +59505,7 @@
   },
   {
     "id": "player_watford_kevin_keben_4",
-    "name": "Kévin Keben",
+    "name": "K\u00e9vin Keben",
     "displayName": "K. Keben",
     "primaryPosition": "RB",
     "secondaryPositions": [],
@@ -59533,7 +59533,7 @@
       "portraitAsset": null,
       "birthplace": "Bertoua",
       "heightScale": 1.046,
-      "fullName": "Kévin Keben"
+      "fullName": "K\u00e9vin Keben"
     },
     "age": 22,
     "weightKg": 81
@@ -59575,8 +59575,8 @@
   },
   {
     "id": "player_watford_omar_haktab_traore_23",
-    "name": "Omar Haktab Traoré",
-    "displayName": "O. Haktab Traoré",
+    "name": "Omar Haktab Traor\u00e9",
+    "displayName": "O. Haktab Traor\u00e9",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 67,
@@ -59601,9 +59601,9 @@
       "hairColor": "#3b2a18",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Osnabrück",
+      "birthplace": "Osnabr\u00fcck",
       "heightScale": 1.046,
-      "fullName": "Omar Traoré"
+      "fullName": "Omar Traor\u00e9"
     },
     "age": 28,
     "weightKg": 81
@@ -59723,7 +59723,7 @@
       "skinTone": 0.62,
       "hairStyle": "short",
       "portraitAsset": null,
-      "birthplace": "Sant Cugat del Vallès",
+      "birthplace": "Sant Cugat del Vall\u00e8s",
       "heightScale": 1.017,
       "fullName": "Iker Bravo"
     },
@@ -59860,8 +59860,8 @@
   },
   {
     "id": "player_watford_branimir_mlacic_29",
-    "name": "Branimir Mlačić",
-    "displayName": "B. Mlačić",
+    "name": "Branimir Mla\u010di\u0107",
+    "displayName": "B. Mla\u010di\u0107",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 55,
@@ -59960,7 +59960,7 @@
   },
   {
     "id": "player_watford_krepin_diatta_15",
-    "name": "Krépin Diatta",
+    "name": "Kr\u00e9pin Diatta",
     "displayName": "K. Diatta",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -59988,14 +59988,14 @@
       "portraitAsset": null,
       "birthplace": "Dakar",
       "heightScale": 0.977,
-      "fullName": "Krépin Diatta"
+      "fullName": "Kr\u00e9pin Diatta"
     },
     "age": 27,
     "weightKg": 74
   },
   {
     "id": "player_watford_soumaila_coulibaly_3",
-    "name": "[[Soumaïla Coulibaly",
+    "name": "[[Souma\u00efla Coulibaly",
     "displayName": "[. Coulibaly",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -60259,8 +60259,8 @@
   },
   {
     "id": "player_west_brom_ousmane_diakite_17",
-    "name": "Ousmane Diakité",
-    "displayName": "O. Diakité",
+    "name": "Ousmane Diakit\u00e9",
+    "displayName": "O. Diakit\u00e9",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 74,
@@ -60284,7 +60284,7 @@
       "hairColor": "#111111",
       "portraitAsset": null,
       "heightScale": 1.046,
-      "fullName": "Ousmane Diakité"
+      "fullName": "Ousmane Diakit\u00e9"
     },
     "age": 26,
     "weightKg": 79
@@ -60360,8 +60360,8 @@
   },
   {
     "id": "player_west_brom_aune_heggeb_19",
-    "name": "Aune Heggebø",
-    "displayName": "A. Heggebø",
+    "name": "Aune Heggeb\u00f8",
+    "displayName": "A. Heggeb\u00f8",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 79,
@@ -60388,7 +60388,7 @@
       "portraitAsset": null,
       "birthplace": "Bergen",
       "heightScale": 1.034,
-      "fullName": "Aune Heggebø"
+      "fullName": "Aune Heggeb\u00f8"
     },
     "age": 25,
     "weightKg": 75
@@ -60732,7 +60732,7 @@
   },
   {
     "id": "player_west_ham_joel_veltman_34",
-    "name": "Joël Veltman",
+    "name": "Jo\u00ebl Veltman",
     "displayName": "J. Veltman",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -60758,7 +60758,7 @@
       "portraitAsset": null,
       "birthplace": "IJmuiden",
       "heightScale": 1.029,
-      "fullName": "Joël Veltman"
+      "fullName": "Jo\u00ebl Veltman"
     },
     "age": 34,
     "weightKg": 79
@@ -60795,8 +60795,8 @@
   },
   {
     "id": "player_west_ham_mohamadou_kante_17",
-    "name": "Mohamadou Kanté",
-    "displayName": "M. Kanté",
+    "name": "Mohamadou Kant\u00e9",
+    "displayName": "M. Kant\u00e9",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 76,
@@ -60908,7 +60908,7 @@
   },
   {
     "id": "player_west_ham_joel_piroe_9",
-    "name": "Joël Piroe",
+    "name": "Jo\u00ebl Piroe",
     "displayName": "J. Piroe",
     "primaryPosition": "ST",
     "secondaryPositions": [],
@@ -60936,7 +60936,7 @@
       "portraitAsset": null,
       "birthplace": "Nijmegen",
       "heightScale": 1.011,
-      "fullName": "Joël Piroe"
+      "fullName": "Jo\u00ebl Piroe"
     },
     "age": 27,
     "weightKg": 73
@@ -61170,8 +61170,8 @@
   },
   {
     "id": "player_wolves_david_m_ller_wolfe_6",
-    "name": "David Møller Wolfe",
-    "displayName": "D. Møller Wolfe",
+    "name": "David M\u00f8ller Wolfe",
+    "displayName": "D. M\u00f8ller Wolfe",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 65,
@@ -61198,7 +61198,7 @@
       "portraitAsset": null,
       "birthplace": "Bergen",
       "heightScale": 1.017,
-      "fullName": "David Møller Wolfe"
+      "fullName": "David M\u00f8ller Wolfe"
     },
     "age": 24,
     "weightKg": 78
@@ -61298,8 +61298,8 @@
   },
   {
     "id": "player_wolves_fer_lopez_28",
-    "name": "Fer López",
-    "displayName": "F. López",
+    "name": "Fer L\u00f3pez",
+    "displayName": "F. L\u00f3pez",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 77,
@@ -61326,15 +61326,15 @@
       "portraitAsset": null,
       "birthplace": "El Campillo",
       "heightScale": 0.983,
-      "fullName": "Fermín López"
+      "fullName": "Ferm\u00edn L\u00f3pez"
     },
     "age": 23,
     "weightKg": 74
   },
   {
     "id": "player_wolves_mateus_mane_36",
-    "name": "Mateus Mané",
-    "displayName": "M. Mané",
+    "name": "Mateus Man\u00e9",
+    "displayName": "M. Man\u00e9",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 79,
@@ -61361,7 +61361,7 @@
       "portraitAsset": null,
       "birthplace": "Ziguinchor",
       "heightScale": 1.063,
-      "fullName": "Moussa Mané"
+      "fullName": "Moussa Man\u00e9"
     },
     "age": 22,
     "weightKg": 82
@@ -61400,8 +61400,8 @@
   },
   {
     "id": "player_wolves_raul_jimenez_9",
-    "name": "Raúl Jiménez",
-    "displayName": "R. Jiménez",
+    "name": "Ra\u00fal Jim\u00e9nez",
+    "displayName": "R. Jim\u00e9nez",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 81,
@@ -61430,8 +61430,8 @@
   },
   {
     "id": "player_wolves_joao_virginia_13",
-    "name": "João Virgínia",
-    "displayName": "J. Virgínia",
+    "name": "Jo\u00e3o Virg\u00ednia",
+    "displayName": "J. Virg\u00ednia",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 35,
@@ -61463,7 +61463,7 @@
       "portraitAsset": null,
       "birthplace": "Faro",
       "heightScale": 1.063,
-      "fullName": "João Virgínia"
+      "fullName": "Jo\u00e3o Virg\u00ednia"
     },
     "age": 27,
     "weightKg": 84
@@ -61622,8 +61622,8 @@
   },
   {
     "id": "player_wolves_ladislav_krejci_37",
-    "name": "[[Ladislav Krejčí",
-    "displayName": "[. Krejčí",
+    "name": "[[Ladislav Krej\u010d\u00ed",
+    "displayName": "[. Krej\u010d\u00ed",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 59,
@@ -61724,8 +61724,8 @@
   },
   {
     "id": "player_wrexham_jacques_ekomie_3",
-    "name": "Jacques Ekomié",
-    "displayName": "J. Ekomié",
+    "name": "Jacques Ekomi\u00e9",
+    "displayName": "J. Ekomi\u00e9",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 65,
@@ -62094,8 +62094,8 @@
   },
   {
     "id": "player_wrexham_issa_kabore_12",
-    "name": "Issa Kaboré",
-    "displayName": "I. Kaboré",
+    "name": "Issa Kabor\u00e9",
+    "displayName": "I. Kabor\u00e9",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 55,
@@ -62446,7 +62446,7 @@
   },
   {
     "id": "player_southampton_leo_scienza_7",
-    "name": "Léo Scienza",
+    "name": "L\u00e9o Scienza",
     "displayName": "L. Scienza",
     "primaryPosition": "LW",
     "secondaryPositions": [],
@@ -62470,9 +62470,9 @@
       "skinTone": 0.45,
       "hairStyle": "short",
       "portraitAsset": null,
-      "birthplace": "Venâncio Aires",
+      "birthplace": "Ven\u00e2ncio Aires",
       "heightScale": 0.977,
-      "fullName": "Léo Scienza"
+      "fullName": "L\u00e9o Scienza"
     },
     "age": 28,
     "weightKg": 71
@@ -65105,7 +65105,7 @@
       "hairColor": "#5a4330",
       "bodyType": "standard",
       "portraitAsset": null,
-      "birthplace": "Orléans",
+      "birthplace": "Orl\u00e9ans",
       "heightScale": 1.034,
       "fullName": "William Hondermarck"
     },
@@ -65760,9 +65760,9 @@
       "hairStyle": "short",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Oliveira de Azeméis",
+      "birthplace": "Oliveira de Azem\u00e9is",
       "heightScale": 1.011,
-      "fullName": "Rúben Rodrigues"
+      "fullName": "R\u00faben Rodrigues"
     },
     "age": 30,
     "weightKg": 73
@@ -66683,7 +66683,7 @@
   },
   {
     "id": "player_doncaster_sean_grehan_27",
-    "name": "Seán Grehan",
+    "name": "Se\u00e1n Grehan",
     "displayName": "S. Grehan",
     "primaryPosition": "LB",
     "secondaryPositions": [],
@@ -66710,7 +66710,7 @@
       "bodyType": "standard",
       "portraitAsset": null,
       "heightScale": 1.017,
-      "fullName": "Seán Grehan"
+      "fullName": "Se\u00e1n Grehan"
     },
     "age": 22,
     "weightKg": 78
@@ -67667,7 +67667,7 @@
       "portraitAsset": null,
       "birthplace": "Lleida",
       "heightScale": 1.069,
-      "fullName": "Bojan Radulović"
+      "fullName": "Bojan Radulovi\u0107"
     },
     "age": 26,
     "weightKg": 77
@@ -68097,7 +68097,7 @@
       "skinTone": 0.62,
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Chęciny",
+      "birthplace": "Ch\u0119ciny",
       "heightScale": 1.086,
       "fullName": "Jakub Stolarczyk"
     },
@@ -70628,7 +70628,7 @@
   },
   {
     "id": "player_notts_county_ishe_samuels_smith_26",
-    "name": "Ishé Samuels-Smith",
+    "name": "Ish\u00e9 Samuels-Smith",
     "displayName": "I. Samuels-Smith",
     "primaryPosition": "LB",
     "secondaryPositions": [],
@@ -70654,7 +70654,7 @@
       "portraitAsset": null,
       "birthplace": "Manchester",
       "heightScale": 1.04,
-      "fullName": "Ishé Samuels-Smith"
+      "fullName": "Ish\u00e9 Samuels-Smith"
     },
     "age": 20,
     "weightKg": 80
@@ -71163,7 +71163,7 @@
   },
   {
     "id": "player_oxford_micha_helik_6",
-    "name": "Michał Helik",
+    "name": "Micha\u0142 Helik",
     "displayName": "M. Helik",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -71189,9 +71189,9 @@
       "hairColor": "#5a4330",
       "bodyType": "lean",
       "portraitAsset": null,
-      "birthplace": "Chorzów",
+      "birthplace": "Chorz\u00f3w",
       "heightScale": 1.069,
-      "fullName": "Michał Helik"
+      "fullName": "Micha\u0142 Helik"
     },
     "age": 31,
     "weightKg": 82
@@ -71295,8 +71295,8 @@
   },
   {
     "id": "player_oxford_siriki_dembele_23",
-    "name": "Siriki Dembélé",
-    "displayName": "S. Dembélé",
+    "name": "Siriki Demb\u00e9l\u00e9",
+    "displayName": "S. Demb\u00e9l\u00e9",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 71,
@@ -71322,7 +71322,7 @@
       "bodyType": "standard",
       "portraitAsset": null,
       "heightScale": 0.949,
-      "fullName": "Siriki Dembélé"
+      "fullName": "Siriki Demb\u00e9l\u00e9"
     },
     "age": 30,
     "weightKg": 71
@@ -74961,8 +74961,8 @@
   },
   {
     "id": "player_wycombe_anders_hagelskj_r_45",
-    "name": "Anders Hagelskjær",
-    "displayName": "A. Hagelskjær",
+    "name": "Anders Hagelskj\u00e6r",
+    "displayName": "A. Hagelskj\u00e6r",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 72,
@@ -74989,7 +74989,7 @@
       "portraitAsset": null,
       "birthplace": "Herning",
       "heightScale": 1.074,
-      "fullName": "Anders Hagelskjær"
+      "fullName": "Anders Hagelskj\u00e6r"
     },
     "age": 29,
     "weightKg": 83
@@ -75430,8 +75430,8 @@
   },
   {
     "id": "player_athletic_unai_simon_1",
-    "name": "Unai Simón",
-    "displayName": "U. Simón",
+    "name": "Unai Sim\u00f3n",
+    "displayName": "U. Sim\u00f3n",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 50,
@@ -75465,8 +75465,8 @@
   },
   {
     "id": "player_athletic_oscar_de_marcos_18",
-    "name": "Óscar de Marcos",
-    "displayName": "Ó. de Marcos",
+    "name": "\u00d3scar de Marcos",
+    "displayName": "\u00d3. de Marcos",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 90,
@@ -75583,7 +75583,7 @@
   },
   {
     "id": "player_athletic_inigo_ruiz_de_galarreta_16",
-    "name": "Iñigo Ruiz de Galarreta",
+    "name": "I\u00f1igo Ruiz de Galarreta",
     "displayName": "I. Ruiz de Galarreta",
     "primaryPosition": "DM",
     "secondaryPositions": [],
@@ -75613,7 +75613,7 @@
   },
   {
     "id": "player_athletic_benat_prados_24",
-    "name": "Beñat Prados",
+    "name": "Be\u00f1at Prados",
     "displayName": "B. Prados",
     "primaryPosition": "DM",
     "secondaryPositions": [],
@@ -75642,8 +75642,8 @@
   },
   {
     "id": "player_athletic_alex_berenguer_7",
-    "name": "Álex Berenguer",
-    "displayName": "Á. Berenguer",
+    "name": "\u00c1lex Berenguer",
+    "displayName": "\u00c1. Berenguer",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 96,
@@ -75785,8 +75785,8 @@
   },
   {
     "id": "player_athletic_yeray_alvarez_5",
-    "name": "Yeray Álvarez",
-    "displayName": "Y. Álvarez",
+    "name": "Yeray \u00c1lvarez",
+    "displayName": "Y. \u00c1lvarez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 66,
@@ -75815,7 +75815,7 @@
   },
   {
     "id": "player_athletic_inigo_lekue_15",
-    "name": "Iñigo Lekue",
+    "name": "I\u00f1igo Lekue",
     "displayName": "I. Lekue",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -75872,8 +75872,8 @@
   },
   {
     "id": "player_athletic_unai_gomez_14",
-    "name": "Unai Gómez",
-    "displayName": "U. Gómez",
+    "name": "Unai G\u00f3mez",
+    "displayName": "U. G\u00f3mez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 76,
@@ -75902,7 +75902,7 @@
   },
   {
     "id": "player_athletic_inaki_williams_11",
-    "name": "Iñaki Williams",
+    "name": "I\u00f1aki Williams",
     "displayName": "I. Williams",
     "primaryPosition": "RW",
     "secondaryPositions": [],
@@ -75930,8 +75930,8 @@
   },
   {
     "id": "player_athletic_alvaro_djalo_12",
-    "name": "Álvaro Djaló",
-    "displayName": "Á. Djaló",
+    "name": "\u00c1lvaro Djal\u00f3",
+    "displayName": "\u00c1. Djal\u00f3",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 77,
@@ -76023,8 +76023,8 @@
   },
   {
     "id": "player_osasuna_david_garcia_5",
-    "name": "David García",
-    "displayName": "D. García",
+    "name": "David Garc\u00eda",
+    "displayName": "D. Garc\u00eda",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 78,
@@ -76106,8 +76106,8 @@
   },
   {
     "id": "player_osasuna_lucas_torro_6",
-    "name": "Lucas Torró",
-    "displayName": "L. Torró",
+    "name": "Lucas Torr\u00f3",
+    "displayName": "L. Torr\u00f3",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 80,
@@ -76196,8 +76196,8 @@
   },
   {
     "id": "player_osasuna_ruben_garcia_11",
-    "name": "Rubén García",
-    "displayName": "R. García",
+    "name": "Rub\u00e9n Garc\u00eda",
+    "displayName": "R. Garc\u00eda",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 85,
@@ -76253,8 +76253,8 @@
   },
   {
     "id": "player_osasuna_moi_gomez_12",
-    "name": "Moi Gómez",
-    "displayName": "M. Gómez",
+    "name": "Moi G\u00f3mez",
+    "displayName": "M. G\u00f3mez",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 90,
@@ -76283,8 +76283,8 @@
   },
   {
     "id": "player_osasuna_aitor_fernandez_13",
-    "name": "Aitor Fernández",
-    "displayName": "A. Fernández",
+    "name": "Aitor Fern\u00e1ndez",
+    "displayName": "A. Fern\u00e1ndez",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 49,
@@ -76316,8 +76316,8 @@
   },
   {
     "id": "player_osasuna_unai_garcia_4",
-    "name": "Unai García",
-    "displayName": "U. García",
+    "name": "Unai Garc\u00eda",
+    "displayName": "U. Garc\u00eda",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 71,
@@ -76372,8 +76372,8 @@
   },
   {
     "id": "player_osasuna_pablo_ibanez_8",
-    "name": "Pablo Ibáñez",
-    "displayName": "P. Ibáñez",
+    "name": "Pablo Ib\u00e1\u00f1ez",
+    "displayName": "P. Ib\u00e1\u00f1ez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 81,
@@ -76402,8 +76402,8 @@
   },
   {
     "id": "player_osasuna_iker_munoz_16",
-    "name": "Iker Muñoz",
-    "displayName": "I. Muñoz",
+    "name": "Iker Mu\u00f1oz",
+    "displayName": "I. Mu\u00f1oz",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 73,
@@ -76432,8 +76432,8 @@
   },
   {
     "id": "player_osasuna_raul_garcia_17",
-    "name": "Raúl García",
-    "displayName": "R. García",
+    "name": "Ra\u00fal Garc\u00eda",
+    "displayName": "R. Garc\u00eda",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 88,
@@ -76553,8 +76553,8 @@
   },
   {
     "id": "player_atletico_jose_maria_gimenez_2",
-    "name": "José María Giménez",
-    "displayName": "J. María Giménez",
+    "name": "Jos\u00e9 Mar\u00eda Gim\u00e9nez",
+    "displayName": "J. Mar\u00eda Gim\u00e9nez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 71,
@@ -76583,8 +76583,8 @@
   },
   {
     "id": "player_atletico_stefan_savic_15",
-    "name": "Stefan Savić",
-    "displayName": "S. Savić",
+    "name": "Stefan Savi\u0107",
+    "displayName": "S. Savi\u0107",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 75,
@@ -76610,7 +76610,7 @@
   },
   {
     "id": "player_atletico_cesar_azpilicueta_3",
-    "name": "César Azpilicueta",
+    "name": "C\u00e9sar Azpilicueta",
     "displayName": "C. Azpilicueta",
     "primaryPosition": "LB",
     "secondaryPositions": [],
@@ -76784,8 +76784,8 @@
   },
   {
     "id": "player_atletico_julian_alvarez_19",
-    "name": "Julián Álvarez",
-    "displayName": "J. Álvarez",
+    "name": "Juli\u00e1n \u00c1lvarez",
+    "displayName": "J. \u00c1lvarez",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 84,
@@ -76956,8 +76956,8 @@
   },
   {
     "id": "player_atletico_alexander_s_rloth_9",
-    "name": "Alexander Sørloth",
-    "displayName": "A. Sørloth",
+    "name": "Alexander S\u00f8rloth",
+    "displayName": "A. S\u00f8rloth",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 83,
@@ -77105,8 +77105,8 @@
   },
   {
     "id": "player_alaves_santiago_mourino_2",
-    "name": "Santiago Mouriño",
-    "displayName": "S. Mouriño",
+    "name": "Santiago Mouri\u00f1o",
+    "displayName": "S. Mouri\u00f1o",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 71,
@@ -77135,8 +77135,8 @@
   },
   {
     "id": "player_alaves_manu_sanchez_3",
-    "name": "Manu Sánchez",
-    "displayName": "M. Sánchez",
+    "name": "Manu S\u00e1nchez",
+    "displayName": "M. S\u00e1nchez",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 82,
@@ -77252,8 +77252,8 @@
   },
   {
     "id": "player_alaves_joan_jordan_10",
-    "name": "Joan Jordán",
-    "displayName": "J. Jordán",
+    "name": "Joan Jord\u00e1n",
+    "displayName": "J. Jord\u00e1n",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 82,
@@ -77282,8 +77282,8 @@
   },
   {
     "id": "player_alaves_carlos_martin_11",
-    "name": "Carlos Martín",
-    "displayName": "C. Martín",
+    "name": "Carlos Mart\u00edn",
+    "displayName": "C. Mart\u00edn",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 89,
@@ -77312,8 +77312,8 @@
   },
   {
     "id": "player_alaves_kike_garcia_15",
-    "name": "Kike García",
-    "displayName": "K. García",
+    "name": "Kike Garc\u00eda",
+    "displayName": "K. Garc\u00eda",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 91,
@@ -77342,7 +77342,7 @@
   },
   {
     "id": "player_alaves_jesus_owono_13",
-    "name": "Jesús Owono",
+    "name": "Jes\u00fas Owono",
     "displayName": "J. Owono",
     "primaryPosition": "GK",
     "secondaryPositions": [],
@@ -77522,8 +77522,8 @@
   },
   {
     "id": "player_alaves_toni_martinez_17",
-    "name": "Toni Martínez",
-    "displayName": "T. Martínez",
+    "name": "Toni Mart\u00ednez",
+    "displayName": "T. Mart\u00ednez",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 85,
@@ -77552,8 +77552,8 @@
   },
   {
     "id": "player_elche_miguel_san_roman_1",
-    "name": "Miguel San Román",
-    "displayName": "M. San Román",
+    "name": "Miguel San Rom\u00e1n",
+    "displayName": "M. San Rom\u00e1n",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 53,
@@ -77643,8 +77643,8 @@
   },
   {
     "id": "player_elche_diego_gonzalez_4",
-    "name": "Diego González",
-    "displayName": "D. González",
+    "name": "Diego Gonz\u00e1lez",
+    "displayName": "D. Gonz\u00e1lez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 75,
@@ -77673,7 +77673,7 @@
   },
   {
     "id": "player_elche_jose_salinas_3",
-    "name": "José Salinas",
+    "name": "Jos\u00e9 Salinas",
     "displayName": "J. Salinas",
     "primaryPosition": "LB",
     "secondaryPositions": [],
@@ -77703,8 +77703,8 @@
   },
   {
     "id": "player_elche_nicolas_fernandez_mercau_6",
-    "name": "Nicolás Fernández Mercau",
-    "displayName": "N. Fernández Mercau",
+    "name": "Nicol\u00e1s Fern\u00e1ndez Mercau",
+    "displayName": "N. Fern\u00e1ndez Mercau",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 83,
@@ -77731,7 +77731,7 @@
   },
   {
     "id": "player_elche_raul_guti_8",
-    "name": "Raúl Guti",
+    "name": "Ra\u00fal Guti",
     "displayName": "R. Guti",
     "primaryPosition": "DM",
     "secondaryPositions": [],
@@ -77791,8 +77791,8 @@
   },
   {
     "id": "player_elche_oscar_plano_10",
-    "name": "Óscar Plano",
-    "displayName": "Ó. Plano",
+    "name": "\u00d3scar Plano",
+    "displayName": "\u00d3. Plano",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 86,
@@ -77818,7 +77818,7 @@
   },
   {
     "id": "player_elche_german_valera_11",
-    "name": "Germán Valera",
+    "name": "Germ\u00e1n Valera",
     "displayName": "G. Valera",
     "primaryPosition": "LW",
     "secondaryPositions": [],
@@ -77845,7 +77845,7 @@
   },
   {
     "id": "player_elche_jose_manuel_copete_9",
-    "name": "José Manuel Copete",
+    "name": "Jos\u00e9 Manuel Copete",
     "displayName": "J. Manuel Copete",
     "primaryPosition": "ST",
     "secondaryPositions": [],
@@ -77875,8 +77875,8 @@
   },
   {
     "id": "player_elche_edgar_badia_13",
-    "name": "Edgar Badía",
-    "displayName": "E. Badía",
+    "name": "Edgar Bad\u00eda",
+    "displayName": "E. Bad\u00eda",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 54,
@@ -78024,8 +78024,8 @@
   },
   {
     "id": "player_elche_sergio_leon_17",
-    "name": "Sergio León",
-    "displayName": "S. León",
+    "name": "Sergio Le\u00f3n",
+    "displayName": "S. Le\u00f3n",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 82,
@@ -78081,7 +78081,7 @@
   },
   {
     "id": "player_barcelona_marc_andre_ter_stegen_1",
-    "name": "Marc-André ter Stegen",
+    "name": "Marc-Andr\u00e9 ter Stegen",
     "displayName": "M. ter Stegen",
     "primaryPosition": "GK",
     "secondaryPositions": [],
@@ -78113,8 +78113,8 @@
   },
   {
     "id": "player_barcelona_jules_kounde_23",
-    "name": "Jules Koundé",
-    "displayName": "J. Koundé",
+    "name": "Jules Kound\u00e9",
+    "displayName": "J. Kound\u00e9",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 86,
@@ -78140,8 +78140,8 @@
   },
   {
     "id": "player_barcelona_ronald_araujo_4",
-    "name": "Ronald Araújo",
-    "displayName": "R. Araújo",
+    "name": "Ronald Ara\u00fajo",
+    "displayName": "R. Ara\u00fajo",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 78,
@@ -78167,8 +78167,8 @@
   },
   {
     "id": "player_barcelona_inigo_martinez_5",
-    "name": "Iñigo Martínez",
-    "displayName": "I. Martínez",
+    "name": "I\u00f1igo Mart\u00ednez",
+    "displayName": "I. Mart\u00ednez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 72,
@@ -78224,8 +78224,8 @@
   },
   {
     "id": "player_barcelona_marc_casado_17",
-    "name": "Marc Casadó",
-    "displayName": "M. Casadó",
+    "name": "Marc Casad\u00f3",
+    "displayName": "M. Casad\u00f3",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 82,
@@ -78393,8 +78393,8 @@
   },
   {
     "id": "player_barcelona_inaki_pena_13",
-    "name": "Iñaki Peña",
-    "displayName": "I. Peña",
+    "name": "I\u00f1aki Pe\u00f1a",
+    "displayName": "I. Pe\u00f1a",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 46,
@@ -78428,8 +78428,8 @@
   },
   {
     "id": "player_barcelona_pau_cubarsi_2",
-    "name": "Pau Cubarsí",
-    "displayName": "P. Cubarsí",
+    "name": "Pau Cubars\u00ed",
+    "displayName": "P. Cubars\u00ed",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 68,
@@ -78456,8 +78456,8 @@
   },
   {
     "id": "player_barcelona_eric_garcia_24",
-    "name": "Eric García",
-    "displayName": "E. García",
+    "name": "Eric Garc\u00eda",
+    "displayName": "E. Garc\u00eda",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 66,
@@ -78544,8 +78544,8 @@
   },
   {
     "id": "player_barcelona_fermin_lopez_16",
-    "name": "Fermín López",
-    "displayName": "F. López",
+    "name": "Ferm\u00edn L\u00f3pez",
+    "displayName": "F. L\u00f3pez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 75,
@@ -78637,8 +78637,8 @@
   },
   {
     "id": "player_getafe_djene_2",
-    "name": "Djené",
-    "displayName": "D. Djené",
+    "name": "Djen\u00e9",
+    "displayName": "D. Djen\u00e9",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 90,
@@ -78838,8 +78838,8 @@
   },
   {
     "id": "player_getafe_carles_alena_17",
-    "name": "Carles Aleñá",
-    "displayName": "C. Aleñá",
+    "name": "Carles Ale\u00f1\u00e1",
+    "displayName": "C. Ale\u00f1\u00e1",
     "primaryPosition": "LM",
     "secondaryPositions": [],
     "pace": 84,
@@ -78895,8 +78895,8 @@
   },
   {
     "id": "player_getafe_bertug_y_ld_r_m_19",
-    "name": "Bertuğ Yıldırım",
-    "displayName": "B. Yıldırım",
+    "name": "Bertu\u011f Y\u0131ld\u0131r\u0131m",
+    "displayName": "B. Y\u0131ld\u0131r\u0131m",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 86,
@@ -79015,8 +79015,8 @@
   },
   {
     "id": "player_getafe_alvaro_rodriguez_10",
-    "name": "Álvaro Rodríguez",
-    "displayName": "Á. Rodríguez",
+    "name": "\u00c1lvaro Rodr\u00edguez",
+    "displayName": "\u00c1. Rodr\u00edguez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 82,
@@ -79130,8 +79130,8 @@
   },
   {
     "id": "player_levante_andres_fernandez_1",
-    "name": "Andrés Fernández",
-    "displayName": "A. Fernández",
+    "name": "Andr\u00e9s Fern\u00e1ndez",
+    "displayName": "A. Fern\u00e1ndez",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 54,
@@ -79165,8 +79165,8 @@
   },
   {
     "id": "player_levante_andres_garcia_2",
-    "name": "Andrés García",
-    "displayName": "A. García",
+    "name": "Andr\u00e9s Garc\u00eda",
+    "displayName": "A. Garc\u00eda",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 89,
@@ -79195,7 +79195,7 @@
   },
   {
     "id": "player_levante_adrian_de_la_fuente_5",
-    "name": "Adrián de la Fuente",
+    "name": "Adri\u00e1n de la Fuente",
     "displayName": "A. de la Fuente",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -79252,8 +79252,8 @@
   },
   {
     "id": "player_levante_manu_sanchez_3",
-    "name": "Manu Sánchez",
-    "displayName": "M. Sánchez",
+    "name": "Manu S\u00e1nchez",
+    "displayName": "M. S\u00e1nchez",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 87,
@@ -79310,8 +79310,8 @@
   },
   {
     "id": "player_levante_pablo_martinez_8",
-    "name": "Pablo Martínez",
-    "displayName": "P. Martínez",
+    "name": "Pablo Mart\u00ednez",
+    "displayName": "P. Mart\u00ednez",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 77,
@@ -79340,8 +79340,8 @@
   },
   {
     "id": "player_levante_carlos_alvarez_7",
-    "name": "Carlos Álvarez",
-    "displayName": "C. Álvarez",
+    "name": "Carlos \u00c1lvarez",
+    "displayName": "C. \u00c1lvarez",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 92,
@@ -79370,7 +79370,7 @@
   },
   {
     "id": "player_levante_jose_luis_morales_10",
-    "name": "José Luis Morales",
+    "name": "Jos\u00e9 Luis Morales",
     "displayName": "J. Luis Morales",
     "primaryPosition": "AM",
     "secondaryPositions": [],
@@ -79430,8 +79430,8 @@
   },
   {
     "id": "player_levante_roger_brugue_9",
-    "name": "Roger Brugué",
-    "displayName": "R. Brugué",
+    "name": "Roger Brugu\u00e9",
+    "displayName": "R. Brugu\u00e9",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 88,
@@ -79458,8 +79458,8 @@
   },
   {
     "id": "player_levante_alex_primo_13",
-    "name": "Álex Primo",
-    "displayName": "Á. Primo",
+    "name": "\u00c1lex Primo",
+    "displayName": "\u00c1. Primo",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 47,
@@ -79547,8 +79547,8 @@
   },
   {
     "id": "player_levante_alex_cantero_14",
-    "name": "Álex Cantero",
-    "displayName": "Á. Cantero",
+    "name": "\u00c1lex Cantero",
+    "displayName": "\u00c1. Cantero",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 71,
@@ -79577,8 +79577,8 @@
   },
   {
     "id": "player_levante_pablo_martinez_17",
-    "name": "Pablo Martínez",
-    "displayName": "P. Martínez",
+    "name": "Pablo Mart\u00ednez",
+    "displayName": "P. Mart\u00ednez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 74,
@@ -79604,7 +79604,7 @@
   },
   {
     "id": "player_levante_ivan_romero_18",
-    "name": "Iván Romero",
+    "name": "Iv\u00e1n Romero",
     "displayName": "I. Romero",
     "primaryPosition": "ST",
     "secondaryPositions": [],
@@ -79632,8 +79632,8 @@
   },
   {
     "id": "player_levante_angel_algobia_19",
-    "name": "Ángel Algobia",
-    "displayName": "Á. Algobia",
+    "name": "\u00c1ngel Algobia",
+    "displayName": "\u00c1. Algobia",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 80,
@@ -79785,8 +79785,8 @@
   },
   {
     "id": "player_malaga_carlos_dominguez_3",
-    "name": "Carlos Domínguez",
-    "displayName": "C. Domínguez",
+    "name": "Carlos Dom\u00ednguez",
+    "displayName": "C. Dom\u00ednguez",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 82,
@@ -79870,7 +79870,7 @@
   },
   {
     "id": "player_malaga_antonito_cordero_7",
-    "name": "Antoñito Cordero",
+    "name": "Anto\u00f1ito Cordero",
     "displayName": "A. Cordero",
     "primaryPosition": "RW",
     "secondaryPositions": [],
@@ -79982,8 +79982,8 @@
   },
   {
     "id": "player_malaga_carlos_lopez_13",
-    "name": "Carlos López",
-    "displayName": "C. López",
+    "name": "Carlos L\u00f3pez",
+    "displayName": "C. L\u00f3pez",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 52,
@@ -80015,7 +80015,7 @@
   },
   {
     "id": "player_malaga_nelson_monte_15",
-    "name": "Nélson Monte",
+    "name": "N\u00e9lson Monte",
     "displayName": "N. Monte",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -80045,8 +80045,8 @@
   },
   {
     "id": "player_malaga_victor_garcia_16",
-    "name": "Víctor García",
-    "displayName": "V. García",
+    "name": "V\u00edctor Garc\u00eda",
+    "displayName": "V. Garc\u00eda",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 70,
@@ -80127,8 +80127,8 @@
   },
   {
     "id": "player_malaga_loren_zuniga_18",
-    "name": "Loren Zúñiga",
-    "displayName": "L. Zúñiga",
+    "name": "Loren Z\u00fa\u00f1iga",
+    "displayName": "L. Z\u00fa\u00f1iga",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 79,
@@ -80218,8 +80218,8 @@
   },
   {
     "id": "player_celta_oscar_mingueza_3",
-    "name": "Óscar Mingueza",
-    "displayName": "Ó. Mingueza",
+    "name": "\u00d3scar Mingueza",
+    "displayName": "\u00d3. Mingueza",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 86,
@@ -80273,8 +80273,8 @@
   },
   {
     "id": "player_celta_carlos_dominguez_24",
-    "name": "Carlos Domínguez",
-    "displayName": "C. Domínguez",
+    "name": "Carlos Dom\u00ednguez",
+    "displayName": "C. Dom\u00ednguez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 69,
@@ -80361,8 +80361,8 @@
   },
   {
     "id": "player_celta_fran_beltran_8",
-    "name": "Fran Beltrán",
-    "displayName": "F. Beltrán",
+    "name": "Fran Beltr\u00e1n",
+    "displayName": "F. Beltr\u00e1n",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 76,
@@ -80419,8 +80419,8 @@
   },
   {
     "id": "player_celta_alfon_gonzalez_12",
-    "name": "Alfon González",
-    "displayName": "A. González",
+    "name": "Alfon Gonz\u00e1lez",
+    "displayName": "A. Gonz\u00e1lez",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 90,
@@ -80505,7 +80505,7 @@
   },
   {
     "id": "player_celta_ivan_villar_1",
-    "name": "Iván Villar",
+    "name": "Iv\u00e1n Villar",
     "displayName": "I. Villar",
     "primaryPosition": "GK",
     "secondaryPositions": [],
@@ -80540,8 +80540,8 @@
   },
   {
     "id": "player_celta_unai_nunez_4",
-    "name": "Unai Núñez",
-    "displayName": "U. Núñez",
+    "name": "Unai N\u00fa\u00f1ez",
+    "displayName": "U. N\u00fa\u00f1ez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 71,
@@ -80710,8 +80710,8 @@
   },
   {
     "id": "player_deportivo_german_parreno_1",
-    "name": "Germán Parreño",
-    "displayName": "G. Parreño",
+    "name": "Germ\u00e1n Parre\u00f1o",
+    "displayName": "G. Parre\u00f1o",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 52,
@@ -80772,8 +80772,8 @@
   },
   {
     "id": "player_deportivo_pablo_vazquez_5",
-    "name": "Pablo Vázquez",
-    "displayName": "P. Vázquez",
+    "name": "Pablo V\u00e1zquez",
+    "displayName": "P. V\u00e1zquez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 74,
@@ -80799,8 +80799,8 @@
   },
   {
     "id": "player_deportivo_pablo_martinez_4",
-    "name": "Pablo Martínez",
-    "displayName": "P. Martínez",
+    "name": "Pablo Mart\u00ednez",
+    "displayName": "P. Mart\u00ednez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 72,
@@ -80884,8 +80884,8 @@
   },
   {
     "id": "player_deportivo_jose_angel_jurado_8",
-    "name": "José Ángel Jurado",
-    "displayName": "J. Ángel Jurado",
+    "name": "Jos\u00e9 \u00c1ngel Jurado",
+    "displayName": "J. \u00c1ngel Jurado",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 80,
@@ -80911,8 +80911,8 @@
   },
   {
     "id": "player_deportivo_yeremay_hernandez_7",
-    "name": "Yeremay Hernández",
-    "displayName": "Y. Hernández",
+    "name": "Yeremay Hern\u00e1ndez",
+    "displayName": "Y. Hern\u00e1ndez",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 91,
@@ -80938,8 +80938,8 @@
   },
   {
     "id": "player_deportivo_lucas_perez_10",
-    "name": "Lucas Pérez",
-    "displayName": "L. Pérez",
+    "name": "Lucas P\u00e9rez",
+    "displayName": "L. P\u00e9rez",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 82,
@@ -81088,8 +81088,8 @@
   },
   {
     "id": "player_deportivo_jaime_sanchez_16",
-    "name": "Jaime Sánchez",
-    "displayName": "J. Sánchez",
+    "name": "Jaime S\u00e1nchez",
+    "displayName": "J. S\u00e1nchez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 67,
@@ -81117,8 +81117,8 @@
   },
   {
     "id": "player_deportivo_alex_petisca_14",
-    "name": "Álex Petisca",
-    "displayName": "Á. Petisca",
+    "name": "\u00c1lex Petisca",
+    "displayName": "\u00c1. Petisca",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 74,
@@ -81232,8 +81232,8 @@
   },
   {
     "id": "player_espanyol_joan_garcia_1",
-    "name": "Joan García",
-    "displayName": "J. García",
+    "name": "Joan Garc\u00eda",
+    "displayName": "J. Garc\u00eda",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 59,
@@ -81357,8 +81357,8 @@
   },
   {
     "id": "player_espanyol_brian_olivan_3",
-    "name": "Brian Oliván",
-    "displayName": "B. Oliván",
+    "name": "Brian Oliv\u00e1n",
+    "displayName": "B. Oliv\u00e1n",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 87,
@@ -81387,7 +81387,7 @@
   },
   {
     "id": "player_espanyol_jose_gragera_6",
-    "name": "José Gragera",
+    "name": "Jos\u00e9 Gragera",
     "displayName": "J. Gragera",
     "primaryPosition": "DM",
     "secondaryPositions": [],
@@ -81475,8 +81475,8 @@
   },
   {
     "id": "player_espanyol_alejo_veliz_10",
-    "name": "Alejo Véliz",
-    "displayName": "A. Véliz",
+    "name": "Alejo V\u00e9liz",
+    "displayName": "A. V\u00e9liz",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 86,
@@ -81560,8 +81560,8 @@
   },
   {
     "id": "player_espanyol_angel_fortuno_13",
-    "name": "Ángel Fortuño",
-    "displayName": "Á. Fortuño",
+    "name": "\u00c1ngel Fortu\u00f1o",
+    "displayName": "\u00c1. Fortu\u00f1o",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 49,
@@ -81651,8 +81651,8 @@
   },
   {
     "id": "player_espanyol_alvaro_aguado_16",
-    "name": "Álvaro Aguado",
-    "displayName": "Á. Aguado",
+    "name": "\u00c1lvaro Aguado",
+    "displayName": "\u00c1. Aguado",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 74,
@@ -81678,8 +81678,8 @@
   },
   {
     "id": "player_espanyol_edu_exposito_17",
-    "name": "Edu Expósito",
-    "displayName": "E. Expósito",
+    "name": "Edu Exp\u00f3sito",
+    "displayName": "E. Exp\u00f3sito",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 78,
@@ -81708,7 +81708,7 @@
   },
   {
     "id": "player_espanyol_martin_braithwaite_18",
-    "name": "Martín Braithwaite",
+    "name": "Mart\u00edn Braithwaite",
     "displayName": "M. Braithwaite",
     "primaryPosition": "ST",
     "secondaryPositions": [],
@@ -81768,8 +81768,8 @@
   },
   {
     "id": "player_rayo_dani_cardenas_1",
-    "name": "Dani Cárdenas",
-    "displayName": "D. Cárdenas",
+    "name": "Dani C\u00e1rdenas",
+    "displayName": "D. C\u00e1rdenas",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 52,
@@ -81803,8 +81803,8 @@
   },
   {
     "id": "player_rayo_andrei_ratiu_2",
-    "name": "Andrei Rațiu",
-    "displayName": "A. Rațiu",
+    "name": "Andrei Ra\u021biu",
+    "displayName": "A. Ra\u021biu",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 88,
@@ -81860,7 +81860,7 @@
   },
   {
     "id": "player_rayo_pathe_ciss_24",
-    "name": "Pathé Ciss",
+    "name": "Path\u00e9 Ciss",
     "displayName": "P. Ciss",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -81920,8 +81920,8 @@
   },
   {
     "id": "player_rayo_oscar_valentin_6",
-    "name": "Óscar Valentín",
-    "displayName": "Ó. Valentín",
+    "name": "\u00d3scar Valent\u00edn",
+    "displayName": "\u00d3. Valent\u00edn",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 82,
@@ -81948,8 +81948,8 @@
   },
   {
     "id": "player_rayo_unai_lopez_17",
-    "name": "Unai López",
-    "displayName": "U. López",
+    "name": "Unai L\u00f3pez",
+    "displayName": "U. L\u00f3pez",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 80,
@@ -81976,8 +81976,8 @@
   },
   {
     "id": "player_rayo_isi_palazon_7",
-    "name": "Isi Palazón",
-    "displayName": "I. Palazón",
+    "name": "Isi Palaz\u00f3n",
+    "displayName": "I. Palaz\u00f3n",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 96,
@@ -82006,8 +82006,8 @@
   },
   {
     "id": "player_rayo_james_rodriguez_10",
-    "name": "James Rodríguez",
-    "displayName": "J. Rodríguez",
+    "name": "James Rodr\u00edguez",
+    "displayName": "J. Rodr\u00edguez",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 85,
@@ -82036,8 +82036,8 @@
   },
   {
     "id": "player_rayo_alvaro_garcia_11",
-    "name": "Álvaro García",
-    "displayName": "Á. García",
+    "name": "\u00c1lvaro Garc\u00eda",
+    "displayName": "\u00c1. Garc\u00eda",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 92,
@@ -82066,8 +82066,8 @@
   },
   {
     "id": "player_rayo_raul_de_tomas_9",
-    "name": "Raúl de Tomás",
-    "displayName": "R. de Tomás",
+    "name": "Ra\u00fal de Tom\u00e1s",
+    "displayName": "R. de Tom\u00e1s",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 88,
@@ -82096,8 +82096,8 @@
   },
   {
     "id": "player_rayo_miguel_angel_morro_13",
-    "name": "Miguel Ángel Morro",
-    "displayName": "M. Ángel Morro",
+    "name": "Miguel \u00c1ngel Morro",
+    "displayName": "M. \u00c1ngel Morro",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 54,
@@ -82131,8 +82131,8 @@
   },
   {
     "id": "player_rayo_aridane_hernandez_4",
-    "name": "Aridane Hernández",
-    "displayName": "A. Hernández",
+    "name": "Aridane Hern\u00e1ndez",
+    "displayName": "A. Hern\u00e1ndez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 71,
@@ -82187,8 +82187,8 @@
   },
   {
     "id": "player_rayo_pep_chavarria_8",
-    "name": "Pep Chavarría",
-    "displayName": "P. Chavarría",
+    "name": "Pep Chavarr\u00eda",
+    "displayName": "P. Chavarr\u00eda",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 82,
@@ -82334,8 +82334,8 @@
   },
   {
     "id": "player_betis_hector_bellerin_2",
-    "name": "Héctor Bellerín",
-    "displayName": "H. Bellerín",
+    "name": "H\u00e9ctor Beller\u00edn",
+    "displayName": "H. Beller\u00edn",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 91,
@@ -82420,8 +82420,8 @@
   },
   {
     "id": "player_betis_ricardo_rodriguez_12",
-    "name": "Ricardo Rodríguez",
-    "displayName": "R. Rodríguez",
+    "name": "Ricardo Rodr\u00edguez",
+    "displayName": "R. Rodr\u00edguez",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 86,
@@ -82592,8 +82592,8 @@
   },
   {
     "id": "player_betis_chimy_avila_9",
-    "name": "Chimy Ávila",
-    "displayName": "C. Ávila",
+    "name": "Chimy \u00c1vila",
+    "displayName": "C. \u00c1vila",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 89,
@@ -82619,8 +82619,8 @@
   },
   {
     "id": "player_betis_adrian_1",
-    "name": "Adrián",
-    "displayName": "A. Adrián",
+    "name": "Adri\u00e1n",
+    "displayName": "A. Adri\u00e1n",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 46,
@@ -82799,8 +82799,8 @@
   },
   {
     "id": "player_betis_ayoze_perez_19",
-    "name": "Ayoze Pérez",
-    "displayName": "A. Pérez",
+    "name": "Ayoze P\u00e9rez",
+    "displayName": "A. P\u00e9rez",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 80,
@@ -82889,8 +82889,8 @@
   },
   {
     "id": "player_realmadrid_eder_militao_3",
-    "name": "Éder Militão",
-    "displayName": "É. Militão",
+    "name": "\u00c9der Milit\u00e3o",
+    "displayName": "\u00c9. Milit\u00e3o",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 75,
@@ -82919,8 +82919,8 @@
   },
   {
     "id": "player_realmadrid_antonio_rudiger_22",
-    "name": "Antonio Rüdiger",
-    "displayName": "A. Rüdiger",
+    "name": "Antonio R\u00fcdiger",
+    "displayName": "A. R\u00fcdiger",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 71,
@@ -83007,8 +83007,8 @@
   },
   {
     "id": "player_realmadrid_aurelien_tchouameni_14",
-    "name": "Aurélien Tchouaméni",
-    "displayName": "A. Tchouaméni",
+    "name": "Aur\u00e9lien Tchouam\u00e9ni",
+    "displayName": "A. Tchouam\u00e9ni",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 82,
@@ -83091,8 +83091,8 @@
   },
   {
     "id": "player_realmadrid_vinicius_junior_7",
-    "name": "Vinícius Júnior",
-    "displayName": "V. Júnior",
+    "name": "Vin\u00edcius J\u00fanior",
+    "displayName": "V. J\u00fanior",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 89,
@@ -83121,8 +83121,8 @@
   },
   {
     "id": "player_realmadrid_kylian_mbappe_9",
-    "name": "Kylian Mbappé",
-    "displayName": "K. Mbappé",
+    "name": "Kylian Mbapp\u00e9",
+    "displayName": "K. Mbapp\u00e9",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 88,
@@ -83183,7 +83183,7 @@
   },
   {
     "id": "player_realmadrid_raul_asencio_15",
-    "name": "Raúl Asencio",
+    "name": "Ra\u00fal Asencio",
     "displayName": "R. Asencio",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -83210,8 +83210,8 @@
   },
   {
     "id": "player_realmadrid_fran_garcia_18",
-    "name": "Fran García",
-    "displayName": "F. García",
+    "name": "Fran Garc\u00eda",
+    "displayName": "F. Garc\u00eda",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 65,
@@ -83270,8 +83270,8 @@
   },
   {
     "id": "player_realmadrid_luka_modric_10",
-    "name": "Luka Modrić",
-    "displayName": "L. Modrić",
+    "name": "Luka Modri\u0107",
+    "displayName": "L. Modri\u0107",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 81,
@@ -83297,8 +83297,8 @@
   },
   {
     "id": "player_realmadrid_arda_guler_17",
-    "name": "Arda Güler",
-    "displayName": "A. Güler",
+    "name": "Arda G\u00fcler",
+    "displayName": "A. G\u00fcler",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 74,
@@ -83389,8 +83389,8 @@
   },
   {
     "id": "player_racing_alvaro_mantilla_2",
-    "name": "Álvaro Mantilla",
-    "displayName": "Á. Mantilla",
+    "name": "\u00c1lvaro Mantilla",
+    "displayName": "\u00c1. Mantilla",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 89,
@@ -83448,8 +83448,8 @@
   },
   {
     "id": "player_racing_inigo_sainz_maza_4",
-    "name": "Íñigo Sainz-Maza",
-    "displayName": "Í. Sainz-Maza",
+    "name": "\u00cd\u00f1igo Sainz-Maza",
+    "displayName": "\u00cd. Sainz-Maza",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 69,
@@ -83478,8 +83478,8 @@
   },
   {
     "id": "player_racing_saul_garcia_3",
-    "name": "Saúl García",
-    "displayName": "S. García",
+    "name": "Sa\u00fal Garc\u00eda",
+    "displayName": "S. Garc\u00eda",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 85,
@@ -83508,8 +83508,8 @@
   },
   {
     "id": "player_racing_inigo_vicente_6",
-    "name": "Íñigo Vicente",
-    "displayName": "Í. Vicente",
+    "name": "\u00cd\u00f1igo Vicente",
+    "displayName": "\u00cd. Vicente",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 76,
@@ -83564,8 +83564,8 @@
   },
   {
     "id": "player_racing_andres_martin_7",
-    "name": "Andrés Martín",
-    "displayName": "A. Martín",
+    "name": "Andr\u00e9s Mart\u00edn",
+    "displayName": "A. Mart\u00edn",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 91,
@@ -83654,8 +83654,8 @@
   },
   {
     "id": "player_racing_peque_fernandez_9",
-    "name": "Peque Fernández",
-    "displayName": "P. Fernández",
+    "name": "Peque Fern\u00e1ndez",
+    "displayName": "P. Fern\u00e1ndez",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 86,
@@ -83681,8 +83681,8 @@
   },
   {
     "id": "player_racing_german_fernandez_13",
-    "name": "Germán Fernández",
-    "displayName": "G. Fernández",
+    "name": "Germ\u00e1n Fern\u00e1ndez",
+    "displayName": "G. Fern\u00e1ndez",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 47,
@@ -83714,8 +83714,8 @@
   },
   {
     "id": "player_racing_mario_garcia_15",
-    "name": "Mario García",
-    "displayName": "M. García",
+    "name": "Mario Garc\u00eda",
+    "displayName": "M. Garc\u00eda",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 67,
@@ -83744,7 +83744,7 @@
   },
   {
     "id": "player_racing_clement_michelin_16",
-    "name": "Clément Michelin",
+    "name": "Cl\u00e9ment Michelin",
     "displayName": "C. Michelin",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -83801,8 +83801,8 @@
   },
   {
     "id": "player_racing_pablo_rodriguez_17",
-    "name": "Pablo Rodríguez",
-    "displayName": "P. Rodríguez",
+    "name": "Pablo Rodr\u00edguez",
+    "displayName": "P. Rodr\u00edguez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 78,
@@ -83887,8 +83887,8 @@
   },
   {
     "id": "player_realsociedad_alex_remiro_1",
-    "name": "Álex Remiro",
-    "displayName": "Á. Remiro",
+    "name": "\u00c1lex Remiro",
+    "displayName": "\u00c1. Remiro",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 53,
@@ -84006,8 +84006,8 @@
   },
   {
     "id": "player_realsociedad_aihen_munoz_3",
-    "name": "Aihen Muñoz",
-    "displayName": "A. Muñoz",
+    "name": "Aihen Mu\u00f1oz",
+    "displayName": "A. Mu\u00f1oz",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 87,
@@ -84036,7 +84036,7 @@
   },
   {
     "id": "player_realsociedad_martin_zubimendi_4",
-    "name": "Martín Zubimendi",
+    "name": "Mart\u00edn Zubimendi",
     "displayName": "M. Zubimendi",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -84064,7 +84064,7 @@
   },
   {
     "id": "player_realsociedad_benat_turrientes_8",
-    "name": "Beñat Turrientes",
+    "name": "Be\u00f1at Turrientes",
     "displayName": "B. Turrientes",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -84181,8 +84181,8 @@
   },
   {
     "id": "player_realsociedad_luka_sucic_14",
-    "name": "Luka Sučić",
-    "displayName": "L. Sučić",
+    "name": "Luka Su\u010di\u0107",
+    "displayName": "L. Su\u010di\u0107",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 88,
@@ -84243,8 +84243,8 @@
   },
   {
     "id": "player_realsociedad_hamari_traore_2",
-    "name": "Hamari Traoré",
-    "displayName": "H. Traoré",
+    "name": "Hamari Traor\u00e9",
+    "displayName": "H. Traor\u00e9",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 68,
@@ -84300,8 +84300,8 @@
   },
   {
     "id": "player_realsociedad_brais_mendez_16",
-    "name": "Brais Méndez",
-    "displayName": "B. Méndez",
+    "name": "Brais M\u00e9ndez",
+    "displayName": "B. M\u00e9ndez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 76,
@@ -84386,8 +84386,8 @@
   },
   {
     "id": "player_realsociedad_orri_oskarsson_19",
-    "name": "Orri Óskarsson",
-    "displayName": "O. Óskarsson",
+    "name": "Orri \u00d3skarsson",
+    "displayName": "O. \u00d3skarsson",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 82,
@@ -84416,8 +84416,8 @@
   },
   {
     "id": "player_sevilla_rjan_nyland_1",
-    "name": "Ørjan Nyland",
-    "displayName": "Ø. Nyland",
+    "name": "\u00d8rjan Nyland",
+    "displayName": "\u00d8. Nyland",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 55,
@@ -84450,7 +84450,7 @@
   },
   {
     "id": "player_sevilla_jesus_navas_16",
-    "name": "Jesús Navas",
+    "name": "Jes\u00fas Navas",
     "displayName": "J. Navas",
     "primaryPosition": "RB",
     "secondaryPositions": [],
@@ -84477,8 +84477,8 @@
   },
   {
     "id": "player_sevilla_loic_bade_4",
-    "name": "Loïc Badé",
-    "displayName": "L. Badé",
+    "name": "Lo\u00efc Bad\u00e9",
+    "displayName": "L. Bad\u00e9",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 77,
@@ -84534,7 +84534,7 @@
   },
   {
     "id": "player_sevilla_adria_pedrosa_3",
-    "name": "Adrià Pedrosa",
+    "name": "Adri\u00e0 Pedrosa",
     "displayName": "A. Pedrosa",
     "primaryPosition": "LB",
     "secondaryPositions": [],
@@ -84564,8 +84564,8 @@
   },
   {
     "id": "player_sevilla_lucien_agoume_6",
-    "name": "Lucien Agoumé",
-    "displayName": "L. Agoumé",
+    "name": "Lucien Agoum\u00e9",
+    "displayName": "L. Agoum\u00e9",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 81,
@@ -84736,8 +84736,8 @@
   },
   {
     "id": "player_sevilla_alvaro_valles_13",
-    "name": "Álvaro Valles",
-    "displayName": "Á. Valles",
+    "name": "\u00c1lvaro Valles",
+    "displayName": "\u00c1. Valles",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 49,
@@ -84798,8 +84798,8 @@
   },
   {
     "id": "player_sevilla_marcos_acuna_15",
-    "name": "Marcos Acuña",
-    "displayName": "M. Acuña",
+    "name": "Marcos Acu\u00f1a",
+    "displayName": "M. Acu\u00f1a",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 67,
@@ -84828,8 +84828,8 @@
   },
   {
     "id": "player_sevilla_joan_jordan_8",
-    "name": "Joan Jordán",
-    "displayName": "J. Jordán",
+    "name": "Joan Jord\u00e1n",
+    "displayName": "J. Jord\u00e1n",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 76,
@@ -84918,8 +84918,8 @@
   },
   {
     "id": "player_sevilla_mariano_diaz_19",
-    "name": "Mariano Díaz",
-    "displayName": "M. Díaz",
+    "name": "Mariano D\u00edaz",
+    "displayName": "M. D\u00edaz",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 83,
@@ -85038,8 +85038,8 @@
   },
   {
     "id": "player_valencia_cenk_ozkacar_5",
-    "name": "Cenk Özkacar",
-    "displayName": "C. Özkacar",
+    "name": "Cenk \u00d6zkacar",
+    "displayName": "C. \u00d6zkacar",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 70,
@@ -85068,8 +85068,8 @@
   },
   {
     "id": "player_valencia_jesus_vazquez_21",
-    "name": "Jesús Vázquez",
-    "displayName": "J. Vázquez",
+    "name": "Jes\u00fas V\u00e1zquez",
+    "displayName": "J. V\u00e1zquez",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 82,
@@ -85184,7 +85184,7 @@
   },
   {
     "id": "player_valencia_andre_almeida_10",
-    "name": "André Almeida",
+    "name": "Andr\u00e9 Almeida",
     "displayName": "A. Almeida",
     "primaryPosition": "AM",
     "secondaryPositions": [],
@@ -85211,8 +85211,8 @@
   },
   {
     "id": "player_valencia_diego_lopez_11",
-    "name": "Diego López",
-    "displayName": "D. López",
+    "name": "Diego L\u00f3pez",
+    "displayName": "D. L\u00f3pez",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 88,
@@ -85268,8 +85268,8 @@
   },
   {
     "id": "player_valencia_jaume_domenech_13",
-    "name": "Jaume Doménech",
-    "displayName": "J. Doménech",
+    "name": "Jaume Dom\u00e9nech",
+    "displayName": "J. Dom\u00e9nech",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 45,
@@ -85363,8 +85363,8 @@
   },
   {
     "id": "player_valencia_fran_perez_14",
-    "name": "Fran Pérez",
-    "displayName": "F. Pérez",
+    "name": "Fran P\u00e9rez",
+    "displayName": "F. P\u00e9rez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 75,
@@ -85393,8 +85393,8 @@
   },
   {
     "id": "player_valencia_sergri_dominguez_16",
-    "name": "Sergri Domínguez",
-    "displayName": "S. Domínguez",
+    "name": "Sergri Dom\u00ednguez",
+    "displayName": "S. Dom\u00ednguez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 75,
@@ -85453,8 +85453,8 @@
   },
   {
     "id": "player_valencia_dani_gomez_19",
-    "name": "Dani Gómez",
-    "displayName": "D. Gómez",
+    "name": "Dani G\u00f3mez",
+    "displayName": "D. G\u00f3mez",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 80,
@@ -85480,8 +85480,8 @@
   },
   {
     "id": "player_villarreal_luiz_junior_1",
-    "name": "Luiz Júnior",
-    "displayName": "L. Júnior",
+    "name": "Luiz J\u00fanior",
+    "displayName": "L. J\u00fanior",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 50,
@@ -85515,8 +85515,8 @@
   },
   {
     "id": "player_villarreal_kiko_femenia_2",
-    "name": "Kiko Femenía",
-    "displayName": "K. Femenía",
+    "name": "Kiko Femen\u00eda",
+    "displayName": "K. Femen\u00eda",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 88,
@@ -85545,7 +85545,7 @@
   },
   {
     "id": "player_villarreal_raul_albiol_3",
-    "name": "Raúl Albiol",
+    "name": "Ra\u00fal Albiol",
     "displayName": "R. Albiol",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -85686,8 +85686,8 @@
   },
   {
     "id": "player_villarreal_santi_comesana_6",
-    "name": "Santi Comesaña",
-    "displayName": "S. Comesaña",
+    "name": "Santi Comesa\u00f1a",
+    "displayName": "S. Comesa\u00f1a",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 84,
@@ -85716,8 +85716,8 @@
   },
   {
     "id": "player_villarreal_alex_baena_16",
-    "name": "Álex Baena",
-    "displayName": "Á. Baena",
+    "name": "\u00c1lex Baena",
+    "displayName": "\u00c1. Baena",
     "primaryPosition": "LM",
     "secondaryPositions": [],
     "pace": 89,
@@ -85773,8 +85773,8 @@
   },
   {
     "id": "player_villarreal_ayoze_perez_9",
-    "name": "Ayoze Pérez",
-    "displayName": "A. Pérez",
+    "name": "Ayoze P\u00e9rez",
+    "displayName": "A. P\u00e9rez",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 85,
@@ -85978,8 +85978,8 @@
   },
   {
     "id": "player_villarreal_nicolas_pepe_19",
-    "name": "Nicolas Pépé",
-    "displayName": "N. Pépé",
+    "name": "Nicolas P\u00e9p\u00e9",
+    "displayName": "N. P\u00e9p\u00e9",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 84,
@@ -86123,8 +86123,8 @@
   },
   {
     "id": "player_milan_theo_hernandez_19",
-    "name": "Theo Hernández",
-    "displayName": "T. Hernández",
+    "name": "Theo Hern\u00e1ndez",
+    "displayName": "T. Hern\u00e1ndez",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 88,
@@ -86261,8 +86261,8 @@
   },
   {
     "id": "player_milan_rafael_leao_7",
-    "name": "Rafael Leão",
-    "displayName": "R. Leão",
+    "name": "Rafael Le\u00e3o",
+    "displayName": "R. Le\u00e3o",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 94,
@@ -86291,8 +86291,8 @@
   },
   {
     "id": "player_milan_alvaro_morata_9",
-    "name": "Álvaro Morata",
-    "displayName": "Á. Morata",
+    "name": "\u00c1lvaro Morata",
+    "displayName": "\u00c1. Morata",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 90,
@@ -86410,7 +86410,7 @@
   },
   {
     "id": "player_milan_ismael_bennacer_4",
-    "name": "Ismaël Bennacer",
+    "name": "Isma\u00ebl Bennacer",
     "displayName": "I. Bennacer",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -86584,8 +86584,8 @@
   },
   {
     "id": "player_monza_pablo_mari_5",
-    "name": "Pablo Marí",
-    "displayName": "P. Marí",
+    "name": "Pablo Mar\u00ed",
+    "displayName": "P. Mar\u00ed",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 74,
@@ -86963,8 +86963,8 @@
   },
   {
     "id": "player_monza_jose_machin_17",
-    "name": "José Machín",
-    "displayName": "J. Machín",
+    "name": "Jos\u00e9 Mach\u00edn",
+    "displayName": "J. Mach\u00edn",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 80,
@@ -86990,8 +86990,8 @@
   },
   {
     "id": "player_monza_milan_uric_9",
-    "name": "Milan Đurić",
-    "displayName": "M. Đurić",
+    "name": "Milan \u0110uri\u0107",
+    "displayName": "M. \u0110uri\u0107",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 84,
@@ -87081,8 +87081,8 @@
   },
   {
     "id": "player_fiorentina_dodo_2",
-    "name": "Dodô",
-    "displayName": "D. Dodô",
+    "name": "Dod\u00f4",
+    "displayName": "D. Dod\u00f4",
     "primaryPosition": "RB",
     "secondaryPositions": [],
     "pace": 84,
@@ -87111,8 +87111,8 @@
   },
   {
     "id": "player_fiorentina_lucas_martinez_quarta_4",
-    "name": "Lucas Martínez Quarta",
-    "displayName": "L. Martínez Quarta",
+    "name": "Lucas Mart\u00ednez Quarta",
+    "displayName": "L. Mart\u00ednez Quarta",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 72,
@@ -87288,8 +87288,8 @@
   },
   {
     "id": "player_fiorentina_albert_gu_mundsson_10",
-    "name": "Albert Guðmundsson",
-    "displayName": "A. Guðmundsson",
+    "name": "Albert Gu\u00f0mundsson",
+    "displayName": "A. Gu\u00f0mundsson",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 87,
@@ -87315,8 +87315,8 @@
   },
   {
     "id": "player_fiorentina_christian_kouame_11",
-    "name": "Christian Kouamé",
-    "displayName": "C. Kouamé",
+    "name": "Christian Kouam\u00e9",
+    "displayName": "C. Kouam\u00e9",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 90,
@@ -87437,8 +87437,8 @@
   },
   {
     "id": "player_fiorentina_marin_pongracic_16",
-    "name": "Marin Pongračić",
-    "displayName": "M. Pongračić",
+    "name": "Marin Pongra\u010di\u0107",
+    "displayName": "M. Pongra\u010di\u0107",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 69,
@@ -87496,8 +87496,8 @@
   },
   {
     "id": "player_fiorentina_lucas_beltran_17",
-    "name": "Lucas Beltrán",
-    "displayName": "L. Beltrán",
+    "name": "Lucas Beltr\u00e1n",
+    "displayName": "L. Beltr\u00e1n",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 77,
@@ -87554,8 +87554,8 @@
   },
   {
     "id": "player_fiorentina_jonathan_ikone_19",
-    "name": "Jonathan Ikoné",
-    "displayName": "J. Ikoné",
+    "name": "Jonathan Ikon\u00e9",
+    "displayName": "J. Ikon\u00e9",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 84,
@@ -87709,8 +87709,8 @@
   },
   {
     "id": "player_roma_angelino_3",
-    "name": "Angeliño",
-    "displayName": "A. Angeliño",
+    "name": "Angeli\u00f1o",
+    "displayName": "A. Angeli\u00f1o",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 83,
@@ -87854,8 +87854,8 @@
   },
   {
     "id": "player_roma_matias_soule_11",
-    "name": "Matías Soulé",
-    "displayName": "M. Soulé",
+    "name": "Mat\u00edas Soul\u00e9",
+    "displayName": "M. Soul\u00e9",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 89,
@@ -87914,8 +87914,8 @@
   },
   {
     "id": "player_roma_rui_patricio_1",
-    "name": "Rui Patrício",
-    "displayName": "R. Patrício",
+    "name": "Rui Patr\u00edcio",
+    "displayName": "R. Patr\u00edcio",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 48,
@@ -87975,8 +87975,8 @@
   },
   {
     "id": "player_roma_mehmet_zeki_celik_19",
-    "name": "Mehmet Zeki Çelik",
-    "displayName": "M. Zeki Çelik",
+    "name": "Mehmet Zeki \u00c7elik",
+    "displayName": "M. Zeki \u00c7elik",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 70,
@@ -88005,7 +88005,7 @@
   },
   {
     "id": "player_roma_niccolo_pisilli_8",
-    "name": "Niccolò Pisilli",
+    "name": "Niccol\u00f2 Pisilli",
     "displayName": "N. Pisilli",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -88212,8 +88212,8 @@
   },
   {
     "id": "player_atalanta_sead_kolasinac_23",
-    "name": "Sead Kolašinac",
-    "displayName": "S. Kolašinac",
+    "name": "Sead Kola\u0161inac",
+    "displayName": "S. Kola\u0161inac",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 73,
@@ -88270,8 +88270,8 @@
   },
   {
     "id": "player_atalanta_mario_pasalic_8",
-    "name": "Mario Pašalić",
-    "displayName": "M. Pašalić",
+    "name": "Mario Pa\u0161ali\u0107",
+    "displayName": "M. Pa\u0161ali\u0107",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 80,
@@ -88300,8 +88300,8 @@
   },
   {
     "id": "player_atalanta_ederson_13",
-    "name": "Éderson",
-    "displayName": "É. Éderson",
+    "name": "\u00c9derson",
+    "displayName": "\u00c9. \u00c9derson",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 85,
@@ -88566,7 +88566,7 @@
   },
   {
     "id": "player_atalanta_nicolo_zaniolo_10",
-    "name": "Nicolò Zaniolo",
+    "name": "Nicol\u00f2 Zaniolo",
     "displayName": "N. Zaniolo",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -88656,8 +88656,8 @@
   },
   {
     "id": "player_bologna_ukasz_skorupski_1",
-    "name": "Łukasz Skorupski",
-    "displayName": "Ł. Skorupski",
+    "name": "\u0141ukasz Skorupski",
+    "displayName": "\u0141. Skorupski",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 48,
@@ -88749,8 +88749,8 @@
   },
   {
     "id": "player_bologna_jhon_lucumi_26",
-    "name": "Jhon Lucumí",
-    "displayName": "J. Lucumí",
+    "name": "Jhon Lucum\u00ed",
+    "displayName": "J. Lucum\u00ed",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 68,
@@ -89050,8 +89050,8 @@
   },
   {
     "id": "player_bologna_martin_erlic_4",
-    "name": "Martin Erlić",
-    "displayName": "M. Erlić",
+    "name": "Martin Erli\u0107",
+    "displayName": "M. Erli\u0107",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 70,
@@ -89307,8 +89307,8 @@
   },
   {
     "id": "player_cagliari_adam_diakite_3",
-    "name": "Adam Diakité",
-    "displayName": "A. Diakité",
+    "name": "Adam Diakit\u00e9",
+    "displayName": "A. Diakit\u00e9",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 89,
@@ -89831,8 +89831,8 @@
   },
   {
     "id": "player_como_alex_valle_3",
-    "name": "Álex Valle",
-    "displayName": "Á. Valle",
+    "name": "\u00c1lex Valle",
+    "displayName": "\u00c1. Valle",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 88,
@@ -89861,7 +89861,7 @@
   },
   {
     "id": "player_como_maximo_perrone_8",
-    "name": "Máximo Perrone",
+    "name": "M\u00e1ximo Perrone",
     "displayName": "M. Perrone",
     "primaryPosition": "DM",
     "secondaryPositions": [],
@@ -90391,7 +90391,7 @@
   },
   {
     "id": "player_inter_nicolo_barella_23",
-    "name": "Nicolò Barella",
+    "name": "Nicol\u00f2 Barella",
     "displayName": "N. Barella",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -90419,8 +90419,8 @@
   },
   {
     "id": "player_inter_hakan_calhanoglu_20",
-    "name": "Hakan Çalhanoğlu",
-    "displayName": "H. Çalhanoğlu",
+    "name": "Hakan \u00c7alhano\u011flu",
+    "displayName": "H. \u00c7alhano\u011flu",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 80,
@@ -90479,8 +90479,8 @@
   },
   {
     "id": "player_inter_lautaro_martinez_10",
-    "name": "Lautaro Martínez",
-    "displayName": "L. Martínez",
+    "name": "Lautaro Mart\u00ednez",
+    "displayName": "L. Mart\u00ednez",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 87,
@@ -90539,8 +90539,8 @@
   },
   {
     "id": "player_inter_piotr_zielinski_8",
-    "name": "Piotr Zieliński",
-    "displayName": "P. Zieliński",
+    "name": "Piotr Zieli\u0144ski",
+    "displayName": "P. Zieli\u0144ski",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 85,
@@ -90569,8 +90569,8 @@
   },
   {
     "id": "player_inter_josep_martinez_13",
-    "name": "Josep Martínez",
-    "displayName": "J. Martínez",
+    "name": "Josep Mart\u00ednez",
+    "displayName": "J. Mart\u00ednez",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 48,
@@ -90750,8 +90750,8 @@
   },
   {
     "id": "player_inter_marko_arnautovic_14",
-    "name": "Marko Arnautović",
-    "displayName": "M. Arnautović",
+    "name": "Marko Arnautovi\u0107",
+    "displayName": "M. Arnautovi\u0107",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 84,
@@ -91212,8 +91212,8 @@
   },
   {
     "id": "player_frosinone_arijon_ibrahimovic_17",
-    "name": "Arijon Ibrahimović",
-    "displayName": "A. Ibrahimović",
+    "name": "Arijon Ibrahimovi\u0107",
+    "displayName": "A. Ibrahimovi\u0107",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 75,
@@ -91242,8 +91242,8 @@
   },
   {
     "id": "player_frosinone_jaime_baez_18",
-    "name": "Jaime Báez",
-    "displayName": "J. Báez",
+    "name": "Jaime B\u00e1ez",
+    "displayName": "J. B\u00e1ez",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 77,
@@ -91415,8 +91415,8 @@
   },
   {
     "id": "player_genoa_aaron_martin_3",
-    "name": "Aarón Martín",
-    "displayName": "A. Martín",
+    "name": "Aar\u00f3n Mart\u00edn",
+    "displayName": "A. Mart\u00edn",
     "primaryPosition": "LB",
     "secondaryPositions": [],
     "pace": 83,
@@ -91504,8 +91504,8 @@
   },
   {
     "id": "player_genoa_albert_gu_mundsson_7",
-    "name": "Albert Guðmundsson",
-    "displayName": "A. Guðmundsson",
+    "name": "Albert Gu\u00f0mundsson",
+    "displayName": "A. Gu\u00f0mundsson",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 92,
@@ -91861,7 +91861,7 @@
   },
   {
     "id": "player_juventus_nicolo_savona_2",
-    "name": "Nicolò Savona",
+    "name": "Nicol\u00f2 Savona",
     "displayName": "N. Savona",
     "primaryPosition": "RB",
     "secondaryPositions": [],
@@ -92032,8 +92032,8 @@
   },
   {
     "id": "player_juventus_francisco_conceicao_7",
-    "name": "Francisco Conceição",
-    "displayName": "F. Conceição",
+    "name": "Francisco Concei\u00e7\u00e3o",
+    "displayName": "F. Concei\u00e7\u00e3o",
     "primaryPosition": "RW",
     "secondaryPositions": [],
     "pace": 92,
@@ -92060,8 +92060,8 @@
   },
   {
     "id": "player_juventus_kenan_y_ld_z_10",
-    "name": "Kenan Yıldız",
-    "displayName": "K. Yıldız",
+    "name": "Kenan Y\u0131ld\u0131z",
+    "displayName": "K. Y\u0131ld\u0131z",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 81,
@@ -92114,8 +92114,8 @@
   },
   {
     "id": "player_juventus_dusan_vlahovic_9",
-    "name": "Dušan Vlahović",
-    "displayName": "D. Vlahović",
+    "name": "Du\u0161an Vlahovi\u0107",
+    "displayName": "D. Vlahovi\u0107",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 89,
@@ -92318,8 +92318,8 @@
   },
   {
     "id": "player_juventus_nico_gonzalez_19",
-    "name": "Nico González",
-    "displayName": "N. González",
+    "name": "Nico Gonz\u00e1lez",
+    "displayName": "N. Gonz\u00e1lez",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 79,
@@ -92495,8 +92495,8 @@
   },
   {
     "id": "player_parma_adrian_bernabe_6",
-    "name": "Adrián Bernabé",
-    "displayName": "A. Bernabé",
+    "name": "Adri\u00e1n Bernab\u00e9",
+    "displayName": "A. Bernab\u00e9",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 79,
@@ -92789,8 +92789,8 @@
   },
   {
     "id": "player_parma_nahuel_estevez_17",
-    "name": "Nahuel Estévez",
-    "displayName": "N. Estévez",
+    "name": "Nahuel Est\u00e9vez",
+    "displayName": "N. Est\u00e9vez",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 72,
@@ -93029,7 +93029,7 @@
   },
   {
     "id": "player_lazio_nicolo_rovella_6",
-    "name": "Nicolò Rovella",
+    "name": "Nicol\u00f2 Rovella",
     "displayName": "N. Rovella",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -93056,7 +93056,7 @@
   },
   {
     "id": "player_lazio_matteo_guendouzi_8",
-    "name": "Mattéo Guendouzi",
+    "name": "Matt\u00e9o Guendouzi",
     "displayName": "M. Guendouzi",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -93146,7 +93146,7 @@
   },
   {
     "id": "player_lazio_valentin_castellanos_9",
-    "name": "Valentín Castellanos",
+    "name": "Valent\u00edn Castellanos",
     "displayName": "V. Castellanos",
     "primaryPosition": "ST",
     "secondaryPositions": [],
@@ -93318,8 +93318,8 @@
   },
   {
     "id": "player_lazio_toma_basic_16",
-    "name": "Toma Bašić",
-    "displayName": "T. Bašić",
+    "name": "Toma Ba\u0161i\u0107",
+    "displayName": "T. Ba\u0161i\u0107",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 74,
@@ -93757,7 +93757,7 @@
   },
   {
     "id": "player_napoli_mathias_olivera_6",
-    "name": "Mathías Olivera",
+    "name": "Math\u00edas Olivera",
     "displayName": "M. Olivera",
     "primaryPosition": "CB",
     "secondaryPositions": [],
@@ -93787,8 +93787,8 @@
   },
   {
     "id": "player_napoli_rafa_marin_17",
-    "name": "Rafa Marín",
-    "displayName": "R. Marín",
+    "name": "Rafa Mar\u00edn",
+    "displayName": "R. Mar\u00edn",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 65,
@@ -93844,7 +93844,7 @@
   },
   {
     "id": "player_napoli_andre_zambo_anguissa_20",
-    "name": "André Zambo Anguissa",
+    "name": "Andr\u00e9 Zambo Anguissa",
     "displayName": "A. Zambo Anguissa",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -93929,8 +93929,8 @@
   },
   {
     "id": "player_torino_vanja_milinkovic_savic_1",
-    "name": "Vanja Milinković-Savić",
-    "displayName": "V. Milinković-Savić",
+    "name": "Vanja Milinkovi\u0107-Savi\u0107",
+    "displayName": "V. Milinkovi\u0107-Savi\u0107",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 49,
@@ -93963,8 +93963,8 @@
   },
   {
     "id": "player_torino_guillermo_maripan_4",
-    "name": "Guillermo Maripán",
-    "displayName": "G. Maripán",
+    "name": "Guillermo Marip\u00e1n",
+    "displayName": "G. Marip\u00e1n",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 74,
@@ -94104,8 +94104,8 @@
   },
   {
     "id": "player_torino_ivan_ilic_6",
-    "name": "Ivan Ilić",
-    "displayName": "I. Ilić",
+    "name": "Ivan Ili\u0107",
+    "displayName": "I. Ili\u0107",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 76,
@@ -94159,8 +94159,8 @@
   },
   {
     "id": "player_torino_nikola_vlasic_7",
-    "name": "Nikola Vlašić",
-    "displayName": "N. Vlašić",
+    "name": "Nikola Vla\u0161i\u0107",
+    "displayName": "N. Vla\u0161i\u0107",
     "primaryPosition": "AM",
     "secondaryPositions": [],
     "pace": 86,
@@ -94489,7 +94489,7 @@
   },
   {
     "id": "player_lecce_frederic_guilbert_2",
-    "name": "Frédéric Guilbert",
+    "name": "Fr\u00e9d\u00e9ric Guilbert",
     "displayName": "F. Guilbert",
     "primaryPosition": "RB",
     "secondaryPositions": [],
@@ -94720,8 +94720,8 @@
   },
   {
     "id": "player_lecce_nikola_krstovic_9",
-    "name": "Nikola Krstović",
-    "displayName": "N. Krstović",
+    "name": "Nikola Krstovi\u0107",
+    "displayName": "N. Krstovi\u0107",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 89,
@@ -94776,8 +94776,8 @@
   },
   {
     "id": "player_lecce_christian_fruchtl_13",
-    "name": "Christian Früchtl",
-    "displayName": "C. Früchtl",
+    "name": "Christian Fr\u00fcchtl",
+    "displayName": "C. Fr\u00fcchtl",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 46,
@@ -94811,8 +94811,8 @@
   },
   {
     "id": "player_lecce_marin_pongracic_15",
-    "name": "Marin Pongračić",
-    "displayName": "M. Pongračić",
+    "name": "Marin Pongra\u010di\u0107",
+    "displayName": "M. Pongra\u010di\u0107",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 69,
@@ -95048,8 +95048,8 @@
   },
   {
     "id": "player_sassuolo_martin_erlic_5",
-    "name": "Martin Erlić",
-    "displayName": "M. Erlić",
+    "name": "Martin Erli\u0107",
+    "displayName": "M. Erli\u0107",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 73,
@@ -95135,8 +95135,8 @@
   },
   {
     "id": "player_sassuolo_uros_racic_6",
-    "name": "Uroš Račić",
-    "displayName": "U. Račić",
+    "name": "Uro\u0161 Ra\u010di\u0107",
+    "displayName": "U. Ra\u010di\u0107",
     "primaryPosition": "DM",
     "secondaryPositions": [],
     "pace": 79,
@@ -95247,8 +95247,8 @@
   },
   {
     "id": "player_sassuolo_armand_lauriente_11",
-    "name": "Armand Laurienté",
-    "displayName": "A. Laurienté",
+    "name": "Armand Laurient\u00e9",
+    "displayName": "A. Laurient\u00e9",
     "primaryPosition": "LW",
     "secondaryPositions": [],
     "pace": 88,
@@ -95578,8 +95578,8 @@
   },
   {
     "id": "player_udinese_nehuen_perez_4",
-    "name": "Nehuén Pérez",
-    "displayName": "N. Pérez",
+    "name": "Nehu\u00e9n P\u00e9rez",
+    "displayName": "N. P\u00e9rez",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 75,
@@ -95663,8 +95663,8 @@
   },
   {
     "id": "player_udinese_sandi_lovric_8",
-    "name": "Sandi Lovrić",
-    "displayName": "S. Lovrić",
+    "name": "Sandi Lovri\u0107",
+    "displayName": "S. Lovri\u0107",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 83,
@@ -95693,8 +95693,8 @@
   },
   {
     "id": "player_udinese_jesper_karlstrom_6",
-    "name": "Jesper Karlström",
-    "displayName": "J. Karlström",
+    "name": "Jesper Karlstr\u00f6m",
+    "displayName": "J. Karlstr\u00f6m",
     "primaryPosition": "CM",
     "secondaryPositions": [],
     "pace": 78,
@@ -95931,7 +95931,7 @@
   },
   {
     "id": "player_udinese_martin_payero_14",
-    "name": "Martín Payero",
+    "name": "Mart\u00edn Payero",
     "displayName": "M. Payero",
     "primaryPosition": "CM",
     "secondaryPositions": [],
@@ -96376,8 +96376,8 @@
   },
   {
     "id": "player_venezia_filip_stankovic_13",
-    "name": "Filip Stanković",
-    "displayName": "F. Stanković",
+    "name": "Filip Stankovi\u0107",
+    "displayName": "F. Stankovi\u0107",
     "primaryPosition": "GK",
     "secondaryPositions": [],
     "pace": 48,
@@ -96408,8 +96408,8 @@
   },
   {
     "id": "player_venezia_marin_sverko_15",
-    "name": "Marin Šverko",
-    "displayName": "M. Šverko",
+    "name": "Marin \u0160verko",
+    "displayName": "M. \u0160verko",
     "primaryPosition": "CB",
     "secondaryPositions": [],
     "pace": 72,
@@ -96522,8 +96522,8 @@
   },
   {
     "id": "player_venezia_christian_gytkj_r_18",
-    "name": "Christian Gytkjær",
-    "displayName": "C. Gytkjær",
+    "name": "Christian Gytkj\u00e6r",
+    "displayName": "C. Gytkj\u00e6r",
     "primaryPosition": "ST",
     "secondaryPositions": [],
     "pace": 79,

@@ -18,10 +18,10 @@ describe("Argyle Fans XI", () => {
     expect(ARGYLE_FANS_XI).toHaveLength(11);
     const byShirt = new Map(ARGYLE_FANS_MEMBERSHIPS.map((m) => [m.shirtNumber, m.playerId]));
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(1))?.displayName).toBe("CD-PAFC");
-    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(2))?.displayName).toBe("Argyletweet");
+    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(2))?.displayName).toBe("A. Tweets");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(3))?.displayName).toBe("T. Bones");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(5))?.displayName).toBe("V. Doo");
-    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(4))?.displayName).toBe("A. Tweets");
+    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(4))?.displayName).toBe("A. Memes");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(11))?.displayName).toBe("S. ArgoTweets");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(6))?.displayName).toBe("A. Life");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(8))?.displayName).toBe("C. Pilgrim");
@@ -32,7 +32,8 @@ describe("Argyle Fans XI", () => {
   });
 
   it("keeps the named substitutes on unique shirts", () => {
-    expect(ARGYLE_FANS_BENCH.map((b) => b.shirtNumber)).toEqual([12, 13, 14, 15, 17, 19, 32, 76, 96]);
+    expect(ARGYLE_FANS_BENCH.map((b) => b.shirtNumber)).toEqual([13, 12, 14, 15, 17, 19, 32, 76, 96]);
+    expect(ARGYLE_FANS_BENCH[0]?.id).toBe("player_fan_p_petey");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_a_bradderz")?.displayName).toBe("A. Bradderz");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_p_petey")?.displayName).toBe("P. Petey");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_c_pilgrim_14")?.displayName).toBe("C. Pilgrim");
@@ -98,9 +99,11 @@ describe("Argyle Fans XI", () => {
     expect(pasoti.pace!).toBeLessThan(face.pace!);
   });
 
-  it("profiles Argyletweet and A. Tweets as full-backs", () => {
+  it("profiles A. Tweets and A. Memes as full-backs", () => {
     const lb = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_argyletweet")!;
     const rb = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_a_tweets")!;
+    expect(lb.displayName).toBe("A. Tweets");
+    expect(rb.displayName).toBe("A. Memes");
     expect(lb.primaryPosition).toBe("LB");
     expect(rb.primaryPosition).toBe("RB");
     expect(lb.defending).toBeGreaterThanOrEqual(65);

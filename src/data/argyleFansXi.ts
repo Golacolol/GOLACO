@@ -54,7 +54,7 @@ export const ARGYLE_FANS_PLAYERS: PlayerRecord[] = [
     gkDiving: 73, gkHandling: 71, gkPositioning: 72, gkReflexes: 75, gkKicking: 66, heightCm: 188,
     appearance: { portraitAsset: "/images/l8.png", skinTone: 0.58, hairStyle: "short", hairColor: "#1a1410", bodyType: "stocky", heightScale: 1.04 },
   }),
-  fan("player_fan_argyletweet", "Argyletweet", "Argyletweet", "LB", ["LWB", "LM"], {
+  fan("player_fan_argyletweet", "A. Tweets", "A. Tweets", "LB", ["LWB", "LM"], {
     pace: 76, passing: 66, longPassing: 63, vision: 64, control: 68, dribbling: 68, shooting: 42, finishing: 38, shotPower: 58, longShots: 40, defending: 68, strength: 66, stamina: 82, composure: 64,
     preferredFoot: "L", heightCm: 176,
     appearance: { portraitAsset: "/images/l2.png", skinTone: 0.42, hairStyle: "fade", hairColor: "#111111", bodyType: "lean" },
@@ -69,7 +69,7 @@ export const ARGYLE_FANS_PLAYERS: PlayerRecord[] = [
     preferredFoot: "L", heightCm: 186,
     appearance: { portraitAsset: "/images/l4.png", skinTone: 0.36, hairStyle: "curl", hairColor: "#111111", bodyType: "standard" },
   }),
-  fan("player_fan_a_tweets", "A. Tweets", "A. Tweets", "RB", ["RWB", "RM"], {
+  fan("player_fan_a_tweets", "A. Memes", "A. Memes", "RB", ["RWB", "RM"], {
     pace: 75, passing: 65, longPassing: 62, vision: 63, control: 67, dribbling: 67, shooting: 41, finishing: 37, shotPower: 59, longShots: 39, defending: 69, strength: 65, stamina: 81, composure: 63,
     heightCm: 175,
     appearance: { portraitAsset: "/images/l3.png", skinTone: 0.48, hairStyle: "fade", hairColor: "#2a2018", bodyType: "lean" },
@@ -214,9 +214,10 @@ export const ARGYLE_FANS_XI: { id: string; shirtNumber: number; slot: string; ca
   { id: "player_fan_p_face", shirtNumber: 10, slot: "RST", captain: true },
 ];
 
+/** Sub GK first, then remaining bench by shirt number. */
 export const ARGYLE_FANS_BENCH: { id: string; shirtNumber: number }[] = [
-  { id: "player_fan_a_bradderz", shirtNumber: 12 },
   { id: "player_fan_p_petey", shirtNumber: 13 },
+  { id: "player_fan_a_bradderz", shirtNumber: 12 },
   { id: "player_fan_c_pilgrim_14", shirtNumber: 14 },
   { id: "player_fan_a_capman", shirtNumber: 15 },
   { id: "player_fan_g_bobby", shirtNumber: 17 },

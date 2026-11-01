@@ -2420,11 +2420,12 @@ export class CharacterSelect {
           p.shirtNumber,
         ];
       }
+      // Bench: substitute GK stays top; everyone else by shirt number.
       return [
         1,
-        lineBandFromPosition(p.player.primaryPosition),
-        sideRankFromPosition(p.player.primaryPosition),
+        p.player.primaryPosition === "GK" ? 0 : 1,
         p.shirtNumber,
+        0,
       ];
     };
 

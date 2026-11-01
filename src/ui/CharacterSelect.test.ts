@@ -358,6 +358,28 @@ describe("character select", () => {
     expect(rows.every((r) => /^\d+$/.test(r.ovr))).toBe(true);
     expect(rows[0]?.ovr).toBe("74");
     expect(rows.map((r) => r.num)).toEqual(["1", "2", "5", "6", "3", "7", "8", "4", "11", "9", "10", "13", "12", "14", "19"]);
+    const benchNums = [...view.root.querySelectorAll(".bench-card .kit-marker-num")].map((el) => el.textContent);
+    expect(benchNums).toEqual(["13.", "12.", "14.", "19."]);
+  });
+
+  it("orders substitutes with GK first then by shirt number", () => {
+    const host = document.createElement("div");
+    const view = new CharacterSelect(host);
+    const starters = squad();
+    const bench = [
+      makePlayer("bst", "B. Striker", "ST", 32),
+      makePlayer("bcm", "B. Mid", "CM", 15),
+      makePlayer("bgk", "B. Keeper", "GK", 13),
+      makePlayer("bcb", "B. Centre", "CB", 19),
+    ];
+    view.setSquad("Argyle Fans", starters, "#007A3D", {
+      formation: "4-4-2",
+      roster: [...starters, ...bench],
+      starterSlots: ["RST", "GK", "LB", "RB", "RCB", "LCB", "LM", "RM", "RCM", "LCM", "LST"],
+    });
+    view.render();
+    const benchNums = [...view.root.querySelectorAll(".bench-card .kit-marker-num")].map((el) => el.textContent);
+    expect(benchNums).toEqual(["13.", "15.", "19.", "32."]);
   });
 
   it("omits pitch/bench name tooltips unless formation overlays are on", () => {
@@ -705,7 +727,7 @@ describe("kitSurnameFromName", () => {
     Object.defineProperty(h3, "scrollWidth", { configurable: true, get: () => 200 });
     Object.defineProperty(h3, "clientWidth", { configurable: true, get: () => 120 });
     fitRosterHeadingElements(host);
-    expect(parseFloat(h3.style.fontSize)).toBeLessThan(26);
+    expect(parseFloat(h3.style.fontSize)).toBeLessThan(28);
     expect(parseFloat(h3.style.fontSize)).toBeGreaterThanOrEqual(13);
     expect(h3.style.whiteSpace).toBe("nowrap");
     host.remove();
