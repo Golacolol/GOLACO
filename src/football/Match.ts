@@ -2372,6 +2372,7 @@ export class Match {
     this.incomingAerial = true;
     this.longPassLanding = { x: decided.x, z: decided.z };
     this.passTargetId = decided.targetId ?? null;
+    this.stats.passes += 1;
     this.stats.longPasses += 1;
     this.pendingPassFrom = gk.id;
     void dt;
@@ -2403,6 +2404,8 @@ export class Match {
     this.pendingPassFrom = gk.id;
     this.assistCandidate = gk.id;
     this.stats.passes += 1;
+    // Hand distribution is a short restart — must count toward short pass mix gates.
+    this.stats.shortPasses += 1;
   }
 
   /** Face upfield into open play (respects flipped ends). */

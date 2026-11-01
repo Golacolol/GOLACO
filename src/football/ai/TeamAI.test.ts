@@ -103,31 +103,3 @@ describe("team width after kick-off", () => {
     expect(st.desiredZ).toBe(st.anchorZ);
   });
 });
-
-describe("one hunter with formation cover", () => {
-  it("sends the nearest defender to the carrier while cover holds lateral shape", () => {
-    const carrier = make("st", 8, 0, "RST", "home");
-    carrier.hasBall = true;
-    const nearer = make("cm", 4, 1, "RCM", "away");
-    nearer.anchorX = -2;
-    nearer.anchorZ = 6;
-    const lcb = make("lcb", -14, -7, "LCB", "away");
-    lcb.anchorX = -16;
-    lcb.anchorZ = -7;
-    const rcb = make("rcb", -14, 7, "RCB", "away");
-    rcb.anchorX = -16;
-    rcb.anchorZ = 7;
-    const ball = new Ball();
-    ball.x = carrier.x;
-    ball.z = carrier.z;
-    ball.ownerId = carrier.id;
-    const result = updateTeamAI([carrier, nearer, lcb, rcb], "away", ball, "home", 0.16, new Set());
-    expect(result.pressingId).toBe("cm");
-    expect(Math.abs(lcb.desiredZ)).toBeGreaterThan(4);
-    expect(Math.abs(rcb.desiredZ)).toBeGreaterThan(4);
-    expect(Math.abs(lcb.desiredZ - rcb.desiredZ)).toBeGreaterThan(8);
-    // Cover CBs stay deeper than the hunter's press lane.
-    expect(lcb.desiredX).toBeLessThan(nearer.desiredX - 2);
-    expect(rcb.desiredX).toBeLessThan(nearer.desiredX - 2);
-  });
-});

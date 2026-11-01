@@ -112,7 +112,20 @@ describe("nearest player chase freeze", () => {
     expect(picked[0]?.id).toBe("cb");
   });
 
-  it("always assigns a presser against a live carrier even when far", () => {
+  it("assigns a presser against a live carrier inside chase range", () => {
+    const ball = new Ball();
+    ball.x = 8;
+    ball.z = 0;
+    const carrier = make("st", 8, 0, "RST", "home");
+    carrier.hasBall = true;
+    ball.ownerId = carrier.id;
+    const nearCb = make("cb", -4, 2, "LCB", "away");
+    const cover = make("cb2", -10, -8, "RCB", "away");
+    const result = updateTeamAI([carrier, nearCb, cover], "away", ball, "home", 0.05, new Set());
+    expect(result.pressingId).toBe("cb");
+  });
+
+  it("does not force a 60m hunter onto deep opposition build-up", () => {
     const ball = new Ball();
     ball.x = 40;
     ball.z = 0;
@@ -122,7 +135,7 @@ describe("nearest player chase freeze", () => {
     const farCb = make("cb", -20, 8, "LCB", "away");
     const cover = make("cb2", -22, -8, "RCB", "away");
     const result = updateTeamAI([carrier, farCb, cover], "away", ball, "home", 0.05, new Set());
-    expect(result.pressingId).toBe("cb");
+    expect(result.pressingId).toBeNull();
   });
 
   it("keeps the previous presser sticky unless someone is clearly nearer", () => {

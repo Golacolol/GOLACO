@@ -186,8 +186,8 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
       (building && wide && progress < 0.58) ||
       footRole === "CB" ||
       footRole === "DM" ||
-      // Full-backs only recycle deep — once advanced, attack first.
-      (footRole === "FB" && progress < 0.52) ||
+      // Full-backs recycle in their own half; once advanced, attack first.
+      (footRole === "FB" && progress < 0.58) ||
       footRole === "CM");
   const forbid = new Set(ctx.forbidIds ?? []);
   const passOpts = {
@@ -416,29 +416,29 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   if (footRole === "FB") {
     const nearTouch = Math.abs(carrier.z) > HALF_WIDTH - 7;
     if (pressure < 0.48 && progress < 0.72) {
-      runScore += 0.34 + pace * 0.16 + drib * 0.1;
-      if (forwardMate > 2 && lane > 0.48) passScore += 0.22;
-      throughBallScore += 0.14 + vision * 0.08;
-      holdScore *= 0.55;
+      runScore += 0.28 + pace * 0.14 + drib * 0.08;
+      if (forwardMate > 2 && lane > 0.48) passScore += 0.28;
+      throughBallScore += 0.08 + vision * 0.06;
+      holdScore *= 0.6;
       // Prefer cutting inside off the touchline rather than dribbling out of play.
       if (nearTouch) {
-        runScore += 0.12;
-        if (shortT && Math.abs(shortT.z) < Math.abs(carrier.z)) passScore += 0.16;
+        runScore += 0.1;
+        if (shortT && Math.abs(shortT.z) < Math.abs(carrier.z)) passScore += 0.2;
       }
     } else if (pressure > 0.55 && recycleTarget) {
-      passScore += 0.2;
+      passScore += 0.24;
     }
     // Crossing window: wide + advanced with a box target — realistic, not spam.
-    if (crossT && Math.abs(carrier.z) > 13.5 && progress > 0.56 && distGoal < 40) {
-      const crossWindow = 0.26 + passing * 0.1 + (boxMate ? 0.16 : 0.04) + (1 - pressure) * 0.08;
+    if (crossT && Math.abs(carrier.z) > 13.5 && progress > 0.58 && distGoal < 40) {
+      const crossWindow = 0.16 + passing * 0.08 + (boxMate ? 0.12 : 0.03) + (1 - pressure) * 0.06;
       crossScore += crossWindow;
       // Final-third / byline: deliver rather than keep driving the flag.
-      if (progress > 0.66 && distGoal < 34) {
-        crossScore += 0.18;
-        runScore *= 0.62;
-      } else if (progress < 0.6) {
+      if (progress > 0.68 && distGoal < 34) {
+        crossScore += 0.12;
+        runScore *= 0.7;
+      } else if (progress < 0.64) {
         // Early half-way crosses stay occasional.
-        crossScore *= 0.62;
+        crossScore *= 0.55;
       }
     }
   }

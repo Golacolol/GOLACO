@@ -356,11 +356,17 @@ export function chooseKeeperOutlet(gk: Player, teammates: Player[], opponents: P
   if (best) return best;
 
   // Soft fallback: still aim at a free teammate rather than an empty punt.
+  // Prefer nearer outlets so distribution stays a throw/roll (short), not a hopeful kick.
   for (const mate of teammates) {
     if (mate.id === gk.id || mate.isGK || skip.has(mate.id)) continue;
+    const dist = gk.distTo(mate.x, mate.z);
+    if (dist > 32) continue;
     const score = scoreOutlet(mate, true);
-    if (score == null || score <= bestScore) continue;
-    bestScore = score;
+    if (score == null) continue;
+    const nearBonus = clamp((32 - dist) / 32, 0, 1) * 0.35;
+    const total = score + nearBonus;
+    if (total <= bestScore) continue;
+    bestScore = total;
     best = mate;
   }
   return best;
