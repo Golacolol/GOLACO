@@ -16,6 +16,11 @@ export function scoreboardIsSubordinate(width: number, height: number): boolean 
   return width <= 12 && height <= 4.5 && width * height <= 40;
 }
 
+/** Footpath centre X for park venues — clear of pitch + grass apron (pad 10 → ±5). */
+export function parkPathCentreX(pitchLength: number): number {
+  return pitchLength / 2 + 10;
+}
+
 export class Stadium {
   readonly group = new THREE.Group();
   readonly crowd: Crowd;
@@ -45,7 +50,8 @@ export class Stadium {
       park: record.environment === "park",
     });
     this.group.add(this.pitch);
-    this.group.add(createGoals());
+    // Goals must sit on THIS venue's goal lines (Fans Central Park is not always 105×68).
+    this.group.add(createGoals(record.pitchLength / 2));
     this.ads = new AdvertisingBoards(ads);
     this.group.add(this.ads.group);
     this.crowd = new Crowd(
@@ -498,25 +504,29 @@ export class Stadium {
   }
 
   private buildPark(): void {
+    const halfL = this.record.pitchLength / 2;
+    const halfW = this.record.pitchWidth / 2;
     const treeGeo = new THREE.ConeGeometry(2.2, 6, 7);
     const treeMat = new THREE.MeshStandardMaterial({ color: 0x1d5c32, roughness: 0.9 });
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5a3b22 });
     for (let i = 0; i < 18; i++) {
-      const x = (i % 2 === 0 ? 1 : -1) * (58 + (i % 5) * 3);
-      // Keep trees off the north stand apron; ring the ends and open (+Z) side.
-      const z = i < 8 ? -22 + i * 6.5 : 8 + ((i - 8) % 5) * 7;
+      // Keep trees off the grass — ring outside the pitch apron.
+      const x = (i % 2 === 0 ? 1 : -1) * (halfL + 8 + (i % 5) * 3);
+      const z = i < 8 ? -halfW + 4 + i * 6.5 : halfW * 0.15 + ((i - 8) % 5) * 7;
       const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.35, 2.4, 6), trunkMat);
       trunk.position.set(x, 1.2, z);
       const crown = new THREE.Mesh(treeGeo, treeMat);
       crown.position.set(x, 5.2, z);
       this.group.add(trunk, crown);
     }
+    // Footpath outside the +X goal line — clear of pitch + grass apron (park pad = 10).
     const path = new THREE.Mesh(
-      new THREE.PlaneGeometry(8, 80),
+      new THREE.PlaneGeometry(8, Math.min(80, this.record.pitchWidth + 12)),
       new THREE.MeshStandardMaterial({ color: 0xb7a48a, roughness: 1 }),
     );
     path.rotation.x = -Math.PI / 2;
-    path.position.set(48, 0.02, 0);
+    path.position.set(parkPathCentreX(this.record.pitchLength), 0.02, 0);
+    path.name = "parkPath";
     this.group.add(path);
   }
 }

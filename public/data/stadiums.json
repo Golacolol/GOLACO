@@ -61,8 +61,8 @@
     "id": "central_park_pitch",
     "name": "Central Park",
     "venueType": "COMMUNITY_PITCH",
-    "pitchLength": 100,
-    "pitchWidth": 64,
+    "pitchLength": 105,
+    "pitchWidth": 68,
     "standConfiguration": "one",
     "crowdCapacity": 400,
     "crowdSections": [

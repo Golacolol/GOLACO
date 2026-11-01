@@ -1,16 +1,25 @@
+/**
+ * Flickball score panel — same chrome as Real Football `.hud-score`.
+ */
 export class FlickHUD {
   readonly root: HTMLElement;
+  private homeAbbr: string;
+  private awayAbbr: string;
 
-  constructor(parent: HTMLElement) {
+  constructor(parent: HTMLElement, opts?: { homeAbbr?: string; awayAbbr?: string }) {
+    this.homeAbbr = (opts?.homeAbbr || "HOME").slice(0, 4).toUpperCase();
+    this.awayAbbr = (opts?.awayAbbr || "AWAY").slice(0, 4).toUpperCase();
     this.root = document.createElement("div");
-    this.root.className = "flick-hud";
+    this.root.className = "hud flick-hud";
     this.root.innerHTML = `
-      <div class="flick-hud-score">
-        <span data-home>0</span>
-        <span class="flick-hud-sep">–</span>
-        <span data-away>0</span>
+      <div class="hud-score">
+        <span class="clock" data-turn>HOME</span>
+        <span class="home" data-home-abbr>${escapeHud(this.homeAbbr)}</span>
+        <strong><span data-home>0</span> - <span data-away>0</span></strong>
+        <span class="away" data-away-abbr>${escapeHud(this.awayAbbr)}</span>
+        <span class="mode" data-mode></span>
       </div>
-      <div class="flick-hud-meta" data-meta></div>
+      <div class="hud-auto" data-banner hidden></div>
       <div class="flick-hud-help" data-help></div>
     `;
     parent.appendChild(this.root);
@@ -22,17 +31,16 @@ export class FlickHUD {
     const style = document.createElement("style");
     style.id = "flick-hud-css";
     style.textContent = `
-      .flick-hud {
-        position: absolute; left: 50%; top: 12px; transform: translateX(-50%);
-        z-index: 40; pointer-events: none; text-align: center;
-        font-family: "Segoe UI", system-ui, sans-serif; color: #f4f0e6;
-        text-shadow: 0 1px 3px rgba(0,0,0,.75);
+      .flick-hud { pointer-events: none; }
+      .flick-hud .hud-score { pointer-events: none; }
+      .flick-hud-help {
+        position: absolute; left: 50%; top: 64px; transform: translateX(-50%);
+        margin-top: 0; font-size: 0.72rem; opacity: 0.7; max-width: 560px;
+        text-align: center; color: #f4f0e6; text-shadow: 0 1px 3px rgba(0,0,0,.75);
+        font-family: "Helvetica Neue", "Segoe UI", sans-serif;
       }
-      .flick-hud-score { font-size: 2rem; font-weight: 700; letter-spacing: 0.08em; }
-      .flick-hud-sep { opacity: 0.55; margin: 0 0.35rem; }
-      .flick-hud-meta { margin-top: 4px; font-size: 0.85rem; opacity: 0.9; }
-      .flick-hud-help { margin-top: 6px; font-size: 0.72rem; opacity: 0.7; max-width: 560px; }
-      .flick-hud-meta .gk-cue { color: #ffe08a; font-weight: 600; }
+      .flick-hud .hud-auto { top: 64px; }
+      .flick-hud .hud-auto:not([hidden]) ~ .flick-hud-help { top: 96px; }
     `;
     document.head.appendChild(style);
   }
@@ -57,32 +65,45 @@ export class FlickHUD {
     gkWindow?: boolean;
     winner?: "home" | "away" | null;
     phase?: string;
+    banner?: string | null;
   }): void {
     const h = this.root.querySelector("[data-home]");
     const a = this.root.querySelector("[data-away]");
-    const meta = this.root.querySelector("[data-meta]");
+    const turn = this.root.querySelector("[data-turn]");
+    const mode = this.root.querySelector("[data-mode]");
     const help = this.root.querySelector("[data-help]");
+    const banner = this.root.querySelector<HTMLElement>("[data-banner]");
     if (h) h.textContent = String(opts.home);
     if (a) a.textContent = String(opts.away);
-    if (meta) {
+    if (turn) {
+      turn.textContent =
+        opts.turnBased === false ? "OPEN" : opts.gkWindow ? "GK" : opts.turn;
+    }
+    if (mode) {
       const opp =
-        opts.opponent === "AI" ? `vs AI · ${opts.difficulty ?? "NORMAL"}` : "2P hotseat";
-      const win = opts.winner ? ` · ${opts.winner.toUpperCase()} wins` : "";
-      const gk = opts.gkWindow ? ` · <span class="gk-cue">Your GK — flick to save</span>` : "";
-      const turnBit =
-        opts.turnBased === false ? "OPEN PLAY" : `${opts.turn} flick`;
-      meta.innerHTML = `First to ${opts.firstTo} · ${opp} · ${turnBit} · ${opts.view}${gk}${win}`;
+        opts.opponent === "AI" ? `AI · ${opts.difficulty ?? "NORMAL"}` : "2P";
+      const win = opts.winner ? ` · ${opts.winner.toUpperCase()} WINS` : "";
+      mode.textContent = `FIRST TO ${opts.firstTo} · ${opp} · ${opts.view}${win}`;
+    }
+    if (banner) {
+      const text = opts.banner?.trim() || "";
+      banner.hidden = !text;
+      banner.textContent = text;
     }
     if (help) {
-      const gkHint = "GK: WASD/arrows or drag to position (no flick)";
+      const gkHint = "GK: WASD/arrows or drag (no flick)";
       help.textContent =
         opts.turnBased === false
-          ? `Open play — flick anytime settled; AI reacts on its timer · ${gkHint} · V view · Esc pause`
-          : `Click outfield, pull back, release to flick · ${gkHint} · V view · Esc pause`;
+          ? `Open play — flick anytime; AI on its timer · ${gkHint} · V view · Esc pause`
+          : `Flick after the other side has moved — ball need not be still · ${gkHint} · V view · Esc pause`;
     }
   }
 
   dispose(): void {
     this.root.remove();
   }
+}
+
+function escapeHud(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 }

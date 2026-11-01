@@ -6,6 +6,7 @@ import { checkFlickGoal, createFlickBall, resetFlickBall, type FlickBallState } 
 import { FlickCamera } from "./FlickCamera";
 import {
   applyFlickImpulse,
+  figureSpeed,
   kickoffFormation,
   type FlickFigureState,
   type FlickSide,
@@ -13,7 +14,14 @@ import {
 import { FlickHUD } from "./FlickHUD";
 import { FlickInput, pickFigureAt } from "./FlickInput";
 import { ballThreatensGoal, clampGkPosition, FLICK_PITCH } from "./FlickPitch";
-import { everythingSettled, FLICK_SETTLE_HOLD, stepFlickWorld } from "./FlickPhysics";
+import {
+  checkFlickOutOfPlay,
+  everythingSettled,
+  FLICK_REST_SPEED,
+  FLICK_SETTLE_HOLD,
+  stepFlickWorld,
+  type FlickRestart,
+} from "./FlickPhysics";
 import {
   normalizeFlickConfig,
   type FlickMatchConfig,
@@ -21,7 +29,7 @@ import {
 } from "./FlickSetup";
 import { FlickVisual } from "./FlickVisual";
 
-export type FlickMatchPhase = "kickoff" | "aim" | "moving" | "settle" | "goal" | "over";
+export type FlickMatchPhase = "kickoff" | "aim" | "moving" | "settle" | "goal" | "over" | "restart";
 
 /**
  * Who may flick right now.
@@ -65,6 +73,15 @@ export class FlickMatch {
   private gkWindowT = 0;
   /** Side that last scored — conceding side takes the next kickoff. */
   private lastScorer: FlickSide | null = null;
+  /** Last side to strike the ball — drives Subbuteo throw-in / corner awards. */
+  private lastTouchSide: FlickSide | null = null;
+  /** Figure that was just flicked — hand off once it settles, even if the ball rolls. */
+  private flickedFigureId: string | null = null;
+  private restartBanner: string | null = null;
+  private restartT = 0;
+  /** Brief flash of the active side's outfield pieces when their turn begins. */
+  private turnFlashT = 0;
+  private turnFlashPhase = 0;
   private disposed = false;
 
   constructor(
@@ -85,7 +102,10 @@ export class FlickMatch {
     this.visual = new FlickVisual(this.config.homeColor, this.config.awayColor, FLICK_PITCH);
     this.input = new FlickInput();
     this.ai = new FlickAI(this.config.difficulty);
-    this.hud = new FlickHUD(uiParent);
+    this.hud = new FlickHUD(uiParent, {
+      homeAbbr: world.homeAbbr,
+      awayAbbr: world.awayAbbr,
+    });
 
     this.stadium = new Stadium(
       this.scene,
@@ -146,11 +166,29 @@ export class FlickMatch {
       this.controlMode = "gkWindow";
       this.gkWindowT = 7;
       this.ai.resetThink();
+      this.turnFlashT = 0;
       return;
     }
     this.pendingGkAfterAi = false;
     this.controlMode = "outfield";
     if (this.shouldRunAi()) this.ai.resetThink();
+    // Pulse the side that can flick now (human turn, or both in open play).
+    this.beginTurnFlash();
+  }
+
+  private beginTurnFlash(): void {
+    this.turnFlashT = 1.35;
+    this.turnFlashPhase = 0;
+  }
+
+  /** Outfield figures the current controller may flick (never GKs). */
+  private flashableFigureIds(): Set<string> {
+    const ids = new Set<string>();
+    if (this.phase !== "aim" || this.controlMode === "gkWindow") return ids;
+    for (const f of this.figures) {
+      if (this.canSelectFigure(f)) ids.add(f.id);
+    }
+    return ids;
   }
 
   private isAiOutfieldTurn(): boolean {
@@ -193,12 +231,48 @@ export class FlickMatch {
     if (!applyFlickImpulse(fig, pullDx, pullDz)) return;
     this.flickedGkFromWindow = this.controlMode === "gkWindow";
     this.lastFlickKind = this.flickedGkFromWindow ? "gk" : "outfield";
+    this.flickedFigureId = fig.id;
+    this.restartBanner = null;
     if (this.controlMode === "gkWindow") this.pendingGkAfterAi = false;
     this.phase = "moving";
     this.settleT = 0;
     this.selectedId = null;
     this.input.clearSelection();
     this.controlMode = "outfield";
+  }
+
+  /** True once the piece that was flicked has come to rest (ball may still roll). */
+  private flickedFigureAtRest(): boolean {
+    if (!this.flickedFigureId) return everythingSettled(this.figures, this.ball);
+    const fig = this.figures.find((f) => f.id === this.flickedFigureId);
+    if (!fig) return everythingSettled(this.figures, this.ball);
+    return figureSpeed(fig) <= FLICK_REST_SPEED;
+  }
+
+  private applyRestart(restart: FlickRestart): void {
+    this.ball.x = restart.x;
+    this.ball.z = restart.z;
+    this.ball.vx = 0;
+    this.ball.vz = 0;
+    this.ball.y = FLICK_PITCH.playY + this.ball.radius;
+    for (const f of this.figures) {
+      f.vx = 0;
+      f.vz = 0;
+      f.leanX = 0;
+      f.leanZ = 0;
+      f.settled = true;
+    }
+    this.flickedFigureId = null;
+    this.pendingGkAfterAi = false;
+    this.flickedGkFromWindow = false;
+    this.turnSide = restart.awardTo;
+    this.controlMode = "outfield";
+    this.restartBanner =
+      restart.kind === "throwIn" ? "THROW-IN" : restart.kind === "corner" ? "CORNER" : "GOAL KICK";
+    this.phase = "restart";
+    this.restartT = 0.85;
+    this.selectedId = null;
+    this.input.clearSelection();
   }
 
   /**
@@ -286,6 +360,12 @@ export class FlickMatch {
 
   private afterSettle(): void {
     if (this.tryRegisterGoal()) return;
+    const out = checkFlickOutOfPlay(this.ball, this.lastTouchSide, FLICK_PITCH);
+    if (out) {
+      this.applyRestart(out);
+      return;
+    }
+    this.flickedFigureId = null;
 
     // Open play: no turns — reopen aim so human and AI can both contest the next flick.
     if (!this.config.turnBased) {
@@ -358,18 +438,29 @@ export class FlickMatch {
     if (this.phase === "kickoff") {
       this.kickoffT -= dt;
       if (this.kickoffT <= 0) this.enterAim();
+    } else if (this.phase === "restart") {
+      this.restartT -= dt;
+      if (this.restartT <= 0) {
+        this.restartBanner = null;
+        this.enterAim();
+      }
     } else if (this.phase === "goal") {
       this.goalT -= dt;
       if (this.goalT <= 0) this.onGoalDone();
     } else if (this.phase === "aim") {
+      // Keep the world alive while the ball rolls — next side may already flick.
+      if (!everythingSettled(this.figures, this.ball)) {
+        this.stepLiveWorld(dt);
+      }
       this.updateGkControl(dt);
       this.updateAim(dt, poll);
     } else if (this.phase === "moving" || this.phase === "settle") {
-      stepFlickWorld(this.figures, this.ball, dt, FLICK_PITCH);
+      this.stepLiveWorld(dt);
       this.updateGkControl(dt);
-      if (this.tryRegisterGoal()) {
-        // scored mid-flight
-      } else if (everythingSettled(this.figures, this.ball)) {
+      if (this.phase === "goal" || this.phase === "restart") {
+        // Goal / out-of-play already handled inside stepLiveWorld.
+      } else if (this.flickedFigureAtRest()) {
+        // Opposition has completed their flick — hand off even if the ball still rolls.
         this.settleT += dt;
         this.phase = "settle";
         if (this.settleT >= FLICK_SETTLE_HOLD) this.afterSettle();
@@ -377,6 +468,11 @@ export class FlickMatch {
         this.settleT = 0;
         this.phase = "moving";
       }
+    }
+
+    if (this.turnFlashT > 0) {
+      this.turnFlashT = Math.max(0, this.turnFlashT - dt);
+      this.turnFlashPhase += dt;
     }
 
     this.syncVisual();
@@ -394,9 +490,26 @@ export class FlickMatch {
       gkWindow: this.controlMode === "gkWindow" && this.phase === "aim",
       winner: this.winner,
       phase: this.phase,
+      banner:
+        this.phase === "goal"
+          ? "GOAL!"
+          : this.phase === "restart"
+            ? this.restartBanner
+            : this.controlMode === "gkWindow" && this.phase === "aim"
+              ? "YOUR GK — POSITION TO SAVE"
+              : null,
     });
 
     return { pauseRequested: false };
+  }
+
+  /** Physics + last-touch + goal / out-of-play detection for a live tick. */
+  private stepLiveWorld(dt: number): void {
+    const struck = stepFlickWorld(this.figures, this.ball, dt, FLICK_PITCH);
+    if (struck) this.lastTouchSide = struck;
+    if (this.tryRegisterGoal()) return;
+    const out = checkFlickOutOfPlay(this.ball, this.lastTouchSide, FLICK_PITCH);
+    if (out) this.applyRestart(out);
   }
 
   private turnLabel(): string {
@@ -523,7 +636,16 @@ export class FlickMatch {
         };
       }
     }
-    this.visual.sync(this.figures, this.ball, this.selectedId, aim);
+    const flashIds = this.turnFlashT > 0 ? this.flashableFigureIds() : null;
+    this.visual.sync(
+      this.figures,
+      this.ball,
+      this.selectedId,
+      aim,
+      flashIds && flashIds.size
+        ? { ids: flashIds, phase: this.turnFlashPhase }
+        : null,
+    );
   }
 
   setAspect(aspect: number): void {

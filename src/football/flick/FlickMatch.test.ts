@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { ballThreatensGoal, clampGkPosition, FLICK_PITCH, gkMoveBounds, halfLength } from "./FlickPitch";
+import { ballThreatensGoal, clampGkPosition, FLICK_PITCH, gkMoveBounds, halfLength, halfWidth } from "./FlickPitch";
 import { applyFlickImpulse, kickoffFormation } from "./FlickFigure";
 import { checkFlickGoal, createFlickBall } from "./FlickBall";
 import { decideFlickAI, powerForCoastDistance } from "./FlickAI";
-import { estimateFlickCoastDistance } from "./FlickPhysics";
+import { checkFlickOutOfPlay, estimateFlickCoastDistance } from "./FlickPhysics";
 import { normalizeFlickConfig } from "./FlickSetup";
 
 describe("FlickMatch rules helpers", () => {
@@ -121,5 +121,29 @@ describe("FlickMatch rules helpers", () => {
     expect(pinned.z).toBeGreaterThanOrEqual(home.minZ);
     expect(pinned.z).toBeLessThanOrEqual(home.maxZ);
     expect(Math.abs(pinned.z)).toBeLessThanOrEqual(FLICK_PITCH.goalWidth / 2 + FLICK_PITCH.figureRadius);
+  });
+
+  it("awards Subbuteo-style throw-ins, corners, and goal kicks", () => {
+    const ball = createFlickBall(FLICK_PITCH);
+    const hl = halfLength(FLICK_PITCH);
+    const hw = halfWidth(FLICK_PITCH);
+
+    ball.x = 10;
+    ball.z = hw + ball.radius + 0.05;
+    const throwIn = checkFlickOutOfPlay(ball, "home", FLICK_PITCH);
+    expect(throwIn?.kind).toBe("throwIn");
+    expect(throwIn?.awardTo).toBe("away");
+
+    // Defender last-touches over own goal-line outside the mouth → corner.
+    ball.x = hl + ball.radius + 0.1;
+    ball.z = FLICK_PITCH.goalWidth;
+    const corner = checkFlickOutOfPlay(ball, "away", FLICK_PITCH);
+    expect(corner?.kind).toBe("corner");
+    expect(corner?.awardTo).toBe("home");
+
+    // Attacker last-touches over opponent goal-line outside the mouth → goal kick.
+    const gk = checkFlickOutOfPlay(ball, "home", FLICK_PITCH);
+    expect(gk?.kind).toBe("goalKick");
+    expect(gk?.awardTo).toBe("away");
   });
 });

@@ -32,6 +32,9 @@ export interface FlickWorldContext {
   awayKit: TeamKit;
   env: EnvironmentPreset;
   graphicsPreset: FlickGraphicsPreset;
+  /** Scoreboard abbreviations (Real Football HUD style). */
+  homeAbbr?: string;
+  awayAbbr?: string;
 }
 
 export const DEFAULT_FLICK_CONFIG: FlickMatchConfig = {

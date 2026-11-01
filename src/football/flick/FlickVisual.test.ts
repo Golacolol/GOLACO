@@ -38,11 +38,18 @@ describe("FlickVisual on REAL pitch", () => {
         settled: true,
       },
     ]);
-    const base = visual.group.getObjectByName("flickBase") as { rotation: { x: number }; position: { y: number } } | undefined;
+    const base = visual.group.getObjectByName("flickBase") as {
+      rotation: { x: number };
+      position: { y: number };
+      material: { color: { getHex: () => number } };
+    } | undefined;
     expect(base).toBeTruthy();
     expect(Math.abs(base!.rotation.x - Math.PI)).toBeLessThan(1e-6);
     // Sphere centre sits one radius above the pitch so the curve touches playY.
     expect(base!.position.y).toBeCloseTo(FLICK_PITCH.playY + FLICK_PITCH.figureRadius, 5);
+    // Outfield shell is a darkened team colour — not flat charcoal.
+    expect(base!.material.color.getHex()).toBe(FlickVisual.shade(0x034694, 0.42));
+    expect(visual.group.getObjectByName("flickBaseRim")).toBeTruthy();
     expect(FLICK_PITCH.ballRadius).toBeGreaterThan(0.5);
     visual.dispose();
   });

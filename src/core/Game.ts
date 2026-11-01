@@ -874,6 +874,8 @@ export class Game {
       awayKit: kits.away,
       env: resolveEnvironment(saved.timeOfDay, saved.weather),
       graphicsPreset: saved.graphicsPreset ?? "HIGH",
+      homeAbbr: home.abbreviation,
+      awayAbbr: away.abbreviation,
     });
     this.flickMatch.attachCanvas(this.canvas);
     this.appState = AppState.MATCH;

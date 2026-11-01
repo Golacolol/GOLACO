@@ -33,11 +33,14 @@ export {
   stepFlickWorld,
   updateFigureLean,
   estimateFlickCoastDistance,
+  checkFlickOutOfPlay,
   FLICK_REST_SPEED,
   FLICK_SETTLE_HOLD,
   FLICK_FIGURE_FRICTION,
   collideFigureBall,
   collideFigures,
+  type FlickRestart,
+  type FlickRestartKind,
 } from "./FlickPhysics";
 export { FlickMatch, type FlickMatchPhase, type FlickControlMode } from "./FlickMatch";
 export { FlickCamera, type FlickViewMode } from "./FlickCamera";

@@ -98,7 +98,23 @@ describe("FlickPhysics", () => {
     ball.z = 0;
     ball.vx = 0;
     ball.vz = 0;
-    collideFigureBall(fig, ball);
+    expect(collideFigureBall(fig, ball)).toBe(true);
     expect(Math.hypot(ball.vx, ball.vz)).toBeGreaterThan(35);
+  });
+
+  it("fast flick still hits the full ball disc across a long frame (no tunneling)", () => {
+    const fig = createFigure("a", "home", "ST", 0, 0, false);
+    // 50ms hitch at near-max power: travel ≫ base+ball, so end-of-frame alone would miss.
+    fig.vx = 118;
+    fig.vz = 0;
+    const ball = createFlickBall(FLICK_PITCH);
+    ball.x = 2.5;
+    ball.z = 0;
+    ball.vx = 0;
+    ball.vz = 0;
+    const startDist = Math.hypot(ball.x - fig.x, ball.z - fig.z);
+    expect(startDist).toBeGreaterThan(fig.radius + ball.radius);
+    stepFlickWorld([fig], ball, 1 / 20, FLICK_PITCH);
+    expect(Math.hypot(ball.vx, ball.vz)).toBeGreaterThan(40);
   });
 });

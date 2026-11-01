@@ -102,9 +102,14 @@ export function collideFigures(a: FlickFigureState, b: FlickFigureState): void {
   b.settled = false;
 }
 
-export function collideFigureBall(fig: FlickFigureState, ball: FlickBallState): void {
-  const hit = resolveCircle(fig.x, fig.z, fig.radius, ball.x, ball.z, ball.radius);
-  if (!hit) return;
+/**
+ * Planar hit using the full base disc and the full ball radius (not a point).
+ * Returns true when the figure meaningfully strikes the ball (for last-touch).
+ */
+export function collideFigureBall(fig: FlickFigureState, ball: FlickBallState): boolean {
+  // Full Subbuteo base footprint + full ball disc (slightly generous so grazes still catch).
+  const hit = resolveCircle(fig.x, fig.z, fig.radius, ball.x, ball.z, ball.radius * 1.08);
+  if (!hit) return false;
   const push = hit.overlap * 0.55;
   fig.x -= hit.ox * push * 0.35;
   fig.z -= hit.oz * push * 0.35;
@@ -114,6 +119,7 @@ export function collideFigureBall(fig: FlickFigureState, ball: FlickBallState): 
   const relVx = fig.vx - ball.vx;
   const relVz = fig.vz - ball.vz;
   const vn = relVx * hit.ox + relVz * hit.oz;
+  let struck = false;
   if (vn > 0.05) {
     // Flick strike: ball takes the bulk of the figure's velocity (plus closing boost).
     const transfer = 1.08;
@@ -121,6 +127,7 @@ export function collideFigureBall(fig: FlickFigureState, ball: FlickBallState): 
     ball.vz = fig.vz * transfer + hit.oz * vn * 0.25;
     fig.vx *= 0.38;
     fig.vz *= 0.38;
+    struck = true;
   } else if (vn < -0.05) {
     // Separating — light restitution only.
     const j = -vn * 0.35;
@@ -128,8 +135,12 @@ export function collideFigureBall(fig: FlickFigureState, ball: FlickBallState): 
     ball.vz -= hit.oz * j;
     fig.vx += hit.ox * j * 0.25;
     fig.vz += hit.oz * j * 0.25;
+  } else {
+    // Nested / slow contact — still a touch for possession.
+    struck = figureSpeed(fig) > FLICK_REST_SPEED * 0.5 || Math.hypot(ball.vx, ball.vz) > FLICK_REST_SPEED * 0.5;
   }
   fig.settled = false;
+  return struck;
 }
 
 export function clampFigureToPitch(fig: FlickFigureState, dims: FlickPitchDims = FLICK_PITCH): void {
@@ -151,27 +162,88 @@ export function clampFigureToPitch(fig: FlickFigureState, dims: FlickPitchDims =
   }
 }
 
+/**
+ * Soft in-play clamp only. Touchlines and goal-lines outside the mouth are left
+ * open so throw-ins / corners / goal-kicks can be awarded (Subbuteo style).
+ * Goal mouth stays open for scoring; posts still bounce.
+ */
 export function clampBallToPitch(ball: FlickBallState, dims: FlickPitchDims = FLICK_PITCH): void {
   const hl = halfLength(dims);
-  const hw = halfWidth(dims) - ball.radius;
   const halfG = dims.goalWidth / 2;
-  // Side walls
-  if (ball.z < -hw) {
-    ball.z = -hw;
-    ball.vz = Math.abs(ball.vz) * 0.55;
-  } else if (ball.z > hw) {
-    ball.z = hw;
-    ball.vz = -Math.abs(ball.vz) * 0.55;
-  }
-  // End walls — open goal mouth
-  if (ball.x > hl - ball.radius && Math.abs(ball.z) > halfG) {
-    ball.x = hl - ball.radius;
-    ball.vx = -Math.abs(ball.vx) * 0.5;
-  } else if (ball.x < -hl + ball.radius && Math.abs(ball.z) > halfG) {
-    ball.x = -hl + ball.radius;
-    ball.vx = Math.abs(ball.vx) * 0.5;
+  // Soft bounce off the posts (goal-line just outside the mouth).
+  if (ball.x > hl - ball.radius && Math.abs(ball.z) > halfG && Math.abs(ball.z) < halfG + ball.radius * 1.2) {
+    if (Math.abs(ball.z) - halfG < ball.radius) {
+      ball.z = Math.sign(ball.z) * (halfG + ball.radius * 0.15);
+      ball.vz *= -0.45;
+    }
+  } else if (ball.x < -hl + ball.radius && Math.abs(ball.z) > halfG && Math.abs(ball.z) < halfG + ball.radius * 1.2) {
+    if (Math.abs(ball.z) - halfG < ball.radius) {
+      ball.z = Math.sign(ball.z) * (halfG + ball.radius * 0.15);
+      ball.vz *= -0.45;
+    }
   }
   ball.y = dims.playY + ball.radius;
+}
+
+export type FlickRestartKind = "throwIn" | "corner" | "goalKick";
+
+export interface FlickRestart {
+  kind: FlickRestartKind;
+  /** Side that takes the restart. */
+  awardTo: "home" | "away";
+  x: number;
+  z: number;
+}
+
+/**
+ * Subbuteo-style out-of-play:
+ * - Touchline → throw-in to the side that did not last touch (possession lost).
+ * - Own goal-line (outside mouth) last touched by defender → corner to attacker.
+ * - Own goal-line last touched by attacker → goal-kick to defender.
+ */
+export function checkFlickOutOfPlay(
+  ball: FlickBallState,
+  lastTouch: "home" | "away" | null,
+  dims: FlickPitchDims = FLICK_PITCH,
+): FlickRestart | null {
+  if (checkFlickGoalImport(ball, dims)) return null;
+  const hl = halfLength(dims);
+  const hw = halfWidth(dims);
+  const halfG = dims.goalWidth / 2;
+  const touch = lastTouch ?? "home";
+
+  if (ball.z - ball.radius >= hw || ball.z + ball.radius <= -hw) {
+    const awardTo: "home" | "away" = touch === "home" ? "away" : "home";
+    const z = ball.z >= 0 ? hw - ball.radius * 0.2 : -hw + ball.radius * 0.2;
+    const x = Math.max(-hl + 3, Math.min(hl - 3, ball.x));
+    return { kind: "throwIn", awardTo, x, z };
+  }
+
+  // Away goal-line (+X), outside the mouth.
+  if (ball.x - ball.radius >= hl && Math.abs(ball.z) > halfG) {
+    if (touch === "away") {
+      const z = ball.z >= 0 ? hw - 0.8 : -hw + 0.8;
+      return { kind: "corner", awardTo: "home", x: hl - 0.8, z };
+    }
+    return { kind: "goalKick", awardTo: "away", x: hl - Math.min(dims.boxDepth * 0.35, 6), z: 0 };
+  }
+  // Home goal-line (−X), outside the mouth.
+  if (ball.x + ball.radius <= -hl && Math.abs(ball.z) > halfG) {
+    if (touch === "home") {
+      const z = ball.z >= 0 ? hw - 0.8 : -hw + 0.8;
+      return { kind: "corner", awardTo: "away", x: -hl + 0.8, z };
+    }
+    return { kind: "goalKick", awardTo: "home", x: -hl + Math.min(dims.boxDepth * 0.35, 6), z: 0 };
+  }
+  return null;
+}
+
+/** Local import-free goal check used by out-of-play (avoids circular imports). */
+function checkFlickGoalImport(ball: FlickBallState, dims: FlickPitchDims): boolean {
+  const hl = dims.length / 2;
+  const halfG = dims.goalWidth / 2 + ball.radius * 0.35;
+  if (Math.abs(ball.z) > halfG) return false;
+  return ball.x - ball.radius >= hl || ball.x + ball.radius <= -hl;
 }
 
 export function everythingSettled(
@@ -185,30 +257,45 @@ export function everythingSettled(
   return true;
 }
 
+/**
+ * Advance flick physics. Sub-steps when pieces move fast so the full base disc
+ * cannot tunnel through the full ball disc in one frame.
+ * Returns the side of the last figure that struck the ball this tick (if any).
+ */
 export function stepFlickWorld(
   figures: FlickFigureState[],
   ball: FlickBallState,
   dt: number,
   dims: FlickPitchDims = FLICK_PITCH,
-): void {
-  for (const f of figures) {
-    f.x += f.vx * dt;
-    f.z += f.vz * dt;
-    stepFlickFriction(f, dt);
-    clampFigureToPitch(f, dims);
-    updateFigureLean(f);
-  }
-  ball.x += ball.vx * dt;
-  ball.z += ball.vz * dt;
-  stepBallFriction(ball, dt);
-  clampBallToPitch(ball, dims);
+): "home" | "away" | null {
+  let maxSp = Math.hypot(ball.vx, ball.vz);
+  for (const f of figures) maxSp = Math.max(maxSp, figureSpeed(f));
+  const maxTravel = Math.max(0.12, Math.min(dims.figureRadius, dims.ballRadius) * 0.4);
+  const steps = Math.max(1, Math.min(16, Math.ceil((maxSp * dt) / maxTravel)));
+  const sub = dt / steps;
+  let lastStrike: "home" | "away" | null = null;
 
-  for (let i = 0; i < figures.length; i++) {
-    for (let j = i + 1; j < figures.length; j++) {
-      collideFigures(figures[i]!, figures[j]!);
+  for (let s = 0; s < steps; s++) {
+    for (const f of figures) {
+      f.x += f.vx * sub;
+      f.z += f.vz * sub;
+      stepFlickFriction(f, sub);
+      clampFigureToPitch(f, dims);
+      updateFigureLean(f);
     }
-    collideFigureBall(figures[i]!, ball);
+    ball.x += ball.vx * sub;
+    ball.z += ball.vz * sub;
+    stepBallFriction(ball, sub);
+    clampBallToPitch(ball, dims);
+
+    for (let i = 0; i < figures.length; i++) {
+      for (let j = i + 1; j < figures.length; j++) {
+        collideFigures(figures[i]!, figures[j]!);
+      }
+      if (collideFigureBall(figures[i]!, ball)) lastStrike = figures[i]!.side;
+    }
+    for (const f of figures) clampFigureToPitch(f, dims);
+    clampBallToPitch(ball, dims);
   }
-  for (const f of figures) clampFigureToPitch(f, dims);
-  clampBallToPitch(ball, dims);
+  return lastStrike;
 }

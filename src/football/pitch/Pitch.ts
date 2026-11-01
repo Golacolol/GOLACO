@@ -138,20 +138,22 @@ function grassTexture(length: number, width: number): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = 1536;
   canvas.height = 1536;
-  const ctx = canvas.getContext("2d")!;
-  const stripes = 24;
-  for (let i = 0; i < stripes; i++) {
-    ctx.fillStyle = i % 2 === 0 ? "#228544" : "#1a7338";
-    ctx.fillRect((i * canvas.width) / stripes, 0, canvas.width / stripes, canvas.height);
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    const stripes = 24;
+    for (let i = 0; i < stripes; i++) {
+      ctx.fillStyle = i % 2 === 0 ? "#228544" : "#1a7338";
+      ctx.fillRect((i * canvas.width) / stripes, 0, canvas.width / stripes, canvas.height);
+    }
+    const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const n = (Math.random() - 0.5) * 12;
+      img.data[i] = Math.max(0, Math.min(255, img.data[i] + n));
+      img.data[i + 1] = Math.max(0, Math.min(255, img.data[i + 1] + n));
+      img.data[i + 2] = Math.max(0, Math.min(255, img.data[i + 2] + n));
+    }
+    ctx.putImageData(img, 0, 0);
   }
-  const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  for (let i = 0; i < img.data.length; i += 4) {
-    const n = (Math.random() - 0.5) * 12;
-    img.data[i] = Math.max(0, Math.min(255, img.data[i] + n));
-    img.data[i + 1] = Math.max(0, Math.min(255, img.data[i + 1] + n));
-    img.data[i + 2] = Math.max(0, Math.min(255, img.data[i + 2] + n));
-  }
-  ctx.putImageData(img, 0, 0);
   void length;
   void width;
   const tex = new THREE.CanvasTexture(canvas);

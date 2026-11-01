@@ -4,9 +4,11 @@ import { GOAL_DEPTH, GOAL_HEIGHT, GOAL_WIDTH, HALF_LENGTH } from "../constants";
 /** Post radius — centres sit on the painted goal-line midline. */
 const POST_R = 0.06;
 
-export function createGoals(): THREE.Group {
+/** Goals sit on this pitch's goal lines (defaults to the FIFA half-length). */
+export function createGoals(halfLength = HALF_LENGTH): THREE.Group {
   const group = new THREE.Group();
-  group.add(makeGoal(-HALF_LENGTH), makeGoal(HALF_LENGTH));
+  const hl = Math.max(40, halfLength);
+  group.add(makeGoal(-hl), makeGoal(hl));
   return group;
 }
 
@@ -21,10 +23,12 @@ function makeGoal(lineX: number): THREE.Group {
   const white = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.35, metalness: 0.08 });
   const postGeo = new THREE.CylinderGeometry(POST_R, POST_R, GOAL_HEIGHT, 10);
   const left = new THREE.Mesh(postGeo, white);
+  left.name = "goal-post";
   left.position.set(mouthX, GOAL_HEIGHT / 2, -GOAL_WIDTH / 2);
   const right = left.clone();
   right.position.z = GOAL_WIDTH / 2;
   const bar = new THREE.Mesh(new THREE.CylinderGeometry(POST_R, POST_R, GOAL_WIDTH, 10), white);
+  bar.name = "goal-bar";
   bar.rotation.x = Math.PI / 2;
   bar.position.set(mouthX, GOAL_HEIGHT, 0);
   g.add(left, right, bar);
