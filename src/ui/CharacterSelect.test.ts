@@ -7,7 +7,7 @@ import {
   MARKER_MIN_DY,
   separatePitchMarkers,
 } from "./CharacterSelect";
-import { kitCaptionSurname, kitMarkerHtml, kitSurnameFromName } from "./Portrait";
+import { kitCaptionSurname, kitInitialSurnameLabel, kitMarkerHtml, kitSurnameFromName } from "./Portrait";
 import type { SquadPlayer } from "../core/Database";
 import type { PlayerRecord } from "../data/schema";
 
@@ -209,7 +209,7 @@ describe("character select", () => {
     expect(view.root.querySelector(".team-roster-card .portrait-badge-kit .sur")?.textContent).toMatch(/[A-Z]{2,}/);
     expect(view.root.querySelector(".team-roster-card .portrait-badge-kit .ini")).toBeNull();
     expect(view.root.querySelector(".team-roster-card h3")?.textContent).toBe(
-      `${target.player.shirtNumber}. ${target.player.player.name}`,
+      `${target.player.shirtNumber}. ${kitInitialSurnameLabel(target.player.player.displayName, target.player.player.name)}`,
     );
     expect(view.root.querySelector(".team-roster-card .char-meta")?.textContent).toMatch(/OVR/);
     expect(view.root.querySelector(".team-roster-card .profile-stats")).toBeTruthy();
@@ -633,6 +633,13 @@ describe("kitSurnameFromName", () => {
     expect(kitCaptionSurname("de Boer", "Frank de Boer")).toBe("DE BOER");
     expect(kitCaptionSurname("Hardie", "Ryan Hardie")).toBe("HARDIE");
     expect(kitCaptionSurname("Del Piero")).toBe("DEL PIERO");
+  });
+
+  it("formats roster headings as given initial + surname", () => {
+    expect(kitInitialSurnameLabel("R. Hardie", "Ryan Hardie")).toBe("R. HARDIE");
+    expect(kitInitialSurnameLabel(undefined, "Ryan Hardie")).toBe("R. HARDIE");
+    expect(kitInitialSurnameLabel("Edwin van der Sar", "Edwin van der Sar")).toBe("E. VAN DER SAR");
+    expect(kitInitialSurnameLabel("Hardie", "Hardie")).toBe("HARDIE");
   });
 });
 

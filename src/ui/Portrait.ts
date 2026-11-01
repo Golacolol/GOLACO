@@ -181,6 +181,16 @@ export function kitCaptionSurname(displayName: string | undefined, fullName?: st
   return kitSurnameFromName(displayName || fullName || "?");
 }
 
+/**
+ * Short kit label for roster / detail headings: given initial + surname
+ * (`R. HARDIE`, `E. VAN DER SAR`) — never the full first name.
+ */
+export function kitInitialSurnameLabel(displayName: string | undefined, fullName?: string | undefined): string {
+  const surname = kitSurnameFromName(displayName || fullName || "?");
+  const initial = kitGivenInitial(displayName, fullName);
+  return initial ? `${initial}. ${surname}` : surname;
+}
+
 /** Scale surname text so long names still fit — mild shrink only; never go tiny when space exists. */
 export function surnameFitPx(surname: string, base: number): number {
   const len = surname.length;

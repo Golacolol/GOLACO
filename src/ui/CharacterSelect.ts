@@ -10,7 +10,14 @@ import {
 } from "../football/ai/PlayStyle";
 import { kitsClash, pickTeamKit, teamHomeKit, teamResolvedAwayKit } from "../football/teams/KitClash";
 import { applyPhysicalToAppearance } from "../football/players/PlayerStats";
-import { fitKitSurnameElements, kitMarkerHtml, kitSurnameFromName, portraitHtml, teamBadgeHtml } from "./Portrait";
+import {
+  fitKitSurnameElements,
+  kitInitialSurnameLabel,
+  kitMarkerHtml,
+  kitSurnameFromName,
+  portraitHtml,
+  teamBadgeHtml,
+} from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
 import { imageLabel, listPlayerImages, uploadPlayerImage } from "./playerImages";
 import { nextProfileStatsMode, profileStatsBlock, type ProfileStatsMode } from "./ProfileHex";
@@ -205,6 +212,11 @@ function sideRankFromPosition(pos: string): number {
 
 function kitSurname(name: string): string {
   return kitSurnameFromName(name);
+}
+
+/** Roster / detail heading: `R. HARDIE` — initial only, never a full first name. */
+function kitHeadingName(player: { displayName?: string; name?: string }): string {
+  return kitInitialSurnameLabel(player.displayName, player.name);
 }
 
 function escapeHtml(s: string): string {
@@ -1168,7 +1180,7 @@ export class CharacterSelect {
           className: "kit-marker-roster",
           textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
         })}
-        <h3>${selected.shirtNumber}. ${escapeHtml(selected.player.name)}</h3>
+        <h3>${selected.shirtNumber}. ${escapeHtml(kitHeadingName(selected.player))}</h3>
         <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
         ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
       `;
@@ -1248,7 +1260,7 @@ export class CharacterSelect {
         <div class="tabletop-setup-kicker">PLAYER SELECT</div>
         ${portraitHtml(p.player, p.shirtNumber, this.teamColor)}
         <div class="char-num">#${p.shirtNumber}</div>
-        <h2>${escapeHtml(p.player.name)}</h2>
+        <h2>${escapeHtml(kitHeadingName(p.player))}</h2>
         <div class="char-meta">${p.player.primaryPosition} · OVR ${p.overall} · ${groupOf(p.player.primaryPosition)}</div>
         ${profileStatsBlock(a, { mode: this.profileView, size: 168 })}
         <p class="hint">Use ‹ › or the squad list to change player. Start as Player locks you to this one.</p>
@@ -1557,7 +1569,7 @@ export class CharacterSelect {
                 className: "kit-marker-roster",
                 textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
               })}
-              <h3>${selected.shirtNumber}. ${escapeHtml(selected.player.name)}</h3>
+              <h3>${selected.shirtNumber}. ${escapeHtml(kitHeadingName(selected.player))}</h3>
               <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
               ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
             </div>
