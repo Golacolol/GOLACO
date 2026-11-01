@@ -779,8 +779,8 @@ html.club-name-glow-off .club-line {
 }
 .fixture-match .opposition-dial-field {
   flex: 0 0 auto;
-  min-width: 4.75rem;
-  max-width: 5.75rem;
+  min-width: 6.75rem;
+  max-width: 8.5rem;
   width: auto;
   align-self: center;
   align-items: stretch;
@@ -889,11 +889,11 @@ html.club-name-glow-off .club-line {
     gap: 6px;
   }
   .fixture-match-main {
-    max-width: calc(100% - 5.5rem);
+    max-width: calc(100% - 8rem);
   }
   .fixture-match-dials {
-    min-width: 4.5rem;
-    max-width: 5.5rem;
+    min-width: 6rem;
+    max-width: 7.5rem;
   }
 }
 .team-dials.team-dials-locked,
@@ -1006,7 +1006,7 @@ html.club-name-glow-off .club-line {
   flex: 0 1 auto;
   min-width: 0;
   width: auto;
-  max-width: calc(100% - 6rem);
+  max-width: calc(100% - 9rem);
   overflow: hidden;
   gap: 0;
 }
@@ -1017,9 +1017,9 @@ html.club-name-glow-off .club-line {
   align-items: center;
   flex: 0 0 auto;
   gap: 10px;
-  min-width: 4.75rem;
+  min-width: 6.75rem;
   width: auto;
-  max-width: 5.75rem;
+  max-width: 8.5rem;
   margin-left: 0;
   overflow: hidden;
 }
