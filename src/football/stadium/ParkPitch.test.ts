@@ -1,15 +1,11 @@
-/** @vitest-environment jsdom */
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { StadiumRecord } from "../../data/schema";
+import stadiumsData from "../../../public/data/stadiums.json";
 import { createGoals } from "./Goals";
 import { parkPathCentreX } from "./Stadium";
 
 describe("Central Park venue data", () => {
-  const stadiums = JSON.parse(
-    readFileSync(resolve(__dirname, "../../../public/data/stadiums.json"), "utf8"),
-  ) as StadiumRecord[];
+  const stadiums = stadiumsData as StadiumRecord[];
   const central = stadiums.find((s) => s.id === "central_park_pitch");
 
   it("uses a full FIFA-sized pitch so markings and grass line up", () => {

@@ -457,7 +457,8 @@ export class FlickMatch {
     } else if (this.phase === "moving" || this.phase === "settle") {
       this.stepLiveWorld(dt);
       this.updateGkControl(dt);
-      if (this.phase === "goal" || this.phase === "restart") {
+      // stepLiveWorld may have already switched to goal / restart.
+      if (this.phase !== "moving" && this.phase !== "settle") {
         // Goal / out-of-play already handled inside stepLiveWorld.
       } else if (this.flickedFigureAtRest()) {
         // Opposition has completed their flick — hand off even if the ball still rolls.

@@ -184,29 +184,10 @@ function lineBandFromSlot(slot: string, _formation: string): number {
   return LINE_BAND.CM;
 }
 
-function lineBandFromPosition(pos: string): number {
-  if (pos === "GK") return LINE_BAND.GK;
-  if (pos === "RB" || pos === "RWB") return LINE_BAND.RB;
-  if (pos === "CB") return LINE_BAND.CB;
-  if (pos === "LB" || pos === "LWB") return LINE_BAND.LB;
-  if (pos === "RM") return LINE_BAND.RM;
-  if (pos === "LM") return LINE_BAND.LM;
-  if (pos === "RW") return LINE_BAND.RM;
-  if (pos === "LW") return LINE_BAND.LM;
-  if (pos === "ST" || pos === "CF") return LINE_BAND.ST;
-  return LINE_BAND.CM;
-}
-
 /** Right (0) → centre (1) → left (2). */
 function sideRankFromSlot(slot: string, z: number): number {
   if (slot.startsWith("R") || z > 0.05) return 0;
   if (slot.startsWith("L") || z < -0.05) return 2;
-  return 1;
-}
-
-function sideRankFromPosition(pos: string): number {
-  if (pos.startsWith("R")) return 0;
-  if (pos.startsWith("L")) return 2;
   return 1;
 }
 
