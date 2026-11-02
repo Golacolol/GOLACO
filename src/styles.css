@@ -2163,8 +2163,97 @@ select.formation-chip.formation-select option {
   width: min(100%, 340px);
   margin: 0 auto;
 }
-.player-card-shell-edit {
+.player-card-shell-edit,
+.player-card-shell.is-editing {
   width: min(100%, 340px);
+}
+.player-card-shell-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  flex: 0 0 auto;
+}
+.player-card-shell-kicker {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  font-weight: 700;
+}
+.player-card-action {
+  margin: 0;
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(197, 165, 114, 0.55);
+  background: rgba(0, 122, 61, 0.28);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+.player-card-action.primary,
+.player-card-action[data-char="card-save"] {
+  border-color: var(--gold);
+  background: linear-gradient(90deg, rgba(0, 122, 61, 0.85), rgba(0, 122, 61, 0.45));
+}
+.player-card-edit-panel {
+  width: 100%;
+  max-width: 340px;
+  min-height: 460px;
+  aspect-ratio: 2 / 3.05;
+  height: auto;
+  max-height: none;
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(197, 165, 114, 0.75);
+  background:
+    linear-gradient(165deg, rgba(18, 48, 32, 0.98) 0%, rgba(6, 18, 12, 0.98) 55%, rgba(4, 14, 9, 1) 100%);
+  box-sizing: border-box;
+  text-align: left;
+}
+.player-card-edit-panel::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.player-card-edit-section-title {
+  margin: 0 0 8px;
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.player-card-edit-portrait-row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.player-card-edit-portrait-preview {
+  width: 96px;
+  height: 96px;
+}
+.player-card-edit-portrait-preview .player-card-photo {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+}
+.player-card-edit-portrait-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
 }
 .player-card {
   --card-accent: #007a3d;
@@ -2184,9 +2273,9 @@ select.formation-chip.formation-select option {
 }
 .player-card-edit {
   max-width: 340px;
-  min-height: 420px;
-  aspect-ratio: auto;
-  height: min(72vh, 520px);
+  width: 100%;
+  min-height: 460px;
+  aspect-ratio: 2 / 3.05;
 }
 .player-card-inner {
   position: relative;
@@ -2230,11 +2319,37 @@ select.formation-chip.formation-select option {
 .player-card-back-head {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  column-gap: 8px;
+  row-gap: 2px;
   align-items: center;
-  gap: 8px;
   flex: 0 0 auto;
 }
-.player-card-pos {
+/* Row 1: POS / OVR labels share one Y line. Row 2: badge / rating share one Y line. */
+.player-card-meta-label {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: center;
+  margin: 0;
+  font-style: normal;
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  opacity: 0.65;
+  font-weight: 700;
+  color: var(--paper);
+  line-height: 1;
+}
+.player-card-meta-label-end {
+  grid-column: 3;
+  justify-self: center;
+}
+.player-card-pos-code {
+  grid-column: 1;
+  grid-row: 2;
+  justify-self: center;
+  align-self: end;
+  display: block;
   font-family: "Oswald", "Arial Narrow", sans-serif;
   font-size: 15px;
   font-weight: 700;
@@ -2244,12 +2359,18 @@ select.formation-chip.formation-select option {
   border-radius: 4px;
   padding: 2px 7px;
   line-height: 1.1;
-  justify-self: start;
+  box-sizing: border-box;
+  /* Optical nudge: bordered badge reads high against large OVR digits. */
+  transform: translateY(2px);
 }
-.player-card-team {
+.player-card-team,
+.player-card-player {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
   min-width: 0;
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2260,23 +2381,50 @@ select.formation-chip.formation-select option {
   opacity: 0.88;
   color: var(--paper);
 }
-.player-card-ovr {
+.player-card-ovr-holo,
+.player-card-ovr-value {
+  grid-column: 3;
+  grid-row: 2;
+  justify-self: center;
+  align-self: end;
   font-family: "Oswald", "Arial Narrow", Impact, sans-serif;
   font-size: 26px;
   font-weight: 800;
   line-height: 1;
   color: var(--paper);
   letter-spacing: -0.02em;
-  justify-self: end;
-  text-align: right;
+  text-align: center;
 }
-.player-card-ovr em {
-  display: block;
-  font-style: normal;
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  opacity: 0.65;
-  font-weight: 700;
+.player-card-ovr-holo {
+  display: inline-block;
+  background-image:
+    linear-gradient(
+      115deg,
+      #f4e4bc 0%,
+      #7ef9ff 16%,
+      #c9a0ff 32%,
+      #ffe56b 48%,
+      #7dffb3 64%,
+      #ff9ad5 80%,
+      #f4e4bc 100%
+    );
+  background-size: 280% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: player-card-ovr-holo-shift 3.2s linear infinite;
+  filter: drop-shadow(0 0 3px rgba(255, 230, 150, 0.28));
+}
+@keyframes player-card-ovr-holo-shift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .player-card-ovr-holo {
+    animation: none;
+    background-position: 40% 50%;
+  }
 }
 .player-card-photo {
   position: relative;
@@ -2285,19 +2433,19 @@ select.formation-chip.formation-select option {
   width: 100%;
   aspect-ratio: 1 / 1;
   max-height: 48%;
-  border-radius: 6px;
-  border: 1.5px solid rgba(197, 165, 114, 0.55);
-  background: rgba(4, 17, 10, 0.9);
+  border-radius: 0;
+  border: none;
+  background: transparent;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  padding: 6px;
+  padding: 0;
 }
 .player-card-photo.has-photo,
 .player-card-photo.has-crest {
-  background: rgba(7, 20, 13, 0.95);
+  background: transparent;
 }
 .player-card-photo .player-card-portrait {
   display: block;
@@ -2320,15 +2468,19 @@ select.formation-chip.formation-select option {
 }
 .player-card-crest.team-badge,
 .player-card-crest-fallback {
-  width: min(72%, 128px) !important;
-  height: min(72%, 128px) !important;
-  border-radius: 8px;
+  width: 92% !important;
+  height: 92% !important;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
   overflow: hidden;
+  box-shadow: none;
 }
 .player-card-crest.team-badge img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center center;
   display: block;
 }
 .player-card-crest .team-badge-fallback {
@@ -2336,8 +2488,12 @@ select.formation-chip.formation-select option {
   height: 100%;
   display: grid;
   place-items: center;
-  font-size: 28px;
+  font-size: clamp(28px, 18cqw, 56px);
   font-weight: 800;
+}
+.player-card-photo.has-crest {
+  container-type: size;
+  padding: 4px;
 }
 .player-card-shirt {
   display: flex;
@@ -2431,8 +2587,14 @@ select.formation-chip.formation-select option {
   flex: 1 1 auto;
   min-height: 0;
   overflow: auto;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   padding-right: 2px;
+}
+.player-card-back-body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 .player-card-ratings {
   display: flex;
@@ -2479,8 +2641,6 @@ select.formation-chip.formation-select option {
   gap: 6px;
   text-align: left;
   font-size: 11px;
-  max-height: 38%;
-  overflow: auto;
 }
 .player-card-edit-identity label {
   display: flex;
@@ -2647,13 +2807,19 @@ select.formation-chip.formation-select option {
   color: var(--paper);
 }
 .squad-edit-dialog.squad-edit-card {
-  width: auto;
-  max-width: min(380px, 100%);
-  padding: 10px;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  overflow: visible;
+  width: min(364px, 100%);
+  max-height: min(90vh, 720px);
+  overflow: auto;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(197, 165, 114, 0.45);
+  background: linear-gradient(165deg, #0d2a1c 0%, #071810 100%);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  color: var(--paper);
+}
+.squad-edit-dialog.squad-edit-card .player-card-shell {
+  width: min(100%, 340px);
+  max-width: 340px;
 }
 .squad-edit-dialog h3 {
   margin: 0 0 4px;

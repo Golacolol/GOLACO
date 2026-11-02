@@ -26,7 +26,7 @@ import { Stadium } from "../football/stadium/Stadium";
 import { createPlayerVisual } from "../football/players/PlayerVisual";
 import { DEFAULT_PLAYER_MODEL, preloadPlayerModels } from "../football/players/PlayerModelLoader";
 import { Player } from "../football/players/Player";
-import { applyPhysicalToAppearance } from "../football/players/PlayerStats";
+import { applyPhysicalToAppearance, deriveOverall } from "../football/players/PlayerStats";
 import { applyClubNameAppearance, applyTitleFont } from "../ui/TitleFonts";
 import { MainMenu } from "../ui/MainMenu";
 import {
@@ -1284,6 +1284,7 @@ export class Game {
       if (value == null) delete (player as unknown as Record<string, unknown>)[key];
       else (player as unknown as Record<string, number>)[key] = value;
     }
+    player.overall = deriveOverall(player.primaryPosition, player);
     const teamId = edit.teamId || this.charTeamId;
     for (const m of this.db.memberships) {
       if (m.playerId === edit.playerId && (!teamId || m.teamId === teamId)) {

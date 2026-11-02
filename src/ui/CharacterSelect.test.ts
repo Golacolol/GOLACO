@@ -301,6 +301,7 @@ describe("character select", () => {
     expect(view.root.querySelector(".player-card-flip-label")?.textContent).toMatch(/OVR/);
     expect(view.root.querySelector(".player-pitch-select .tabletop-setup-kicker")).toBeNull();
     expect(view.root.querySelector(".player-pitch-select .hint")).toBeNull();
+    expect(view.root.querySelector('[data-char="card-edit"]')?.textContent).toBe("EDIT");
     // No portrait on the stub squad → club crest fills the photo well.
     expect(view.root.querySelector(".player-card-photo.has-crest .player-card-crest")).toBeTruthy();
     flipNav?.querySelector<HTMLElement>("[data-char='card-flip']")?.click();
@@ -308,6 +309,95 @@ describe("character select", () => {
     expect(view.root.querySelector(".player-card-ratings")).toBeTruthy();
     flipNav?.querySelector<HTMLElement>("[data-char='card-flip']")?.click();
     expect(card?.classList.contains("is-flipped")).toBe(false);
+    view.root.querySelector<HTMLElement>('[data-char="card-edit"]')?.click();
+    expect(view.root.querySelector(".player-card-edit-panel")).toBeTruthy();
+    expect(view.root.querySelector(".player-card-edit-section-title")?.textContent).toMatch(/Details/i);
+    expect(view.root.querySelector('[data-char="card-view"]')?.textContent).toBe("CARD");
+    view.root.querySelector<HTMLInputElement>('[data-edit-field="name"]')!.value = "Edited Name";
+    view.root.querySelector<HTMLInputElement>('[data-edit-field="name"]')!.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(view.root.querySelector('[data-char="card-save"]')?.textContent).toBe("SAVE");
+  });
+
+  it("right-clicks a squad row into the editable PLAYER SELECT card", () => {
+    const host = document.createElement("div");
+    const view = new CharacterSelect(host);
+    view.setSquad("Plymouth Argyle", squad(), "#007A3D", {
+      formation: "4-2-3-1",
+      starterSlots: ["GK", "CAM", "ST"],
+      team: {
+        id: "plymouth_argyle_current",
+        name: "Plymouth Argyle",
+        abbreviation: "ARG",
+        primaryColor: "#007A3D",
+        secondaryColor: "#C5A572",
+      },
+    });
+    view.render();
+    expect(view.controlMode).toBe("TEAM");
+    const row = view.root.querySelector<HTMLElement>('.roster-row[data-id="p2"]');
+    expect(row).toBeTruthy();
+    row!.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true }));
+    expect(view.controlMode).toBe("PLAYER");
+    expect(view.current().player.id).toBe("p2");
+    expect(view.root.querySelector(".player-pitch-select .player-card-edit-panel")).toBeTruthy();
+    const titles = [...view.root.querySelectorAll(".player-card-edit-section-title")].map((el) => el.textContent);
+    expect(titles[0]).toMatch(/Details/i);
+    expect(titles.some((t) => /Statistics/i.test(t ?? ""))).toBe(true);
+    expect(view.root.querySelector('[data-char="card-view"]')?.textContent).toBe("CARD");
+    expect(view.root.querySelector(".player-pitch-select .player-card-flip-nav")).toBeTruthy();
+    expect(view.root.querySelector(".player-card-flip-label")?.textContent).toMatch(/OVR/);
+    const before = view.current().player.id;
+    view.root.querySelector<HTMLElement>('[data-char="card-flip"][data-dir="next"]')?.click();
+    expect(view.current().player.id).not.toBe(before);
+    expect(view.root.querySelector(".player-card-edit-panel")).toBeTruthy();
+    view.root.querySelector<HTMLElement>('[data-char="card-flip"][data-dir="prev"]')?.click();
+    expect(view.current().player.id).toBe(before);
+  });
+
+  it("saves EDIT card changes via onSquadPlayerSave and updates the local squad", () => {
+    const host = document.createElement("div");
+    const view = new CharacterSelect(host);
+    const saved: unknown[] = [];
+    view.onSquadPlayerSave = (edit) => saved.push(edit);
+    view.setSquad("Plymouth Argyle", squad(), "#007A3D", {
+      formation: "4-2-3-1",
+      starterSlots: ["GK", "CAM", "ST"],
+      team: {
+        id: "plymouth_argyle_current",
+        name: "Plymouth Argyle",
+        abbreviation: "ARG",
+        primaryColor: "#007A3D",
+        secondaryColor: "#C5A572",
+      },
+    });
+    view.setControlMode("PLAYER");
+    view.render();
+    view.root.querySelector<HTMLElement>('[data-char="card-edit"]')?.click();
+    const name = view.root.querySelector<HTMLInputElement>('[data-edit-field="name"]')!;
+    name.value = "Ryan Hardie Esq";
+    name.dispatchEvent(new Event("input", { bubbles: true }));
+    const pace = view.root.querySelector<HTMLInputElement>('[data-edit-stat="pace"]');
+    if (pace) {
+      pace.value = "91";
+      pace.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    expect(view.root.querySelector('[data-char="card-save"]')?.textContent).toBe("SAVE");
+    view.root.querySelector<HTMLElement>('[data-char="card-save"]')?.click();
+    expect(saved).toHaveLength(1);
+    const edit = saved[0] as {
+      playerId: string;
+      teamId: string;
+      name: string;
+      stats: { pace?: number };
+    };
+    expect(edit.playerId).toBe(view.current().player.id);
+    expect(edit.teamId).toBe("plymouth_argyle_current");
+    expect(edit.name).toBe("Ryan Hardie Esq");
+    if (pace) expect(edit.stats.pace).toBe(91);
+    expect(view.current().player.name).toBe("Ryan Hardie Esq");
+    if (pace) expect(view.current().player.pace).toBe(91);
+    expect(view.root.querySelector(".player-card-edit-panel")).toBeNull();
+    expect(view.root.querySelector('[data-char="card-edit"]')?.textContent).toBe("EDIT");
   });
 
   it("refreshTeamSelection keeps roster scroll and does not show click-hint text", () => {

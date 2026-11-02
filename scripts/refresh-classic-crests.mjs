@@ -91,7 +91,11 @@ const ERA_LOGOS = [
 /** Direct PNG fallbacks when SportsDB is rate-limited (api-sports team badges). */
 const NATION_PNG = {
   Denmark: { ids: ["classic_denmark_1992", "classic_denmark"], url: "https://media.api-sports.io/football/teams/21.png" },
-  Greece: { ids: ["classic_greece_2004", "classic_greece"], url: "https://media.api-sports.io/football/teams/32.png" },
+  // SportsDB national badge (api-sports /teams/32.png was Egypt — wrong).
+  Greece: {
+    ids: ["classic_greece_2004", "classic_greece"],
+    url: "https://r2.thesportsdb.com/images/media/team/badge/xtxtts1455465601.png",
+  },
   Uruguay: { ids: ["classic_uruguay_2011", "classic_uruguay"], url: "https://media.api-sports.io/football/teams/7.png" },
   Cameroon: { ids: ["classic_cameroon_1990", "classic_cameroon"], url: "https://media.api-sports.io/football/teams/31.png" },
 };
