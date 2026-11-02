@@ -757,8 +757,7 @@ export class MainMenu {
           cooldownMs: 95,
           eventCap: 48,
         });
-        // Invert vs team dials — trackpad scroll-down should advance the list the other way.
-        if (dir) this.stepOpposition(dir === 1 ? -1 : 1);
+        if (dir) this.stepOpposition(dir);
       },
       { passive: false },
     );
