@@ -16,6 +16,8 @@ export class Team {
   readonly kit: TeamKit;
   bench: SquadPlayer[] = [];
   roster: SquadPlayer[] = [];
+  /** Players already substituted off — cannot return this match. */
+  readonly subbedOffIds = new Set<string>();
   subsUsed = 0;
   static readonly MAX_SUBS = 5;
 
@@ -62,6 +64,7 @@ export class Team {
 
   substitute(offId: string, onId: string): { off: Player; on: Player } | null {
     if (this.subsUsed >= Team.MAX_SUBS) return null;
+    if (this.subbedOffIds.has(onId)) return null;
     const offIdx = this.players.findIndex((p) => p.id === offId);
     const incoming = this.bench.find((s) => s.player.id === onId);
     if (offIdx < 0 || !incoming) return null;
@@ -76,11 +79,16 @@ export class Team {
     next.facing = off.facing;
     this.players[offIdx] = next;
     this.bench = this.bench.filter((s) => s.player.id !== onId);
-    const offRecord = this.roster.find((s) => s.player.id === offId);
-    if (offRecord) this.bench.push(offRecord);
+    // Subbed-off players leave the match — do not return them to the bench.
+    this.subbedOffIds.add(offId);
     this.subsUsed += 1;
     this.lineup.starters = this.players.map((p) => ({ playerId: p.id, slot: p.slot }));
     return { off, on: next };
+  }
+
+  /** Squad available for the pause editor / AI bench (excludes players already taken off). */
+  availableRoster(): SquadPlayer[] {
+    return this.roster.filter((s) => !this.subbedOffIds.has(s.player.id));
   }
 
   applyFormation(name: string): void {

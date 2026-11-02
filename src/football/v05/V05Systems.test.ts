@@ -18,6 +18,7 @@ import {
   possessionUrgency,
   v04PassUrge,
 } from "../ai/AttackingDecision";
+import { canShoot } from "../ai/PassingAI";
 import { bestAvailableSpace, forwardPathCongested, v04GoalwardTarget } from "../ai/SpaceField";
 import { supportTarget, triangleOptions } from "../ai/SupportAI";
 import { Player } from "../players/Player";
@@ -261,6 +262,32 @@ describe("attacking decisions", () => {
       rng: () => 0,
     });
     expect(dec.action).toBe("SHOT");
+    expect(dec.scores.shotScore).toBeGreaterThan(dec.scores.passScore);
+  });
+
+  it("shoots on a channel 1v1 in the box with only the GK left (not endless RUN)", () => {
+    const ball = new Ball();
+    // Wide channel inside the rectangular box — previously fell off the |z|<12 clear-chance cliff.
+    const st = make("st", HALF_LENGTH - 10, 15.5, "home", { shooting: 74, finishing: 76, composure: 62 }, "LST");
+    const mate = make("m", HALF_LENGTH - 22, 8, "home", {}, "LCM");
+    const gk = make("gk", HALF_LENGTH - 2.5, 2.5, "away", {}, "GK");
+    expect(inOpponentPenaltyArea(st)).toBe(true);
+    expect(Math.abs(st.z)).toBeGreaterThan(12);
+    const clear = clearChanceOpportunity(st, [gk]);
+    expect(clear.quality).toBeGreaterThan(0.28);
+    expect(canShoot(st, [gk])).toBe(true);
+    const dec = decideAttack({
+      carrier: st,
+      teammates: [st, mate],
+      opponents: [gk],
+      ball,
+      possessionTime: 1.1,
+      pressure: 0.2,
+      tuning: real,
+      rng: () => 0,
+    });
+    expect(dec.action).toBe("SHOT");
+    expect(dec.scores.shotScore).toBeGreaterThan(dec.scores.runScore);
     expect(dec.scores.shotScore).toBeGreaterThan(dec.scores.passScore);
   });
 

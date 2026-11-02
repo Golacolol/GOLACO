@@ -28,6 +28,7 @@ import { updateTeamAI } from "./ai/TeamAI";
 import { containTarget, nearestPressTargets, pressTarget, jockeyTarget } from "./ai/DefensiveAI";
 import {
   boxFinishDeadline,
+  clearChanceOpportunity,
   decideAttack,
   inOpponentPenaltyArea,
   isStriker,
@@ -623,6 +624,7 @@ export class Match {
   queueSubstitution(side: "home" | "away", offId: string, onId: string): boolean {
     if (this.subsRemaining(side) <= 0) return false;
     const team = side === "home" ? this.home : this.away;
+    if (team.subbedOffIds.has(onId) || team.subbedOffIds.has(offId)) return false;
     const off = team.players.find((p) => p.id === offId);
     const incoming = team.bench.find((s) => s.player.id === onId);
     if (!off || !incoming) return false;
@@ -2024,12 +2026,15 @@ export class Match {
     const gkClose = gkCloseEarly;
     const boxDeadline = boxDeadlineEarly;
     const boxMustFinish = inBox && this.possessionTime >= boxDeadline;
+    const clearChance = clearChanceOpportunity(passer, this.opponentsOf(passer));
+    const mustTakeChance = clearChance.quality >= 0.4 || (inBox && clearChance.close);
     // First-touch plant — AI must settle before kicking (PES second-touch timing).
-    // Past the box deadline, never demote a finish back into the shuffle.
+    // Past the box deadline / gilt-edged chance, never demote a finish back into the shuffle.
     if (
       passer.firstTouchTimer > 0.1 &&
       (passLike || action === "SHOT" || action === "LONG_SHOT") &&
-      !boxMustFinish
+      !boxMustFinish &&
+      !mustTakeChance
     ) {
       action = decision.scores.runScore >= 0.08 ? "RUN" : "HOLD";
     }
@@ -2044,7 +2049,7 @@ export class Match {
         : this.pressure > 0.55
           ? clamp(0.85 + (1 - composure) * 0.22 - patience * 0.02, 0.65, 1.2)
           : clamp(1.25 + (1 - composure) * 0.28 + (1 - vision) * 0.1 + patience * 0.28, 1.05, 2.05);
-      if (passLike && this.possessionTime < dwell && !boxMustFinish) action = "RUN";
+      if (passLike && this.possessionTime < dwell && !boxMustFinish && !mustTakeChance) action = "RUN";
     }
     // Marker on the ball + a cut lane = carry / shield, not a hopeful pass straight into him.
     if (
@@ -2065,16 +2070,17 @@ export class Match {
     const stallAt =
       (stallStyle?.id === "possession" ? 4.2 : stallStyle?.id === "routeOne" || stallStyle?.id === "direct" ? 3.1 : 3.6) /
       Math.max(0.85, stallStyle?.tempo ?? 1);
-    // Box: force an end-product before the keeper-mirroring carry deadlock.
-    if ((action === "RUN" || action === "HOLD") && boxMustFinish) {
+    // Box / 1v1: force an end-product before the keeper-mirroring carry deadlock.
+    if ((action === "RUN" || action === "HOLD" || (action === "PASS" && mustTakeChance)) && (boxMustFinish || mustTakeChance)) {
       const cutbackOpen =
         !!passTarget &&
         !forbid.includes(passTarget.id) &&
         !passTarget.isGK &&
         passingLaneQuality(passer, passTarget.x, passTarget.z, this.opponentsOf(passer)) >= 0.55 &&
-        !gkClose;
-      // Keeper in the face → shoot; only pass when a clear cutback exists.
-      if (gkClose || decision.scores.shotScore + 0.02 >= decision.scores.passScore || !cutbackOpen) {
+        !gkClose &&
+        !mustTakeChance;
+      // Keeper in the face / clear chance → shoot; only pass when a clear cutback exists.
+      if (gkClose || mustTakeChance || decision.scores.shotScore + 0.02 >= decision.scores.passScore || !cutbackOpen) {
         action = "SHOT";
       } else {
         action = "PASS";
@@ -2160,8 +2166,8 @@ export class Match {
       const minShotHold =
         action === "LONG_SHOT"
           ? 1.05
-          : boxMustFinish
-            ? 0.28
+          : boxMustFinish || mustTakeChance
+            ? 0.18
             : inBox
               ? gkClose
                 ? 0.32
@@ -2169,7 +2175,7 @@ export class Match {
               : isStriker(passer)
                 ? 0.48
                 : 0.72;
-      if (this.possessionTime < minShotHold && !boxMustFinish) {
+      if (this.possessionTime < minShotHold && !boxMustFinish && !mustTakeChance) {
         if (passTarget && decision.scores.passScore >= 0.28) action = "PASS";
         else {
           action = decision.scores.runScore >= 0.1 ? "RUN" : "HOLD";
@@ -4597,7 +4603,8 @@ export class Match {
         const scatter = (1 - setTech) * 2.4;
         kickBall(this.ball, kick.vx + (Math.random() - 0.5) * scatter, kick.vz + (Math.random() - 0.5) * scatter, kick.vy);
         this.passTargetId = target?.id ?? null;
-        this.longPassLanding = passType === "long" ? { x: tx, z: tz } : null;
+        // Always land a receive aim — short FK passes still need steer/pickup bonuses.
+        this.longPassLanding = { x: tx, z: tz };
         if (passType === "long") {
           this.stats.longPasses += 1;
           this.incomingAerial = true;
@@ -4693,7 +4700,14 @@ export class Match {
       this.passTargetId = target?.id ?? null;
       this.longPassLanding = { x: tx, z: tz };
     }
+    // clearOwner() wipes pass targeting — restore so the restart receiver can steer/collect.
+    const keepPassTarget = this.passTargetId;
+    const keepLanding = this.longPassLanding;
+    const keepAerial = this.incomingAerial;
     this.clearOwner();
+    this.passTargetId = keepPassTarget;
+    this.longPassLanding = keepLanding;
+    this.incomingAerial = keepAerial;
     // Throw-ins use throwTimer / arms — don't flash a foot-kick pose.
     taker.kickTimer = kind === FootballState.THROW_IN ? 0 : 0.38;
     this.ball.lastTouchId = taker.id;

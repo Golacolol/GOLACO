@@ -1,26 +1,71 @@
-import type { GameDatabase } from "../core/Database";
-import { portraitHtml } from "./Portrait";
-import { imageLabel, listPlayerImages, uploadPlayerImage } from "./playerImages";
+import type { GameDatabase, SquadPlayer } from "../core/Database";
+import type { TeamMembership } from "../data/schema";
+import {
+  applyPhysicalToAppearance,
+  deriveOverall,
+  resolveAttributes,
+} from "../football/players/PlayerStats";
+import { nextProfileStatsMode, type ProfileStatsMode } from "./ProfileHex";
+import { listPlayerImages, uploadPlayerImage } from "./playerImages";
+import {
+  escapeAttr,
+  escapeHtml,
+  playerCardShellHtml,
+  readSquadPlayerEditFromHost,
+  type PlayerCardTeamContext,
+  type SquadPlayerEdit,
+} from "./playerCardShared";
 
+type IndexedPlayer = {
+  id: string;
+  search: string;
+  label: string;
+  meta: string;
+  overall: number;
+};
+
+/**
+ * Main Menu → Database → Player Database.
+ * Searchable list + the same sports card / EDIT·CARD·SAVE flow as Formation.
+ */
 export class PlayerDatabaseEditor {
   readonly root: HTMLElement;
+  private db: GameDatabase | null = null;
   private imagePaths: string[] = [];
   private query = "";
   private focusSearchOnPaint = false;
+  private selectedId: string | null = null;
+  private filteredIds: string[] = [];
+  private cardEditing = false;
+  private editDirty = false;
+  private cardFlipped = false;
+  private profileView: ProfileStatsMode = "hex";
+  /** Persist card SAVE into player + membership records (and save file). */
+  onPlayerSave: ((edit: SquadPlayerEdit) => void) | null = null;
 
   constructor(parent: HTMLElement) {
     this.root = document.createElement("div");
     this.root.className = "editor-screen";
     parent.appendChild(this.root);
     this.hide();
+    this.root.addEventListener("click", (e) => this.onClick(e));
+    this.root.addEventListener("input", (e) => this.onFieldEvent(e));
+    this.root.addEventListener("change", (e) => {
+      this.onFieldEvent(e);
+      void this.onPortraitChange(e);
+    });
   }
 
   async render(db: GameDatabase): Promise<void> {
+    this.db = db;
     this.root.hidden = false;
     this.query = "";
     this.focusSearchOnPaint = true;
+    this.cardEditing = false;
+    this.editDirty = false;
+    this.cardFlipped = false;
     this.root.innerHTML = `
-      <div class="editor-card wide">
+      <div class="editor-card player-db-shell">
         <h2>Player Database</h2>
         <p class="hint">Loading player images…</p>
       </div>
@@ -30,230 +75,345 @@ export class PlayerDatabaseEditor {
     } catch {
       this.imagePaths = [];
     }
-    this.paint(db);
-  }
-
-  private paint(db: GameDatabase): void {
-    const players = [...db.players.values()];
-    const rows = players
-      .map((p) => {
-        const memberships = db.membershipsForPlayer(p.id);
-        const teams = memberships
-          .map((m) => {
-            const team = db.teams.get(m.teamId);
-            return `${team?.abbreviation ?? m.teamId} #${m.shirtNumber}`;
-          })
-          .join(", ");
-        const teamNames = memberships
-          .map((m) => {
-            const team = db.teams.get(m.teamId);
-            return [team?.name, team?.abbreviation, m.teamId, String(m.shirtNumber)].filter(Boolean).join(" ");
-          })
-          .join(" ");
-        const search = [p.id, p.name, p.primaryPosition, teamNames, teams].join(" ").toLowerCase();
-        const shirt = memberships[0]?.shirtNumber ?? 0;
-        const current = p.appearance?.portraitAsset?.trim() || "";
-        return `<tr data-player-row="${p.id}" data-search="${escapeAttr(search)}">
-          <td class="player-portrait-cell">
-            <div class="player-portrait-preview" data-preview-for="${p.id}">${portraitHtml(p, shirt)}</div>
-            <select data-pid="${p.id}" data-field="portraitAsset" title="Portrait from images/">
-              ${this.portraitOptions(current)}
-            </select>
-            <label class="portrait-upload-btn">
-              Upload
-              <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-pid="${p.id}" data-upload hidden />
-            </label>
-          </td>
-          <td>${p.id}</td>
-          <td><input data-pid="${p.id}" data-field="name" value="${escapeAttr(p.name)}" /></td>
-          <td>${p.primaryPosition}</td>
-          <td><input data-pid="${p.id}" data-field="passing" type="number" min="1" max="100" value="${p.passing}" /></td>
-          <td><input data-pid="${p.id}" data-field="vision" type="number" min="1" max="100" value="${p.vision}" /></td>
-          <td><input data-pid="${p.id}" data-field="finishing" type="number" min="1" max="100" value="${p.finishing}" /></td>
-          <td><input data-pid="${p.id}" data-field="pace" type="number" min="1" max="100" value="${p.pace}" /></td>
-          <td><input data-pid="${p.id}" data-field="acceleration" type="number" min="1" max="100" value="${p.acceleration ?? ""}" placeholder="~pace" /></td>
-          <td><input data-pid="${p.id}" data-field="attackingAwareness" type="number" min="1" max="100" value="${p.attackingAwareness ?? ""}" placeholder="~vis" /></td>
-          <td><input data-pid="${p.id}" data-field="defensiveAwareness" type="number" min="1" max="100" value="${p.defensiveAwareness ?? ""}" placeholder="~def" /></td>
-          <td><input data-pid="${p.id}" data-field="heightCm" type="number" min="150" max="220" value="${p.heightCm ?? ""}" /></td>
-          <td class="muted">${teams}</td>
-        </tr>`;
-      })
-      .join("");
-    this.root.innerHTML = `
-      <div class="editor-card wide">
-        <h2>Player Database</h2>
-        <p class="hint">Canonical IDs. Full mental set (form, vision, composure, focus, awareness) is editable in Formation → right-click player. Blank optional fields use compatibility defaults.</p>
-        <div class="player-db-toolbar">
-          <label class="player-db-search">
-            <span>Search</span>
-            <input id="player-db-search" type="search" placeholder="Name, ID, position, club…" value="${escapeAttr(this.query)}" autocomplete="off" />
-          </label>
-          <span class="player-db-count muted" data-player-count></span>
-        </div>
-        <div class="table-wrap player-db-table">
-          <table>
-            <thead><tr><th>Portrait</th><th>ID</th><th>Name</th><th>Pos</th><th>Pass</th><th>Vis</th><th>Fin</th><th>Pace</th><th>Acc</th><th>AttAw</th><th>DefAw</th><th>Ht</th><th>Memberships</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-        <div class="row-btns">
-          <button data-act="save">Save</button>
-          <button data-act="back">Back</button>
-        </div>
-      </div>
-    `;
-    this.bindPortraitControls(db);
-    this.bindSearch(players.length);
-    this.applyFilter();
-  }
-
-  private bindSearch(total: number): void {
-    const input = this.root.querySelector("#player-db-search") as HTMLInputElement | null;
-    if (!input) return;
-    input.addEventListener("input", () => {
-      this.query = input.value;
-      this.applyFilter();
-    });
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        input.value = "";
-        this.query = "";
-        this.applyFilter();
-      }
-    });
-    const count = this.root.querySelector("[data-player-count]");
-    if (count) count.setAttribute("data-total", String(total));
-    if (this.focusSearchOnPaint) {
-      this.focusSearchOnPaint = false;
-      queueMicrotask(() => input.focus());
-    }
-  }
-
-  private applyFilter(): void {
-    const tokens = this.query
-      .toLowerCase()
-      .trim()
-      .split(/\s+/)
-      .filter(Boolean);
-    let visible = 0;
-    this.root.querySelectorAll<HTMLTableRowElement>("tr[data-player-row]").forEach((row) => {
-      const hay = row.dataset.search ?? "";
-      const show = tokens.every((token) => hay.includes(token));
-      row.hidden = !show;
-      if (show) visible += 1;
-    });
-    const count = this.root.querySelector("[data-player-count]");
-    const total = count?.getAttribute("data-total") ?? String(visible);
-    if (count) {
-      count.textContent = tokens.length
-        ? `${visible} of ${total} players`
-        : `${total} players`;
-    }
-  }
-
-  private portraitOptions(current: string): string {
-    const paths = [...this.imagePaths];
-    if (current && !paths.includes(current)) paths.unshift(current);
-    const opts = [`<option value="">(none)</option>`];
-    for (const path of paths) {
-      const selected = path === current ? " selected" : "";
-      opts.push(`<option value="${escapeAttr(path)}"${selected}>${escapeHtml(imageLabel(path))}</option>`);
-    }
-    return opts.join("");
-  }
-
-  private bindPortraitControls(db: GameDatabase): void {
-    this.root.querySelectorAll("select[data-field='portraitAsset']").forEach((el) => {
-      const select = el as HTMLSelectElement;
-      select.addEventListener("change", () => {
-        const pid = select.dataset.pid ?? "";
-        const player = db.players.get(pid);
-        if (!player) return;
-        const value = select.value.trim();
-        if (!player.appearance) player.appearance = {};
-        player.appearance.portraitAsset = value || null;
-        this.refreshPreview(db, pid);
-      });
-    });
-
-    this.root.querySelectorAll("input[data-upload]").forEach((el) => {
-      const input = el as HTMLInputElement;
-      input.addEventListener("change", async () => {
-        const file = input.files?.[0];
-        const pid = input.dataset.pid ?? "";
-        if (!file || !pid) return;
-        try {
-          const path = await uploadPlayerImage(file);
-          if (!this.imagePaths.includes(path)) this.imagePaths.push(path);
-          this.imagePaths.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
-          const player = db.players.get(pid);
-          if (player) {
-            if (!player.appearance) player.appearance = {};
-            player.appearance.portraitAsset = path;
-          }
-          this.paint(db);
-          const rowSelect = this.root.querySelector(
-            `select[data-pid="${CSS.escape(pid)}"][data-field="portraitAsset"]`,
-          ) as HTMLSelectElement | null;
-          if (rowSelect) rowSelect.value = path;
-        } catch (error) {
-          window.alert(error instanceof Error ? error.message : "Image upload failed");
-        } finally {
-          input.value = "";
-        }
-      });
-    });
-  }
-
-  private refreshPreview(db: GameDatabase, playerId: string): void {
-    const player = db.players.get(playerId);
-    const preview = this.root.querySelector(`[data-preview-for="${CSS.escape(playerId)}"]`);
-    if (!player || !preview) return;
-    const shirt = db.membershipsForPlayer(playerId)[0]?.shirtNumber ?? 0;
-    preview.innerHTML = portraitHtml(player, shirt);
+    const first = [...db.players.keys()].sort((a, b) => a.localeCompare(b))[0] ?? null;
+    this.selectedId = first;
+    this.paint();
   }
 
   hide(): void {
     this.root.hidden = true;
   }
 
-  apply(db: GameDatabase): void {
-    this.root.querySelectorAll("input[data-pid]:not([data-upload])").forEach((el) => {
-      const input = el as HTMLInputElement;
-      const p = db.players.get(input.dataset.pid ?? "");
-      const field = input.dataset.field;
-      if (!p || !field) return;
-      if (input.type === "number") {
-        const raw = input.value.trim();
-        if (!raw) {
-          // Clear optional inferred fields so resolveAttributes can fill defaults.
-          if (field !== "passing" && field !== "finishing" && field !== "pace" && field !== "vision" && field !== "name") {
-            delete (p as unknown as Record<string, unknown>)[field];
-          }
-          return;
+  /** Global Save still flushes db → localStorage; card SAVE already mutates records. */
+  apply(_db: GameDatabase): void {
+    // no-op — edits commit through the card SAVE button
+  }
+
+  private paint(): void {
+    const db = this.db;
+    if (!db) return;
+    const index = this.buildIndex(db);
+    const tokens = this.query
+      .toLowerCase()
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+    const visible = index.filter((row) => tokens.every((t) => row.search.includes(t)));
+    this.filteredIds = visible.map((v) => v.id);
+    if (this.selectedId && !this.filteredIds.includes(this.selectedId)) {
+      this.selectedId = this.filteredIds[0] ?? null;
+      this.cardEditing = false;
+      this.editDirty = false;
+      this.cardFlipped = false;
+    } else if (!this.selectedId && this.filteredIds.length) {
+      this.selectedId = this.filteredIds[0]!;
+    }
+
+    const countLabel = tokens.length
+      ? `${visible.length} of ${index.length} players`
+      : `${index.length} players`;
+
+    const list = visible
+      .map((row) => {
+        const on = row.id === this.selectedId ? " on" : "";
+        return `<button type="button" class="player-db-row${on}" data-player-pick="${escapeAttr(row.id)}">
+          <span class="player-db-row-name">${escapeHtml(row.label)}</span>
+          <span class="player-db-row-meta">${escapeHtml(row.meta)}</span>
+          <span class="player-db-row-ovr">${row.overall}</span>
+        </button>`;
+      })
+      .join("");
+
+    const cardHost = this.selectedId
+      ? this.cardHtml(db, this.selectedId)
+      : `<div class="player-db-empty hint">No players match this search.</div>`;
+
+    this.root.innerHTML = `
+      <div class="editor-card player-db-shell">
+        <h2>Player Database</h2>
+        <p class="hint">Search a player, open their card, then EDIT details and statistics. SAVE writes to the player and team membership records.</p>
+        <div class="player-db-layout">
+          <aside class="player-db-sidebar">
+            <div class="player-db-toolbar">
+              <label class="player-db-search">
+                <span>Search</span>
+                <input id="player-db-search" type="search" placeholder="Name, ID, position, club…" value="${escapeAttr(this.query)}" autocomplete="off" />
+              </label>
+              <span class="player-db-count muted" data-player-count>${escapeHtml(countLabel)}</span>
+            </div>
+            <div class="player-db-results" role="listbox" aria-label="Players">${list || `<p class="hint">No matches.</p>`}</div>
+          </aside>
+          <section class="player-db-card-host" aria-label="Player card">${cardHost}</section>
+        </div>
+        <div class="row-btns">
+          <button type="button" data-act="save">Save</button>
+          <button type="button" data-act="back">Back</button>
+        </div>
+      </div>
+    `;
+
+    const input = this.root.querySelector<HTMLInputElement>("#player-db-search");
+    if (input) {
+      input.addEventListener("input", () => {
+        this.query = input.value;
+        this.paint();
+        const again = this.root.querySelector<HTMLInputElement>("#player-db-search");
+        if (again) {
+          again.focus();
+          const len = again.value.length;
+          again.setSelectionRange(len, len);
         }
-        const value = Number(raw);
-        if (!Number.isFinite(value)) return;
-        (p as unknown as Record<string, number>)[field] = value;
-        return;
+      });
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          input.value = "";
+          this.query = "";
+          this.paint();
+        }
+      });
+      if (this.focusSearchOnPaint) {
+        this.focusSearchOnPaint = false;
+        queueMicrotask(() => input.focus());
       }
-      (p as unknown as Record<string, string>)[field] = input.value;
-    });
-    this.root.querySelectorAll("select[data-field='portraitAsset']").forEach((el) => {
-      const select = el as HTMLSelectElement;
-      const p = db.players.get(select.dataset.pid ?? "");
-      if (!p) return;
-      if (!p.appearance) p.appearance = {};
-      const value = select.value.trim();
-      p.appearance.portraitAsset = value || null;
+    }
+  }
+
+  private buildIndex(db: GameDatabase): IndexedPlayer[] {
+    const rows: IndexedPlayer[] = [];
+    for (const p of db.players.values()) {
+      const memberships = db.membershipsForPlayer(p.id);
+      const teams = memberships
+        .map((m) => {
+          const team = db.teams.get(m.teamId);
+          return `${team?.abbreviation ?? m.teamId} #${m.shirtNumber}`;
+        })
+        .join(", ");
+      const teamNames = memberships
+        .map((m) => {
+          const team = db.teams.get(m.teamId);
+          return [team?.name, team?.abbreviation, m.teamId, String(m.shirtNumber)].filter(Boolean).join(" ");
+        })
+        .join(" ");
+      const sp = this.resolvePlayer(db, p.id);
+      const overall = sp ? Math.round(sp.overall) : 0;
+      rows.push({
+        id: p.id,
+        search: [p.id, p.name, p.displayName, p.primaryPosition, teamNames, teams].join(" ").toLowerCase(),
+        label: p.displayName || p.name,
+        meta: `${p.primaryPosition}${teams ? ` · ${teams}` : ""}`,
+        overall,
+      });
+    }
+    rows.sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: "base" }));
+    return rows;
+  }
+
+  private resolvePlayer(db: GameDatabase, playerId: string): SquadPlayer | null {
+    const memberships = db.membershipsForPlayer(playerId);
+    if (memberships[0]) return db.resolveSquadPlayer(memberships[0]);
+    const player = db.players.get(playerId);
+    if (!player) return null;
+    const membership: TeamMembership = {
+      playerId,
+      teamId: "",
+      shirtNumber: 0,
+      squadRole: "FIRST_TEAM",
+    };
+    const attrs = resolveAttributes(player);
+    const overall = deriveOverall(player.primaryPosition, attrs);
+    return {
+      player,
+      membership,
+      attrs: { ...player, ...attrs, overall },
+      overall,
+      shirtNumber: 0,
+    };
+  }
+
+  private teamContext(db: GameDatabase, sp: SquadPlayer): PlayerCardTeamContext {
+    const teamId = sp.membership.teamId;
+    const team = teamId ? db.teams.get(teamId) ?? null : null;
+    return {
+      teamName: team?.name ?? "Free agent",
+      teamColor: team?.primaryColor ?? "#007A3D",
+      teamSecondaryColor: team?.secondaryColor ?? "#C5A572",
+      team,
+    };
+  }
+
+  private cardHtml(db: GameDatabase, playerId: string): string {
+    const sp = this.resolvePlayer(db, playerId);
+    if (!sp) return `<div class="player-db-empty hint">Player not found.</div>`;
+    const team = this.teamContext(db, sp);
+    return playerCardShellHtml(sp, team, {
+      editing: this.cardEditing,
+      editDirty: this.editDirty,
+      flipped: this.cardFlipped,
+      profileView: this.profileView,
+      imagePaths: this.imagePaths,
+      navMode: "browse",
     });
   }
-}
 
-function escapeAttr(value: string): string {
-  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-}
+  private onClick(e: MouseEvent): void {
+    const t = e.target as HTMLElement;
+    const pick = t.closest<HTMLElement>("[data-player-pick]");
+    if (pick && this.root.contains(pick)) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = pick.getAttribute("data-player-pick");
+      if (!id || id === this.selectedId) return;
+      this.selectedId = id;
+      this.cardEditing = false;
+      this.editDirty = false;
+      this.cardFlipped = false;
+      this.paint();
+      return;
+    }
 
-function escapeHtml(value: string): string {
-  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const flip = t.closest<HTMLElement>("[data-char='card-flip']");
+    if (flip && this.root.contains(flip)) {
+      e.preventDefault();
+      e.stopPropagation();
+      const dir = flip.getAttribute("data-dir") === "prev" ? -1 : 1;
+      this.stepPlayer(dir);
+      return;
+    }
+
+    const act = t.closest<HTMLElement>("[data-char='card-edit'], [data-char='card-view'], [data-char='card-save']");
+    if (act && this.root.contains(act)) {
+      e.preventDefault();
+      e.stopPropagation();
+      const kind = act.getAttribute("data-char");
+      if (kind === "card-edit") {
+        this.cardEditing = true;
+        this.editDirty = false;
+        this.cardFlipped = false;
+        this.paint();
+      } else if (kind === "card-view") {
+        this.cardEditing = false;
+        this.editDirty = false;
+        this.cardFlipped = false;
+        this.paint();
+      } else if (kind === "card-save") {
+        this.commitEdit();
+      }
+      return;
+    }
+
+    const toggle = t.closest<HTMLElement>("[data-char='profile-toggle']");
+    if (toggle && this.root.contains(toggle)) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.profileView = nextProfileStatsMode(this.profileView);
+      this.paint();
+    }
+  }
+
+  private onFieldEvent(e: Event): void {
+    if (!this.cardEditing || this.editDirty) return;
+    const el = e.target as HTMLElement | null;
+    if (!el?.closest?.("[data-edit-field], [data-edit-stat], [data-edit-upload]")) return;
+    this.editDirty = true;
+    const btn = this.root.querySelector(".player-card-action");
+    if (btn) {
+      btn.outerHTML = `<button type="button" class="player-card-action primary" data-char="card-save" title="Save player changes">SAVE</button>`;
+    }
+  }
+
+  private async onPortraitChange(e: Event): Promise<void> {
+    const target = e.target as HTMLElement | null;
+    if (!target || !this.db || !this.selectedId) return;
+    const upload = target.closest<HTMLInputElement>("input[data-edit-upload]");
+    if (upload?.files?.[0]) {
+      try {
+        const path = await uploadPlayerImage(upload.files[0]);
+        if (!this.imagePaths.includes(path)) this.imagePaths.push(path);
+        this.imagePaths.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+        const player = this.db.players.get(this.selectedId);
+        if (player) {
+          if (!player.appearance) player.appearance = {};
+          player.appearance.portraitAsset = path;
+        }
+        this.editDirty = true;
+        this.paint();
+      } catch (error) {
+        window.alert(error instanceof Error ? error.message : "Image upload failed");
+      } finally {
+        upload.value = "";
+      }
+      return;
+    }
+    const select = target.closest<HTMLSelectElement>("select[data-edit-field='portraitAsset']");
+    if (select) {
+      const player = this.db.players.get(this.selectedId);
+      if (!player) return;
+      if (!player.appearance) player.appearance = {};
+      player.appearance.portraitAsset = select.value.trim() || null;
+      this.editDirty = true;
+      const btn = this.root.querySelector(".player-card-action");
+      if (btn) {
+        btn.outerHTML = `<button type="button" class="player-card-action primary" data-char="card-save" title="Save player changes">SAVE</button>`;
+      }
+    }
+  }
+
+  private stepPlayer(delta: number): void {
+    if (!this.filteredIds.length || !this.selectedId) return;
+    const i = this.filteredIds.indexOf(this.selectedId);
+    if (i < 0) return;
+    const next = this.filteredIds[(i + delta + this.filteredIds.length) % this.filteredIds.length]!;
+    this.selectedId = next;
+    this.cardEditing = false;
+    this.editDirty = false;
+    this.cardFlipped = false;
+    this.paint();
+  }
+
+  private commitEdit(): void {
+    const db = this.db;
+    if (!db || !this.selectedId) return;
+    const sp = this.resolvePlayer(db, this.selectedId);
+    if (!sp) return;
+    const edit = readSquadPlayerEditFromHost(this.root, sp, sp.membership.teamId || "");
+    this.applyEditLocally(db, edit);
+    this.onPlayerSave?.(edit);
+    this.cardEditing = false;
+    this.editDirty = false;
+    this.cardFlipped = false;
+    this.paint();
+  }
+
+  private applyEditLocally(db: GameDatabase, edit: SquadPlayerEdit): void {
+    const player = db.players.get(edit.playerId);
+    if (!player) return;
+    player.name = edit.name;
+    player.displayName = edit.displayName;
+    player.primaryPosition = edit.primaryPosition;
+    if (!player.appearance) player.appearance = {};
+    player.appearance.portraitAsset = edit.portraitAsset;
+    if (edit.heightCm == null) delete player.heightCm;
+    else player.heightCm = edit.heightCm;
+    if (edit.weightKg == null) delete player.weightKg;
+    else player.weightKg = edit.weightKg;
+    Object.assign(
+      player.appearance,
+      applyPhysicalToAppearance(player.appearance, edit.heightCm, edit.weightKg),
+    );
+    for (const [key, value] of Object.entries(edit.stats)) {
+      if (value == null) delete (player as unknown as Record<string, unknown>)[key];
+      else (player as unknown as Record<string, number>)[key] = value;
+    }
+    player.overall = deriveOverall(player.primaryPosition, player);
+    if (edit.teamId) {
+      for (const m of db.memberships) {
+        if (m.playerId === edit.playerId && m.teamId === edit.teamId) {
+          m.shirtNumber = edit.shirtNumber;
+        }
+      }
+    } else {
+      const first = db.membershipsForPlayer(edit.playerId)[0];
+      if (first) first.shirtNumber = edit.shirtNumber;
+    }
+  }
 }

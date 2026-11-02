@@ -52,8 +52,10 @@ export function spaceScoreAt(
   // Reward cutting inside when already wide.
   const cutInside =
     Math.abs(carrier.z) > 12 && Math.abs(z) < Math.abs(carrier.z) - 1.5 ? 0.55 : 0;
+  // Cap "open grass" so empty boxes (only GK) don't inflate RUN over a finish.
+  const nearestCap = Math.min(nearest, 9);
   return (
-    nearest * 0.22 +
+    nearestCap * 0.22 +
     fwd * 0.08 +
     towardGoal * 1.4 +
     width +

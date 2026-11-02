@@ -2044,9 +2044,11 @@ export class CharacterSelect {
                   const p = row.player;
                   const on = p.player.id === selectedId ? "on" : "";
                   const name = escapeHtml(p.player.name);
-                  const nameTip = this.showOverlays ? ` title="${name}"` : "";
+                  const tip = this.showOverlays
+                    ? name
+                    : "Left-click select · Right-click player card";
                   return `<div class="pitch-slot ${on}" data-slot="${slot.id}" data-player-id="${p.player.id}" style="left:${pos.left}%; bottom:${pos.bottom}%">
-                  <button type="button" class="pitch-token ${on}" data-char="pick" data-id="${p.player.id}" data-player-id="${p.player.id}" data-from-slot="${slot.id}" aria-label="${name}"${nameTip}>
+                  <button type="button" class="pitch-token ${on}" data-char="pick" data-id="${p.player.id}" data-player-id="${p.player.id}" data-from-slot="${slot.id}" aria-label="${name}" title="${tip}">
                     ${kitMarkerHtml(p.player, p.shirtNumber, {
                       ...kitMarkerColors(p.player.primaryPosition, this.teamColor, this.teamSecondaryColor),
                     })}
@@ -2253,6 +2255,16 @@ export class CharacterSelect {
   }
 
   private onRosterContextMenu(e: MouseEvent): void {
+    // Pitch counter → player card (view). Squad list row → editable card.
+    const token = (e.target as HTMLElement).closest<HTMLElement>(
+      ".pitch-token[data-id], .pitch-slot[data-player-id]",
+    );
+    if (token && this.root.contains(token)) {
+      e.preventDefault();
+      const id = token.getAttribute("data-id") || token.getAttribute("data-player-id");
+      if (id) this.openPlayerCard(id);
+      return;
+    }
     const row = (e.target as HTMLElement).closest<HTMLElement>(".roster-row[data-id]");
     if (!row || !this.root.contains(row)) return;
     e.preventDefault();
@@ -2260,6 +2272,21 @@ export class CharacterSelect {
     if (!id) return;
     this.selectPlayerId(id);
     void this.enterCardEdit(id);
+  }
+
+  /** Open PLAYER SELECT sports card for a squad member (not edit mode). */
+  private openPlayerCard(id: string): void {
+    this.selectPlayerId(id);
+    this.editingPlayerId = null;
+    this.cardEditing = false;
+    this.editDirty = false;
+    this.cardFlipped = false;
+    if (this.playerSelectAvailable()) this.controlMode = "PLAYER";
+    this.render();
+  }
+
+  private playerSelectAvailable(): boolean {
+    return this.context !== "pause" && this.purpose !== "spot" && !this.tabletopKind;
   }
 
   private async enterCardEdit(id: string): Promise<void> {
@@ -2270,9 +2297,7 @@ export class CharacterSelect {
     this.cardFlipped = false;
     // Prefer the PLAYER SELECT card well (EDIT / CARD / SAVE). Overlay only when
     // PLAYER SELECT is unavailable (pause, spot practice, tabletop).
-    const playerSelectAvailable =
-      this.context !== "pause" && this.purpose !== "spot" && !this.tabletopKind;
-    if (playerSelectAvailable) {
+    if (this.playerSelectAvailable()) {
       this.controlMode = "PLAYER";
     } else if (this.controlMode === "KIT") {
       this.controlMode = "TEAM";

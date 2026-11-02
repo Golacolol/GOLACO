@@ -356,6 +356,11 @@ export class GameDatabase {
       down.shirtNumber = 10;
       face.shirtNumber = 8;
     }
+    // CapMan #15 → #22.
+    const capman = this.memberships.find(
+      (m) => m.teamId === ARGYLE_FANS_TEAM_ID && m.playerId === "player_fan_a_capman",
+    );
+    if (capman?.shirtNumber === 15) capman.shirtNumber = 22;
   }
 
   /** Rebuild the English league calendar from scratch (casual / REAL baseline). */

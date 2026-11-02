@@ -1,6 +1,6 @@
 import { clamp, dist2, dot2, normalize2, stat01 } from "../../core/math";
 import { scorePassCandidate, type PassType } from "../ball/PassModel";
-import { HALF_LENGTH } from "../constants";
+import { HALF_LENGTH, PENALTY_AREA_LENGTH, PENALTY_AREA_WIDTH } from "../constants";
 import { inPenaltyArea } from "../pitch/PitchZones";
 import { offsideDepthM, offsideLineX } from "../rules/Offside";
 import type { Ball } from "../ball/Ball";
@@ -33,6 +33,7 @@ export function isPassSafe(
 
 /**
  * CanShoot gate: clear enough lane + close enough for a forced shot decision.
+ * Uses box depth (not radial distance to goal centre) so channel 1v1s qualify.
  */
 export function canShoot(
   carrier: Player,
@@ -40,10 +41,19 @@ export function canShoot(
   opts?: { maxDist?: number; minLane?: number },
 ): boolean {
   const goalX = carrier.oppGoalX();
-  const dist = carrier.distTo(goalX, 0);
-  const maxDist = opts?.maxDist ?? 16;
-  if (dist > maxDist || Math.abs(carrier.z) > 12) return false;
-  return passingLaneQuality(carrier, goalX, 0, opponents) >= (opts?.minLane ?? 0.45);
+  const depth = Math.abs(goalX - carrier.x);
+  const maxDepth = opts?.maxDist ?? PENALTY_AREA_LENGTH + 0.75;
+  if (depth > maxDepth) return false;
+  if (Math.abs(carrier.z) > PENALTY_AREA_WIDTH / 2) return false;
+  // Prefer a clear lane, but allow a forced finish when only the keeper remains.
+  let nearestOutfield = 40;
+  for (const o of opponents) {
+    if (o.isGK) continue;
+    nearestOutfield = Math.min(nearestOutfield, carrier.distTo(o.x, o.z));
+  }
+  if (nearestOutfield > 6.5) return true;
+  const minLane = opts?.minLane ?? 0.45;
+  return passingLaneQuality(carrier, goalX, 0, opponents) >= minLane;
 }
 
 /** Best pass-safe teammate for a type, or null (hard filter before soft scores). */

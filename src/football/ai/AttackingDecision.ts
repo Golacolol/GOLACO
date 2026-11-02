@@ -53,10 +53,12 @@ export function possessionUrgency(possessionTime: number): number {
   return clamp(0.88 + (possessionTime - 5.5) * 0.08, 0.88, 1.18);
 }
 
-/** True when the carrier is inside the opponent's penalty area (uses attack goal). */
+/** True when the carrier is inside the opponent's rectangular penalty area. */
 export function inOpponentPenaltyArea(carrier: Player): boolean {
-  const distGoal = carrier.distTo(carrier.oppGoalX(), 0);
-  return distGoal < PENALTY_AREA_LENGTH + 0.5 && Math.abs(carrier.z) <= PENALTY_AREA_WIDTH / 2;
+  const goalX = carrier.oppGoalX();
+  const minX = goalX > 0 ? HALF_LENGTH - PENALTY_AREA_LENGTH : -HALF_LENGTH;
+  const maxX = goalX > 0 ? HALF_LENGTH : -HALF_LENGTH + PENALTY_AREA_LENGTH;
+  return carrier.x >= minX && carrier.x <= maxX && Math.abs(carrier.z) <= PENALTY_AREA_WIDTH / 2;
 }
 
 /**
@@ -91,6 +93,7 @@ export function longShotOpportunity(carrier: Player, opponents: Player[]): { ope
 /**
  * Near-goal chance quality: clear lane + exposed keeper (even if he can still dive).
  * High values should force a shot rather than another recycle pass.
+ * Uses the full rectangular box — channel 1v1s must not fall off a |z|&lt;12 cliff.
  */
 export function clearChanceOpportunity(
   carrier: Player,
@@ -98,12 +101,18 @@ export function clearChanceOpportunity(
 ): { quality: number; close: boolean; laneClear: boolean; gkExposed: boolean } {
   const goalX = carrier.oppGoalX();
   const distance = carrier.distTo(goalX, 0);
-  const close = distance < 16 && Math.abs(carrier.z) < 12;
-  if (!close) return { quality: 0, close: false, laneClear: false, gkExposed: false };
+  const inBox = inOpponentPenaltyArea(carrier);
+  const halfBoxW = PENALTY_AREA_WIDTH / 2;
+  // Central pocket still gets the highest spike; wider box stays eligible.
+  const close = inBox && distance < 16.5 && Math.abs(carrier.z) < 12;
+  const eligible = inBox || (distance < 20 && Math.abs(carrier.z) <= halfBoxW);
+  if (!eligible) return { quality: 0, close: false, laneClear: false, gkExposed: false };
 
   let outfieldBlock = false;
+  let nearestOutfield = 40;
   for (const o of opponents) {
     if (o.isGK) continue;
+    nearestOutfield = Math.min(nearestOutfield, carrier.distTo(o.x, o.z));
     const t = ((o.x - carrier.x) * (goalX - carrier.x) + (o.z - carrier.z) * (0 - carrier.z)) / (distance * distance || 1);
     if (t > 0.08 && t < 0.95) {
       const px = carrier.x + (goalX - carrier.x) * t;
@@ -112,6 +121,7 @@ export function clearChanceOpportunity(
     }
   }
   const laneClear = !outfieldBlock;
+  const onlyGkLeft = nearestOutfield > 6.5;
 
   const gk = opponents.find((o) => o.isGK) ?? null;
   let gkExposed = true;
@@ -132,16 +142,25 @@ export function clearChanceOpportunity(
 
   let quality = 0;
   if (laneClear) {
-    quality = 0.4 + (1 - distance / 16) * 0.42 + (gkExposed ? 0.32 : 0.1);
+    quality = 0.4 + (1 - clamp(distance / 18, 0, 1)) * 0.42 + (gkExposed ? 0.32 : 0.1);
     if (distance < 12) quality += 0.2;
     if (distance < 8) quality += 0.14;
     if (Math.abs(carrier.z) < 6) quality += 0.12;
     if (gk && Math.abs(gk.z - carrier.z) > 2.4) quality += 0.14;
-  } else if (distance < 10 && Math.abs(carrier.z) < 9) {
+    if (onlyGkLeft) quality += 0.18;
+  } else if (distance < 10 && Math.abs(carrier.z) < 11) {
     // Still must hit it when very close even through a crowd.
     quality = 0.48 + (gkExposed ? 0.16 : 0.04);
+  } else if (inBox && onlyGkLeft) {
+    // Channel 1v1 with only the keeper — still a clear chance, not a carry.
+    quality = 0.42 + (gkExposed ? 0.2 : 0.08) + (1 - clamp(distance / 18, 0, 1)) * 0.2;
   }
-  return { quality: clamp(quality, 0, 1), close, laneClear, gkExposed };
+  // Soften angle falloff inside the box instead of zeroing quality outside |z|&lt;12.
+  if (inBox && !close && quality > 0) {
+    const angleFade = clamp(1 - (Math.abs(carrier.z) - 10) / 14, 0.55, 1);
+    quality *= angleFade;
+  }
+  return { quality: clamp(quality, 0, 1), close: close || (onlyGkLeft && inBox), laneClear, gkExposed };
 }
 
 export function isStriker(player: Player): boolean {
@@ -291,10 +310,21 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
   const clearChance = clearChanceOpportunity(carrier, opponents);
 
   let shotScore = 0;
-  if (distGoal < PENALTY_AREA_LENGTH + 0.5 && Math.abs(carrier.z) < 12) {
+  const inBoxNow = inOpponentPenaltyArea(carrier) || (distGoal < PENALTY_AREA_LENGTH + 1.2 && Math.abs(carrier.z) <= PENALTY_AREA_WIDTH / 2);
+  if (inBoxNow) {
     // Box strikes should fire (misses / saves count) — not only gilt-edged chances.
     shotScore = 0.28 + shoot * 0.45 + (1 - pressure) * 0.18 - (shortT && forwardMate > 6 ? 0.18 : 0);
     if (shortT && lane > 0.55 && forwardMate > 4 && clearChance.quality < 0.35) shotScore *= 0.72;
+    // Only the keeper left — do not prefer another carry across the face.
+    let nearestOutfield = 40;
+    for (const o of opponents) {
+      if (o.isGK) continue;
+      nearestOutfield = Math.min(nearestOutfield, carrier.distTo(o.x, o.z));
+    }
+    if (nearestOutfield > 6.2) {
+      shotScore = Math.max(shotScore, 0.72 + shoot * 0.28 + clearChance.quality * 0.35);
+      runScore *= 0.42;
+    }
   }
 
   let longShotScore = 0;
@@ -686,6 +716,16 @@ export function decideAttack(ctx: AttackContext): AttackDecision {
     const gk = opponents.find((o) => o.isGK) ?? null;
     const gkClose = !!gk && carrier.distTo(gk.x, gk.z) < 4.6;
     const deadline = boxFinishDeadline(pressure, gkClose);
+    let nearestOutfield = 40;
+    for (const o of opponents) {
+      if (o.isGK) continue;
+      nearestOutfield = Math.min(nearestOutfield, carrier.distTo(o.x, o.z));
+    }
+    if (nearestOutfield > 6.2) {
+      runScore *= 0.48;
+      holdScore *= 0.22;
+      shotScore = Math.max(shotScore, 0.68 + shoot * 0.24);
+    }
     // Lateral grass next to a rushed keeper is a trap — crush side-to-side carries.
     if (space.kind === "lateral" || space.kind === "back") {
       runScore *= gkClose || pressure > 0.48 ? 0.28 : 0.55;

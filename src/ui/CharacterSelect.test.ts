@@ -318,6 +318,32 @@ describe("character select", () => {
     expect(view.root.querySelector('[data-char="card-save"]')?.textContent).toBe("SAVE");
   });
 
+  it("right-clicks a pitch counter into the PLAYER SELECT card (not edit)", () => {
+    const host = document.createElement("div");
+    const view = new CharacterSelect(host);
+    view.setSquad("Plymouth Argyle", squad(), "#007A3D", {
+      formation: "4-2-3-1",
+      starterSlots: ["GK", "CAM", "ST"],
+      team: {
+        id: "plymouth_argyle_current",
+        name: "Plymouth Argyle",
+        abbreviation: "ARG",
+        primaryColor: "#007A3D",
+        secondaryColor: "#C5A572",
+      },
+    });
+    view.render();
+    expect(view.controlMode).toBe("TEAM");
+    const token = view.root.querySelector<HTMLElement>('.pitch-token[data-id="p2"]');
+    expect(token).toBeTruthy();
+    token!.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true }));
+    expect(view.controlMode).toBe("PLAYER");
+    expect(view.current().player.id).toBe("p2");
+    expect(view.root.querySelector(".player-pitch-select .player-card")).toBeTruthy();
+    expect(view.root.querySelector(".player-card-edit-panel")).toBeNull();
+    expect(view.root.querySelector('[data-char="card-edit"]')?.textContent).toBe("EDIT");
+  });
+
   it("right-clicks a squad row into the editable PLAYER SELECT card", () => {
     const host = document.createElement("div");
     const view = new CharacterSelect(host);

@@ -167,6 +167,7 @@ export class Game {
     };
     this.teams = new TeamEditor(this.ui);
     this.players = new PlayerDatabaseEditor(this.ui);
+    this.players.onPlayerSave = (edit) => this.persistSquadPlayerEdit(edit);
     this.setup = new MatchSetup(this.ui);
     this.simLab = new MatchSimulationLabMenu(this.ui);
     this.matchCard = new MatchCard(this.ui);
@@ -1838,14 +1839,15 @@ export class Game {
     const match = this.match!;
     const team = side === "home" ? match.home : match.away;
     const tactics = this.save.data.teamTactics[team.record.id];
-    const byId = new Map(team.roster.map((s) => [s.player.id, s]));
+    const available = team.availableRoster();
+    const byId = new Map(available.map((s) => [s.player.id, s]));
     const starters = team.players
       .map((p) => byId.get(p.id))
       .filter((s): s is NonNullable<typeof s> => !!s);
     if (starters.length < team.players.length) {
       for (const p of team.players) {
         if (byId.has(p.id)) continue;
-        const synth = team.roster.find((s) => s.player.id === p.id);
+        const synth = available.find((s) => s.player.id === p.id) ?? team.roster.find((s) => s.player.id === p.id);
         if (synth) starters.push(synth);
       }
     }
@@ -1855,7 +1857,8 @@ export class Game {
       teamColor: team.record.primaryColor,
       formation: team.lineup.formation,
       formationSelection: tactics?.selection ?? team.lineup.formation,
-      roster: team.roster,
+      // Exclude already-subbed-off players so they cannot be dragged back on.
+      roster: available,
       starterSlots: team.players.map((p) => p.slot),
       secondaryColor: team.record.secondaryColor,
       team: team.record,

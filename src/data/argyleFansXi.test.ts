@@ -34,7 +34,7 @@ describe("Argyle Fans XI", () => {
   });
 
   it("keeps the named substitutes on unique shirts", () => {
-    expect(ARGYLE_FANS_BENCH.map((b) => b.shirtNumber)).toEqual([12, 6, 13, 14, 15, 17, 19, 76, 96]);
+    expect(ARGYLE_FANS_BENCH.map((b) => b.shirtNumber)).toEqual([12, 6, 13, 14, 22, 17, 19, 76, 96]);
     expect(ARGYLE_FANS_BENCH[0]?.id).toBe("player_fan_p_petey");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_a_bradderz")?.displayName).toBe("A. Bradderz");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_p_petey")?.displayName).toBe("P. Petey");

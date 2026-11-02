@@ -220,7 +220,7 @@ export const ARGYLE_FANS_BENCH: { id: string; shirtNumber: number }[] = [
   { id: "player_fan_a_life", shirtNumber: 6 },
   { id: "player_fan_a_bradderz", shirtNumber: 13 },
   { id: "player_fan_c_pilgrim_14", shirtNumber: 14 },
-  { id: "player_fan_a_capman", shirtNumber: 15 },
+  { id: "player_fan_a_capman", shirtNumber: 22 },
   { id: "player_fan_g_bobby", shirtNumber: 17 },
   { id: "player_fan_alfie_greenwood", shirtNumber: 19 },
   { id: "player_fan_argyle_usa", shirtNumber: 76 },
