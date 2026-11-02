@@ -1,6 +1,7 @@
 import { DEFAULT_KEY_BINDINGS, mergeKeyBindings, type KeyBindings } from "../football/controls/KeyBindings";
 import { DEFAULT_KICK_OFF_TIME, DEFAULT_MATCH_DURATION, DEFAULT_TEAM_ID } from "../football/constants";
 import { blankPredictions, normalizePredictions, type PredictionsState } from "../football/predictions/Predictions";
+import type { TeamTacticsSave } from "../football/teams/TeamTactics";
 import { DEFAULT_TITLE_FONT, DEFAULT_CLUB_NAME_FONT, DEFAULT_CLUB_NAME_GLOW, DEFAULT_CLUB_NAME_GLOW_DIFFUSION, DEFAULT_CLUB_NAME_INVERT_COLORS, clampClubNameGlowDiffusion } from "../ui/TitleFonts";
 
 export interface SavedSettings {
@@ -89,6 +90,8 @@ export interface SaveData {
   fansTeam: unknown | null;
   playedListedFixture: boolean;
   predictions: PredictionsState;
+  /** Per-team formation / play-style / USER custom tactics. */
+  teamTactics: Record<string, TeamTacticsSave>;
 }
 
 const KEY = "argyle-football-save-v05";
@@ -242,6 +245,10 @@ export class SaveManager {
         settings,
         playedListedFixture: Boolean(parsed.playedListedFixture),
         predictions: normalizePredictions(parsed.predictions),
+        teamTactics:
+          parsed.teamTactics && typeof parsed.teamTactics === "object"
+            ? (parsed.teamTactics as Record<string, TeamTacticsSave>)
+            : {},
       };
     } catch {
       return this.blank();
@@ -268,6 +275,7 @@ export class SaveManager {
       fansTeam: null,
       playedListedFixture: false,
       predictions: blankPredictions(),
+      teamTactics: {},
     };
   }
 }

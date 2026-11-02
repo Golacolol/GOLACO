@@ -1,5 +1,16 @@
 import type { SquadPlayer } from "../core/Database";
-import { FORMATION_NAMES, getFormation, remapPlayersToFormation } from "../football/teams/Formation";
+import {
+  FORMATION_NAMES,
+  getFormation,
+  remapPlayersToFormation,
+  USER_FORMATION,
+  type FormationName,
+} from "../football/teams/Formation";
+import {
+  normalizeFormationName,
+  snapshotWorkingAsUser,
+  type TeamTacticsUserSnapshot,
+} from "../football/teams/TeamTactics";
 import type { KitChoice, PlayerAttributes, PositionCode, TeamKit, TeamRecord } from "../data/schema";
 import {
   PLAY_STYLE_IDS,
@@ -15,12 +26,13 @@ import {
   kitInitialSurnameLabel,
   kitMarkerHtml,
   kitSurnameFromName,
-  portraitHtml,
+  portraitAsset,
   teamBadgeHtml,
 } from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
 import { imageLabel, listPlayerImages, uploadPlayerImage } from "./playerImages";
 import { nextProfileStatsMode, profileStatsBlock, type ProfileStatsMode } from "./ProfileHex";
+import { listProfileAttrSpokes } from "../football/players/PlayerStats";
 
 const EDIT_POSITIONS: PositionCode[] = [
   "GK",
@@ -132,7 +144,6 @@ type TeamBadgeSource = {
   secondaryColor?: string;
 };
 
-const GROUPS = ["GK", "DEF", "MID", "FWD"] as const;
 /** Max nudge from formation default (normalized pitch units). */
 const MAX_OFFSET_X = 0.28;
 const MAX_OFFSET_Z = 0.4;
@@ -148,13 +159,6 @@ const LINE_BAND = {
   LM: 6,
   ST: 7,
 } as const;
-
-function groupOf(pos: string): (typeof GROUPS)[number] {
-  if (pos === "GK") return "GK";
-  if (["CB", "RB", "LB", "RWB", "LWB"].includes(pos)) return "DEF";
-  if (["ST", "RW", "LW"].includes(pos)) return "FWD";
-  return "MID";
-}
 
 /** Formation kit disc: outfield uses club colours; GKs use a standard green kit with white text. */
 const GK_MARKER_GREEN = "#1FAE5B";
@@ -217,18 +221,18 @@ export function fitFormationTeamTitle(title: HTMLElement): void {
   title.style.fontSize = "";
   title.style.letterSpacing = "";
   title.style.whiteSpace = "nowrap";
-  let size = parseFloat(getComputedStyle(title).fontSize) || 22;
-  let tracking = parseFloat(getComputedStyle(title).letterSpacing) || 0.06;
+  let size = parseFloat(getComputedStyle(title).fontSize) || 44;
+  let tracking = parseFloat(getComputedStyle(title).letterSpacing) || 0.04;
   // letterSpacing from computed style is px — prefer the CSS em default.
-  if (getComputedStyle(title).letterSpacing.endsWith("px")) tracking = 0.06;
+  if (getComputedStyle(title).letterSpacing.endsWith("px")) tracking = 0.04;
   let guard = 0;
-  while (title.scrollWidth > maxW + 0.5 && size > 13 && guard < 48) {
+  while (title.scrollWidth > maxW + 0.5 && size > 26 && guard < 48) {
     size -= 0.5;
     title.style.fontSize = `${size}px`;
     guard += 1;
   }
-  while (title.scrollWidth > maxW + 0.5 && tracking > 0.02 && guard < 72) {
-    tracking = Math.max(0.02, tracking - 0.01);
+  while (title.scrollWidth > maxW + 0.5 && tracking > 0.01 && guard < 72) {
+    tracking = Math.max(0.01, tracking - 0.01);
     title.style.letterSpacing = `${tracking}em`;
     guard += 1;
   }
@@ -492,8 +496,12 @@ export interface TeamSelectSlot {
 
 export type EditedLineup = {
   formation: string;
+  /** Dropdown selection — base shape or USER. */
+  selection: string;
   playStyle: PlayStyleChoice;
   starters: { playerId: string; slot: string; offsetX?: number; offsetZ?: number }[];
+  /** Latest USER snapshot to retain when switching back to a base. */
+  userTactics?: TeamTacticsUserSnapshot | null;
 };
 
 interface SlotOffset {
@@ -510,10 +518,13 @@ export type FormationSideDraft = {
   team: TeamRecord | null;
   teamBadge: TeamBadgeSource | null;
   formation: string;
+  formationSelection: string;
   playStyle: PlayStyleChoice;
   xi: TeamSelectSlot[];
   bench: SquadPlayer[];
   slotOffsets: Map<string, SlotOffset>;
+  userTactics: TeamTacticsUserSnapshot | null;
+  userBoardDirty: boolean;
   pauseOriginalStarterIds: Set<string> | null;
   pauseSubsRemaining: number | null;
 };
@@ -524,12 +535,15 @@ export type FormationSideConfig = {
   starters: SquadPlayer[];
   teamColor?: string;
   formation?: string;
+  /** Formation dropdown value — base name or USER. */
+  formationSelection?: string;
   roster?: SquadPlayer[];
   starterSlots?: string[];
   secondaryColor?: string;
   team?: TeamRecord | TeamBadgeSource | null;
   playStyle?: PlayStyleId | null;
   slotOffsets?: { slot: string; dx: number; dz: number }[];
+  userTactics?: TeamTacticsUserSnapshot | null;
   pauseSubsRemaining?: number | null;
 };
 
@@ -593,6 +607,12 @@ export class CharacterSelect {
   /** Club whose kit choice applies (fixed while switching HOME/AWAY drafts). */
   private userMatchTeam: TeamRecord | null = null;
   formation = "4-2-3-1";
+  /** Formation dropdown — a base shape or USER. */
+  formationSelection: string = "4-2-3-1";
+  /** Retained custom tactics (survives switching to a clean base). */
+  userTactics: TeamTacticsUserSnapshot | null = null;
+  /** True after swaps / style / nudges — retain as USER when switching to a clean base. */
+  private userBoardDirty = false;
   /** Play-style override; Auto = derive at kick-off. */
   playStyle: PlayStyleChoice = "auto";
   /** Shown in pause formation editor (substitutions remaining this match). */
@@ -622,6 +642,8 @@ export class CharacterSelect {
   onSquadPlayerSave: ((edit: SquadPlayerEdit) => void) | null = null;
   /** Hex shape vs six detail bars on the roster card / player panel. */
   private profileView: ProfileStatsMode = "hex";
+  /** Sports card flipped to the full-ratings back. */
+  private cardFlipped = false;
   /**
    * When true, pitch/bench counters show native hover titles with the player name.
    * Driven by Options → Display → Formation overlays (default off).
@@ -679,6 +701,13 @@ export class CharacterSelect {
         this.toggleChalkMode();
         return;
       }
+      const flip = (e.target as HTMLElement).closest<HTMLElement>("[data-char='card-flip']");
+      if (flip && this.root.contains(flip)) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.setCardFlipped(!this.cardFlipped);
+        return;
+      }
       const toggle = (e.target as HTMLElement).closest<HTMLElement>("[data-char='profile-toggle']");
       if (toggle && this.root.contains(toggle)) {
         e.preventDefault();
@@ -716,6 +745,9 @@ export class CharacterSelect {
       kitChoice?: KitChoice;
       /** Lineup play-style override; null/absent → Auto. */
       playStyle?: PlayStyleId | null;
+      formationSelection?: string;
+      userTactics?: TeamTacticsUserSnapshot | null;
+      slotOffsets?: { slot: string; dx: number; dz: number }[];
       /** Fixture side this squad represents when dual editing is not used. */
       formationSide?: FormationSide;
     },
@@ -733,11 +765,14 @@ export class CharacterSelect {
       starters,
       teamColor,
       formation: options?.formation,
+      formationSelection: options?.formationSelection,
       roster: options?.roster,
       starterSlots: options?.starterSlots,
       secondaryColor: options?.secondaryColor,
       team: options?.team,
       playStyle: options?.playStyle,
+      slotOffsets: options?.slotOffsets,
+      userTactics: options?.userTactics,
       pauseSubsRemaining: this.context === "pause" ? this.pauseSubsRemaining : null,
     });
     this.userMatchTeam = draft.team;
@@ -833,7 +868,9 @@ export class CharacterSelect {
           secondaryColor: config.team.secondaryColor ?? secondaryColor,
         }
       : null;
-    const formation = config.formation ?? "4-2-3-1";
+    const formation = normalizeFormationName(config.formation);
+    const formationSelection =
+      config.formationSelection === USER_FORMATION ? USER_FORMATION : normalizeFormationName(config.formationSelection ?? formation);
     const playStyle = isPlayStyleId(config.playStyle ?? undefined) ? config.playStyle! : "auto";
     const form = getFormation(formation);
     const slots = config.starterSlots;
@@ -878,10 +915,13 @@ export class CharacterSelect {
       team: teamRecord,
       teamBadge,
       formation,
+      formationSelection,
       playStyle,
       xi,
       bench,
       slotOffsets,
+      userTactics: config.userTactics ?? null,
+      userBoardDirty: false,
       pauseOriginalStarterIds,
       pauseSubsRemaining: config.pauseSubsRemaining ?? null,
     };
@@ -895,7 +935,10 @@ export class CharacterSelect {
     this.teamRecord = draft.team;
     this.teamBadge = draft.teamBadge;
     this.formation = draft.formation;
+    this.formationSelection = draft.formationSelection;
     this.playStyle = draft.playStyle;
+    this.userTactics = draft.userTactics;
+    this.userBoardDirty = draft.userBoardDirty;
     this.xi = draft.xi.map((row) => ({ slot: row.slot, player: row.player }));
     this.bench = [...draft.bench];
     this.slotOffsets = new Map(draft.slotOffsets);
@@ -921,10 +964,13 @@ export class CharacterSelect {
       team: this.teamRecord,
       teamBadge: this.teamBadge,
       formation: this.formation,
+      formationSelection: this.formationSelection,
       playStyle: this.playStyle,
       xi: this.xi.map((row) => ({ slot: row.slot, player: row.player })),
       bench: [...this.bench],
       slotOffsets: new Map(this.slotOffsets),
+      userTactics: this.userTactics,
+      userBoardDirty: this.userBoardDirty,
       pauseOriginalStarterIds: this.pauseOriginalStarterIds
         ? new Set(this.pauseOriginalStarterIds)
         : null,
@@ -940,6 +986,7 @@ export class CharacterSelect {
   private fingerprintDraft(draft: FormationSideDraft): string {
     return JSON.stringify({
       formation: draft.formation,
+      selection: draft.formationSelection,
       playStyle: draft.playStyle,
       starters: draft.xi.map((row) => {
         const off = draft.slotOffsets.get(row.slot);
@@ -954,17 +1001,30 @@ export class CharacterSelect {
   }
 
   private editedLineupFromDraft(draft: FormationSideDraft): EditedLineup {
+    const starters = draft.xi.map((row) => {
+      const off = draft.slotOffsets.get(row.slot);
+      return {
+        playerId: row.player.player.id,
+        slot: row.slot,
+        ...(off && (off.dx || off.dz) ? { offsetX: off.dx, offsetZ: off.dz } : {}),
+      };
+    });
+    const userTactics =
+      draft.formationSelection === USER_FORMATION ||
+      draft.slotOffsets.size > 0 ||
+      draft.userBoardDirty
+        ? snapshotWorkingAsUser({
+            formation: draft.formation,
+            playStyle: draft.playStyle,
+            starters,
+          })
+        : draft.userTactics;
     return {
       formation: draft.formation,
+      selection: draft.formationSelection,
       playStyle: draft.playStyle,
-      starters: draft.xi.map((row) => {
-        const off = draft.slotOffsets.get(row.slot);
-        return {
-          playerId: row.player.player.id,
-          slot: row.slot,
-          ...(off && (off.dx || off.dz) ? { offsetX: off.dx, offsetZ: off.dz } : {}),
-        };
-      }),
+      starters,
+      userTactics,
     };
   }
 
@@ -991,7 +1051,16 @@ export class CharacterSelect {
 
   setPlayStyle(choice: PlayStyleChoice): void {
     this.playStyle = choice === "auto" || isPlayStyleId(choice) ? choice : "auto";
+    this.userBoardDirty = true;
     this.markDirtyIfNeeded();
+  }
+
+  private formationSelectOptions(): string[] {
+    const names: string[] = [...FORMATION_NAMES];
+    if ((this.userTactics || this.formationSelection === USER_FORMATION) && !names.includes(USER_FORMATION)) {
+      names.unshift(USER_FORMATION);
+    }
+    return names;
   }
 
   private markDirtyIfNeeded(): void {
@@ -1174,16 +1243,30 @@ export class CharacterSelect {
   }
 
   setFormation(name: string): void {
+    if (name === USER_FORMATION) {
+      const user = this.userTactics;
+      if (!user?.starters?.length) return;
+      this.retainWorkingAsUserIfNeeded();
+      this.applyUserTacticsSnapshot(user);
+      this.formationSelection = USER_FORMATION;
+      this.userBoardDirty = false;
+      this.markDirtyIfNeeded();
+      return;
+    }
+    const next = normalizeFormationName(name);
+    this.retainWorkingAsUserIfNeeded();
     const from = this.formation;
-    this.formation = name;
+    this.formation = next;
+    this.formationSelection = next;
     this.slotOffsets.clear();
+    this.userBoardDirty = false;
     const mapped = remapPlayersToFormation(
       this.xi.map((row) => ({
         id: row.player.player.id,
         slot: row.slot,
         isGK: row.player.player.primaryPosition === "GK",
       })),
-      name,
+      next,
       from,
     );
     const byId = new Map(this.xi.map((row) => [row.player.player.id, row.player]));
@@ -1192,6 +1275,75 @@ export class CharacterSelect {
       player: byId.get(row.id)!,
     }));
     this.markDirtyIfNeeded();
+  }
+
+  /** Keep the current board as USER before switching to a clean base. */
+  private retainWorkingAsUserIfNeeded(): void {
+    if (
+      this.formationSelection !== USER_FORMATION &&
+      this.slotOffsets.size === 0 &&
+      !this.userBoardDirty
+    ) {
+      return;
+    }
+    this.userTactics = snapshotWorkingAsUser({
+      formation: this.formation,
+      playStyle: this.playStyle,
+      starters: this.xi.map((row) => {
+        const off = this.slotOffsets.get(row.slot);
+        return {
+          playerId: row.player.player.id,
+          slot: row.slot,
+          ...(off && (off.dx || off.dz) ? { offsetX: off.dx, offsetZ: off.dz } : {}),
+        };
+      }),
+    });
+  }
+
+  private applyUserTacticsSnapshot(user: TeamTacticsUserSnapshot): void {
+    const formation = normalizeFormationName(user.formation);
+    this.formation = formation;
+    this.playStyle = isPlayStyleId(user.playStyle ?? undefined) ? user.playStyle! : "auto";
+    const pool = [...this.xi.map((r) => r.player), ...this.bench];
+    const byId = new Map(pool.map((p) => [p.player.id, p]));
+    const nextXi: TeamSelectSlot[] = [];
+    const used = new Set<string>();
+    for (const starter of user.starters) {
+      const player = byId.get(starter.playerId);
+      if (!player || used.has(player.player.id)) continue;
+      used.add(player.player.id);
+      nextXi.push({ slot: starter.slot, player });
+    }
+    if (nextXi.length < 11) {
+      const leftovers = pool
+        .filter((p) => !used.has(p.player.id))
+        .map((p) => ({
+          id: p.player.id,
+          slot: p.player.primaryPosition,
+          isGK: p.player.primaryPosition === "GK",
+        }));
+      for (const row of remapPlayersToFormation(leftovers, formation, formation)) {
+        if (nextXi.length >= 11) break;
+        if (used.has(row.id)) continue;
+        const player = byId.get(row.id);
+        if (!player) continue;
+        used.add(row.id);
+        nextXi.push({ slot: row.slot, player });
+      }
+    }
+    if (nextXi.length) {
+      this.xi = nextXi.slice(0, 11);
+      this.bench = pool.filter((p) => !used.has(p.player.id));
+    }
+    this.slotOffsets.clear();
+    for (const starter of user.starters) {
+      if (!starter.offsetX && !starter.offsetZ) continue;
+      this.slotOffsets.set(starter.slot, {
+        dx: clamp(starter.offsetX ?? 0, -MAX_OFFSET_X, MAX_OFFSET_X),
+        dz: clamp(starter.offsetZ ?? 0, -MAX_OFFSET_Z, MAX_OFFSET_Z),
+      });
+    }
+    this.syncPlayersList();
   }
 
   getEditedLineup(): EditedLineup {
@@ -1218,18 +1370,34 @@ export class CharacterSelect {
       dx: clamp(dx, -MAX_OFFSET_X, MAX_OFFSET_X),
       dz: clamp(dz, -MAX_OFFSET_Z, MAX_OFFSET_Z),
     });
+    this.formationSelection = USER_FORMATION;
+    this.userBoardDirty = true;
+    this.retainWorkingAsUserIfNeeded();
     this.markDirtyIfNeeded();
   }
 
   selectPlayerId(id: string): void {
     const i = this.players.findIndex((p) => p.player.id === id);
-    if (i >= 0) this.index = i;
+    if (i < 0) return;
+    if (this.players[this.index]?.player.id !== id) this.cardFlipped = false;
+    this.index = i;
   }
 
-  /** Cycle hex (6) → six ratings → full attribute shape, without rebuilding the formation panel. */
+  /** Cycle hex (6) → full N-gon → six rating bars, without rebuilding the formation panel. */
   toggleProfileView(): void {
     this.profileView = nextProfileStatsMode(this.profileView);
     this.patchProfileStats();
+  }
+
+  setCardFlipped(flipped: boolean): void {
+    this.cardFlipped = flipped;
+    for (const card of this.root.querySelectorAll<HTMLElement>(".player-card")) {
+      card.classList.toggle("is-flipped", flipped);
+      card.setAttribute("data-face", flipped ? "back" : "front");
+      for (const label of card.querySelectorAll<HTMLElement>(".player-card-flip-label")) {
+        label.textContent = flipped ? "STATS" : "CARD";
+      }
+    }
   }
 
   /**
@@ -1264,17 +1432,11 @@ export class CharacterSelect {
 
     const card = this.root.querySelector(".team-roster-card");
     if (card) {
-      const a = selected.attrs;
-      card.innerHTML = `
-        ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
-          surnameOnly: true,
-          className: "kit-marker-roster",
-          textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
-        })}
-        <h3>${selected.shirtNumber}. ${escapeHtml(kitHeadingName(selected.player))}</h3>
-        <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
-        ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
-      `;
+      card.innerHTML = this.playerSportsCardHtml(selected, { variant: "roster" });
+    }
+    const pitchCard = this.root.querySelector(".player-pitch-select");
+    if (pitchCard) {
+      pitchCard.innerHTML = this.playerSelectPitchInnerHtml(selected);
     }
 
     if (list) list.scrollTop = scrollTop;
@@ -1286,19 +1448,21 @@ export class CharacterSelect {
   }
 
   private patchProfileStats(): void {
-    const host = this.root.querySelector<HTMLElement>("[data-char='profile-toggle']");
-    if (!host) {
+    const hosts = this.root.querySelectorAll<HTMLElement>("[data-char='profile-toggle']");
+    if (!hosts.length) {
       this.render();
       return;
     }
-    const size = Number(host.getAttribute("data-size") || (this.controlMode === "TEAM" ? 168 : 188));
-    const compact = host.classList.contains("profile-stats-compact");
-    const next = profileStatsBlock(this.current().attrs, {
-      compact,
-      mode: this.profileView,
-      size,
-    });
-    host.outerHTML = next;
+    const attrs = this.current().attrs;
+    for (const host of hosts) {
+      const size = Number(host.getAttribute("data-size") || 148);
+      const compact = host.classList.contains("profile-stats-compact");
+      host.outerHTML = profileStatsBlock(attrs, {
+        compact,
+        mode: this.profileView,
+        size,
+      });
+    }
   }
 
   render(): void {
@@ -1353,19 +1517,144 @@ export class CharacterSelect {
     return `<div class="char-team-title">${badge}<div class="eyebrow">${escapeHtml(text)}</div>${chips}</div>`;
   }
 
+  private playerCardFlipNavHtml(): string {
+    return `<div class="player-card-flip-nav" role="group" aria-label="Flip player card">
+      <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="prev" aria-label="Flip card">‹</button>
+      <span class="player-card-flip-label">${this.cardFlipped ? "STATS" : "CARD"}</span>
+      <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="next" aria-label="Flip card">›</button>
+    </div>`;
+  }
+
+  private playerCardShirtHtml(sp: SquadPlayer): string {
+    const text = contrastingKitText(this.teamColor, this.teamSecondaryColor);
+    const surname = kitSurname(sp.player.displayName || sp.player.name);
+    return `<div class="player-card-shirt" style="background:${escapeAttr(this.teamColor)};color:${escapeAttr(text)}">
+      <span class="player-card-shirt-name">${escapeHtml(surname)}</span>
+      <span class="player-card-shirt-num">${sp.shirtNumber}</span>
+    </div>`;
+  }
+
+  private playerCardPhotoHtml(sp: SquadPlayer): string {
+    const src = portraitAsset(sp.player);
+    const text = contrastingKitText(this.teamColor, this.teamSecondaryColor);
+    if (src) {
+      return `<div class="player-card-photo has-photo">
+        <img alt="" src="${escapeAttr(src)}" onerror="this.closest('.player-card-photo')?.classList.remove('has-photo');this.remove();"/>
+      </div>`;
+    }
+    return `<div class="player-card-photo player-card-photo-fallback" style="background:${escapeAttr(this.teamColor)};color:${escapeAttr(text)}">
+      <span class="player-card-shirt-name">${escapeHtml(kitSurname(sp.player.displayName || sp.player.name))}</span>
+      <span class="player-card-shirt-num">${sp.shirtNumber}</span>
+    </div>`;
+  }
+
+  private playerCardRatingsHtml(sp: SquadPlayer, editing: boolean): string {
+    if (editing) {
+      return EDIT_STAT_GROUPS.map((group) => {
+        const fields = group.fields
+          .map((field) => {
+            const raw = sp.attrs[field.key];
+            const stored = (sp.player as PlayerAttributes)[field.key];
+            const value =
+              field.optional && (stored === undefined || stored === null)
+                ? ""
+                : String(typeof raw === "number" ? raw : stored ?? "");
+            const ph = field.optional ? ` placeholder="auto"` : "";
+            return `<label class="player-card-stat">${field.label}<input data-edit-stat="${field.key}" type="number" min="1" max="100" value="${escapeAttr(value)}"${ph} /></label>`;
+          })
+          .join("");
+        return `<div class="player-card-stat-group"><div class="player-card-stat-title">${group.title}</div><div class="player-card-stat-grid">${fields}</div></div>`;
+      }).join("");
+    }
+    const spokes = listProfileAttrSpokes(sp.attrs);
+    return `<div class="player-card-ratings">
+      ${spokes
+        .map(
+          (s) =>
+            `<div class="player-card-rating-row"><span>${escapeHtml(s.label)}</span><b>${s.value}</b><i style="width:${s.value}%"></i></div>`,
+        )
+        .join("")}
+    </div>`;
+  }
+
+  /** Flipable sports card — front: shirt + PNG + hex; back: full ratings. */
+  private playerSportsCardHtml(
+    sp: SquadPlayer,
+    opts: { variant: "roster" | "select" | "edit" },
+  ): string {
+    const editing = opts.variant === "edit";
+    const flipped = this.cardFlipped || editing;
+    const hexSize = opts.variant === "roster" ? 132 : opts.variant === "select" ? 156 : 140;
+    const compact = opts.variant === "roster";
+    const saveBar = editing
+      ? `<div class="player-card-save-bar">
+          <button type="button" class="primary" data-squad-edit="save">Save</button>
+          <button type="button" data-squad-edit="cancel">Cancel</button>
+        </div>`
+      : "";
+    const editFront = editing
+      ? `<div class="player-card-edit-identity">
+          <label>Name <input data-edit-field="name" type="text" value="${escapeAttr(sp.player.name)}" /></label>
+          <label>Display <input data-edit-field="displayName" type="text" value="${escapeAttr(sp.player.displayName || sp.player.name)}" /></label>
+          <div class="player-card-edit-row">
+            <label>Shirt <input data-edit-field="shirtNumber" type="number" min="1" max="99" value="${sp.shirtNumber}" /></label>
+            <label>Pos <select data-edit-field="primaryPosition">${EDIT_POSITIONS.map(
+              (pos) =>
+                `<option value="${pos}"${pos === sp.player.primaryPosition ? " selected" : ""}>${pos}</option>`,
+            ).join("")}</select></label>
+          </div>
+          <div class="player-card-edit-row">
+            <label>Height <input data-edit-field="heightCm" type="number" min="150" max="220" value="${sp.player.heightCm ?? ""}" placeholder="cm" /></label>
+            <label>Weight <input data-edit-field="weightKg" type="number" min="50" max="120" value="${sp.player.weightKg ?? ""}" placeholder="kg" /></label>
+          </div>
+          <label>PNG portrait
+            <select data-edit-field="portraitAsset" title="Portrait from images/">${this.portraitOptionsHtml(sp.player.appearance?.portraitAsset?.trim() || "")}</select>
+          </label>
+          <label class="portrait-upload-btn squad-edit-upload">Upload PNG
+            <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-edit-upload hidden />
+          </label>
+        </div>`
+      : "";
+    return `<div class="player-card player-card-${opts.variant}${flipped ? " is-flipped" : ""}" data-face="${flipped ? "back" : "front"}" style="--card-accent:${escapeAttr(this.teamColor)}">
+      <div class="player-card-inner">
+        <div class="player-card-face player-card-front">
+          <div class="player-card-top">
+            <span class="player-card-pos">${escapeHtml(sp.player.primaryPosition)}</span>
+            <span class="player-card-ovr"><em>OVR</em>${Math.round(sp.overall)}</span>
+          </div>
+          ${this.playerCardPhotoHtml(sp)}
+          ${this.playerCardShirtHtml(sp)}
+          ${editFront}
+          ${profileStatsBlock(sp.attrs, { compact, mode: this.profileView, size: hexSize })}
+          ${this.playerCardFlipNavHtml()}
+        </div>
+        <div class="player-card-face player-card-back">
+          ${saveBar}
+          <div class="player-card-back-head">
+            <span class="player-card-pos">${escapeHtml(sp.player.primaryPosition)}</span>
+            <span class="player-card-back-name">${escapeHtml(kitHeadingName(sp.player))}</span>
+            <span class="player-card-ovr"><em>OVR</em>${Math.round(sp.overall)}</span>
+          </div>
+          <div class="player-card-back-body">${this.playerCardRatingsHtml(sp, editing)}</div>
+          ${this.playerCardFlipNavHtml()}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  private playerSelectPitchInnerHtml(sp: SquadPlayer): string {
+    return `
+      <div class="tabletop-setup-kicker">PLAYER SELECT</div>
+      ${this.playerSportsCardHtml(sp, { variant: "select" })}
+      <p class="hint">Use bottom ‹ › on the mode bar to change player. Flip the card for full ratings. Start as Player locks you to this one.</p>
+    `;
+  }
+
   /** Player details shown in the pitch well during PLAYER SELECT. */
   private playerSelectPitchHtml(): string {
-    const p = this.current();
-    const a = p.attrs;
     return `
       <div class="pitch-overlay-card player-pitch-select">
-        <div class="tabletop-setup-kicker">PLAYER SELECT</div>
-        ${portraitHtml(p.player, p.shirtNumber, this.teamColor)}
-        <div class="char-num">#${p.shirtNumber}</div>
-        <h2>${escapeHtml(kitHeadingName(p.player))}</h2>
-        <div class="char-meta">${p.player.primaryPosition} · OVR ${p.overall} · ${groupOf(p.player.primaryPosition)}</div>
-        ${profileStatsBlock(a, { mode: this.profileView, size: 168 })}
-        <p class="hint">Use ‹ › or the squad list to change player. Start as Player locks you to this one.</p>
+        ${this.playerSelectPitchInnerHtml(this.current())}
       </div>
     `;
   }
@@ -1480,7 +1769,7 @@ export class CharacterSelect {
     }
     if (el instanceof HTMLSelectElement && el.matches("[data-char='form']")) {
       const form = el.value;
-      if (form) {
+      if (form === USER_FORMATION || FORMATION_NAMES.includes(form as FormationName)) {
         this.setFormation(form);
         this.render();
       }
@@ -1594,7 +1883,6 @@ export class CharacterSelect {
     const form = getFormation(this.formation);
     const bySlot = new Map(this.xi.map((row) => [row.slot, row]));
     const selected = this.current();
-    const a = selected.attrs;
     const selectedId = selected.player.id;
     const overlayMode =
       this.purpose !== "spot" &&
@@ -1686,10 +1974,12 @@ export class CharacterSelect {
             <label class="formation-select-wrap">
               <span class="visually-hidden">Formation</span>
               <select class="formation-chip formation-select form-select on" data-char="form" aria-label="Formation">
-                ${FORMATION_NAMES.map(
-                  (name) =>
-                    `<option value="${name}" ${name === this.formation ? "selected" : ""}>${name}</option>`,
-                ).join("")}
+                ${this.formationSelectOptions()
+                  .map(
+                    (name) =>
+                      `<option value="${name}" ${name === this.formationSelection ? "selected" : ""}>${name}</option>`,
+                  )
+                  .join("")}
               </select>
             </label>
           </div>
@@ -1698,14 +1988,7 @@ export class CharacterSelect {
         <div class="team-select-body">
           <aside class="team-roster">
             <div class="team-roster-card">
-              ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
-                surnameOnly: true,
-                className: "kit-marker-roster",
-                textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
-              })}
-              <h3>${selected.shirtNumber}. ${escapeHtml(kitHeadingName(selected.player))}</h3>
-              <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
-              ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
+              ${this.playerSportsCardHtml(selected, { variant: "roster" })}
             </div>
             <div class="team-roster-list">
               ${this.players
@@ -1828,60 +2111,10 @@ export class CharacterSelect {
     if (!this.editingPlayerId) return "";
     const sp = this.players.find((p) => p.player.id === this.editingPlayerId);
     if (!sp) return "";
-    const p = sp.player;
-    const a = sp.attrs;
-    const posOpts = EDIT_POSITIONS.map(
-      (pos) =>
-        `<option value="${pos}"${pos === p.primaryPosition ? " selected" : ""}>${pos}</option>`,
-    ).join("");
-    const currentPortrait = p.appearance?.portraitAsset?.trim() || "";
-    const portraitOpts = this.portraitOptionsHtml(currentPortrait);
-    const groups = EDIT_STAT_GROUPS.map((group) => {
-      const fields = group.fields
-        .map((field) => {
-          const raw = a[field.key];
-          const stored = (p as PlayerAttributes)[field.key];
-          const value =
-            field.optional && (stored === undefined || stored === null)
-              ? ""
-              : String(typeof raw === "number" ? raw : stored ?? "");
-          const ph = field.optional ? ` placeholder="auto"` : "";
-          return `<label>${field.label} <input data-edit-stat="${field.key}" type="number" min="1" max="100" value="${escapeAttr(value)}"${ph} /></label>`;
-        })
-        .join("");
-      return `<div class="squad-edit-group"><div class="squad-edit-group-title">${group.title}</div><div class="squad-edit-attrs">${fields}</div></div>`;
-    }).join("");
     return `
       <div class="squad-edit-overlay" data-squad-edit="backdrop" role="presentation">
-        <div class="squad-edit-dialog" role="dialog" aria-modal="true" aria-label="Edit player" data-squad-edit="dialog">
-          <h3>Edit player</h3>
-          <p class="hint">Portrait + full attributes. Blank optional stats use game defaults. Saves to local squad data.</p>
-          <div class="squad-edit-portrait">
-            <div class="squad-edit-portrait-preview" data-edit-preview>${portraitHtml(p, sp.shirtNumber, this.teamColor)}</div>
-            <div class="squad-edit-portrait-controls">
-              <label>PNG portrait
-                <select data-edit-field="portraitAsset" title="Portrait from images/">${portraitOpts}</select>
-              </label>
-              <label class="portrait-upload-btn squad-edit-upload">Upload PNG
-                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-edit-upload hidden />
-              </label>
-            </div>
-          </div>
-          <label>Name <input data-edit-field="name" type="text" value="${escapeAttr(p.name)}" /></label>
-          <label>Display name <input data-edit-field="displayName" type="text" value="${escapeAttr(p.displayName || p.name)}" /></label>
-          <div class="squad-edit-row">
-            <label>Shirt # <input data-edit-field="shirtNumber" type="number" min="1" max="99" value="${sp.shirtNumber}" /></label>
-            <label>Position <select data-edit-field="primaryPosition">${posOpts}</select></label>
-          </div>
-          <div class="squad-edit-row">
-            <label>Height (cm) <input data-edit-field="heightCm" type="number" min="150" max="220" value="${p.heightCm ?? ""}" placeholder="auto" /></label>
-            <label>Weight (kg) <input data-edit-field="weightKg" type="number" min="50" max="120" value="${p.weightKg ?? ""}" placeholder="auto" /></label>
-          </div>
-          ${groups}
-          <div class="row-btns">
-            <button type="button" data-squad-edit="cancel">Cancel</button>
-            <button type="button" class="primary" data-squad-edit="save">Save</button>
-          </div>
+        <div class="squad-edit-dialog squad-edit-card" role="dialog" aria-modal="true" aria-label="Edit player" data-squad-edit="dialog">
+          ${this.playerSportsCardHtml(sp, { variant: "edit" })}
         </div>
       </div>
     `;
@@ -1910,6 +2143,7 @@ export class CharacterSelect {
 
   private async openSquadEdit(id: string): Promise<void> {
     this.editingPlayerId = id;
+    this.cardFlipped = true;
     this.render();
     if (!this.imagesLoaded) {
       try {
@@ -1929,6 +2163,7 @@ export class CharacterSelect {
     if (kind === "cancel" || kind === "backdrop") {
       e.preventDefault();
       this.editingPlayerId = null;
+      this.cardFlipped = false;
       this.render();
       return;
     }
@@ -1970,8 +2205,8 @@ export class CharacterSelect {
       if (!sp.player.appearance) sp.player.appearance = {};
       const value = select.value.trim();
       sp.player.appearance.portraitAsset = value || null;
-      const preview = this.root.querySelector("[data-edit-preview]");
-      if (preview) preview.innerHTML = portraitHtml(sp.player, sp.shirtNumber, this.teamColor);
+      const photo = this.root.querySelector(".squad-edit-dialog .player-card-photo");
+      if (photo) photo.outerHTML = this.playerCardPhotoHtml(sp);
     }
   }
 
@@ -2027,6 +2262,7 @@ export class CharacterSelect {
     this.applySquadPlayerEditLocally(edit);
     this.onSquadPlayerSave?.(edit);
     this.editingPlayerId = null;
+    this.cardFlipped = false;
     this.render();
   }
 
@@ -2354,6 +2590,7 @@ export class CharacterSelect {
       const moving = this.xi[fromXi];
       this.xi[fromXi] = { slot: moving.slot, player: target.player };
       this.xi[targetIdx] = { slot: toSlot, player: moving.player };
+      this.userBoardDirty = true;
       this.markDirtyIfNeeded();
       return;
     }
@@ -2376,6 +2613,7 @@ export class CharacterSelect {
     this.bench.splice(fromBench, 1);
     this.bench.push(target.player);
     this.xi[targetIdx] = { slot: toSlot, player: incoming };
+    this.userBoardDirty = true;
     this.markDirtyIfNeeded();
   }
 

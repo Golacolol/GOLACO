@@ -64,8 +64,8 @@ export const ARGYLE_FANS_PLAYERS: PlayerRecord[] = [
     heightCm: 190,
     appearance: { portraitAsset: "/images/l7.png", skinTone: 0.5, hairStyle: "bald", hairColor: "#2a2018", bodyType: "stocky", heightScale: 1.05 },
   }),
-  fan("player_fan_v_doo", "V. Doo", "V. Doo", "CB", ["LB"], {
-    pace: 60, passing: 55, longPassing: 61, vision: 54, control: 57, dribbling: 46, shooting: 32, finishing: 28, shotPower: 58, longShots: 30, defending: 73, strength: 74, stamina: 71, composure: 65,
+  fan("player_fan_v_doo", "V. Doo", "V. Doo", "CM", ["DM", "CB"], {
+    pace: 64, passing: 70, longPassing: 68, vision: 68, control: 68, dribbling: 62, shooting: 48, finishing: 42, shotPower: 60, longShots: 48, defending: 64, strength: 70, stamina: 78, composure: 67,
     preferredFoot: "L", heightCm: 186,
     appearance: { portraitAsset: "/images/l4.png", skinTone: 0.36, hairStyle: "curl", hairColor: "#111111", bodyType: "standard" },
   }),
@@ -121,10 +121,10 @@ export const ARGYLE_FANS_PLAYERS: PlayerRecord[] = [
       heightScale: 1.02,
     },
   }),
-  fan("player_fan_c_pilgrim_14", "C. Pilgrim", "C. Pilgrim", "CM", ["ST", "AM"], {
-    pace: 66, passing: 70, longPassing: 67, vision: 68, control: 67, dribbling: 65, shooting: 64, finishing: 60, shotPower: 64, longShots: 61, defending: 52, strength: 60, stamina: 75, composure: 66,
+  fan("player_fan_c_pilgrim_14", "Rotolok", "Rotolok", "RM", ["RW", "CM"], {
+    pace: 74, passing: 66, longPassing: 62, vision: 64, control: 68, dribbling: 72, shooting: 58, finishing: 54, shotPower: 62, longShots: 55, defending: 44, strength: 58, stamina: 78, composure: 64,
     heightCm: 176,
-    appearance: { skinTone: 0.41, hairStyle: "fade", hairColor: "#111111", bodyType: "lean" },
+    appearance: { portraitAsset: "/images/l21.png", skinTone: 0.41, hairStyle: "fade", hairColor: "#111111", bodyType: "lean" },
   }),
   // Bench depth — a notch under the named XI, same band as the other Fans subs.
   fan("player_fan_a_capman", "A CapMan", "A CapMan", "CM", ["AM", "RM"], {
@@ -203,12 +203,12 @@ export const ARGYLE_FANS_PLAYERS: PlayerRecord[] = [
 export const ARGYLE_FANS_XI: { id: string; shirtNumber: number; slot: string; captain?: boolean }[] = [
   { id: "player_fan_cd_pafc", shirtNumber: 1, slot: "GK" },
   { id: "player_fan_argyletweet", shirtNumber: 2, slot: "LB" },
-  { id: "player_fan_v_doo", shirtNumber: 5, slot: "LCB" },
+  { id: "player_fan_g_sparks", shirtNumber: 32, slot: "LCB" },
   { id: "player_fan_t_bones", shirtNumber: 3, slot: "RCB" },
   { id: "player_fan_a_tweets", shirtNumber: 4, slot: "RB" },
   { id: "player_fan_l_days", shirtNumber: 7, slot: "LM" },
   { id: "player_fan_c_pilgrim", shirtNumber: 8, slot: "LCM" },
-  { id: "player_fan_a_life", shirtNumber: 6, slot: "RCM" },
+  { id: "player_fan_v_doo", shirtNumber: 5, slot: "RCM" },
   { id: "player_fan_s_argotweets", shirtNumber: 11, slot: "RM" },
   { id: "player_fan_s_down", shirtNumber: 9, slot: "LST" },
   { id: "player_fan_p_face", shirtNumber: 10, slot: "RST", captain: true },
@@ -216,13 +216,13 @@ export const ARGYLE_FANS_XI: { id: string; shirtNumber: number; slot: string; ca
 
 /** Sub GK first, then remaining bench by shirt number. */
 export const ARGYLE_FANS_BENCH: { id: string; shirtNumber: number }[] = [
-  { id: "player_fan_p_petey", shirtNumber: 13 },
-  { id: "player_fan_a_bradderz", shirtNumber: 12 },
+  { id: "player_fan_p_petey", shirtNumber: 12 },
+  { id: "player_fan_a_life", shirtNumber: 6 },
+  { id: "player_fan_a_bradderz", shirtNumber: 13 },
   { id: "player_fan_c_pilgrim_14", shirtNumber: 14 },
   { id: "player_fan_a_capman", shirtNumber: 15 },
   { id: "player_fan_g_bobby", shirtNumber: 17 },
   { id: "player_fan_alfie_greenwood", shirtNumber: 19 },
-  { id: "player_fan_g_sparks", shirtNumber: 32 },
   { id: "player_fan_argyle_usa", shirtNumber: 76 },
   { id: "player_fan_pasoti", shirtNumber: 96 },
 ];

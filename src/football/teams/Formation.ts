@@ -1,4 +1,17 @@
-export type FormationName = "4-2-3-1" | "4-3-3" | "4-4-2" | "3-4-2-1" | "4-4-2-W";
+export type FormationName =
+  | "4-2-3-1"
+  | "4-3-3"
+  | "4-4-2"
+  | "3-4-2-1"
+  | "4-4-2-W"
+  | "3-5-2"
+  | "5-3-2"
+  | "4-1-4-1"
+  | "4-5-1"
+  | "3-4-3";
+
+/** Special formation select value — restores the team's saved custom tactics. */
+export const USER_FORMATION = "USER";
 
 export interface FormationSlot {
   id: string;
@@ -73,13 +86,94 @@ const FORMATIONS: Record<FormationName, FormationSlot[]> = {
     { id: "LST", role: "FWD", x: 0.82, z: -0.15 },
     { id: "RST", role: "FWD", x: 0.82, z: 0.15 },
   ],
+  "3-5-2": [
+    { id: "GK", role: "GK", x: 0.07, z: 0 },
+    { id: "RCB", role: "DEF", x: 0.2, z: 0.22 },
+    { id: "CB", role: "DEF", x: 0.16, z: 0 },
+    { id: "LCB", role: "DEF", x: 0.2, z: -0.22 },
+    { id: "RM", role: "MID", x: 0.48, z: 0.42 },
+    { id: "RCM", role: "MID", x: 0.46, z: 0.16 },
+    { id: "CDM", role: "MID", x: 0.4, z: 0 },
+    { id: "LCM", role: "MID", x: 0.46, z: -0.16 },
+    { id: "LM", role: "MID", x: 0.48, z: -0.42 },
+    { id: "RST", role: "FWD", x: 0.82, z: 0.14 },
+    { id: "LST", role: "FWD", x: 0.82, z: -0.14 },
+  ],
+  "5-3-2": [
+    { id: "GK", role: "GK", x: 0.07, z: 0 },
+    { id: "RWB", role: "DEF", x: 0.28, z: 0.42 },
+    { id: "RCB", role: "DEF", x: 0.18, z: 0.2 },
+    { id: "CB", role: "DEF", x: 0.15, z: 0 },
+    { id: "LCB", role: "DEF", x: 0.18, z: -0.2 },
+    { id: "LWB", role: "DEF", x: 0.28, z: -0.42 },
+    { id: "RCM", role: "MID", x: 0.48, z: 0.18 },
+    { id: "CM", role: "MID", x: 0.46, z: 0 },
+    { id: "LCM", role: "MID", x: 0.48, z: -0.18 },
+    { id: "RST", role: "FWD", x: 0.82, z: 0.14 },
+    { id: "LST", role: "FWD", x: 0.82, z: -0.14 },
+  ],
+  "4-1-4-1": [
+    { id: "GK", role: "GK", x: 0.07, z: 0 },
+    { id: "RB", role: "DEF", x: 0.22, z: 0.38 },
+    { id: "RCB", role: "DEF", x: 0.18, z: 0.13 },
+    { id: "LCB", role: "DEF", x: 0.18, z: -0.13 },
+    { id: "LB", role: "DEF", x: 0.22, z: -0.38 },
+    { id: "CDM", role: "MID", x: 0.4, z: 0 },
+    { id: "RM", role: "MID", x: 0.58, z: 0.36 },
+    { id: "RCM", role: "MID", x: 0.56, z: 0.12 },
+    { id: "LCM", role: "MID", x: 0.56, z: -0.12 },
+    { id: "LM", role: "MID", x: 0.58, z: -0.36 },
+    { id: "ST", role: "FWD", x: 0.84, z: 0 },
+  ],
+  "4-5-1": [
+    { id: "GK", role: "GK", x: 0.07, z: 0 },
+    { id: "RB", role: "DEF", x: 0.22, z: 0.38 },
+    { id: "RCB", role: "DEF", x: 0.18, z: 0.13 },
+    { id: "LCB", role: "DEF", x: 0.18, z: -0.13 },
+    { id: "LB", role: "DEF", x: 0.22, z: -0.38 },
+    { id: "RM", role: "MID", x: 0.5, z: 0.38 },
+    { id: "RCM", role: "MID", x: 0.48, z: 0.16 },
+    { id: "CDM", role: "MID", x: 0.42, z: 0 },
+    { id: "LCM", role: "MID", x: 0.48, z: -0.16 },
+    { id: "LM", role: "MID", x: 0.5, z: -0.38 },
+    { id: "ST", role: "FWD", x: 0.84, z: 0 },
+  ],
+  "3-4-3": [
+    { id: "GK", role: "GK", x: 0.07, z: 0 },
+    { id: "RCB", role: "DEF", x: 0.2, z: 0.22 },
+    { id: "CB", role: "DEF", x: 0.16, z: 0 },
+    { id: "LCB", role: "DEF", x: 0.2, z: -0.22 },
+    { id: "RM", role: "MID", x: 0.46, z: 0.4 },
+    { id: "RCM", role: "MID", x: 0.44, z: 0.12 },
+    { id: "LCM", role: "MID", x: 0.44, z: -0.12 },
+    { id: "LM", role: "MID", x: 0.46, z: -0.4 },
+    { id: "RW", role: "FWD", x: 0.78, z: 0.3 },
+    { id: "ST", role: "FWD", x: 0.84, z: 0 },
+    { id: "LW", role: "FWD", x: 0.78, z: -0.3 },
+  ],
 };
 
 export function getFormation(name: string): FormationSlot[] {
+  if (name === USER_FORMATION) return FORMATIONS["4-2-3-1"];
   return FORMATIONS[(name as FormationName) ?? "4-2-3-1"] ?? FORMATIONS["4-2-3-1"];
 }
 
-export const FORMATION_NAMES: FormationName[] = ["4-4-2-W", "4-4-2", "4-3-3", "4-2-3-1", "3-4-2-1"];
+export function isFormationName(name: string): name is FormationName {
+  return Object.prototype.hasOwnProperty.call(FORMATIONS, name);
+}
+
+export const FORMATION_NAMES: FormationName[] = [
+  "4-4-2-W",
+  "4-4-2",
+  "4-3-3",
+  "4-2-3-1",
+  "3-4-2-1",
+  "3-5-2",
+  "5-3-2",
+  "4-1-4-1",
+  "4-5-1",
+  "3-4-3",
+];
 
 export function playerFormationRole(isGK: boolean, slotId: string, formation?: string): FormationSlot["role"] {
   if (isGK) return "GK";
@@ -96,12 +190,13 @@ function slotFamily(slotId: string, formation?: string): string {
   const role = slotRole(slotId, formation);
   if (role === "DEF") {
     if (["RCB", "LCB", "CB"].includes(slotId)) return "CB";
+    if (["RWB", "LWB"].includes(slotId)) return "FB";
     return "FB";
   }
   if (role === "FWD") return slotId.includes("ST") ? "ST" : "W";
-  if (slotId.includes("DM")) return "DM";
+  if (slotId.includes("DM") || slotId === "CDM") return "DM";
   if (slotId.includes("AM") || slotId === "CAM") return "AM";
-  if (["LM", "RM"].includes(slotId)) return "WM";
+  if (["LM", "RM", "LWB", "RWB"].includes(slotId)) return "WM";
   return "CM";
 }
 

@@ -33,6 +33,7 @@ import {
 } from "../data/argyleFansXi";
 import { CLASSIC_TEAM_DEFINITIONS, buildClassicTeamArtifacts } from "../data/classicTeams";
 import { buildEnglishLeagueFixtures, nextFixtureForTeam, todayIso } from "../data/leagueSchedule";
+import { applyTacticsToLineup, type TeamTacticsSave } from "../football/teams/TeamTactics";
 import { loadAssetPackManifest, resolvePlayerPortraitUrl } from "../data/AssetPack";
 import playersData from "../../public/data/players.json";
 import teamsData from "../../public/data/teams.json";
@@ -270,6 +271,17 @@ export class GameDatabase {
       this.overlayUserFixtureResults(save.data.fixtures as FixtureRecord[]);
     }
     if (save.data.advertising.length) this.advertising = save.data.advertising as AdvertisingBoardRecord[];
+    this.applyTeamTactics(save.data.teamTactics ?? {});
+  }
+
+  /** Overlay persisted formation / play-style / USER tactics onto authored lineups. */
+  applyTeamTactics(tacticsByTeam: Record<string, TeamTacticsSave>): void {
+    for (const [teamId, tactics] of Object.entries(tacticsByTeam)) {
+      if (!tactics?.starters?.length || !this.teams.has(teamId)) continue;
+      const lineup = this.lineups.find((l) => l.teamId === teamId);
+      if (!lineup) continue;
+      applyTacticsToLineup(lineup, tactics);
+    }
   }
 
   /** One-shot remap for older saves that still have Doo #21 / Days #11 / ArgoTweets #7. */

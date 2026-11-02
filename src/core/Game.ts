@@ -20,6 +20,8 @@ import { decisionTelemetry } from "../football/ai/DecisionTelemetry";
 import { FormationDebug } from "../football/ui/FormationDebug";
 import { UnitLines, type UnitLineSettings } from "../football/ui/UnitLines";
 import { resolveMatchKits } from "../football/teams/KitClash";
+import { USER_FORMATION } from "../football/teams/Formation";
+import { normalizeFormationName } from "../football/teams/TeamTactics";
 import { Stadium } from "../football/stadium/Stadium";
 import { createPlayerVisual } from "../football/players/PlayerVisual";
 import { DEFAULT_PLAYER_MODEL, preloadPlayerModels } from "../football/players/PlayerModelLoader";
@@ -1301,11 +1303,13 @@ export class Game {
   ): FormationSideConfig {
     const team = this.db.getTeam(teamId);
     const lineup = this.db.getLineup(lineupId, teamId);
+    const tactics = this.save.data.teamTactics[teamId];
     return {
       teamName: team.name,
       starters: this.db.getStartingSquad(lineup),
       teamColor: team.primaryColor,
       formation: lineup.formation,
+      formationSelection: tactics?.selection ?? lineup.formation,
       roster: this.db.getSquad(teamId),
       starterSlots: lineup.starters.map((s) => s.slot),
       secondaryColor: team.secondaryColor,
@@ -1314,6 +1318,7 @@ export class Game {
       slotOffsets: lineup.starters
         .filter((s) => s.offsetX || s.offsetZ)
         .map((s) => ({ slot: s.slot, dx: s.offsetX ?? 0, dz: s.offsetZ ?? 0 })),
+      userTactics: tactics?.user ?? null,
       pauseSubsRemaining: pauseSubsRemaining ?? null,
     };
   }
@@ -1348,8 +1353,10 @@ export class Game {
       );
     } else {
       const lineup = this.db.getLineup(lineupId, teamId);
+      const tactics = this.save.data.teamTactics[teamId];
       this.chars.setSquad(team.name, this.db.getStartingSquad(lineup), team.primaryColor, {
         formation: lineup.formation,
+        formationSelection: tactics?.selection ?? lineup.formation,
         roster: this.db.getSquad(teamId),
         starterSlots: lineup.starters.map((s) => s.slot),
         secondaryColor: team.secondaryColor,
@@ -1359,6 +1366,10 @@ export class Game {
         userIsAwaySide,
         kitChoice: this.save.data.settings.menuKitChoice === "away" ? "away" : "home",
         playStyle: lineup.playStyle ?? null,
+        slotOffsets: lineup.starters
+          .filter((s) => s.offsetX || s.offsetZ)
+          .map((s) => ({ slot: s.slot, dx: s.offsetX ?? 0, dz: s.offsetZ ?? 0 })),
+        userTactics: tactics?.user ?? null,
         formationSide: userIsAwaySide ? "away" : "home",
       });
     }
@@ -1443,6 +1454,31 @@ export class Game {
     }));
     if (edit.playStyle === "auto") delete lineup.playStyle;
     else lineup.playStyle = edit.playStyle;
+    this.persistTeamTactics(teamId, edit);
+  }
+
+  private persistTeamTactics(
+    teamId: string,
+    edit: ReturnType<CharacterSelect["getEditedLineup"]>,
+  ): void {
+    if (!teamId) return;
+    const prev = this.save.data.teamTactics[teamId];
+    const formation = normalizeFormationName(edit.formation);
+    const playStyle = edit.playStyle === "auto" ? null : edit.playStyle;
+    const starters = edit.starters.map((s) => ({ ...s }));
+    const selection =
+      edit.selection === USER_FORMATION ? USER_FORMATION : normalizeFormationName(edit.selection || formation);
+    const user =
+      edit.userTactics ??
+      (selection === USER_FORMATION ? { formation, playStyle, starters } : prev?.user);
+    this.save.data.teamTactics[teamId] = {
+      selection,
+      formation,
+      playStyle,
+      starters,
+      ...(user ? { user } : {}),
+    };
+    this.save.save();
   }
 
   private applyCharacterLineupEdits(): void {
@@ -1800,6 +1836,7 @@ export class Game {
   private pauseFormationSideConfig(side: "home" | "away"): FormationSideConfig {
     const match = this.match!;
     const team = side === "home" ? match.home : match.away;
+    const tactics = this.save.data.teamTactics[team.record.id];
     const byId = new Map(team.roster.map((s) => [s.player.id, s]));
     const starters = team.players
       .map((p) => byId.get(p.id))
@@ -1816,6 +1853,7 @@ export class Game {
       starters,
       teamColor: team.record.primaryColor,
       formation: team.lineup.formation,
+      formationSelection: tactics?.selection ?? team.lineup.formation,
       roster: team.roster,
       starterSlots: team.players.map((p) => p.slot),
       secondaryColor: team.record.secondaryColor,
@@ -1824,6 +1862,7 @@ export class Game {
       slotOffsets: team.lineup.starters
         .filter((row) => row.offsetX || row.offsetZ)
         .map((row) => ({ slot: row.slot, dx: row.offsetX ?? 0, dz: row.offsetZ ?? 0 })),
+      userTactics: tactics?.user ?? null,
       pauseSubsRemaining: match.subsRemaining(side),
     };
   }
@@ -1858,8 +1897,14 @@ export class Game {
     if (!this.pauseFormationOpen) return;
     if (apply && this.match) {
       const edits = this.chars.getEditedLineups();
-      if (edits.home) this.match.applyTacticalEdit(edits.home, "home");
-      if (edits.away) this.match.applyTacticalEdit(edits.away, "away");
+      if (edits.home) {
+        this.match.applyTacticalEdit(edits.home, "home");
+        this.writeLineupEdit(this.match.home.record.id, this.match.home.lineup.id, edits.home);
+      }
+      if (edits.away) {
+        this.match.applyTacticalEdit(edits.away, "away");
+        this.writeLineupEdit(this.match.away.record.id, this.match.away.lineup.id, edits.away);
+      }
     }
     this.chars.setContext("select");
     this.chars.hide();

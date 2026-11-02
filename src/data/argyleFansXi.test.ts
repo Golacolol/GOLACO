@@ -23,24 +23,30 @@ describe("Argyle Fans XI", () => {
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(5))?.displayName).toBe("V. Doo");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(4))?.displayName).toBe("A. Memes");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(11))?.displayName).toBe("S. ArgoTweets");
-    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(6))?.displayName).toBe("A. Life");
+    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(32))?.displayName).toBe("G. Sparks");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(8))?.displayName).toBe("C. Pilgrim");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(7))?.displayName).toBe("L. Days");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(9))?.displayName).toBe("S. Down");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === byShirt.get(10))?.displayName).toBe("P. Face");
+    expect(ARGYLE_FANS_XI.find((s) => s.id === "player_fan_v_doo")?.slot).toBe("RCM");
+    expect(ARGYLE_FANS_XI.find((s) => s.id === "player_fan_g_sparks")?.slot).toBe("LCB");
     expect(ARGYLE_FANS_LINEUP.starters.map((s) => s.playerId)).toEqual(ARGYLE_FANS_XI.map((s) => s.id));
   });
 
   it("keeps the named substitutes on unique shirts", () => {
-    expect(ARGYLE_FANS_BENCH.map((b) => b.shirtNumber)).toEqual([13, 12, 14, 15, 17, 19, 32, 76, 96]);
+    expect(ARGYLE_FANS_BENCH.map((b) => b.shirtNumber)).toEqual([12, 6, 13, 14, 15, 17, 19, 76, 96]);
     expect(ARGYLE_FANS_BENCH[0]?.id).toBe("player_fan_p_petey");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_a_bradderz")?.displayName).toBe("A. Bradderz");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_p_petey")?.displayName).toBe("P. Petey");
-    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_c_pilgrim_14")?.displayName).toBe("C. Pilgrim");
+    expect(ARGYLE_FANS_MEMBERSHIPS.find((m) => m.playerId === "player_fan_a_bradderz")?.shirtNumber).toBe(13);
+    expect(ARGYLE_FANS_MEMBERSHIPS.find((m) => m.playerId === "player_fan_p_petey")?.shirtNumber).toBe(12);
+    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_c_pilgrim_14")?.displayName).toBe("Rotolok");
+    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_c_pilgrim_14")?.primaryPosition).toBe("RM");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_a_capman")?.displayName).toBe("A CapMan");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_g_bobby")?.displayName).toBe("G Bobby");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_alfie_greenwood")?.displayName).toBe("Alfie Greenwood");
-    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_g_sparks")?.displayName).toBe("G. Sparks");
+    expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_a_life")?.displayName).toBe("A. Life");
+    expect(ARGYLE_FANS_BENCH.some((b) => b.id === "player_fan_a_life")).toBe(true);
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_argyle_usa")?.displayName).toBe("ARGYLEUSA");
     expect(ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_pasoti")?.displayName).toBe("PASOTI");
     const numbers = ARGYLE_FANS_MEMBERSHIPS.map((m) => m.shirtNumber);
@@ -67,6 +73,20 @@ describe("Argyle Fans XI", () => {
     expect(byId.get("player_fan_g_sparks")).toBe("/images/l10.png");
     expect(byId.get("player_fan_argyle_usa")).toBe("/images/l9.png");
     expect(byId.get("player_fan_pasoti")).toBe("/images/l15.png");
+    expect(byId.get("player_fan_c_pilgrim_14")).toBe("/images/l21.png");
+  });
+
+  it("profiles Doo as a CM and Rotolok as an RM", () => {
+    const doo = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_v_doo")!;
+    const rotolok = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_c_pilgrim_14")!;
+    const life = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_a_life")!;
+    expect(doo.primaryPosition).toBe("CM");
+    expect(doo.passing!).toBeGreaterThanOrEqual(68);
+    expect(doo.defending!).toBeLessThan(70);
+    expect(doo.passing!).toBeGreaterThanOrEqual(life.passing! - 5);
+    expect(rotolok.primaryPosition).toBe("RM");
+    expect(rotolok.displayName).toBe("Rotolok");
+    expect(rotolok.pace!).toBeGreaterThanOrEqual(70);
   });
 
   it("profiles new bench players relative to the Fans XI band", () => {
@@ -80,7 +100,6 @@ describe("Argyle Fans XI", () => {
     const usa = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_argyle_usa")!;
     const pasoti = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_pasoti")!;
     const bones = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_t_bones")!;
-    const doo = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_v_doo")!;
     const bradderz = ARGYLE_FANS_PLAYERS.find((p) => p.id === "player_fan_a_bradderz")!;
     expect(capman.primaryPosition).toBe("CM");
     expect(capman.passing).toBeLessThanOrEqual(life.passing!);
@@ -90,7 +109,6 @@ describe("Argyle Fans XI", () => {
     expect(alfie.finishing!).toBeLessThanOrEqual(face.finishing!);
     expect(sparks.primaryPosition).toBe("CB");
     expect(sparks.defending!).toBeGreaterThan(bones.defending!);
-    expect(sparks.defending!).toBeGreaterThan(doo.defending!);
     expect(sparks.defending!).toBeGreaterThan(bradderz.defending!);
     expect(usa.primaryPosition).toBe("CM");
     expect(usa.passing!).toBeLessThanOrEqual(life.passing!);
