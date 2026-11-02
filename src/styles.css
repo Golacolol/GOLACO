@@ -1858,12 +1858,15 @@ html.club-name-glow-off .club-line {
 }
 .char-team-title .eyebrow {
   margin: 0;
-  line-height: 1.12;
+  /* Tall enough for descenders (g/y/p) — overflow:hidden was clipping at 1.12. */
+  line-height: 1.32;
+  padding: 0.06em 0 0.14em;
   font-size: 30px;
   font-weight: 800;
   letter-spacing: 0.05em;
   white-space: nowrap;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
   text-overflow: clip;
   min-width: 0;
   flex: 1 1 auto;
