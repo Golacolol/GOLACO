@@ -5,7 +5,7 @@ const FAN_FROM = "2026-01-01";
 export const ARGYLE_FANS_TEAM_ID = "argyle_fans_xi";
 export const ARGYLE_FANS_LINEUP_ID = "argyle_fans_xi_lineup";
 export const ARGYLE_FANS_FORMATION = "4-4-2-W";
-export const ARGYLE_FANS_NAME = "Plymouth Argyle — FANS";
+export const ARGYLE_FANS_NAME = "Plymouth Argyle Fans";
 export const ARGYLE_FANS_ABBREVIATION = "FAN";
 export const ARGYLE_FANS_ERA = "FANS";
 

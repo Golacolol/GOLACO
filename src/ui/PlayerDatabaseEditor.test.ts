@@ -21,7 +21,8 @@ describe("PlayerDatabaseEditor", () => {
     expect(view.root.querySelector(".player-card-edit-panel")).toBeTruthy();
     expect(view.root.querySelector(".player-card-edit-section-title")?.textContent).toMatch(/Details/i);
     expect(view.root.querySelector('[data-char="card-view"]')?.textContent).toBe("CARD");
-    expect(view.root.querySelector(".player-card-flip-label")?.textContent).toMatch(/OVR/);
+    expect(view.root.querySelector(".player-card-flip-label")).toBeNull();
+    expect(view.root.querySelector(".player-card-flip-nav")).toBeTruthy();
   });
 
   it("filters the list and steps players with the card arrows", async () => {
@@ -43,5 +44,21 @@ describe("PlayerDatabaseEditor", () => {
     const after = view.root.querySelector(".player-db-row.on")?.getAttribute("data-player-pick");
     if (rows.length > 1) expect(after).not.toBe(firstId);
     expect(view.root.querySelector(".player-card")).toBeTruthy();
+  });
+
+  it("flips the normal card on click and keeps hex toggling separate", async () => {
+    const db = await GameDatabase.load(new SaveManager());
+    const host = document.createElement("div");
+    const view = new PlayerDatabaseEditor(host);
+    await view.render(db);
+
+    expect(view.root.querySelector(".player-card")?.classList.contains("is-flipped")).toBe(false);
+    view.root.querySelector<HTMLElement>(".player-card-team")?.click();
+    expect(view.root.querySelector(".player-card")?.classList.contains("is-flipped")).toBe(true);
+    expect(view.root.querySelector(".player-card-ratings")).toBeTruthy();
+
+    view.root.querySelector<HTMLElement>('[data-char="card-edit"]')?.click();
+    expect(view.root.querySelector(".player-card-edit-panel")).toBeTruthy();
+    expect(view.root.querySelector(".player-card")).toBeNull();
   });
 });

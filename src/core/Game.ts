@@ -28,6 +28,7 @@ import { DEFAULT_PLAYER_MODEL, preloadPlayerModels } from "../football/players/P
 import { Player } from "../football/players/Player";
 import { applyPhysicalToAppearance, deriveOverall } from "../football/players/PlayerStats";
 import { applyClubNameAppearance, applyTitleFont } from "../ui/TitleFonts";
+import { setInfoOverlaysEnabled } from "../ui/infoOverlays";
 import { MainMenu } from "../ui/MainMenu";
 import {
   CharacterSelect,
@@ -175,6 +176,7 @@ export class Game {
     this.applyGraphics();
     applyTitleFont(this.save.data.settings.titleFont);
     applyClubNameAppearance(this.save.data.settings);
+    this.applyInfoOverlaysSetting();
     this.input.keyboard.setBindings(this.save.data.settings.keyBindings);
     this.audio.setVolume(this.save.data.settings.masterVolume);
     this.audio.setEnabled(this.save.data.settings.audioEnabled !== false);
@@ -553,7 +555,7 @@ export class Game {
         this.match.awayHidePlayers = this.save.data.settings.awayHidePlayers;
         this.match.ballGoldRing = this.save.data.settings.ballGoldRing;
         this.match.showPassTargetHighlight = this.save.data.settings.showPassTargetHighlight;
-        this.chars.showOverlays = this.save.data.settings.formationOverlays === true;
+        this.applyInfoOverlaysSetting();
         if (!this.chars.root.hidden) this.chars.render();
         this.unitLines.update(this.scene, this.match, this.unitLineSettings());
       }
@@ -1327,7 +1329,7 @@ export class Game {
 
   private openCharacterSelect(teamId: string): void {
     this.menu.hide();
-    this.chars.showOverlays = this.save.data.settings.formationOverlays === true;
+    this.applyInfoOverlaysSetting();
     this.charTeamId = teamId;
     const team = this.db.getTeam(teamId);
     const f = this.pendingFixture;
@@ -1871,10 +1873,16 @@ export class Game {
     };
   }
 
+  private applyInfoOverlaysSetting(): void {
+    const on = this.save.data.settings.formationOverlays === true;
+    setInfoOverlaysEnabled(on);
+    this.chars.showOverlays = on;
+  }
+
   private openPauseFormation(): void {
     if (!this.match) return;
     const team = this.match.userTeam();
-    this.chars.showOverlays = this.save.data.settings.formationOverlays === true;
+    this.applyInfoOverlaysSetting();
     this.charTeamId = team.record.id;
     const active: FormationSide = team.side;
     this.chars.setContext("pause", { subsRemaining: this.match.subsRemaining(team.side) });

@@ -37,6 +37,14 @@ import {
 import { contrastingKitText } from "./kitContrast";
 import { imageLabel, listPlayerImages, uploadPlayerImage } from "./playerImages";
 import { nextProfileStatsMode, profileStatsBlock, type ProfileStatsMode } from "./ProfileHex";
+import {
+  applyPlayerCardFlip,
+  formatPlayerCardTeamName,
+  isPlayerCardShowingBack,
+  nextPlayerCardFlipY,
+  playerCardFlipSideFromClientX,
+} from "./playerCardShared";
+import { setInfoOverlaysEnabled, titleAttr } from "./infoOverlays";
 
 const EDIT_POSITIONS: PositionCode[] = [
   "GK",
@@ -652,9 +660,11 @@ export class CharacterSelect {
   private profileView: ProfileStatsMode = "hex";
   /** Sports card flipped to the full-ratings back. */
   private cardFlipped = false;
+  /** Cumulative rotateY — left tap adds 180°, right tap subtracts 180°. */
+  private cardFlipY = 0;
   /**
-   * When true, pitch/bench counters show native hover titles with the player name.
-   * Driven by Options → Display → Formation overlays (default off).
+   * When true, pitch/bench names and UI help tooltips show on hover.
+   * Driven by Options → Display → Info overlays (default off).
    */
   showOverlays = false;
   /** Formation chalk board — draw thick lines on the pitch under player counters. */
@@ -713,12 +723,8 @@ export class CharacterSelect {
       if (flip && this.root.contains(flip)) {
         e.preventDefault();
         e.stopPropagation();
-        if (this.cardEditing) {
-          const dir = flip.getAttribute("data-dir") === "prev" ? -1 : 1;
-          this.stepCardPlayer(dir);
-        } else {
-          this.setCardFlipped(!this.cardFlipped);
-        }
+        const dir = flip.getAttribute("data-dir") === "prev" ? -1 : 1;
+        this.stepCardPlayer(dir);
         return;
       }
       const cardAct = (e.target as HTMLElement).closest<HTMLElement>("[data-char='card-edit'], [data-char='card-view'], [data-char='card-save']");
@@ -738,14 +744,30 @@ export class CharacterSelect {
         this.toggleProfileView();
         return;
       }
+      // Name / card body flips from the tapped side; hex keeps its own toggle above.
+      const face = (e.target as HTMLElement).closest<HTMLElement>("[data-char='card-face']");
+      if (face && this.root.contains(face) && !this.cardEditing) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.flipCardFromPointer(face, e.clientX);
+        return;
+      }
       this.onEditDialogClick(e);
     });
     this.root.addEventListener("keydown", (e) => {
       if (e.key !== "Enter" && e.key !== " ") return;
       const toggle = (e.target as HTMLElement).closest?.("[data-char='profile-toggle']");
-      if (!toggle || !this.root.contains(toggle as Node)) return;
-      e.preventDefault();
-      this.toggleProfileView();
+      if (toggle && this.root.contains(toggle as Node)) {
+        e.preventDefault();
+        this.toggleProfileView();
+        return;
+      }
+      const face = (e.target as HTMLElement).closest?.("[data-char='card-face']") as HTMLElement | null;
+      if (face && this.root.contains(face) && !this.cardEditing) {
+        e.preventDefault();
+        // Keyboard: default to flipping as if the right edge was pushed.
+        this.flipCardFromSide("right");
+      }
     });
     this.root.addEventListener("input", (e) => this.onCardEditFieldEvent(e));
     this.root.addEventListener("change", (e) => {
@@ -789,7 +811,7 @@ export class CharacterSelect {
     this.editingPlayerId = null;
     this.cardEditing = false;
     this.editDirty = false;
-    this.cardFlipped = false;
+    this.resetCardFlip();
     const draft = this.buildSideDraft({
       teamName,
       starters,
@@ -834,7 +856,7 @@ export class CharacterSelect {
     this.editingPlayerId = null;
     this.cardEditing = false;
     this.editDirty = false;
-    this.cardFlipped = false;
+    this.resetCardFlip();
     this.purpose = options?.purpose ?? "match";
     this.opponentHomeKit = options?.opponentHomeKit ?? null;
     this.userIsAwaySide = !!options?.userIsAwaySide;
@@ -1231,7 +1253,7 @@ export class CharacterSelect {
       const thumb = src
         ? `<img class="kit-chip-thumb" alt="" src="${escapeHtml(src)}" onerror="this.remove()"/>`
         : `<span class="kit-chip-swatch" style="background:${escapeHtml(kit.shirt)};box-shadow:inset 0 0 0 1px ${escapeHtml(kit.trim || kit.numberColor || "#fff")}"></span>`;
-      return `<button type="button" class="kit-chip ${on}" data-char="kit" data-kit="${id}" title="${escapeHtml(label)}">${thumb}<span>${label}</span></button>`;
+      return `<button type="button" class="kit-chip ${on}" data-char="kit" data-kit="${id}"${titleAttr(label)}>${thumb}<span>${label}</span></button>`;
     };
     return `
       <div class="kit-name-chips" role="group" aria-label="Kit choice">
@@ -1412,7 +1434,7 @@ export class CharacterSelect {
   selectPlayerId(id: string): void {
     const i = this.players.findIndex((p) => p.player.id === id);
     if (i < 0) return;
-    if (this.players[this.index]?.player.id !== id) this.cardFlipped = false;
+    if (this.players[this.index]?.player.id !== id) this.resetCardFlip();
     this.index = i;
     // Keep the open editor pointed at the newly selected squad row.
     if (this.cardEditing) {
@@ -1428,17 +1450,31 @@ export class CharacterSelect {
   }
 
   setCardFlipped(flipped: boolean): void {
+    if (this.cardEditing) return;
+    if (!flipped) this.resetCardFlip();
+    else if (!this.cardFlipped) this.cardFlipY = 180;
     this.cardFlipped = flipped;
-    const sp = this.current();
-    const labelText = flipped
-      ? "STATS"
-      : `${kitHeadingName(sp.player)} · OVR ${Math.round(sp.overall)}`;
+    this.cardFlipY = flipped ? (isPlayerCardShowingBack(this.cardFlipY) ? this.cardFlipY : 180) : 0;
     for (const card of this.root.querySelectorAll<HTMLElement>(".player-card")) {
-      card.classList.toggle("is-flipped", flipped);
-      card.setAttribute("data-face", flipped ? "back" : "front");
-      for (const label of card.querySelectorAll<HTMLElement>(".player-card-flip-label")) {
-        label.textContent = labelText;
-      }
+      applyPlayerCardFlip(card, this.cardFlipY);
+    }
+  }
+
+  private resetCardFlip(): void {
+    this.cardFlipped = false;
+    this.cardFlipY = 0;
+  }
+
+  private flipCardFromPointer(card: HTMLElement, clientX: number): void {
+    this.flipCardFromSide(playerCardFlipSideFromClientX(card, clientX));
+  }
+
+  private flipCardFromSide(side: "left" | "right"): void {
+    if (this.cardEditing) return;
+    this.cardFlipY = nextPlayerCardFlipY(this.cardFlipY, side);
+    this.cardFlipped = isPlayerCardShowingBack(this.cardFlipY);
+    for (const el of this.root.querySelectorAll<HTMLElement>(".player-card")) {
+      applyPlayerCardFlip(el, this.cardFlipY);
     }
   }
 
@@ -1519,6 +1555,7 @@ export class CharacterSelect {
   }
 
   render(): void {
+    setInfoOverlaysEnabled(this.showOverlays);
     const list = this.root.querySelector<HTMLElement>(".team-roster-list");
     const rosterScroll = list?.scrollTop ?? 0;
     this.root.hidden = false;
@@ -1570,48 +1607,41 @@ export class CharacterSelect {
     return `<div class="char-team-title">${badge}<div class="eyebrow">${escapeHtml(text)}</div>${chips}</div>`;
   }
 
-  private playerCardFlipNavHtml(sp: SquadPlayer): string {
-    const ratingLabel = `${kitHeadingName(sp.player)} · OVR ${Math.round(sp.overall)}`;
-    if (this.cardEditing) {
-      return `<div class="player-card-flip-nav" role="group" aria-label="Browse squad players">
-        <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="prev" aria-label="Previous player">‹</button>
-        <span class="player-card-flip-label">${escapeHtml(ratingLabel)}</span>
-        <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="next" aria-label="Next player">›</button>
-      </div>`;
-    }
-    return `<div class="player-card-flip-nav" role="group" aria-label="Flip player card">
-      <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="prev" aria-label="Flip card">‹</button>
-      <span class="player-card-flip-label">${this.cardFlipped ? "STATS" : escapeHtml(ratingLabel)}</span>
-      <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="next" aria-label="Flip card">›</button>
+  private playerCardFlipNavHtml(_sp: SquadPlayer): string {
+    return `<div class="player-card-flip-nav" role="group" aria-label="Browse squad players">
+      <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="prev" aria-label="Previous player">‹</button>
+      <span class="player-card-flip-spacer" aria-hidden="true"></span>
+      <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="next" aria-label="Next player">›</button>
     </div>`;
   }
 
-  /** Prev/next squad player while the card editor is open (same arrow chrome as flip). */
+  /** Prev/next through the squad (loops). Keeps EDIT mode on the newly selected player. */
   private stepCardPlayer(delta: number): void {
     if (!this.players.length) return;
     this.move(delta);
     const sp = this.current();
-    this.editingPlayerId = sp.player.id;
-    this.editDirty = false;
-    this.cardFlipped = false;
+    if (this.cardEditing) {
+      this.editingPlayerId = sp.player.id;
+      this.editDirty = false;
+    }
+    this.resetCardFlip();
     this.render();
   }
 
   private playerCardActionBtnHtml(): string {
     if (this.cardEditing && this.editDirty) {
-      return `<button type="button" class="player-card-action primary" data-char="card-save" title="Save player changes">SAVE</button>`;
+      return `<button type="button" class="player-card-action primary" data-char="card-save"${titleAttr("Save player changes")}>SAVE</button>`;
     }
     if (this.cardEditing) {
-      return `<button type="button" class="player-card-action" data-char="card-view" title="Back to player card">CARD</button>`;
+      return `<button type="button" class="player-card-action" data-char="card-view"${titleAttr("Back to player card")}>CARD</button>`;
     }
-    return `<button type="button" class="player-card-action" data-char="card-edit" title="Edit player details">EDIT</button>`;
+    return `<button type="button" class="player-card-action" data-char="card-edit"${titleAttr("Edit player details")}>EDIT</button>`;
   }
 
   private playerCardShellHtml(sp: SquadPlayer, opts: { variant: "select" | "edit" }): string {
     const editing = this.cardEditing || opts.variant === "edit";
     return `<div class="player-card-shell player-card-shell-${editing ? "edit" : "select"}${editing ? " is-editing" : ""}">
       <div class="player-card-shell-head">
-        <span class="player-card-shell-kicker">${editing ? "PLAYER EDIT" : "PLAYER CARD"}</span>
         ${this.playerCardActionBtnHtml()}
       </div>
       ${editing ? this.playerCardEditPanelHtml(sp) : this.playerSportsCardHtml(sp, { variant: "select" })}
@@ -1619,10 +1649,10 @@ export class CharacterSelect {
     </div>`;
   }
 
-  private playerCardShirtHtml(sp: SquadPlayer): string {
+  private playerCardShirtHtml(sp: SquadPlayer, className = "player-card-shirt"): string {
     const text = contrastingKitText(this.teamColor, this.teamSecondaryColor);
     const surname = kitSurname(sp.player.displayName || sp.player.name);
-    return `<div class="player-card-shirt" style="background:${escapeAttr(this.teamColor)};color:${escapeAttr(text)}">
+    return `<div class="${className}" style="background:${escapeAttr(this.teamColor)};color:${escapeAttr(text)}">
       <span class="player-card-shirt-name">${escapeHtml(surname)}</span>
       <span class="player-card-shirt-num">${sp.shirtNumber}</span>
     </div>`;
@@ -1691,8 +1721,8 @@ export class CharacterSelect {
   private playerSportsCardHtml(sp: SquadPlayer, _opts: { variant: "select" }): string {
     const flipped = this.cardFlipped;
     const hexSize = 172;
-    const teamLabel = this.teamName.trim() || "TEAM";
-    return `<div class="player-card player-card-select${flipped ? " is-flipped" : ""}" data-face="${flipped ? "back" : "front"}" style="--card-accent:${escapeAttr(this.teamColor)}">
+    const teamLabel = formatPlayerCardTeamName(this.teamName) || "TEAM";
+    return `<div class="player-card player-card-select${flipped ? " is-flipped" : ""}" data-char="card-face" data-face="${flipped ? "back" : "front"}" style="--card-accent:${escapeAttr(this.teamColor)};--card-flip-y:${this.cardFlipY}deg"${titleAttr("Flip card")} role="button" tabindex="0">
       <div class="player-card-inner">
         <div class="player-card-face player-card-front">
           <div class="player-card-top">
@@ -1702,14 +1732,14 @@ export class CharacterSelect {
             <span class="player-card-pos-code">${escapeHtml(sp.player.primaryPosition)}</span>
             <span class="player-card-ovr-holo">${Math.round(sp.overall)}</span>
           </div>
-          ${this.playerCardShirtHtml(sp)}
           ${this.playerCardPhotoHtml(sp)}
           ${profileStatsBlock(sp.attrs, { mode: this.profileView, size: hexSize })}
+          ${this.playerCardShirtHtml(sp)}
         </div>
         <div class="player-card-face player-card-back">
           <div class="player-card-back-head">
             <em class="player-card-meta-label">POS</em>
-            <span class="player-card-player">${sp.shirtNumber}. ${escapeHtml(kitSurname(sp.player.displayName || sp.player.name))}</span>
+            ${this.playerCardShirtHtml(sp, "player-card-shirt player-card-shirt-back")}
             <em class="player-card-meta-label player-card-meta-label-end">OVR</em>
             <span class="player-card-pos-code">${escapeHtml(sp.player.primaryPosition)}</span>
             <span class="player-card-ovr-value">${Math.round(sp.overall)}</span>
@@ -1729,7 +1759,7 @@ export class CharacterSelect {
           <div class="player-card-edit-portrait-preview">${this.playerCardPhotoHtml(sp)}</div>
           <div class="player-card-edit-portrait-controls">
             <label>PNG portrait
-              <select data-edit-field="portraitAsset" title="Portrait from images/">${this.portraitOptionsHtml(sp.player.appearance?.portraitAsset?.trim() || "")}</select>
+              <select data-edit-field="portraitAsset"${titleAttr("Portrait from images/")}>${this.portraitOptionsHtml(sp.player.appearance?.portraitAsset?.trim() || "")}</select>
             </label>
             <label class="portrait-upload-btn squad-edit-upload">Upload PNG
               <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-edit-upload hidden />
@@ -2044,11 +2074,9 @@ export class CharacterSelect {
                   const p = row.player;
                   const on = p.player.id === selectedId ? "on" : "";
                   const name = escapeHtml(p.player.name);
-                  const tip = this.showOverlays
-                    ? name
-                    : "Left-click select · Right-click player card";
+                  const tip = this.showOverlays ? name : "";
                   return `<div class="pitch-slot ${on}" data-slot="${slot.id}" data-player-id="${p.player.id}" style="left:${pos.left}%; bottom:${pos.bottom}%">
-                  <button type="button" class="pitch-token ${on}" data-char="pick" data-id="${p.player.id}" data-player-id="${p.player.id}" data-from-slot="${slot.id}" aria-label="${name}" title="${tip}">
+                  <button type="button" class="pitch-token ${on}" data-char="pick" data-id="${p.player.id}" data-player-id="${p.player.id}" data-from-slot="${slot.id}" aria-label="${name}"${tip ? ` title="${tip}"` : ""}>
                     ${kitMarkerHtml(p.player, p.shirtNumber, {
                       ...kitMarkerColors(p.player.primaryPosition, this.teamColor, this.teamSecondaryColor),
                     })}
@@ -2072,7 +2100,7 @@ export class CharacterSelect {
             ${
               overlayMode
                 ? ""
-                : `<button type="button" class="formation-chip chalk-chip ${this.chalkMode ? "on" : ""}" data-char="chalk" title="Chalk — draw on the pitch. Right-click to wipe." aria-pressed="${this.chalkMode ? "true" : "false"}">Chalk</button>`
+                : `<button type="button" class="formation-chip chalk-chip ${this.chalkMode ? "on" : ""}" data-char="chalk"${titleAttr("Chalk — draw on the pitch. Right-click to wipe.")} aria-pressed="${this.chalkMode ? "true" : "false"}">Chalk</button>`
             }
             <label class="formation-select-wrap">
               <span class="visually-hidden">Play style</span>
@@ -2117,7 +2145,7 @@ export class CharacterSelect {
                   const name = kitSurname(p.player.displayName || p.player.name);
                   const active = p.player.id === selectedId ? "on" : "";
                   const ovr = Math.round(p.overall);
-                  return `<button type="button" class="roster-row ${active}" data-char="pick" data-id="${p.player.id}" title="Left-click select · Right-click edit player">
+                  return `<button type="button" class="roster-row ${active}" data-char="pick" data-id="${p.player.id}"${titleAttr("Left-click select · Right-click edit player")}>
                     <span class="roster-num">${p.shirtNumber}</span>
                     <span class="roster-name">${escapeHtml(name)}</span>
                     <span class="roster-pos">${p.player.primaryPosition}</span>
@@ -2280,7 +2308,7 @@ export class CharacterSelect {
     this.editingPlayerId = null;
     this.cardEditing = false;
     this.editDirty = false;
-    this.cardFlipped = false;
+    this.resetCardFlip();
     if (this.playerSelectAvailable()) this.controlMode = "PLAYER";
     this.render();
   }
@@ -2294,7 +2322,7 @@ export class CharacterSelect {
     this.editingPlayerId = id;
     this.cardEditing = true;
     this.editDirty = false;
-    this.cardFlipped = false;
+    this.resetCardFlip();
     // Prefer the PLAYER SELECT card well (EDIT / CARD / SAVE). Overlay only when
     // PLAYER SELECT is unavailable (pause, spot practice, tabletop).
     if (this.playerSelectAvailable()) {
@@ -2318,7 +2346,7 @@ export class CharacterSelect {
     this.editingPlayerId = null;
     this.cardEditing = false;
     this.editDirty = false;
-    this.cardFlipped = false;
+    this.resetCardFlip();
     if (!saved) {
       // no-op — discard unsaved field values by re-render from live records
     }

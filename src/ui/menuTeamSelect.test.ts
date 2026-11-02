@@ -105,7 +105,7 @@ describe("menuTeamSelect", () => {
       }),
       team({
         id: "argyle_fans_xi",
-        name: "Plymouth Argyle — FANS",
+        name: "Plymouth Argyle Fans",
         teamType: "FANS_TEAM",
         historicSeason: "FANS",
         fanTeam: true,

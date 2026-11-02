@@ -274,6 +274,42 @@ export function fitKitSurnameElements(root: ParentNode): void {
   }
   fitRosterHeadingElements(root);
   fitRosterNameElements(root);
+  fitPlayerCardTeamNames(root);
+}
+
+/**
+ * Player-card front team name — shrink to the middle header column (no ellipsis).
+ */
+export function fitPlayerCardTeamNames(root: ParentNode): void {
+  const nodes = root.querySelectorAll<HTMLElement>(".player-card-team");
+  for (const el of nodes) {
+    const maxW = el.clientWidth;
+    if (maxW < 8) continue;
+    el.style.overflow = "hidden";
+    el.style.textOverflow = "clip";
+    el.style.whiteSpace = "nowrap";
+    el.style.fontSize = "";
+    el.style.letterSpacing = "";
+    let size = parseFloat(getComputedStyle(el).fontSize) || 24;
+    let tracking = 0.1;
+    const floor = 11;
+    el.style.fontSize = `${size}px`;
+    el.style.letterSpacing = `${tracking}em`;
+    el.style.marginInlineEnd = `-${tracking}em`;
+    let guard = 0;
+    const over = () => el.scrollWidth > maxW + 0.5;
+    while (over() && size > floor && guard < 48) {
+      size -= 0.5;
+      el.style.fontSize = `${size}px`;
+      guard += 1;
+    }
+    while (over() && tracking > 0.02 && guard < 72) {
+      tracking = Math.max(0.02, tracking - 0.01);
+      el.style.letterSpacing = `${tracking}em`;
+      el.style.marginInlineEnd = `-${tracking}em`;
+      guard += 1;
+    }
+  }
 }
 
 /**

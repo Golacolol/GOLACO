@@ -7,9 +7,15 @@ import {
 } from "../football/players/PlayerStats";
 import { nextProfileStatsMode, type ProfileStatsMode } from "./ProfileHex";
 import { listPlayerImages, uploadPlayerImage } from "./playerImages";
+import { titleAttr } from "./infoOverlays";
+import { fitKitSurnameElements } from "./Portrait";
 import {
+  applyPlayerCardFlip,
   escapeAttr,
   escapeHtml,
+  isPlayerCardShowingBack,
+  nextPlayerCardFlipY,
+  playerCardFlipSideFromClientX,
   playerCardShellHtml,
   readSquadPlayerEditFromHost,
   type PlayerCardTeamContext,
@@ -39,6 +45,7 @@ export class PlayerDatabaseEditor {
   private cardEditing = false;
   private editDirty = false;
   private cardFlipped = false;
+  private cardFlipY = 0;
   private profileView: ProfileStatsMode = "hex";
   /** Persist card SAVE into player + membership records (and save file). */
   onPlayerSave: ((edit: SquadPlayerEdit) => void) | null = null;
@@ -63,7 +70,7 @@ export class PlayerDatabaseEditor {
     this.focusSearchOnPaint = true;
     this.cardEditing = false;
     this.editDirty = false;
-    this.cardFlipped = false;
+    this.resetCardFlip();
     this.root.innerHTML = `
       <div class="editor-card player-db-shell">
         <h2>Player Database</h2>
@@ -104,7 +111,7 @@ export class PlayerDatabaseEditor {
       this.selectedId = this.filteredIds[0] ?? null;
       this.cardEditing = false;
       this.editDirty = false;
-      this.cardFlipped = false;
+      this.resetCardFlip();
     } else if (!this.selectedId && this.filteredIds.length) {
       this.selectedId = this.filteredIds[0]!;
     }
@@ -176,6 +183,7 @@ export class PlayerDatabaseEditor {
         queueMicrotask(() => input.focus());
       }
     }
+    requestAnimationFrame(() => fitKitSurnameElements(this.root));
   }
 
   private buildIndex(db: GameDatabase): IndexedPlayer[] {
@@ -249,10 +257,24 @@ export class PlayerDatabaseEditor {
       editing: this.cardEditing,
       editDirty: this.editDirty,
       flipped: this.cardFlipped,
+      flipY: this.cardFlipY,
       profileView: this.profileView,
       imagePaths: this.imagePaths,
-      navMode: "browse",
     });
+  }
+
+  private resetCardFlip(): void {
+    this.cardFlipped = false;
+    this.cardFlipY = 0;
+  }
+
+  private flipCardFromPointer(card: HTMLElement, clientX: number): void {
+    if (this.cardEditing) return;
+    this.cardFlipY = nextPlayerCardFlipY(this.cardFlipY, playerCardFlipSideFromClientX(card, clientX));
+    this.cardFlipped = isPlayerCardShowingBack(this.cardFlipY);
+    for (const el of this.root.querySelectorAll<HTMLElement>(".player-card")) {
+      applyPlayerCardFlip(el, this.cardFlipY);
+    }
   }
 
   private onClick(e: MouseEvent): void {
@@ -266,7 +288,7 @@ export class PlayerDatabaseEditor {
       this.selectedId = id;
       this.cardEditing = false;
       this.editDirty = false;
-      this.cardFlipped = false;
+      this.resetCardFlip();
       this.paint();
       return;
     }
@@ -288,12 +310,12 @@ export class PlayerDatabaseEditor {
       if (kind === "card-edit") {
         this.cardEditing = true;
         this.editDirty = false;
-        this.cardFlipped = false;
+        this.resetCardFlip();
         this.paint();
       } else if (kind === "card-view") {
         this.cardEditing = false;
         this.editDirty = false;
-        this.cardFlipped = false;
+        this.resetCardFlip();
         this.paint();
       } else if (kind === "card-save") {
         this.commitEdit();
@@ -307,6 +329,14 @@ export class PlayerDatabaseEditor {
       e.stopPropagation();
       this.profileView = nextProfileStatsMode(this.profileView);
       this.paint();
+      return;
+    }
+
+    const face = t.closest<HTMLElement>("[data-char='card-face']");
+    if (face && this.root.contains(face) && !this.cardEditing) {
+      e.preventDefault();
+      e.stopPropagation();
+      this.flipCardFromPointer(face, e.clientX);
     }
   }
 
@@ -317,7 +347,7 @@ export class PlayerDatabaseEditor {
     this.editDirty = true;
     const btn = this.root.querySelector(".player-card-action");
     if (btn) {
-      btn.outerHTML = `<button type="button" class="player-card-action primary" data-char="card-save" title="Save player changes">SAVE</button>`;
+      btn.outerHTML = `<button type="button" class="player-card-action primary" data-char="card-save"${titleAttr("Save player changes")}>SAVE</button>`;
     }
   }
 
@@ -353,7 +383,7 @@ export class PlayerDatabaseEditor {
       this.editDirty = true;
       const btn = this.root.querySelector(".player-card-action");
       if (btn) {
-        btn.outerHTML = `<button type="button" class="player-card-action primary" data-char="card-save" title="Save player changes">SAVE</button>`;
+        btn.outerHTML = `<button type="button" class="player-card-action primary" data-char="card-save"${titleAttr("Save player changes")}>SAVE</button>`;
       }
     }
   }
@@ -364,9 +394,8 @@ export class PlayerDatabaseEditor {
     if (i < 0) return;
     const next = this.filteredIds[(i + delta + this.filteredIds.length) % this.filteredIds.length]!;
     this.selectedId = next;
-    this.cardEditing = false;
     this.editDirty = false;
-    this.cardFlipped = false;
+    this.resetCardFlip();
     this.paint();
   }
 
@@ -380,7 +409,7 @@ export class PlayerDatabaseEditor {
     this.onPlayerSave?.(edit);
     this.cardEditing = false;
     this.editDirty = false;
-    this.cardFlipped = false;
+    this.resetCardFlip();
     this.paint();
   }
 

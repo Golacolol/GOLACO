@@ -274,7 +274,7 @@ describe("character select", () => {
     expect(view.root.querySelector(`.pitch-token.on[data-id="${target.player.player.id}"]`)).toBeTruthy();
   });
 
-  it("flips the PLAYER SELECT sports card with arrows below the card", () => {
+  it("flips the PLAYER SELECT sports card on click and browses with arrows", () => {
     const host = document.createElement("div");
     const view = new CharacterSelect(host);
     view.setSquad("Plymouth Argyle", squad(), "#007A3D", {
@@ -298,17 +298,23 @@ describe("character select", () => {
     expect(card?.contains(flipNav)).toBe(false);
     expect(view.root.querySelector(".player-card-front .profile-stats")).toBeTruthy();
     expect(view.root.querySelector(".player-card-team")?.textContent).toContain("Plymouth Argyle");
-    expect(view.root.querySelector(".player-card-flip-label")?.textContent).toMatch(/OVR/);
+    expect(view.root.querySelector(".player-card-flip-label")).toBeNull();
     expect(view.root.querySelector(".player-pitch-select .tabletop-setup-kicker")).toBeNull();
     expect(view.root.querySelector(".player-pitch-select .hint")).toBeNull();
     expect(view.root.querySelector('[data-char="card-edit"]')?.textContent).toBe("EDIT");
     // No portrait on the stub squad → club crest fills the photo well.
     expect(view.root.querySelector(".player-card-photo.has-crest .player-card-crest")).toBeTruthy();
-    flipNav?.querySelector<HTMLElement>("[data-char='card-flip']")?.click();
-    expect(card?.classList.contains("is-flipped")).toBe(true);
+    view.root.querySelector<HTMLElement>(".player-card-team")?.click();
+    expect(view.root.querySelector(".player-card")?.classList.contains("is-flipped")).toBe(true);
     expect(view.root.querySelector(".player-card-ratings")).toBeTruthy();
-    flipNav?.querySelector<HTMLElement>("[data-char='card-flip']")?.click();
-    expect(card?.classList.contains("is-flipped")).toBe(false);
+    expect(view.root.querySelector(".player-card-back-head .player-card-shirt-back")).toBeTruthy();
+    expect(view.root.querySelector(".player-card-back-head .player-card-shirt-num")?.textContent).toMatch(/\d+/);
+    view.root.querySelector<HTMLElement>(".player-card-back-head .player-card-shirt-name")?.click();
+    expect(view.root.querySelector(".player-card")?.classList.contains("is-flipped")).toBe(false);
+    const before = view.current().player.id;
+    flipNav?.querySelector<HTMLElement>("[data-char='card-flip'][data-dir='next']")?.click();
+    expect(view.current().player.id).not.toBe(before);
+    expect(view.root.querySelector(".player-card")?.classList.contains("is-flipped")).toBe(false);
     view.root.querySelector<HTMLElement>('[data-char="card-edit"]')?.click();
     expect(view.root.querySelector(".player-card-edit-panel")).toBeTruthy();
     expect(view.root.querySelector(".player-card-edit-section-title")?.textContent).toMatch(/Details/i);
@@ -371,7 +377,7 @@ describe("character select", () => {
     expect(titles.some((t) => /Statistics/i.test(t ?? ""))).toBe(true);
     expect(view.root.querySelector('[data-char="card-view"]')?.textContent).toBe("CARD");
     expect(view.root.querySelector(".player-pitch-select .player-card-flip-nav")).toBeTruthy();
-    expect(view.root.querySelector(".player-card-flip-label")?.textContent).toMatch(/OVR/);
+    expect(view.root.querySelector(".player-card-flip-label")).toBeNull();
     const before = view.current().player.id;
     view.root.querySelector<HTMLElement>('[data-char="card-flip"][data-dir="next"]')?.click();
     expect(view.current().player.id).not.toBe(before);
@@ -579,7 +585,7 @@ describe("character select", () => {
     expect(benchNums).toEqual(["13.", "15.", "19.", "32."]);
   });
 
-  it("omits pitch/bench name tooltips unless formation overlays are on", () => {
+  it("omits pitch/bench name tooltips unless info overlays are on", () => {
     const host = document.createElement("div");
     document.body.appendChild(host);
     const view = new CharacterSelect(host);
@@ -591,17 +597,16 @@ describe("character select", () => {
     });
     view.showOverlays = false;
     view.render();
-    // Overlays off: no player-name titles. Pitch may keep a click/right-click hint.
-    const pitchOff = view.root.querySelector(".pitch-token");
-    const pitchName = pitchOff?.getAttribute("aria-label");
-    expect(pitchName).toBeTruthy();
-    expect(pitchOff?.getAttribute("title")).not.toBe(pitchName);
+    expect(view.root.querySelector(".pitch-token[title]")).toBeNull();
     expect(view.root.querySelector(".bench-card[title]")).toBeNull();
+    expect(view.root.querySelector(".pitch-token")?.getAttribute("aria-label")).toBeTruthy();
+    expect(view.root.querySelector(".roster-row[title]")).toBeNull();
     view.showOverlays = true;
     view.render();
     const pitchOn = view.root.querySelector(".pitch-token");
     expect(pitchOn?.getAttribute("title")).toBe(pitchOn?.getAttribute("aria-label"));
     expect(view.root.querySelector(".bench-card[title]")?.getAttribute("title")).toBe("B. Ench");
+    expect(view.root.querySelector(".roster-row[title]")).toBeTruthy();
     view.dispose();
     host.remove();
   });

@@ -16,6 +16,7 @@ import {
   type PredictionPick,
   type PredictionsState,
 } from "../football/predictions/Predictions";
+import { titleAttr } from "./infoOverlays";
 
 export type PredictionsViewMode = "predict" | "admin";
 
@@ -149,7 +150,7 @@ function predictionRowHtml(
         <span class="pred-team away" style="${teamNameStyle(away)}">${escapeHtml(away)}</span>
         ${actual}
       </div>
-      <button type="button" class="pred-lock ${locked ? "on" : ""}" data-pred="lock" data-fixture="${escapeHtml(fixture.id)}" aria-label="${locked ? "Unlock" : "Lock"} prediction" title="${locked ? "Unlock" : "Lock"}" ${played ? "disabled" : ""}>${locked ? "locked" : "lock"}</button>
+      <button type="button" class="pred-lock ${locked ? "on" : ""}" data-pred="lock" data-fixture="${escapeHtml(fixture.id)}" aria-label="${locked ? "Unlock" : "Lock"} prediction"${titleAttr(locked ? "Unlock" : "Lock")} ${played ? "disabled" : ""}>${locked ? "locked" : "lock"}</button>
     </div>
   `;
 }

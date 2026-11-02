@@ -7,6 +7,7 @@ import { listProfileAttrSpokes } from "../football/players/PlayerStats";
 import { contrastingKitText } from "./kitContrast";
 import { imageLabel } from "./playerImages";
 import { kitSurnameFromName, portraitAsset, teamBadgeHtml } from "./Portrait";
+import { titleAttr } from "./infoOverlays";
 import { profileStatsBlock, type ProfileStatsMode } from "./ProfileHex";
 
 export const EDIT_POSITIONS: PositionCode[] = [
@@ -123,14 +124,57 @@ export type PlayerCardRenderState = {
   editing: boolean;
   editDirty: boolean;
   flipped: boolean;
+  /** Cumulative rotateY for side-aware flips (0 = front; odd×180 = back). */
+  flipY?: number;
   profileView: ProfileStatsMode;
   imagePaths: string[];
-  /** Browse arrows step players (database) vs flip the sports card (formation). */
-  navMode: "flip" | "browse";
 };
+
+export type PlayerCardFlipSide = "left" | "right";
+
+/** Which half of the card was tapped (screen space). */
+export function playerCardFlipSideFromClientX(card: HTMLElement, clientX: number): PlayerCardFlipSide {
+  const rect = card.getBoundingClientRect();
+  return clientX < rect.left + rect.width / 2 ? "left" : "right";
+}
+
+/** Tap left → −180°; tap right → +180° (clicked edge leads the turn). */
+export function nextPlayerCardFlipY(currentY: number, side: PlayerCardFlipSide): number {
+  return currentY + (side === "left" ? -180 : 180);
+}
+
+export function isPlayerCardShowingBack(flipY: number): boolean {
+  return Math.abs(Math.round(flipY / 180)) % 2 === 1;
+}
+
+/** Apply rotateY + face attrs without remounting (keeps the CSS transition). */
+export function applyPlayerCardFlip(card: HTMLElement, flipY: number): void {
+  const back = isPlayerCardShowingBack(flipY);
+  card.style.setProperty("--card-flip-y", `${flipY}deg`);
+  card.classList.toggle("is-flipped", back);
+  card.setAttribute("data-face", back ? "back" : "front");
+}
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/**
+ * Player-card header label:
+ * - "Inter Milan — 1993/94" → "Inter Milan 93/94"
+ * - "Plymouth Argyle — FANS" → "Plymouth Argyle Fans"
+ */
+export function formatPlayerCardTeamName(name: string): string {
+  let s = name.trim();
+  if (!s) return s;
+  // "Club — FANS" / "Club - Fans" → "Club Fans"
+  s = s.replace(/\s*[—–-]\s*(Fans)\b/gi, " $1");
+  // "Club — 1993/94 …" / "Club - 2004/05 Istanbul" → "Club 93/94 …"
+  s = s.replace(/\s*[—–-]\s*(?=(?:19|20)\d{2}\/\d{2}\b)/g, " ");
+  s = s.replace(/\b(?:19|20)(\d{2})\/(\d{2})\b/g, "$1/$2");
+  // Title-case the Fans tag after a strip so it doesn't stay ALL CAPS.
+  s = s.replace(/\bFANS\b/g, "Fans");
+  return s.replace(/\s{2,}/g, " ").trim();
 }
 
 function escapeAttr(s: string): string {
@@ -159,27 +203,19 @@ function portraitOptionsHtml(imagePaths: string[], current: string): string {
 
 function actionBtnHtml(state: PlayerCardRenderState): string {
   if (state.editing && state.editDirty) {
-    return `<button type="button" class="player-card-action primary" data-char="card-save" title="Save player changes">SAVE</button>`;
+    return `<button type="button" class="player-card-action primary" data-char="card-save"${titleAttr("Save player changes")}>SAVE</button>`;
   }
   if (state.editing) {
-    return `<button type="button" class="player-card-action" data-char="card-view" title="Back to player card">CARD</button>`;
+    return `<button type="button" class="player-card-action" data-char="card-view"${titleAttr("Back to player card")}>CARD</button>`;
   }
-  return `<button type="button" class="player-card-action" data-char="card-edit" title="Edit player details">EDIT</button>`;
+  return `<button type="button" class="player-card-action" data-char="card-edit"${titleAttr("Edit player details")}>EDIT</button>`;
 }
 
-function flipNavHtml(sp: SquadPlayer, state: PlayerCardRenderState): string {
-  const ratingLabel = `${kitHeadingName(sp.player)} · OVR ${Math.round(sp.overall)}`;
-  if (state.navMode === "browse" || state.editing) {
-    return `<div class="player-card-flip-nav" role="group" aria-label="Browse players">
-      <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="prev" aria-label="Previous player">‹</button>
-      <span class="player-card-flip-label">${escapeHtml(ratingLabel)}</span>
-      <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="next" aria-label="Next player">›</button>
-    </div>`;
-  }
-  return `<div class="player-card-flip-nav" role="group" aria-label="Flip player card">
-    <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="prev" aria-label="Flip card">‹</button>
-    <span class="player-card-flip-label">${state.flipped ? "STATS" : escapeHtml(ratingLabel)}</span>
-    <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="next" aria-label="Flip card">›</button>
+function flipNavHtml(_sp: SquadPlayer): string {
+  return `<div class="player-card-flip-nav" role="group" aria-label="Browse players">
+    <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="prev" aria-label="Previous player">‹</button>
+    <span class="player-card-flip-spacer" aria-hidden="true"></span>
+    <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="next" aria-label="Next player">›</button>
   </div>`;
 }
 
@@ -212,10 +248,10 @@ function photoHtml(sp: SquadPlayer, team: PlayerCardTeamContext): string {
   return crestBlock;
 }
 
-function shirtHtml(sp: SquadPlayer, team: PlayerCardTeamContext): string {
+function shirtHtml(sp: SquadPlayer, team: PlayerCardTeamContext, className = "player-card-shirt"): string {
   const text = contrastingKitText(team.teamColor, team.teamSecondaryColor);
   const surname = kitSurname(sp.player.displayName || sp.player.name);
-  return `<div class="player-card-shirt" style="background:${escapeAttr(team.teamColor)};color:${escapeAttr(text)}">
+  return `<div class="${className}" style="background:${escapeAttr(team.teamColor)};color:${escapeAttr(text)}">
     <span class="player-card-shirt-name">${escapeHtml(surname)}</span>
     <span class="player-card-shirt-num">${sp.shirtNumber}</span>
   </div>`;
@@ -251,9 +287,10 @@ function ratingsHtml(sp: SquadPlayer, editing: boolean): string {
 }
 
 function sportsCardHtml(sp: SquadPlayer, team: PlayerCardTeamContext, state: PlayerCardRenderState): string {
-  const flipped = state.flipped;
-  const teamLabel = team.teamName.trim() || "TEAM";
-  return `<div class="player-card player-card-select${flipped ? " is-flipped" : ""}" data-face="${flipped ? "back" : "front"}" style="--card-accent:${escapeAttr(team.teamColor)}">
+  const flipY = state.flipY ?? (state.flipped ? 180 : 0);
+  const flipped = isPlayerCardShowingBack(flipY);
+  const teamLabel = formatPlayerCardTeamName(team.teamName) || "TEAM";
+  return `<div class="player-card player-card-select${flipped ? " is-flipped" : ""}" data-char="card-face" data-face="${flipped ? "back" : "front"}" style="--card-accent:${escapeAttr(team.teamColor)};--card-flip-y:${flipY}deg"${titleAttr("Flip card")} role="button" tabindex="0">
     <div class="player-card-inner">
       <div class="player-card-face player-card-front">
         <div class="player-card-top">
@@ -263,14 +300,14 @@ function sportsCardHtml(sp: SquadPlayer, team: PlayerCardTeamContext, state: Pla
           <span class="player-card-pos-code">${escapeHtml(sp.player.primaryPosition)}</span>
           <span class="player-card-ovr-holo">${Math.round(sp.overall)}</span>
         </div>
-        ${shirtHtml(sp, team)}
         ${photoHtml(sp, team)}
         ${profileStatsBlock(sp.attrs, { mode: state.profileView, size: 172 })}
+        ${shirtHtml(sp, team)}
       </div>
       <div class="player-card-face player-card-back">
         <div class="player-card-back-head">
           <em class="player-card-meta-label">POS</em>
-          <span class="player-card-player">${sp.shirtNumber}. ${escapeHtml(kitSurname(sp.player.displayName || sp.player.name))}</span>
+          ${shirtHtml(sp, team, "player-card-shirt player-card-shirt-back")}
           <em class="player-card-meta-label player-card-meta-label-end">OVR</em>
           <span class="player-card-pos-code">${escapeHtml(sp.player.primaryPosition)}</span>
           <span class="player-card-ovr-value">${Math.round(sp.overall)}</span>
@@ -289,7 +326,7 @@ function editPanelHtml(sp: SquadPlayer, team: PlayerCardTeamContext, imagePaths:
         <div class="player-card-edit-portrait-preview">${photoHtml(sp, team)}</div>
         <div class="player-card-edit-portrait-controls">
           <label>PNG portrait
-            <select data-edit-field="portraitAsset" title="Portrait from images/">${portraitOptionsHtml(imagePaths, sp.player.appearance?.portraitAsset?.trim() || "")}</select>
+            <select data-edit-field="portraitAsset"${titleAttr("Portrait from images/")}>${portraitOptionsHtml(imagePaths, sp.player.appearance?.portraitAsset?.trim() || "")}</select>
           </label>
           <label class="portrait-upload-btn squad-edit-upload">Upload PNG
             <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-edit-upload hidden />
@@ -327,11 +364,10 @@ export function playerCardShellHtml(
   const editing = state.editing;
   return `<div class="player-card-shell player-card-shell-${editing ? "edit" : "select"}${editing ? " is-editing" : ""}">
     <div class="player-card-shell-head">
-      <span class="player-card-shell-kicker">${editing ? "PLAYER EDIT" : "PLAYER CARD"}</span>
       ${actionBtnHtml(state)}
     </div>
     ${editing ? editPanelHtml(sp, team, state.imagePaths) : sportsCardHtml(sp, team, state)}
-    ${flipNavHtml(sp, state)}
+    ${flipNavHtml(sp)}
   </div>`;
 }
 

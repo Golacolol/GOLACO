@@ -9,6 +9,7 @@ import {
   type ProfileAxisId,
 } from "../football/players/PlayerStats";
 import type { PlayerAttributes } from "../data/schema";
+import { titleAttr } from "./infoOverlays";
 
 export type ProfileStatsMode = "hex" | "detail" | "full";
 
@@ -149,7 +150,7 @@ export function profileStatsBlock(
   } else {
     body = `<div class="char-stats ${opts?.compact ? "char-stats-compact " : ""}profile-detail-bars">${profileDetailRows(axes)}</div>`;
   }
-  return `<div class="profile-stats${compact}" data-char="profile-toggle" data-mode="${mode}" data-size="${size}" title="${profileModeTitle(mode)}" role="button" tabindex="0" style="width:${size}px;height:${size}px">
+  return `<div class="profile-stats${compact}" data-char="profile-toggle" data-mode="${mode}" data-size="${size}"${titleAttr(profileModeTitle(mode))} role="button" tabindex="0" style="width:${size}px;height:${size}px">
     ${body}
   </div>`;
 }

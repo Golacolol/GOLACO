@@ -337,8 +337,8 @@ export class SettingsMenu {
           </label>
           <label class="check"><input id="club-name-invert" type="checkbox" ${settings.clubNameInvertColors ? "checked" : ""}/> Invert stadium &amp; team name colours</label>
           <label class="check"><input id="ball-ring" type="checkbox" ${settings.ballGoldRing ? "checked" : ""}/> Gold ring around the ball</label>
-          <label class="check"><input id="formation-overlays" type="checkbox" ${settings.formationOverlays ? "checked" : ""}/> Formation overlays</label>
-          <p class="hint">When on, hover a pitch or substitute counter to see the player name.</p>
+          <label class="check"><input id="formation-overlays" type="checkbox" ${settings.formationOverlays ? "checked" : ""}/> Info overlays</label>
+          <p class="hint">When on, hover buttons and controls for help tips, and pitch or substitute counters for player names. Off by default.</p>
           <label class="settings-range">Football size
             <input id="ball-scale" type="range" min="100" max="225" step="5" value="${Math.round(clampBallScalePercent(settings.ballScale))}" />
             <span class="settings-range-value" data-ball-scale>${Math.round(clampBallScalePercent(settings.ballScale))}%</span>

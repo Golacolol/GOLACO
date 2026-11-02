@@ -2173,16 +2173,10 @@ select.formation-chip.formation-select option {
 .player-card-shell-head {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 10px;
   width: 100%;
   flex: 0 0 auto;
-}
-.player-card-shell-kicker {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  color: var(--gold);
-  font-weight: 700;
 }
 .player-card-action {
   margin: 0;
@@ -2285,10 +2279,9 @@ select.formation-chip.formation-select option {
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
+  /* --card-flip-y set from the tapped side so that edge leads the turn. */
+  transform: rotateY(var(--card-flip-y, 0deg));
   transition: transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-.player-card.is-flipped .player-card-inner {
-  transform: rotateY(180deg);
 }
 .player-card-face {
   position: absolute;
@@ -2366,23 +2359,70 @@ select.formation-chip.formation-select option {
   /* Optical nudge: bordered badge reads high against large OVR digits. */
   transform: translateY(2px);
 }
-.player-card-team,
-.player-card-player {
+.player-card[data-char="card-face"] {
+  cursor: pointer;
+}
+.player-card-team {
   grid-column: 2;
   grid-row: 1 / span 2;
   align-self: center;
   min-width: 0;
-  font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  width: 100%;
+  /* Distinct from Oswald kit/OVR type — condensed sports display on the front. */
+  font-family: "Bebas Neue", "Arial Narrow", Impact, sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0.88;
-  color: var(--paper);
+  text-overflow: clip;
+  line-height: 1.05;
+  /* Taller glyphs only — keep fitted width unchanged. */
+  transform: scaleY(1.18);
+  transform-origin: center center;
+  /* Metallic foil from the UI gold, with a bright highlight band. */
+  color: transparent;
+  background-image:
+    linear-gradient(
+      105deg,
+      #6e542c 0%,
+      #9a7a45 14%,
+      var(--gold) 28%,
+      #f2e2b4 42%,
+      #d4b57a 52%,
+      var(--gold) 64%,
+      #8a6b3d 78%,
+      #e8d29a 90%,
+      var(--gold) 100%
+    );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 1px 0 rgba(80, 55, 20, 0.55)) drop-shadow(0 0 4px rgba(197, 165, 114, 0.28));
+  animation: player-card-team-gold-shift 5.5s ease-in-out infinite alternate;
+}
+@keyframes player-card-team-gold-shift {
+  0% { background-position: 8% 50%; }
+  100% { background-position: 92% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .player-card-team {
+    animation: none;
+    background-position: 40% 50%;
+  }
+}
+.player-card-back-head .player-card-shirt-back {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  justify-self: stretch;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 6px 2px;
+  gap: 0;
 }
 .player-card-ovr-holo,
 .player-card-ovr-value {
@@ -2459,6 +2499,54 @@ select.formation-chip.formation-select option {
   object-fit: contain;
   object-position: center center;
 }
+/* Front-of-card player PNGs: circular crop with a gold frame. */
+.player-card-front .player-card-photo.has-photo {
+  width: min(78%, 210px);
+  max-height: 42%;
+  margin: 2px auto 0;
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  box-shadow:
+    0 0 0 1px rgba(197, 165, 114, 0.4),
+    0 0 10px rgba(197, 165, 114, 0.22),
+    inset 0 0 0 1px rgba(242, 226, 180, 0.35);
+  overflow: hidden;
+  background: rgba(4, 14, 9, 0.55);
+  flex: 0 1 auto;
+  aspect-ratio: 1 / 1;
+}
+.player-card-front .player-card-photo.has-photo .player-card-portrait {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 50%;
+}
+/* Club emblems on the player card: no gold circle / circular crop. */
+.player-card-front .player-card-photo.has-crest,
+.player-card-edit-portrait-preview .player-card-photo.has-crest {
+  width: 100%;
+  max-height: 48%;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  flex: 1 1 0;
+  aspect-ratio: 1 / 1;
+  padding: 4px;
+  overflow: hidden;
+}
+.player-card-front .player-card-photo.has-crest .player-card-crest.team-badge,
+.player-card-front .player-card-photo.has-crest .player-card-crest-fallback,
+.player-card-edit-portrait-preview .player-card-photo.has-crest .player-card-crest.team-badge,
+.player-card-edit-portrait-preview .player-card-photo.has-crest .player-card-crest-fallback {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
 .player-card-crest-host {
   width: 100%;
   height: 100%;
@@ -2531,6 +2619,13 @@ select.formation-chip.formation-select option {
   letter-spacing: -0.03em;
   order: 2;
 }
+.player-card-shirt-back .player-card-shirt-name {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+}
+.player-card-shirt-back .player-card-shirt-num {
+  font-size: 28px;
+}
 .player-card-front .profile-stats {
   margin: 0 auto;
   flex: 0 0 auto;
@@ -2538,8 +2633,8 @@ select.formation-chip.formation-select option {
 .player-card-flip-nav {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 10px;
   flex: 0 0 auto;
   width: 100%;
   margin: 0;
@@ -2561,19 +2656,9 @@ select.formation-chip.formation-select option {
 .player-card-flip-btn:hover {
   background: rgba(0, 122, 61, 0.5);
 }
-.player-card-flip-label {
-  font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  opacity: 0.88;
+.player-card-flip-spacer {
+  flex: 1 1 auto;
   min-width: 0;
-  max-width: 12em;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-transform: uppercase;
 }
 .player-card-back-name {
   flex: 1 1 auto;

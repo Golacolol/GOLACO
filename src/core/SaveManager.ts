@@ -70,7 +70,7 @@ export interface SavedSettings {
   awayMidLineColor: string;
   awayAttLineColor: string;
   ballGoldRing: boolean;
-  /** Formation panel hover titles / name tooltips on pitch & bench. Default off. */
+  /** Info overlays: help tooltips + formation pitch/bench name tips. Default off. */
   formationOverlays: boolean;
   /** Ring under the intended pass receiver while aiming. Default off. */
   showPassTargetHighlight: boolean;
