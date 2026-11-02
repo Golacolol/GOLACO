@@ -162,6 +162,7 @@ function escapeHtml(s: string): string {
 /**
  * Player-card header label:
  * - "Inter Milan — 1993/94" → "Inter Milan 93/94"
+ * - "Italy — 1982" / "Portugal — 2016" → "Italy 1982" / "Portugal 2016"
  * - "Plymouth Argyle — FANS" → "Plymouth Argyle Fans"
  */
 export function formatPlayerCardTeamName(name: string): string {
@@ -172,6 +173,8 @@ export function formatPlayerCardTeamName(name: string): string {
   // "Club — 1993/94 …" / "Club - 2004/05 Istanbul" → "Club 93/94 …"
   s = s.replace(/\s*[—–-]\s*(?=(?:19|20)\d{2}\/\d{2}\b)/g, " ");
   s = s.replace(/\b(?:19|20)(\d{2})\/(\d{2})\b/g, "$1/$2");
+  // Single calendar year: keep the full year, drop the dash — "Italy — 1982" → "Italy 1982"
+  s = s.replace(/\s*[—–-]\s*((?:19|20)\d{2})\b/g, " $1");
   // Title-case the Fans tag after a strip so it doesn't stay ALL CAPS.
   s = s.replace(/\bFANS\b/g, "Fans");
   return s.replace(/\s{2,}/g, " ").trim();

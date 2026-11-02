@@ -17,4 +17,14 @@ describe("formatPlayerCardTeamName", () => {
     expect(formatPlayerCardTeamName("Chelsea — 2004/05 Mourinho")).toBe("Chelsea 04/05 Mourinho");
     expect(formatPlayerCardTeamName("Liverpool — 2004/05 Istanbul")).toBe("Liverpool 04/05 Istanbul");
   });
+
+  it("formats single-year teams with the full year and no dash", () => {
+    expect(formatPlayerCardTeamName("Italy — 1982")).toBe("Italy 1982");
+    expect(formatPlayerCardTeamName("Italy - 1982")).toBe("Italy 1982");
+    expect(formatPlayerCardTeamName("Portugal — 2016")).toBe("Portugal 2016");
+    expect(formatPlayerCardTeamName("Germany — 2014")).toBe("Germany 2014");
+    expect(formatPlayerCardTeamName("Boca Juniors — 2000")).toBe("Boca Juniors 2000");
+    expect(formatPlayerCardTeamName("Argentina — 2022")).toBe("Argentina 2022");
+    expect(formatPlayerCardTeamName("Italy 1982")).toBe("Italy 1982");
+  });
 });
