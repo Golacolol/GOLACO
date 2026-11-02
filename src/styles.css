@@ -3517,11 +3517,22 @@ select.formation-chip.formation-select option {
 }
 
 /*
- * Phones / narrow: pitch first (formation is the job), then player card + hex, then bench.
- * Avoid roster overflow painting under the opaque pitch (that hid the hex).
+ * Phones / narrow: pitch first, then action buttons, then substitutes,
+ * then player details + squad list. Desktop triad order stays unchanged.
  */
 @media (max-width: 760px) {
   .char-panel-team {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "head"
+      "pitch"
+      "modes"
+      "nav"
+      "bench"
+      "roster";
+    align-items: start;
+    gap: 10px;
     min-width: 0;
     width: min(100vw - 12px, 98vw);
     max-width: 98vw;
@@ -3530,25 +3541,46 @@ select.formation-chip.formation-select option {
     overflow: auto;
     padding: 10px 8px 8px;
   }
-  .team-select-body {
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "pitch"
-      "roster"
-      "bench";
-    gap: 10px;
-    flex: 0 0 auto;
-    min-height: 0;
-    align-items: start;
+  /* Let pitch / bench / roster join the panel grid so buttons can sit between. */
+  .char-panel-team .team-select-body {
+    display: contents;
   }
-  .team-pitch {
+  .char-panel-team .team-select-head {
+    grid-area: head;
+    grid-template-columns: 1fr;
+    width: 100%;
+    margin-bottom: 0;
+  }
+  .char-panel-team .team-pitch {
     grid-area: pitch;
     width: 100%;
     height: auto;
     min-height: 260px;
     max-height: min(58vh, 520px);
     aspect-ratio: 68 / 105;
+  }
+  .char-panel-team .team-bench {
+    grid-area: bench;
+    height: auto;
+    max-height: min(42vh, 360px);
+    overflow: hidden;
+    width: 100%;
+  }
+  .char-panel-team .char-modes {
+    grid-area: modes;
+    width: 100%;
+    margin: 0;
+  }
+  .char-panel-team .char-nav {
+    grid-area: nav;
+    width: 100%;
+  }
+  .char-panel-team .team-roster {
+    grid-area: roster;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+    width: 100%;
   }
   /* Pitch counters keep .team-pitch cqw clamp — no fixed 64px override. */
   .char-panel .bench-card .kit-marker-bench,
@@ -3565,21 +3597,6 @@ select.formation-chip.formation-select option {
   .team-pitch .kit-marker-caption .kit-marker-num,
   .team-pitch .kit-marker-caption .kit-marker-name {
     font-size: clamp(12px, 2.8cqw, 17px);
-  }
-  .team-select-head {
-    grid-template-columns: 1fr;
-  }
-  .team-roster {
-    grid-area: roster;
-    height: auto;
-    max-height: none;
-    overflow: visible;
-  }
-  .team-bench {
-    grid-area: bench;
-    height: auto;
-    max-height: min(42vh, 360px);
-    overflow: hidden;
   }
   .team-roster-card {
     flex: 0 0 auto;

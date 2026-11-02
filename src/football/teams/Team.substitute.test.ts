@@ -48,10 +48,13 @@ describe("Team.substitute", () => {
       id: "t",
       name: "Test",
       abbreviation: "TST",
+      teamType: "CURRENT_TEAM",
       primaryColor: "#007A3D",
       secondaryColor: "#fff",
       defaultKit: { shirt: "#007A3D", shorts: "#fff", socks: "#007A3D" },
       goalkeeperKit: { shirt: "#1FAE5B", shorts: "#111", socks: "#1FAE5B" },
+      defaultStadiumId: "home_park",
+      defaultFormation: "4-4-2",
     };
     const lineup: LineupRecord = {
       id: "t_xi",
