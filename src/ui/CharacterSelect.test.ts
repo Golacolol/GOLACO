@@ -591,12 +591,16 @@ describe("character select", () => {
     });
     view.showOverlays = false;
     view.render();
-    expect(view.root.querySelector(".pitch-token[title]")).toBeNull();
+    // Overlays off: no player-name titles. Pitch may keep a click/right-click hint.
+    const pitchOff = view.root.querySelector(".pitch-token");
+    const pitchName = pitchOff?.getAttribute("aria-label");
+    expect(pitchName).toBeTruthy();
+    expect(pitchOff?.getAttribute("title")).not.toBe(pitchName);
     expect(view.root.querySelector(".bench-card[title]")).toBeNull();
-    expect(view.root.querySelector(".pitch-token")?.getAttribute("aria-label")).toBeTruthy();
     view.showOverlays = true;
     view.render();
-    expect(view.root.querySelector(".pitch-token[title]")?.getAttribute("title")).toBeTruthy();
+    const pitchOn = view.root.querySelector(".pitch-token");
+    expect(pitchOn?.getAttribute("title")).toBe(pitchOn?.getAttribute("aria-label"));
     expect(view.root.querySelector(".bench-card[title]")?.getAttribute("title")).toBe("B. Ench");
     view.dispose();
     host.remove();

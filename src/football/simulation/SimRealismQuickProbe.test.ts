@@ -131,9 +131,10 @@ describe("sim realism quick probe (post-tune)", () => {
       console.log("realism-quick", detail);
 
       // Soft regression floors vs prior 180s batch (possess~1.1, shots~14/3min, transition~0.7, width~21).
+      // Box 1v1 shot willingness restored ~14 shots / 3min; keep a soft ceiling above that.
       expect(possess, detail).toBeGreaterThan(1.05);
       expect(teamPossess, detail).toBeGreaterThan(2.5);
-      expect(shots, detail).toBeLessThanOrEqual(10);
+      expect(shots, detail).toBeLessThanOrEqual(16);
       expect(completion, detail).toBeGreaterThan(54);
       expect(shortShare, detail).toBeLessThan(0.94);
       expect(longShare, detail).toBeGreaterThan(0.02);
