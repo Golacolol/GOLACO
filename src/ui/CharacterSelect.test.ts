@@ -262,35 +262,51 @@ describe("character select", () => {
     view.render();
     expect(view.current().player.id).toBe(target.player.player.id);
     expect(view.root.querySelector(".roster-row.on .roster-num")?.textContent).toBe(String(target.player.shirtNumber));
-    expect(view.root.querySelector(".team-roster-card .player-card")).toBeTruthy();
-    expect(view.root.querySelector(".team-roster-card .player-card-shirt-name")?.textContent).toMatch(/[A-Z]{2,}/);
-    expect(view.root.querySelector(".team-roster-card .player-card-shirt-num")?.textContent).toBe(
-      String(target.player.shirtNumber),
+    expect(view.root.querySelector(".team-roster-card .char-num")).toBeNull();
+    expect(view.root.querySelector(".team-roster-card .kit-marker-roster")).toBeTruthy();
+    expect(view.root.querySelector(".team-roster-card .portrait-badge-kit .sur")?.textContent).toMatch(/[A-Z]{2,}/);
+    expect(view.root.querySelector(".team-roster-card h3")?.textContent).toBe(
+      `${target.player.shirtNumber}. ${kitInitialSurnameLabel(target.player.player.displayName, target.player.player.name)}`,
     );
-    expect(view.root.querySelector(".team-roster-card .player-card-ovr")?.textContent).toMatch(/OVR/);
-    expect(view.root.querySelector(".team-roster-card .player-card-pos")?.textContent).toBe(
-      target.player.player.primaryPosition,
-    );
+    expect(view.root.querySelector(".team-roster-card .char-meta")?.textContent).toMatch(/OVR/);
     expect(view.root.querySelector(".team-roster-card .profile-stats")).toBeTruthy();
-    expect(view.root.querySelector(".team-roster-card [data-char='card-flip']")).toBeTruthy();
+    expect(view.root.querySelector(".team-roster-card .player-card")).toBeNull();
     expect(view.root.querySelector(`.pitch-token.on[data-id="${target.player.player.id}"]`)).toBeTruthy();
   });
 
-  it("flips the sports player card between hex front and full ratings back", () => {
+  it("flips the PLAYER SELECT sports card with arrows below the card", () => {
     const host = document.createElement("div");
     const view = new CharacterSelect(host);
     view.setSquad("Plymouth Argyle", squad(), "#007A3D", {
       formation: "4-2-3-1",
       starterSlots: ["GK", "CAM", "ST"],
+      team: {
+        id: "plymouth_argyle_current",
+        name: "Plymouth Argyle",
+        abbreviation: "ARG",
+        primaryColor: "#007A3D",
+        secondaryColor: "#C5A572",
+      },
     });
+    view.setControlMode("PLAYER");
     view.render();
-    const card = view.root.querySelector<HTMLElement>(".team-roster-card .player-card");
+    const shell = view.root.querySelector(".player-pitch-select .player-card-shell");
+    const card = view.root.querySelector<HTMLElement>(".player-pitch-select .player-card");
+    const flipNav = view.root.querySelector(".player-pitch-select .player-card-flip-nav");
+    expect(shell).toBeTruthy();
     expect(card?.classList.contains("is-flipped")).toBe(false);
+    expect(card?.contains(flipNav)).toBe(false);
     expect(view.root.querySelector(".player-card-front .profile-stats")).toBeTruthy();
-    view.root.querySelector<HTMLElement>("[data-char='card-flip']")?.click();
+    expect(view.root.querySelector(".player-card-team")?.textContent).toContain("Plymouth Argyle");
+    expect(view.root.querySelector(".player-card-flip-label")?.textContent).toMatch(/OVR/);
+    expect(view.root.querySelector(".player-pitch-select .tabletop-setup-kicker")).toBeNull();
+    expect(view.root.querySelector(".player-pitch-select .hint")).toBeNull();
+    // No portrait on the stub squad → club crest fills the photo well.
+    expect(view.root.querySelector(".player-card-photo.has-crest .player-card-crest")).toBeTruthy();
+    flipNav?.querySelector<HTMLElement>("[data-char='card-flip']")?.click();
     expect(card?.classList.contains("is-flipped")).toBe(true);
     expect(view.root.querySelector(".player-card-ratings")).toBeTruthy();
-    view.root.querySelector<HTMLElement>("[data-char='card-flip']")?.click();
+    flipNav?.querySelector<HTMLElement>("[data-char='card-flip']")?.click();
     expect(card?.classList.contains("is-flipped")).toBe(false);
   });
 
@@ -834,7 +850,7 @@ describe("kitSurnameFromName", () => {
   it("fits classic team titles without treating the crest as text width", () => {
     const host = document.createElement("div");
     host.className = "char-team-title";
-    host.innerHTML = `<span class="char-team-crest" style="display:inline-block;width:44px;height:44px"></span><div class="eyebrow" style="font-size:44px">Cameroon — 1990</div>`;
+    host.innerHTML = `<span class="char-team-crest" style="display:inline-block;width:44px;height:44px"></span><div class="eyebrow" style="font-size:30px">Cameroon — 1990</div>`;
     document.body.appendChild(host);
     Object.defineProperty(host, "clientWidth", { configurable: true, get: () => 200 });
     const crest = host.querySelector(".char-team-crest") as HTMLElement;
@@ -842,12 +858,12 @@ describe("kitSurnameFromName", () => {
     const title = host.querySelector(".eyebrow") as HTMLElement;
     Object.defineProperty(title, "scrollWidth", {
       configurable: true,
-      get: () => (parseFloat(title.style.fontSize || "44") > 30 ? 190 : 140),
+      get: () => (parseFloat(title.style.fontSize || "30") > 20 ? 190 : 140),
     });
     fitFormationTeamTitle(title);
     expect(title.textContent).toBe("Cameroon — 1990");
-    expect(parseFloat(title.style.fontSize)).toBeLessThan(44);
-    expect(parseFloat(title.style.fontSize)).toBeGreaterThanOrEqual(26);
+    expect(parseFloat(title.style.fontSize)).toBeLessThan(30);
+    expect(parseFloat(title.style.fontSize)).toBeGreaterThanOrEqual(16);
     expect(parseFloat(title.style.fontSize)).toBeGreaterThanOrEqual(13);
     host.remove();
   });

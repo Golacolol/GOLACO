@@ -27,6 +27,7 @@ import {
   kitMarkerHtml,
   kitSurnameFromName,
   portraitAsset,
+  portraitHtml,
   teamBadgeHtml,
 } from "./Portrait";
 import { contrastingKitText } from "./kitContrast";
@@ -221,18 +222,18 @@ export function fitFormationTeamTitle(title: HTMLElement): void {
   title.style.fontSize = "";
   title.style.letterSpacing = "";
   title.style.whiteSpace = "nowrap";
-  let size = parseFloat(getComputedStyle(title).fontSize) || 44;
-  let tracking = parseFloat(getComputedStyle(title).letterSpacing) || 0.04;
+  let size = parseFloat(getComputedStyle(title).fontSize) || 30;
+  let tracking = parseFloat(getComputedStyle(title).letterSpacing) || 0.05;
   // letterSpacing from computed style is px — prefer the CSS em default.
-  if (getComputedStyle(title).letterSpacing.endsWith("px")) tracking = 0.04;
+  if (getComputedStyle(title).letterSpacing.endsWith("px")) tracking = 0.05;
   let guard = 0;
-  while (title.scrollWidth > maxW + 0.5 && size > 26 && guard < 48) {
+  while (title.scrollWidth > maxW + 0.5 && size > 16 && guard < 48) {
     size -= 0.5;
     title.style.fontSize = `${size}px`;
     guard += 1;
   }
-  while (title.scrollWidth > maxW + 0.5 && tracking > 0.01 && guard < 72) {
-    tracking = Math.max(0.01, tracking - 0.01);
+  while (title.scrollWidth > maxW + 0.5 && tracking > 0.02 && guard < 72) {
+    tracking = Math.max(0.02, tracking - 0.01);
     title.style.letterSpacing = `${tracking}em`;
     guard += 1;
   }
@@ -1391,11 +1392,15 @@ export class CharacterSelect {
 
   setCardFlipped(flipped: boolean): void {
     this.cardFlipped = flipped;
+    const sp = this.current();
+    const labelText = flipped
+      ? "STATS"
+      : `${kitHeadingName(sp.player)} · OVR ${Math.round(sp.overall)}`;
     for (const card of this.root.querySelectorAll<HTMLElement>(".player-card")) {
       card.classList.toggle("is-flipped", flipped);
       card.setAttribute("data-face", flipped ? "back" : "front");
       for (const label of card.querySelectorAll<HTMLElement>(".player-card-flip-label")) {
-        label.textContent = flipped ? "STATS" : "CARD";
+        label.textContent = labelText;
       }
     }
   }
@@ -1432,7 +1437,17 @@ export class CharacterSelect {
 
     const card = this.root.querySelector(".team-roster-card");
     if (card) {
-      card.innerHTML = this.playerSportsCardHtml(selected, { variant: "roster" });
+      const a = selected.attrs;
+      card.innerHTML = `
+        ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
+          surnameOnly: true,
+          className: "kit-marker-roster",
+          textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
+        })}
+        <h3>${selected.shirtNumber}. ${escapeHtml(kitHeadingName(selected.player))}</h3>
+        <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
+        ${profileStatsBlock(a, { compact: true, mode: this.profileView, size: 168 })}
+      `;
     }
     const pitchCard = this.root.querySelector(".player-pitch-select");
     if (pitchCard) {
@@ -1517,11 +1532,19 @@ export class CharacterSelect {
     return `<div class="char-team-title">${badge}<div class="eyebrow">${escapeHtml(text)}</div>${chips}</div>`;
   }
 
-  private playerCardFlipNavHtml(): string {
+  private playerCardFlipNavHtml(sp: SquadPlayer): string {
+    const frontLabel = `${kitHeadingName(sp.player)} · OVR ${Math.round(sp.overall)}`;
     return `<div class="player-card-flip-nav" role="group" aria-label="Flip player card">
       <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="prev" aria-label="Flip card">‹</button>
-      <span class="player-card-flip-label">${this.cardFlipped ? "STATS" : "CARD"}</span>
+      <span class="player-card-flip-label">${this.cardFlipped ? "STATS" : escapeHtml(frontLabel)}</span>
       <button type="button" class="player-card-flip-btn" data-char="card-flip" data-dir="next" aria-label="Flip card">›</button>
+    </div>`;
+  }
+
+  private playerCardShellHtml(sp: SquadPlayer, opts: { variant: "select" | "edit" }): string {
+    return `<div class="player-card-shell player-card-shell-${opts.variant}">
+      ${this.playerSportsCardHtml(sp, opts)}
+      ${this.playerCardFlipNavHtml(sp)}
     </div>`;
   }
 
@@ -1534,18 +1557,34 @@ export class CharacterSelect {
     </div>`;
   }
 
+  private playerCardCrestHtml(): string {
+    const team = this.teamRecord ?? this.teamBadge;
+    if (!team) {
+      return `<div class="player-card-crest-fallback" style="background:${escapeAttr(this.teamColor)}"></div>`;
+    }
+    return teamBadgeHtml(
+      {
+        id: team.id,
+        name: "name" in team ? team.name : this.teamName,
+        abbreviation: team.abbreviation,
+        badgeAsset: team.badgeAsset,
+        primaryColor: team.primaryColor ?? this.teamColor,
+        secondaryColor: team.secondaryColor ?? this.teamSecondaryColor,
+      },
+      { className: "player-card-crest", size: 128 },
+    );
+  }
+
   private playerCardPhotoHtml(sp: SquadPlayer): string {
     const src = portraitAsset(sp.player);
-    const text = contrastingKitText(this.teamColor, this.teamSecondaryColor);
+    const crestBlock = `<div class="player-card-photo has-crest"><div class="player-card-crest-host">${this.playerCardCrestHtml()}</div></div>`;
     if (src) {
-      return `<div class="player-card-photo has-photo">
-        <img alt="" src="${escapeAttr(src)}" onerror="this.closest('.player-card-photo')?.classList.remove('has-photo');this.remove();"/>
+      // Portrait only in the DOM — crest is swapped in only if the PNG fails to load.
+      return `<div class="player-card-photo has-photo" data-crest-fallback="${escapeAttr(encodeURIComponent(crestBlock))}">
+        <img class="player-card-portrait" alt="" src="${escapeAttr(src)}" onerror="const box=this.closest('.player-card-photo');const fb=box?.dataset.crestFallback;if(!box||!fb){this.remove();return;}box.outerHTML=decodeURIComponent(fb);"/>
       </div>`;
     }
-    return `<div class="player-card-photo player-card-photo-fallback" style="background:${escapeAttr(this.teamColor)};color:${escapeAttr(text)}">
-      <span class="player-card-shirt-name">${escapeHtml(kitSurname(sp.player.displayName || sp.player.name))}</span>
-      <span class="player-card-shirt-num">${sp.shirtNumber}</span>
-    </div>`;
+    return crestBlock;
   }
 
   private playerCardRatingsHtml(sp: SquadPlayer, editing: boolean): string {
@@ -1577,15 +1616,15 @@ export class CharacterSelect {
     </div>`;
   }
 
-  /** Flipable sports card — front: shirt + PNG + hex; back: full ratings. */
+  /** Flipable sports card for PLAYER SELECT / edit — front: shirt + PNG + hex; back: full ratings. */
   private playerSportsCardHtml(
     sp: SquadPlayer,
-    opts: { variant: "roster" | "select" | "edit" },
+    opts: { variant: "select" | "edit" },
   ): string {
     const editing = opts.variant === "edit";
     const flipped = this.cardFlipped || editing;
-    const hexSize = opts.variant === "roster" ? 132 : opts.variant === "select" ? 156 : 140;
-    const compact = opts.variant === "roster";
+    const hexSize = opts.variant === "select" ? 172 : 140;
+    const teamLabel = this.teamName.trim() || "TEAM";
     const saveBar = editing
       ? `<div class="player-card-save-bar">
           <button type="button" class="primary" data-squad-edit="save">Save</button>
@@ -1620,34 +1659,29 @@ export class CharacterSelect {
         <div class="player-card-face player-card-front">
           <div class="player-card-top">
             <span class="player-card-pos">${escapeHtml(sp.player.primaryPosition)}</span>
+            <span class="player-card-team">${escapeHtml(teamLabel)}</span>
             <span class="player-card-ovr"><em>OVR</em>${Math.round(sp.overall)}</span>
           </div>
-          ${this.playerCardPhotoHtml(sp)}
           ${this.playerCardShirtHtml(sp)}
+          ${this.playerCardPhotoHtml(sp)}
           ${editFront}
-          ${profileStatsBlock(sp.attrs, { compact, mode: this.profileView, size: hexSize })}
-          ${this.playerCardFlipNavHtml()}
+          ${profileStatsBlock(sp.attrs, { mode: this.profileView, size: hexSize })}
         </div>
         <div class="player-card-face player-card-back">
           ${saveBar}
           <div class="player-card-back-head">
             <span class="player-card-pos">${escapeHtml(sp.player.primaryPosition)}</span>
-            <span class="player-card-back-name">${escapeHtml(kitHeadingName(sp.player))}</span>
+            <span class="player-card-team">${escapeHtml(teamLabel)}</span>
             <span class="player-card-ovr"><em>OVR</em>${Math.round(sp.overall)}</span>
           </div>
           <div class="player-card-back-body">${this.playerCardRatingsHtml(sp, editing)}</div>
-          ${this.playerCardFlipNavHtml()}
         </div>
       </div>
     </div>`;
   }
 
   private playerSelectPitchInnerHtml(sp: SquadPlayer): string {
-    return `
-      <div class="tabletop-setup-kicker">PLAYER SELECT</div>
-      ${this.playerSportsCardHtml(sp, { variant: "select" })}
-      <p class="hint">Use bottom ‹ › on the mode bar to change player. Flip the card for full ratings. Start as Player locks you to this one.</p>
-    `;
+    return this.playerCardShellHtml(sp, { variant: "select" });
   }
 
   /** Player details shown in the pitch well during PLAYER SELECT. */
@@ -1988,7 +2022,14 @@ export class CharacterSelect {
         <div class="team-select-body">
           <aside class="team-roster">
             <div class="team-roster-card">
-              ${this.playerSportsCardHtml(selected, { variant: "roster" })}
+              ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
+                surnameOnly: true,
+                className: "kit-marker-roster",
+                textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
+              })}
+              <h3>${selected.shirtNumber}. ${escapeHtml(kitHeadingName(selected.player))}</h3>
+              <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
+              ${profileStatsBlock(selected.attrs, { compact: true, mode: this.profileView, size: 168 })}
             </div>
             <div class="team-roster-list">
               ${this.players
@@ -2114,7 +2155,7 @@ export class CharacterSelect {
     return `
       <div class="squad-edit-overlay" data-squad-edit="backdrop" role="presentation">
         <div class="squad-edit-dialog squad-edit-card" role="dialog" aria-modal="true" aria-label="Edit player" data-squad-edit="dialog">
-          ${this.playerSportsCardHtml(sp, { variant: "edit" })}
+          ${this.playerCardShellHtml(sp, { variant: "edit" })}
         </div>
       </div>
     `;

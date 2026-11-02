@@ -1565,16 +1565,13 @@ html.club-name-glow-off .club-line {
 }
 .pitch-overlay-card.player-pitch-select {
   text-align: center;
-  width: min(100%, 320px);
+  width: min(100%, 380px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-}
-.pitch-overlay-card.player-pitch-select .hint {
-  margin-top: 4px;
-  font-size: 0.75rem;
-  opacity: 0.72;
+  justify-content: center;
+  gap: 0;
+  padding: 0;
 }
 .tabletop-setup-kicker {
   letter-spacing: 0.14em;
@@ -1861,18 +1858,16 @@ html.club-name-glow-off .club-line {
 }
 .char-team-title .eyebrow {
   margin: 0;
-  line-height: 1.05;
-  font-size: 44px;
+  line-height: 1.12;
+  font-size: 30px;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: clip;
   min-width: 0;
   flex: 1 1 auto;
   max-width: 100%;
-  font-family: "Oswald", "Arial Narrow", Impact, sans-serif;
-  text-transform: uppercase;
 }
 .kit-name-chips {
   display: inline-flex;
@@ -1898,14 +1893,14 @@ html.club-name-glow-off .club-line {
 /* One right-aligned chip grid: HOME · Chalk · styles · formations. */
 .formation-toolbar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
-  align-content: flex-start;
+  align-content: center;
   align-items: center;
   gap: 5px;
   min-width: 0;
   width: 100%;
-  max-height: 4.6rem;
+  max-height: 2.4rem;
   overflow: hidden;
 }
 .formation-chip {
@@ -2043,34 +2038,155 @@ select.formation-chip.formation-select option {
 }
 .team-roster-card {
   text-align: center;
-  padding: 2px 0 8px;
+  padding: 4px 2px 8px;
   border-bottom: 1px solid rgba(197, 165, 114, 0.25);
-  perspective: 900px;
+}
+.team-roster-card .portrait {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 6px;
+}
+.team-roster-card .kit-marker-roster {
+  /* Fixed square — PNG and badge fallbacks must not resize the card. */
+  --roster-marker: 144px;
+  display: grid;
+  justify-items: center;
+  justify-content: center;
+  align-content: start;
+  gap: 0;
+  margin: 0 auto 8px;
+  width: var(--roster-marker);
+  height: var(--roster-marker);
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+/* Top-left Formation player card: square frame in panel gold/green — never a white circle. */
+.team-roster-card .kit-marker-roster .portrait,
+.team-roster-card .kit-marker-roster.kit-marker-photo .portrait {
+  position: relative;
+  width: var(--roster-marker);
+  height: var(--roster-marker);
+  margin: 0;
+  padding: 7px;
+  border-radius: 4px;
+  border: 2px solid rgba(197, 165, 114, 0.85);
+  background: rgba(4, 17, 10, 0.92);
+  box-shadow:
+    0 0 0 1px rgba(197, 165, 114, 0.28),
+    0 6px 16px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+}
+.team-roster-card .kit-marker-roster .portrait img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  border-radius: 2px;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  background: rgba(7, 20, 13, 0.9);
+}
+.team-roster-card .kit-marker-roster .portrait-badge,
+.team-roster-card .kit-marker-roster .portrait-badge-kit {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  padding: 10px 6px 8px;
+  box-sizing: border-box;
+  gap: 2px;
+  justify-content: center;
+}
+/* Kit-back style: surname arched above a large shirt number. */
+.team-roster-card .kit-marker-roster .portrait-badge-kit .num {
+  font-family: "Oswald", "Arial Narrow", Impact, sans-serif;
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  order: 2;
+}
+.team-roster-card .kit-marker-roster .portrait-badge-kit .sur {
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.05;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 6px;
+  text-align: center;
+  text-transform: uppercase;
+  order: 1;
+}
+/* Top-left card already shows the name in <h3> — never a caption under PNG or badge. */
+.team-roster-card .kit-marker-roster .kit-marker-caption,
+.team-roster-card .kit-marker-roster.kit-marker-photo .kit-marker-caption {
+  display: none !important;
+}
+.team-roster-card h3 {
+  margin: 6px 0 8px;
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  color: inherit;
+  width: 100%;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  box-sizing: border-box;
+  text-align: center;
+}
+.team-roster-card .char-meta {
+  opacity: 0.75;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
 }
 .team-roster-card .profile-stats-compact {
-  margin-top: 2px;
+  margin-top: 0;
 }
 
-/* Flipable sports player card (roster / PLAYER SELECT / edit). */
+/* Flipable sports player card (PLAYER SELECT / edit only). */
+.player-card-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 340px);
+  margin: 0 auto;
+}
+.player-card-shell-edit {
+  width: min(100%, 340px);
+}
 .player-card {
   --card-accent: #007a3d;
   position: relative;
   width: 100%;
-  max-width: 220px;
+  max-width: 340px;
   margin: 0 auto;
-  aspect-ratio: 2 / 3.15;
-  min-height: 280px;
+  aspect-ratio: 2 / 3.05;
+  min-height: 460px;
   perspective: 1100px;
 }
 .player-card-select {
-  max-width: 280px;
-  min-height: 360px;
+  max-width: 340px;
+  width: 100%;
+  min-height: 460px;
+  aspect-ratio: 2 / 3.05;
 }
 .player-card-edit {
   max-width: 340px;
   min-height: 420px;
   aspect-ratio: auto;
-  height: min(78vh, 560px);
+  height: min(72vh, 520px);
 }
 .player-card-inner {
   position: relative;
@@ -2112,9 +2228,9 @@ select.formation-chip.formation-select option {
 }
 .player-card-top,
 .player-card-back-head {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
   flex: 0 0 auto;
 }
@@ -2128,6 +2244,21 @@ select.formation-chip.formation-select option {
   border-radius: 4px;
   padding: 2px 7px;
   line-height: 1.1;
+  justify-self: start;
+}
+.player-card-team {
+  min-width: 0;
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.88;
+  color: var(--paper);
 }
 .player-card-ovr {
   font-family: "Oswald", "Arial Narrow", Impact, sans-serif;
@@ -2136,6 +2267,8 @@ select.formation-chip.formation-select option {
   line-height: 1;
   color: var(--paper);
   letter-spacing: -0.02em;
+  justify-self: end;
+  text-align: right;
 }
 .player-card-ovr em {
   display: block;
@@ -2147,23 +2280,65 @@ select.formation-chip.formation-select option {
 }
 .player-card-photo {
   position: relative;
-  flex: 1 1 auto;
-  min-height: 88px;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 48%;
   border-radius: 6px;
   border: 1.5px solid rgba(197, 165, 114, 0.55);
   background: rgba(4, 17, 10, 0.9);
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 6px;
+}
+.player-card-photo.has-photo,
+.player-card-photo.has-crest {
+  background: rgba(7, 20, 13, 0.95);
+}
+.player-card-photo .player-card-portrait {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center center;
+}
+.player-card-crest-host {
+  width: 100%;
+  height: 100%;
   display: grid;
   place-items: center;
 }
-.player-card-photo img {
+.player-card-photo.has-photo .player-card-crest-host,
+.player-card-photo.has-crest .player-card-portrait {
+  display: none !important;
+}
+.player-card-crest.team-badge,
+.player-card-crest-fallback {
+  width: min(72%, 128px) !important;
+  height: min(72%, 128px) !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.player-card-crest.team-badge img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center top;
+  object-fit: contain;
   display: block;
 }
-.player-card-photo-fallback,
+.player-card-crest .team-badge-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  font-weight: 800;
+}
 .player-card-shirt {
   display: flex;
   flex-direction: column;
@@ -2173,14 +2348,6 @@ select.formation-chip.formation-select option {
   font-family: "Oswald", "Arial Narrow", Impact, sans-serif;
   text-transform: uppercase;
   text-align: center;
-}
-.player-card-photo-fallback {
-  width: 100%;
-  height: 100%;
-  padding: 10px 8px;
-  box-sizing: border-box;
-}
-.player-card-shirt {
   flex: 0 0 auto;
   width: 100%;
   border-radius: 5px;
@@ -2205,19 +2372,19 @@ select.formation-chip.formation-select option {
   letter-spacing: -0.03em;
   order: 2;
 }
-.player-card-photo-fallback .player-card-shirt-name { font-size: 18px; }
-.player-card-photo-fallback .player-card-shirt-num { font-size: 64px; }
 .player-card-front .profile-stats {
   margin: 0 auto;
+  flex: 0 0 auto;
 }
 .player-card-flip-nav {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   flex: 0 0 auto;
-  margin-top: auto;
-  padding-top: 2px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 .player-card-flip-btn {
   width: 34px;
@@ -2236,11 +2403,18 @@ select.formation-chip.formation-select option {
   background: rgba(0, 122, 61, 0.5);
 }
 .player-card-flip-label {
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  opacity: 0.7;
-  min-width: 3.5em;
+  font-family: "Oswald", "Arial Narrow", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  opacity: 0.88;
+  min-width: 0;
+  max-width: 12em;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
 }
 .player-card-back-name {
   flex: 1 1 auto;

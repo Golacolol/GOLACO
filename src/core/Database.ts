@@ -161,13 +161,13 @@ export class GameDatabase {
         },
       });
     }
-    // Always refresh named-squad memberships from TS (shirt numbers / slots).
-    // Saved edits overlay this later via applySave.
+    // Always refresh named-squad memberships + default XI from TS (shirt numbers / slots).
+    // Saved formation edits overlay later via applyTeamTactics.
     this.memberships = this.memberships.filter((m) => m.teamId !== options.teamId).concat(options.memberships);
-    const lineup = this.lineups.find((l) => l.teamId === options.teamId);
-    if (!lineup?.starters.some((s) => s.playerId.startsWith(options.playerPrefix))) {
-      this.lineups = this.lineups.filter((l) => l.teamId !== options.teamId).concat(options.lineup);
-    }
+    this.lineups = this.lineups.filter((l) => l.teamId !== options.teamId).concat({
+      ...options.lineup,
+      starters: options.lineup.starters.map((s) => ({ ...s })),
+    });
     const team = this.teams.get(options.teamId);
     if (team) {
       team.defaultFormation = options.formation;
@@ -271,7 +271,9 @@ export class GameDatabase {
       this.overlayUserFixtureResults(save.data.fixtures as FixtureRecord[]);
     }
     if (save.data.advertising.length) this.advertising = save.data.advertising as AdvertisingBoardRecord[];
+    this.scrubStaleArgyleFansTactics(save);
     this.applyTeamTactics(save.data.teamTactics ?? {});
+    this.migrateArgyleFansStartingXi();
   }
 
   /** Overlay persisted formation / play-style / USER tactics onto authored lineups. */
@@ -281,6 +283,40 @@ export class GameDatabase {
       const lineup = this.lineups.find((l) => l.teamId === teamId);
       if (!lineup) continue;
       applyTacticsToLineup(lineup, tactics);
+    }
+  }
+
+  /** Drop pre-Sparks Fans XI tactics so authored Doo/Life/Sparks XI can load. */
+  private scrubStaleArgyleFansTactics(save: SaveManager): void {
+    const tactics = save.data.teamTactics?.[ARGYLE_FANS_TEAM_ID];
+    if (!tactics?.starters?.length) return;
+    if (!this.isStaleArgyleFansXi(tactics.starters)) return;
+    delete save.data.teamTactics[ARGYLE_FANS_TEAM_ID];
+    save.save();
+  }
+
+  /** True when saved XI still has Life starting / Doo at centre-back / Sparks benched. */
+  private isStaleArgyleFansXi(starters: { playerId: string; slot: string }[]): boolean {
+    const byId = new Map(starters.map((s) => [s.playerId, s.slot]));
+    const dooSlot = byId.get("player_fan_v_doo");
+    return (
+      byId.has("player_fan_a_life") ||
+      dooSlot === "LCB" ||
+      dooSlot === "RCB" ||
+      !byId.has("player_fan_g_sparks")
+    );
+  }
+
+  /** Force authored Fans XI when an old Life/Doo CB arrangement is still loaded. */
+  private migrateArgyleFansStartingXi(): void {
+    const lineup = this.lineups.find((l) => l.teamId === ARGYLE_FANS_TEAM_ID);
+    if (!lineup || !this.isStaleArgyleFansXi(lineup.starters)) return;
+    lineup.formation = ARGYLE_FANS_FORMATION;
+    lineup.starters = ARGYLE_FANS_LINEUP.starters.map((s) => ({ ...s }));
+    const doo = this.players.get("player_fan_v_doo");
+    if (doo) {
+      doo.primaryPosition = "CM";
+      doo.secondaryPositions = ["DM", "CB"];
     }
   }
 
@@ -295,6 +331,30 @@ export class GameDatabase {
     if (days?.shirtNumber === 11 && argo?.shirtNumber === 7) {
       days.shirtNumber = 7;
       argo.shirtNumber = 11;
+    }
+    // Petey/Bradderz shirt swap from older JSON/saves.
+    const petey = this.memberships.find((m) => m.teamId === ARGYLE_FANS_TEAM_ID && m.playerId === "player_fan_p_petey");
+    const bradderz = this.memberships.find(
+      (m) => m.teamId === ARGYLE_FANS_TEAM_ID && m.playerId === "player_fan_a_bradderz",
+    );
+    if (petey?.shirtNumber === 13 && bradderz?.shirtNumber === 12) {
+      petey.shirtNumber = 12;
+      bradderz.shirtNumber = 13;
+    }
+    // Down #9 / Pilgrim #8 → Down #8 / Pilgrim #9 (then Down ↔ Face below).
+    const down = this.memberships.find((m) => m.teamId === ARGYLE_FANS_TEAM_ID && m.playerId === "player_fan_s_down");
+    const pilgrim = this.memberships.find(
+      (m) => m.teamId === ARGYLE_FANS_TEAM_ID && m.playerId === "player_fan_c_pilgrim",
+    );
+    if (down?.shirtNumber === 9 && pilgrim?.shirtNumber === 8) {
+      down.shirtNumber = 8;
+      pilgrim.shirtNumber = 9;
+    }
+    // Down #8 / Face #10 → Down #10 / Face #8.
+    const face = this.memberships.find((m) => m.teamId === ARGYLE_FANS_TEAM_ID && m.playerId === "player_fan_p_face");
+    if (down?.shirtNumber === 8 && face?.shirtNumber === 10) {
+      down.shirtNumber = 10;
+      face.shirtNumber = 8;
     }
   }
 

@@ -139,7 +139,7 @@
   {
     "playerId": "player_fan_c_pilgrim",
     "teamId": "argyle_fans_xi",
-    "shirtNumber": 8,
+    "shirtNumber": 9,
     "squadRole": "FAN",
     "from": "2026-01-01",
     "to": null
@@ -163,7 +163,7 @@
   {
     "playerId": "player_fan_s_down",
     "teamId": "argyle_fans_xi",
-    "shirtNumber": 9,
+    "shirtNumber": 10,
     "squadRole": "FAN",
     "from": "2026-01-01",
     "to": null
@@ -171,7 +171,7 @@
   {
     "playerId": "player_fan_p_face",
     "teamId": "argyle_fans_xi",
-    "shirtNumber": 10,
+    "shirtNumber": 8,
     "squadRole": "FAN",
     "captain": true,
     "from": "2026-01-01",
