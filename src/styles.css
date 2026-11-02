@@ -782,19 +782,28 @@ html.club-name-glow-off .club-line {
   min-width: 6.75rem;
   max-width: 8.5rem;
   width: auto;
-  align-self: center;
+  align-self: stretch;
   align-items: stretch;
+  justify-content: center;
+  min-height: calc(var(--menu-fixture-height) - 12px);
 }
 .fixture-match .opposition-spin.time-spin {
   width: 100%;
   max-width: none;
+  height: 100%;
+  min-height: calc(var(--menu-fixture-height) - 12px);
+  justify-content: center;
+  gap: 3px;
 }
 .fixture-match .opposition-spin.time-spin strong {
-  font-size: 13px;
-  letter-spacing: 0.03em;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
 }
 .fixture-match .opposition-spin .spin-ghost {
-  font-size: 10px;
+  font-size: 11px;
+  line-height: 1.1;
+  opacity: 0.34;
 }
 /*
  * Lighting: title + chips in a left stack; match-time dial after the chips,
@@ -1014,7 +1023,8 @@ html.club-name-glow-off .club-line {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  align-items: center;
+  align-items: stretch;
+  align-self: stretch;
   flex: 0 0 auto;
   gap: 10px;
   min-width: 6.75rem;
