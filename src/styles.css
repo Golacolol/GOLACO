@@ -5433,8 +5433,12 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   position: absolute;
   inset: 0;
   pointer-events: none;
-  overflow: hidden;
-  z-index: 5;
+  overflow: visible;
+  /* Above the dissolving foil wrapper. */
+  z-index: 30;
+}
+.miteam-pack-layered > .miteam-confetti {
+  z-index: 30;
 }
 .miteam-confetti-bit {
   position: absolute;

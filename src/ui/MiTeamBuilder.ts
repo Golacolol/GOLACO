@@ -512,26 +512,30 @@ export class MiTeamBuilder {
       .then(() => waitForElementImages(under))
       .then(() => {
         if (this.phase !== "opening" || this.candidate !== candidate) return;
+        // Confetti as the wrapper dissolves — layered above the foil (not after it's gone).
+        const confettiHost =
+          (layered instanceof HTMLElement ? layered : null) ??
+          foilBtn.closest<HTMLElement>(".miteam-pack-layered");
+        if (confettiHost) burstConfetti(confettiHost, tier);
         playFoilOpen(foilBtn, () => {
           if (this.phase !== "opening" || this.candidate !== candidate) return;
           this.phase = "revealed";
           // Keep the preloaded under-card — do not remount a differently sized card.
-          this.promotePackRevealInPlace(tier);
+          this.promotePackRevealInPlace();
         });
       });
   }
 
   /** Strip foil and enable the already-rendered card + KEEP/DISCARD row. */
-  private promotePackRevealInPlace(tier: PackTier): void {
+  private promotePackRevealInPlace(): void {
     const layered = this.root.querySelector<HTMLElement>(".miteam-pack-layered");
     const under = this.root.querySelector<HTMLElement>(".miteam-pack-under");
     const foilLayer = this.root.querySelector(".miteam-pack-foil-layer");
     if (!layered || !under) {
       this.render();
-      const host = this.root.querySelector<HTMLElement>(".miteam-reveal-card-wrap, .miteam-pack-under");
-      if (host) burstConfetti(host, tier);
       return;
     }
+    // Leave any confetti on `layered` — only remove the foil chrome.
     foilLayer?.remove();
     layered.classList.remove("is-opening");
     layered.classList.add("is-revealed");
@@ -544,7 +548,6 @@ export class MiTeamBuilder {
     }
     // Pack stays mounted — only now mirror the pull into Player Details.
     this.refreshRosterDetailsCard();
-    burstConfetti(under, tier);
   }
 
   /** Left-rail details for the current selection / revealed pull (does not remount the pack). */
