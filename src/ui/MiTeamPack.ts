@@ -86,7 +86,7 @@ export function miteamFoilSerrationClip(): string {
 
 export function miteamFoilHtml(tier: PackTier = "silver"): string {
   const label = tier === "gold" ? "GOLD PACK" : "SILVER PACK";
-  const aria = tier === "gold" ? "Open gold pack" : "Open silver pack";
+  const aria = tier === "gold" ? "Open gold pack (Space)" : "Open silver pack (Space)";
   const clip = miteamFoilSerrationClip();
   return `
     <span class="miteam-foil-shell miteam-foil-shell-${tier}">

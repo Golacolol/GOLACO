@@ -117,6 +117,7 @@ export class MiTeamBuilder {
   private packing = false;
   private profileView: ProfileStatsMode = "hex";
   onAction: ((act: MiTeamBuilderAction) => void) | null = null;
+  private readonly onWindowKeyDown = (e: KeyboardEvent) => this.onKeyDown(e);
 
   constructor(parent: HTMLElement) {
     this.root = document.createElement("div");
@@ -124,18 +125,19 @@ export class MiTeamBuilder {
     parent.appendChild(this.root);
     this.hide();
     this.root.addEventListener("click", (e) => this.onClick(e));
-    this.root.addEventListener("keydown", (e) => this.onKeyDown(e));
     this.root.addEventListener("change", (e) => this.onChange(e));
   }
 
   show(): void {
     this.root.classList.add("open");
     this.root.style.display = "";
+    window.addEventListener("keydown", this.onWindowKeyDown);
   }
 
   hide(): void {
     this.root.classList.remove("open");
     this.root.style.display = "none";
+    window.removeEventListener("keydown", this.onWindowKeyDown);
   }
 
   open(db: GameDatabase, save: SaveManager): void {
@@ -259,14 +261,20 @@ export class MiTeamBuilder {
   }
 
   private onKeyDown(e: KeyboardEvent): void {
+    if (!this.root.classList.contains("open")) return;
+    const target = e.target as HTMLElement | null;
+    if (target?.closest?.("input, textarea, select, [contenteditable='true']")) return;
+
+    if (this.handlePackHotkeys(e)) return;
+
     if (e.key !== "Enter" && e.key !== " ") return;
-    const toggle = (e.target as HTMLElement).closest?.("[data-char='profile-toggle']");
+    const toggle = target?.closest?.("[data-char='profile-toggle']");
     if (toggle && this.root.contains(toggle as Node)) {
       e.preventDefault();
       this.toggleProfileView();
       return;
     }
-    const face = (e.target as HTMLElement).closest?.("[data-char='card-face']") as HTMLElement | null;
+    const face = target?.closest?.("[data-char='card-face']") as HTMLElement | null;
     if (
       face &&
       this.root.contains(face) &&
@@ -278,6 +286,56 @@ export class MiTeamBuilder {
       this.cardFlipY = nextPlayerCardFlipY(this.cardFlipY, "right");
       applyPlayerCardFlip(face, this.cardFlipY);
     }
+  }
+
+  /** Space = open / keep · V = reseal · B = discard. */
+  private handlePackHotkeys(e: KeyboardEvent): boolean {
+    if (!this.packing || this.controlMode !== "PLAYER" || this.cardEditing) return false;
+    const key = e.key;
+    const lower = key.length === 1 ? key.toLowerCase() : key;
+
+    if (key === " " || key === "Spacebar") {
+      if (this.phase === "foil") {
+        e.preventDefault();
+        const foil = this.root.querySelector<HTMLElement>("[data-miteam='open-pack']");
+        if (foil) this.openPack(foil);
+        return true;
+      }
+      if (this.phase === "revealed") {
+        e.preventDefault();
+        this.keep();
+        return true;
+      }
+      if (this.phase === "opening") {
+        e.preventDefault();
+        return true;
+      }
+      return false;
+    }
+
+    if (this.phase !== "revealed") return false;
+
+    if (lower === "v") {
+      e.preventDefault();
+      this.resealPack();
+      return true;
+    }
+    if (lower === "b") {
+      e.preventDefault();
+      this.discard();
+      return true;
+    }
+    return false;
+  }
+
+  /** Wrap the current pull again; Player Details fall back to the previous kept player. */
+  private resealPack(): void {
+    if (!this.packing || this.phase !== "revealed" || !this.targetSlot || !this.candidate) return;
+    this.phase = "foil";
+    this.cardFlipY = 0;
+    this.profileView = "hex";
+    this.packing = true;
+    this.render();
   }
 
   private onClick(e: MouseEvent): void {
@@ -1020,9 +1078,9 @@ export class MiTeamBuilder {
 
   private keepDiscardRowHtml(): string {
     return `<div class="miteam-keep-row" role="group" aria-label="Keep or discard">
-      <button type="button" class="player-card-action" data-miteam="discard">DISCARD</button>
+      <button type="button" class="player-card-action" data-miteam="discard" title="DISCARD (B)">DISCARD</button>
       ${this.filterSelectHtml()}
-      <button type="button" class="player-card-action primary" data-miteam="keep">KEEP</button>
+      <button type="button" class="player-card-action primary" data-miteam="keep" title="KEEP (Space) · reseal (V)">KEEP</button>
     </div>`;
   }
 
