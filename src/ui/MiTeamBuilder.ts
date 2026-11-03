@@ -525,7 +525,7 @@ export class MiTeamBuilder {
         window.setTimeout(() => {
           if (this.phase !== "opening" || this.candidate !== candidate || !confettiHost) return;
           burstConfetti(confettiHost, tier);
-        }, 90);
+        }, 140);
       });
   }
 
@@ -981,7 +981,6 @@ export class MiTeamBuilder {
           ${this.packRevealCardHtml(candidate)}
         </div>
         <div class="miteam-pack-foil-layer">
-          <div class="miteam-slot-hint">Pack for <b>${escapeHtml(slotLabel)}</b></div>
           ${miteamFoilHtml(tier)}
         </div>
       </div>`;

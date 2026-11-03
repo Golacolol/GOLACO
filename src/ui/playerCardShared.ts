@@ -311,11 +311,15 @@ function sportsCardHtml(sp: SquadPlayer, team: PlayerCardTeamContext, state: Pla
       </div>
       <div class="player-card-face player-card-back">
         <div class="player-card-back-head">
-          <em class="player-card-meta-label">POS</em>
+          <div class="player-card-back-meta">
+            <em class="player-card-meta-label">POS</em>
+            <span class="player-card-pos-code">${escapeHtml(sp.player.primaryPosition)}</span>
+          </div>
           ${shirtHtml(sp, team, "player-card-shirt player-card-shirt-back")}
-          <em class="player-card-meta-label player-card-meta-label-end">OVR</em>
-          <span class="player-card-pos-code">${escapeHtml(sp.player.primaryPosition)}</span>
-          <span class="player-card-ovr-value">${Math.round(sp.overall)}</span>
+          <div class="player-card-back-meta player-card-back-meta-end">
+            <em class="player-card-meta-label player-card-meta-label-end">OVR</em>
+            <span class="player-card-ovr-value">${Math.round(sp.overall)}</span>
+          </div>
         </div>
         <div class="player-card-back-body">${ratingsHtml(sp, false)}</div>
       </div>

@@ -2366,8 +2366,10 @@ select.formation-chip.formation-select option {
   padding: 2px 7px;
   line-height: 1.1;
   box-sizing: border-box;
-  /* Optical nudge: bordered badge reads high against large OVR digits. */
-  transform: translateY(2px);
+}
+/* Front: halfway between the old lower seat and the prior lift. */
+.player-card-front .player-card-pos-code {
+  transform: translateY(-1px);
 }
 .player-card[data-char="card-face"] {
   cursor: pointer;
@@ -2424,15 +2426,44 @@ select.formation-chip.formation-select option {
     background-position: 40% 50%;
   }
 }
+/* Back: POS / kit / OVR as three columns — value stacked under its heading. */
+.player-card-back-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto;
+  column-gap: 8px;
+  row-gap: 0;
+  align-items: center;
+}
+.player-card-back-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 2.75em;
+}
+.player-card-back-meta .player-card-meta-label,
+.player-card-back-meta .player-card-meta-label-end {
+  grid-column: auto;
+  grid-row: auto;
+  justify-self: auto;
+}
+.player-card-back-meta .player-card-pos-code,
+.player-card-back-meta .player-card-ovr-value {
+  grid-column: auto;
+  grid-row: auto;
+  justify-self: auto;
+  align-self: auto;
+  transform: none;
+}
 .player-card-back-head .player-card-shirt-back {
-  grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-column: auto;
+  grid-row: auto;
   align-self: center;
   justify-self: stretch;
   width: 100%;
   min-width: 0;
-  padding: 4px 6px 2px;
-  gap: 0;
 }
 .player-card-ovr-holo,
 .player-card-ovr-value {
@@ -2617,14 +2648,15 @@ select.formation-chip.formation-select option {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0;
+  gap: 1px;
   font-family: "Oswald", "Arial Narrow", Impact, sans-serif;
   text-transform: uppercase;
   text-align: center;
   flex: 0 0 auto;
   width: 100%;
   border-radius: 5px;
-  padding: 6px 8px 4px;
+  /* Equal inset so name + number sit centred in the kit panel. */
+  padding: 5px 9px 6px;
   box-sizing: border-box;
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
@@ -2633,28 +2665,38 @@ select.formation-chip.formation-select option {
   margin-top: auto;
 }
 .player-card-shirt-name {
+  display: block;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.14em;
-  line-height: 1.05;
+  line-height: 1.1;
   max-width: 100%;
   overflow: hidden;
   white-space: nowrap;
   order: 1;
 }
 .player-card-shirt-num {
-  font-size: 32px;
+  display: block;
+  font-size: 30px;
   font-weight: 800;
-  line-height: 0.9;
+  line-height: 1;
   letter-spacing: -0.03em;
   order: 2;
 }
+/* Back head is a short strip beside POS/OVR — keep it compact so the badges don’t drop. */
+.player-card-back-head .player-card-shirt-back {
+  padding: 2px 6px 3px;
+  gap: 0;
+}
 .player-card-shirt-back .player-card-shirt-name {
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 0.12em;
+  line-height: 1;
 }
 .player-card-shirt-back .player-card-shirt-num {
-  font-size: 28px;
+  font-size: 24px;
+  line-height: 0.95;
+  padding-bottom: 0;
 }
 .player-card-front .profile-stats {
   margin: 0 auto;
@@ -4984,19 +5026,6 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   z-index: 2;
   gap: 0;
 }
-/* Hint floats above the foil so it doesn't shove the pack off the under-card centre. */
-.miteam-pack-foil-layer .miteam-slot-hint {
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 8px);
-  transform: translateX(-50%);
-  white-space: nowrap;
-}
-.miteam-slot-hint {
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  opacity: 0.85;
-}
 .miteam-foil-shell {
   position: relative;
   display: block;
@@ -5572,7 +5601,7 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
 .miteam-pack-under .player-card-shirt {
   flex: 0 0 auto;
   margin-top: auto;
-  padding: 4px 6px 2px;
+  padding: 5px 9px 6px;
 }
 .miteam-reveal .player-card-shirt-name,
 .miteam-pack-under .player-card-shirt-name {
@@ -5580,8 +5609,8 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
 }
 .miteam-reveal .player-card-shirt-num,
 .miteam-pack-under .player-card-shirt-num {
-  font-size: 32px;
-  line-height: 0.9;
+  font-size: 30px;
+  line-height: 1;
 }
 .miteam-reveal-card-wrap .miteam-keep-row {
   position: absolute;
