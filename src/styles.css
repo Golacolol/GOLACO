@@ -3555,6 +3555,10 @@ select.formation-chip.formation-select option {
   border-color: var(--gold);
   background: linear-gradient(90deg, rgba(0, 122, 61, 0.55), rgba(0, 122, 61, 0.22));
 }
+.bench-card.drag-over {
+  outline: 2px dashed var(--gold);
+  outline-offset: 2px;
+}
 .bench-card:active { cursor: grabbing; }
 .bench-card.dragging { opacity: 0.45; }
 /* Beat `.char-panel .portrait { 120px }` — badge-only subs were clipped ~75%. */

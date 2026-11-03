@@ -1,4 +1,4 @@
-import type { LineupRecord, TeamMembership, TeamRecord } from "../../data/schema";
+import type { LineupRecord, TeamKit, TeamMembership, TeamRecord } from "../../data/schema";
 import type { GameDatabase } from "../../core/Database";
 import {
   MITEAM_BENCH_SLOTS,
@@ -252,6 +252,137 @@ export function nextEmptySlot(roster: MiTeamRosterSlot[], formation = MITEAM_FOR
     if (!filled.has(slot)) return slot;
   }
   return null;
+}
+
+function isBenchSlot(slot: string): boolean {
+  return slot.startsWith("BENCH_");
+}
+
+/** True when the user changed MiTeam name, colours, or emblem from defaults. */
+export function miTeamIdentityCustomized(mt: MiTeamSave | null | undefined): boolean {
+  if (!mt) return false;
+  const name = mt.clubName.trim();
+  if (name && name !== MITEAM_DEFAULT_CLUB_NAME) return true;
+  if (mt.primaryColor?.trim()) return true;
+  if (mt.secondaryColor?.trim()) return true;
+  if (mt.badgeAsset?.trim()) return true;
+  return false;
+}
+
+export type MiTeamPlayerDisplay = {
+  teamName: string;
+  teamColor: string;
+  teamSecondaryColor: string;
+  team: TeamRecord;
+};
+
+/**
+ * Card / marker look for a MiTeam player.
+ * Unmodified MiTeam → origin club identity; customized shell → MiTeam kit/name/crest.
+ */
+export function resolveMiTeamPlayerDisplay(
+  db: GameDatabase,
+  mt: MiTeamSave,
+  playerId: string,
+  sourceTeamId?: string | null,
+): MiTeamPlayerDisplay {
+  const shell = db.teams.get(MITEAM_TEAM_ID) ?? miteamTeamShell(mt.clubName, mt.badgeAsset, {
+    primaryColor: mt.primaryColor,
+    secondaryColor: mt.secondaryColor,
+  });
+  if (miTeamIdentityCustomized(mt)) {
+    return {
+      teamName: shell.name,
+      teamColor: shell.primaryColor,
+      teamSecondaryColor: shell.secondaryColor,
+      team: shell,
+    };
+  }
+  const origin = findMiTeamOriginTeam(db, playerId, sourceTeamId);
+  if (origin) {
+    return {
+      teamName: origin.name,
+      teamColor: origin.primaryColor,
+      teamSecondaryColor: origin.secondaryColor,
+      team: origin,
+    };
+  }
+  return {
+    teamName: shell.name,
+    teamColor: shell.primaryColor,
+    teamSecondaryColor: shell.secondaryColor,
+    team: shell,
+  };
+}
+
+/** Origin-club looks for every roster player when MiTeam is still the default shell. */
+export function buildMiTeamPlayerClubLooks(
+  db: GameDatabase,
+  mt: MiTeamSave | null | undefined,
+): Map<string, MiTeamPlayerDisplay> | null {
+  if (!mt || miTeamIdentityCustomized(mt)) return null;
+  const map = new Map<string, MiTeamPlayerDisplay>();
+  for (const row of mt.roster) {
+    map.set(row.playerId, resolveMiTeamPlayerDisplay(db, mt, row.playerId, row.sourceTeamId));
+  }
+  return map.size ? map : null;
+}
+
+/** Match kit for a MiTeam player — origin club kit while the shell is unmodified. */
+export function resolveMiTeamPlayerKit(
+  db: GameDatabase,
+  mt: MiTeamSave | null | undefined,
+  playerId: string,
+  isGk: boolean,
+  fallback: TeamKit,
+): TeamKit {
+  if (!mt || mt.teamId !== MITEAM_TEAM_ID || miTeamIdentityCustomized(mt)) return fallback;
+  const row = mt.roster.find((r) => r.playerId === playerId);
+  const origin = findMiTeamOriginTeam(db, playerId, row?.sourceTeamId);
+  if (!origin) return fallback;
+  return isGk ? origin.goalkeeperKit : origin.defaultKit;
+}
+
+/**
+ * Move / swap a roster player onto `toSlot` (bench↔XI or XI↔XI).
+ * Bench → XI onto GK requires a goalkeeper (and vice versa), matching Formation.
+ * Returns a new roster array, or null if the move is illegal / a no-op.
+ */
+export function placeMiTeamPlayerOnSlot(
+  roster: MiTeamRosterSlot[],
+  playerId: string,
+  toSlot: string,
+  primaryPositionOf: (playerId: string) => string | null | undefined,
+): MiTeamRosterSlot[] | null {
+  const from = roster.find((r) => r.playerId === playerId);
+  if (!from || from.slot === toSlot) return null;
+
+  const fromIsBench = isBenchSlot(from.slot);
+  const toIsXi = !isBenchSlot(toSlot);
+  if (fromIsBench && toIsXi) {
+    const toIsGk = toSlot === "GK";
+    const inIsGk = primaryPositionOf(playerId) === "GK";
+    if (toIsGk !== inIsGk) return null;
+  }
+
+  const occupant = roster.find((r) => r.slot === toSlot);
+  if (!occupant) {
+    return roster.map((r) => (r.playerId === playerId ? { ...r, slot: toSlot } : r));
+  }
+
+  // When swapping a starter onto the GK slot (or GK off it), enforce GK pairing.
+  if (!fromIsBench && (from.slot === "GK" || toSlot === "GK")) {
+    const movingIsGk = primaryPositionOf(playerId) === "GK";
+    const otherIsGk = primaryPositionOf(occupant.playerId) === "GK";
+    if (movingIsGk !== otherIsGk) return null;
+  }
+
+  const fromSlot = from.slot;
+  return roster.map((r) => {
+    if (r.playerId === playerId) return { ...r, slot: toSlot };
+    if (r.playerId === occupant.playerId) return { ...r, slot: fromSlot };
+    return r;
+  });
 }
 
 export function randomOpponentTeamId(db: GameDatabase): string {

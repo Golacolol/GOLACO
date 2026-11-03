@@ -19,6 +19,8 @@ import {
   miteamFillOrder,
   miteamXiSlots,
   nextEmptySlot,
+  placeMiTeamPlayerOnSlot,
+  resolveMiTeamPlayerDisplay,
   restartMiTeam,
   setMiTeamBadge,
   setMiTeamClubName,
@@ -116,6 +118,7 @@ export class MiTeamBuilder {
   private cardEditing = false;
   private packing = false;
   private profileView: ProfileStatsMode = "hex";
+  private dragPlayerId: string | null = null;
   onAction: ((act: MiTeamBuilderAction) => void) | null = null;
   private readonly onWindowKeyDown = (e: KeyboardEvent) => this.onKeyDown(e);
 
@@ -126,6 +129,11 @@ export class MiTeamBuilder {
     this.hide();
     this.root.addEventListener("click", (e) => this.onClick(e));
     this.root.addEventListener("change", (e) => this.onChange(e));
+    this.root.addEventListener("dragstart", (e) => this.onDragStart(e));
+    this.root.addEventListener("dragover", (e) => this.onDragOver(e));
+    this.root.addEventListener("dragleave", (e) => this.onDragLeave(e));
+    this.root.addEventListener("drop", (e) => this.onDrop(e));
+    this.root.addEventListener("dragend", () => this.onDragEnd());
   }
 
   show(): void {
@@ -338,6 +346,66 @@ export class MiTeamBuilder {
     this.render();
   }
 
+  /** Persist a bench/pitch swap. Returns true when the roster changed. */
+  private tryPlacePlayerOnSlot(playerId: string, toSlot: string): boolean {
+    const next = placeMiTeamPlayerOnSlot(this.roster(), playerId, toSlot, (id) => {
+      return this.db.players.get(id)?.primaryPosition ?? null;
+    });
+    if (!next) return false;
+    setMiTeamRoster(this.save, this.db, next);
+    this.selectedPlayerId = playerId;
+    this.packing = false;
+    this.controlMode = "TEAM";
+    this.render();
+    return true;
+  }
+
+  private onDragStart(e: DragEvent): void {
+    if (this.controlMode !== "TEAM") return;
+    const btn = (e.target as HTMLElement).closest<HTMLElement>(
+      ".bench-card[draggable='true'][data-player-id], .pitch-token[draggable='true'][data-player-id]",
+    );
+    if (!btn || !e.dataTransfer) return;
+    this.dragPlayerId = btn.getAttribute("data-player-id");
+    e.dataTransfer.setData("text/plain", this.dragPlayerId ?? "");
+    e.dataTransfer.effectAllowed = "move";
+    btn.classList.add("dragging");
+  }
+
+  private onDragOver(e: DragEvent): void {
+    if (this.controlMode !== "TEAM" || !this.dragPlayerId) return;
+    const slot = (e.target as HTMLElement).closest<HTMLElement>(".pitch-slot[data-slot], .bench-card[data-slot]");
+    if (!slot) return;
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
+    this.root.querySelectorAll(".drag-over").forEach((el) => el.classList.remove("drag-over"));
+    slot.classList.add("drag-over");
+  }
+
+  private onDragLeave(e: DragEvent): void {
+    const slot = (e.target as HTMLElement).closest<HTMLElement>(".drag-over");
+    slot?.classList.remove("drag-over");
+  }
+
+  private onDrop(e: DragEvent): void {
+    e.preventDefault();
+    const slotEl = (e.target as HTMLElement).closest<HTMLElement>(".pitch-slot[data-slot], .bench-card[data-slot]");
+    const playerId = this.dragPlayerId ?? e.dataTransfer?.getData("text/plain") ?? null;
+    this.root.querySelectorAll(".drag-over").forEach((el) => el.classList.remove("drag-over"));
+    this.dragPlayerId = null;
+    if (!slotEl || !playerId || this.controlMode !== "TEAM") return;
+    const toSlot = slotEl.getAttribute("data-slot");
+    if (!toSlot) return;
+    this.tryPlacePlayerOnSlot(playerId, toSlot);
+  }
+
+  private onDragEnd(): void {
+    this.dragPlayerId = null;
+    this.root.querySelectorAll(".dragging, .drag-over").forEach((el) => {
+      el.classList.remove("dragging", "drag-over");
+    });
+  }
+
   private onClick(e: MouseEvent): void {
     const profileToggle = (e.target as HTMLElement).closest<HTMLElement>("[data-char='profile-toggle']");
     if (
@@ -355,13 +423,18 @@ export class MiTeamBuilder {
     if (slotEl && this.root.contains(slotEl) && this.controlMode === "TEAM") {
       const slot = slotEl.getAttribute("data-slot");
       const row = this.roster().find((r) => r.slot === slot);
-      if (row) {
+      if (row && slot) {
+        // Second click on another filled slot swaps (bench↔pitch or pitch↔pitch).
+        if (
+          this.selectedPlayerId &&
+          this.selectedPlayerId !== row.playerId &&
+          this.tryPlacePlayerOnSlot(this.selectedPlayerId, slot)
+        ) {
+          return;
+        }
         this.selectedPlayerId = row.playerId;
-        this.controlMode = "PLAYER";
         this.packing = false;
         this.cardEditing = false;
-        this.cardFlipY = 0;
-        this.profileView = "hex";
         this.render();
         return;
       }
@@ -376,11 +449,14 @@ export class MiTeamBuilder {
       const id = rosterRow.getAttribute("data-miteam-player");
       if (id) {
         this.selectedPlayerId = id;
-        this.controlMode = "PLAYER";
-        this.packing = false;
-        this.cardEditing = false;
-        this.cardFlipY = 0;
-        this.profileView = "hex";
+        // Squad list opens the player card; pitch/bench stay in TEAM for lineup edits.
+        if (rosterRow.classList.contains("roster-row")) {
+          this.controlMode = "PLAYER";
+          this.packing = false;
+          this.cardEditing = false;
+          this.cardFlipY = 0;
+          this.profileView = "hex";
+        }
         this.render();
       }
       return;
@@ -752,6 +828,10 @@ export class MiTeamBuilder {
     teamSecondaryColor: string;
     team: TeamRecord;
   } {
+    const mt = this.save.data.miteam;
+    if (mt) {
+      return resolveMiTeamPlayerDisplay(this.db, mt, playerId, preferredTeamId);
+    }
     const origin = findMiTeamOriginTeam(this.db, playerId, preferredTeamId);
     if (origin) {
       return {
@@ -817,7 +897,8 @@ export class MiTeamBuilder {
         }
         const sp = this.squadFor(row.playerId, row.shirtNumber);
         const cols = this.coloursForPlayer(row.playerId, row.sourceTeamId);
-        return `<button type="button" class="bench-card" data-slot="${slot}" data-miteam-player="${escapeAttr(row.playerId)}" aria-label="${escapeAttr(sp.player.name)}">${kitMarkerHtml(sp.player, row.shirtNumber, {
+        const on = row.playerId === this.selectedPlayerId ? " on" : "";
+        return `<button type="button" class="bench-card${on}" draggable="true" data-slot="${slot}" data-player-id="${escapeAttr(row.playerId)}" data-miteam-player="${escapeAttr(row.playerId)}" aria-label="${escapeAttr(sp.player.name)}">${kitMarkerHtml(sp.player, row.shirtNumber, {
           ...kitMarkerColors(sp.player.primaryPosition, cols.primary, cols.secondary),
           className: "kit-marker-bench",
         })}</button>`;
@@ -840,8 +921,9 @@ export class MiTeamBuilder {
           const sp = this.squadFor(row.playerId, row.shirtNumber);
           const cols = this.coloursForPlayer(row.playerId, row.sourceTeamId);
           const name = escapeHtml(sp.player.name);
-          return `<div class="pitch-slot" data-slot="${slot.id}" style="left:${pos.left}%; bottom:${pos.bottom}%">
-            <button type="button" class="pitch-token" data-slot="${slot.id}" data-miteam-player="${escapeAttr(row.playerId)}" aria-label="${name}">
+          const on = row.playerId === this.selectedPlayerId ? " on" : "";
+          return `<div class="pitch-slot${on}" data-slot="${slot.id}" style="left:${pos.left}%; bottom:${pos.bottom}%">
+            <button type="button" class="pitch-token" draggable="true" data-slot="${slot.id}" data-player-id="${escapeAttr(row.playerId)}" data-miteam-player="${escapeAttr(row.playerId)}" aria-label="${name}">
               ${kitMarkerHtml(sp.player, row.shirtNumber, {
                 ...kitMarkerColors(sp.player.primaryPosition, cols.primary, cols.secondary),
               })}
@@ -939,7 +1021,7 @@ export class MiTeamBuilder {
     return `<div class="team-pitch team-pitch-panel miteam-options-panel" aria-label="MiTeam options">
       <div class="pitch-overlay-card miteam-options-card">
         <h3 class="miteam-options-title">MiTeam</h3>
-        <p class="hint">Name, emblem, and club colours for your side. Player cards and pitch counters keep each player&rsquo;s original club colours.</p>
+        <p class="hint">Name, emblem, and club colours for your side. Until you change these, cards and kits keep each player&rsquo;s original club look.</p>
         <div class="miteam-options-row">
           <div class="miteam-crest-wrap">
             <button type="button" class="miteam-crest-btn" data-miteam="crest-toggle" aria-label="Choose club emblem" aria-expanded="${this.crestPickerOpen ? "true" : "false"}">

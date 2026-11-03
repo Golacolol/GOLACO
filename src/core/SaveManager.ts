@@ -107,9 +107,15 @@ export type MiTeamRosterSlot = {
 export type MiTeamSave = {
   teamId: string;
   clubName: string;
-  /** Crest URL (pack path or data URL). Null/omit uses the GOLACO logo. */
+  /**
+   * Crest URL (pack path or data URL).
+   * Null = unset — player cards use each origin club crest until the user picks one.
+   */
   badgeAsset: string | null;
-  /** Optional MiTeam shell kit colours (null = default silver/navy). */
+  /**
+   * Optional MiTeam shell kit colours.
+   * Null = unset — players keep origin club colours on cards/kits until set.
+   */
   primaryColor: string | null;
   secondaryColor: string | null;
   roster: MiTeamRosterSlot[];

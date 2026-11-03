@@ -1,4 +1,21 @@
-import type { SquadPlayer } from "../core/Database";
+import type { GameDatabase, SquadPlayer } from "../core/Database";
+import type { SaveManager } from "../core/SaveManager";
+import {
+  MITEAM_DEFAULT_BADGE,
+  MITEAM_DEFAULT_CLUB_NAME,
+  MITEAM_DEFAULT_PRIMARY,
+  MITEAM_DEFAULT_SECONDARY,
+  MITEAM_TEAM_ID,
+} from "../core/SaveManager";
+import { assetUrl } from "../core/assetUrl";
+import {
+  applyMiTeamToDb,
+  buildMiTeamPlayerClubLooks,
+  setMiTeamBadge,
+  setMiTeamClubName,
+  setMiTeamColors,
+} from "../football/miteam/MiTeam";
+import { miteamCrestChoices } from "../football/miteam/MiTeamPool";
 import {
   FORMATION_NAMES,
   getFormation,
@@ -25,6 +42,7 @@ import {
   deriveOverall,
   listProfileAttrSpokes,
 } from "../football/players/PlayerStats";
+import type { PlayerCardTeamContext } from "./playerCardShared";
 import {
   fitKitSurnameElements,
   kitInitialSurnameLabel,
@@ -480,7 +498,7 @@ function fromDisplayX(displayX: number): number {
   return 0.02 + ((displayX - 0.055 - OUTFIELD_LIFT) / (ATTACK_JOIN_DISPLAY - 0.055)) * (ATTACK_JOIN_X - 0.02);
 }
 
-export type ControlMode = "PLAYER" | "TEAM" | "KIT" | "SETUP";
+export type ControlMode = "PLAYER" | "TEAM" | "KIT" | "SETUP" | "MITEAM";
 export type CharacterSelectContext = "select" | "pause";
 export type FormationSide = "home" | "away";
 /** When set, Formation swaps PLAYER SELECT for tabletop match settings. */
@@ -539,6 +557,8 @@ export type FormationSideDraft = {
   userBoardDirty: boolean;
   pauseOriginalStarterIds: Set<string> | null;
   pauseSubsRemaining: number | null;
+  /** Per-player origin club looks (unmodified MiTeam). */
+  playerClubLooks: Map<string, PlayerCardTeamContext> | null;
 };
 
 /** Input for seeding one side of the dual formation editor. */
@@ -557,6 +577,8 @@ export type FormationSideConfig = {
   slotOffsets?: { slot: string; dx: number; dz: number }[];
   userTactics?: TeamTacticsUserSnapshot | null;
   pauseSubsRemaining?: number | null;
+  /** Unmodified MiTeam: origin club colours / name / crest per player. */
+  playerClubLooks?: Map<string, PlayerCardTeamContext> | null;
 };
 
 interface NudgeState {
@@ -585,6 +607,11 @@ export class CharacterSelect {
   /** Optional club/nation record for the formation header crest. */
   teamBadge: TeamBadgeSource | null = null;
   controlMode: ControlMode = "TEAM";
+  /** When set and the active side is MiTeam, Formation shows the MITEAM settings chip. */
+  private miTeamHost: { save: SaveManager; db: GameDatabase } | null = null;
+  private miteamCrestPickerOpen = false;
+  /** Origin-club card/marker looks while MiTeam identity is still default. */
+  private playerClubLooks: Map<string, PlayerCardTeamContext> | null = null;
   /** Prematch character select vs in-match pause formation editor. */
   context: CharacterSelectContext = "select";
   /** Match kick-off vs spot-kick practice (pick a taker on the formation). */
@@ -708,7 +735,10 @@ export class CharacterSelect {
     this.root.addEventListener("pointermove", (e) => this.onPitchPointerMove(e));
     this.root.addEventListener("pointerup", (e) => this.onPitchPointerUp(e));
     this.root.addEventListener("pointercancel", (e) => this.onPitchPointerUp(e));
-    this.root.addEventListener("change", (e) => this.onTabletopFieldChange(e));
+    this.root.addEventListener("change", (e) => {
+      if (this.handleMiTeamSettingsChange(e)) return;
+      this.onTabletopFieldChange(e);
+    });
     this.root.addEventListener("contextmenu", (e) => {
       const chalkBtn = (e.target as HTMLElement).closest<HTMLElement>("[data-char='chalk']");
       if (chalkBtn && this.root.contains(chalkBtn)) {
@@ -760,6 +790,7 @@ export class CharacterSelect {
         this.flipCardFromPointer(face, e.clientX);
         return;
       }
+      if (this.handleMiTeamSettingsClick(e)) return;
       this.onEditDialogClick(e);
     });
     this.root.addEventListener("keydown", (e) => {
@@ -807,6 +838,7 @@ export class CharacterSelect {
       slotOffsets?: { slot: string; dx: number; dz: number }[];
       /** Fixture side this squad represents when dual editing is not used. */
       formationSide?: FormationSide;
+      playerClubLooks?: Map<string, PlayerCardTeamContext> | null;
     },
   ): void {
     this.sideDrafts = {};
@@ -837,6 +869,7 @@ export class CharacterSelect {
       slotOffsets: options?.slotOffsets,
       userTactics: options?.userTactics,
       pauseSubsRemaining: this.context === "pause" ? this.pauseSubsRemaining : null,
+      playerClubLooks: options?.playerClubLooks,
     });
     this.userMatchTeam = draft.team;
     this.applySideDraft(draft);
@@ -1006,6 +1039,7 @@ export class CharacterSelect {
       userBoardDirty: false,
       pauseOriginalStarterIds,
       pauseSubsRemaining: config.pauseSubsRemaining ?? null,
+      playerClubLooks: config.playerClubLooks ? new Map(config.playerClubLooks) : null,
     };
   }
 
@@ -1028,6 +1062,11 @@ export class CharacterSelect {
       ? new Set(draft.pauseOriginalStarterIds)
       : null;
     this.pauseSubsRemaining = draft.pauseSubsRemaining;
+    this.playerClubLooks = draft.playerClubLooks ? new Map(draft.playerClubLooks) : null;
+    if (this.controlMode === "MITEAM" && draft.teamId !== MITEAM_TEAM_ID) {
+      this.controlMode = "TEAM";
+      this.miteamCrestPickerOpen = false;
+    }
     this.syncKitMarkerColors();
     this.syncPlayersList();
     this.index = Math.max(
@@ -1057,6 +1096,31 @@ export class CharacterSelect {
         ? new Set(this.pauseOriginalStarterIds)
         : null,
       pauseSubsRemaining: this.pauseSubsRemaining,
+      playerClubLooks: this.playerClubLooks ? new Map(this.playerClubLooks) : null,
+    };
+  }
+
+  private clubLookFor(playerId: string): PlayerCardTeamContext {
+    const override = this.playerClubLooks?.get(playerId);
+    if (override) return override;
+    const badge = this.teamBadge;
+    const team: PlayerCardTeamContext["team"] =
+      this.teamRecord ??
+      (badge?.id
+        ? {
+            id: badge.id,
+            name: badge.name ?? this.teamName,
+            abbreviation: badge.abbreviation ?? "",
+            badgeAsset: badge.badgeAsset ?? null,
+            primaryColor: badge.primaryColor ?? this.teamColor,
+            secondaryColor: badge.secondaryColor ?? this.teamSecondaryColor,
+          }
+        : null);
+    return {
+      teamName: this.teamName,
+      teamColor: this.teamColor,
+      teamSecondaryColor: this.teamSecondaryColor,
+      team,
     };
   }
 
@@ -1187,6 +1251,10 @@ export class CharacterSelect {
       this.controlMode = "TEAM";
       return;
     }
+    if (mode === "MITEAM" && !this.showMiTeamUi()) {
+      this.controlMode = "TEAM";
+      return;
+    }
     // Flickball / Foosball: no PLAYER SELECT — map that click to the formation pitch.
     if (this.tabletopKind && mode === "PLAYER") {
       this.controlMode = "TEAM";
@@ -1196,7 +1264,28 @@ export class CharacterSelect {
       this.controlMode = "TEAM";
       return;
     }
+    if (mode !== "MITEAM") this.miteamCrestPickerOpen = false;
     this.controlMode = mode;
+  }
+
+  /** Enable MiTeam name / colours / emblem editing from Formation. */
+  setMiTeamHost(save: SaveManager, db: GameDatabase): void {
+    this.miTeamHost = { save, db };
+  }
+
+  clearMiTeamHost(): void {
+    this.miTeamHost = null;
+    this.miteamCrestPickerOpen = false;
+    if (this.controlMode === "MITEAM") this.controlMode = "TEAM";
+  }
+
+  private showMiTeamUi(): boolean {
+    return (
+      this.context === "select" &&
+      this.purpose === "match" &&
+      !!this.miTeamHost &&
+      this.teamId === MITEAM_TEAM_ID
+    );
   }
 
   /** Enable Formation tabletop settings (FLICKBALL / FOOSBALL nav); pitch stays default. */
@@ -1539,11 +1628,12 @@ export class CharacterSelect {
     const card = this.root.querySelector(".team-roster-card");
     if (card) {
       const a = selected.attrs;
+      const look = this.clubLookFor(selected.player.id);
       card.innerHTML = `
-        ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
+        ${portraitHtml(selected.player, selected.shirtNumber, look.teamColor, {
           surnameOnly: true,
           className: "kit-marker-roster",
-          textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
+          textColor: contrastingKitText(look.teamColor, look.teamSecondaryColor),
         })}
         <h3>${selected.shirtNumber}. ${escapeHtml(kitHeadingName(selected.player))}</h3>
         <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
@@ -1589,6 +1679,7 @@ export class CharacterSelect {
     // KIT keeps its own panel; PLAYER / SETUP / TEAM all share the formation shell,
     // with PLAYER SELECT and Flick/Foosball settings replacing the pitch area only.
     if (this.controlMode === "KIT") this.renderKit();
+    else if (this.controlMode === "MITEAM") this.renderMiTeamSettings();
     else this.renderTeam();
     requestAnimationFrame(() => {
       const restored = this.root.querySelector<HTMLElement>(".team-roster-list");
@@ -1677,27 +1768,29 @@ export class CharacterSelect {
   }
 
   private playerCardShirtHtml(sp: SquadPlayer, className = "player-card-shirt"): string {
-    const text = contrastingKitText(this.teamColor, this.teamSecondaryColor);
+    const look = this.clubLookFor(sp.player.id);
+    const text = contrastingKitText(look.teamColor, look.teamSecondaryColor);
     const surname = kitSurname(sp.player.displayName || sp.player.name);
-    return `<div class="${className}" style="background:${escapeAttr(this.teamColor)};color:${escapeAttr(text)}">
+    return `<div class="${className}" style="background:${escapeAttr(look.teamColor)};color:${escapeAttr(text)}">
       <span class="player-card-shirt-name">${escapeHtml(surname)}</span>
       <span class="player-card-shirt-num">${sp.shirtNumber}</span>
     </div>`;
   }
 
-  private playerCardCrestHtml(): string {
-    const team = this.teamRecord ?? this.teamBadge;
+  private playerCardCrestHtml(sp: SquadPlayer): string {
+    const look = this.clubLookFor(sp.player.id);
+    const team = look.team;
     if (!team) {
-      return `<div class="player-card-crest-fallback" style="background:${escapeAttr(this.teamColor)}"></div>`;
+      return `<div class="player-card-crest-fallback" style="background:${escapeAttr(look.teamColor)}"></div>`;
     }
     return teamBadgeHtml(
       {
         id: team.id,
-        name: "name" in team ? team.name : this.teamName,
+        name: "name" in team ? team.name : look.teamName,
         abbreviation: team.abbreviation,
         badgeAsset: team.badgeAsset,
-        primaryColor: team.primaryColor ?? this.teamColor,
-        secondaryColor: team.secondaryColor ?? this.teamSecondaryColor,
+        primaryColor: team.primaryColor ?? look.teamColor,
+        secondaryColor: team.secondaryColor ?? look.teamSecondaryColor,
       },
       { className: "player-card-crest" },
     );
@@ -1705,7 +1798,7 @@ export class CharacterSelect {
 
   private playerCardPhotoHtml(sp: SquadPlayer): string {
     const src = portraitAsset(sp.player);
-    const crestBlock = `<div class="player-card-photo has-crest"><div class="player-card-crest-host">${this.playerCardCrestHtml()}</div></div>`;
+    const crestBlock = `<div class="player-card-photo has-crest"><div class="player-card-crest-host">${this.playerCardCrestHtml(sp)}</div></div>`;
     if (src) {
       // Portrait only in the DOM — crest is swapped in only if the PNG fails to load.
       return `<div class="player-card-photo has-photo" data-crest-fallback="${escapeAttr(encodeURIComponent(crestBlock))}">
@@ -1748,8 +1841,9 @@ export class CharacterSelect {
   private playerSportsCardHtml(sp: SquadPlayer, _opts: { variant: "select" }): string {
     const flipped = this.cardFlipped;
     const hexSize = 148;
-    const teamLabel = formatPlayerCardTeamName(this.teamName) || "TEAM";
-    return `<div class="player-card player-card-select${flipped ? " is-flipped" : ""}" data-char="card-face" data-face="${flipped ? "back" : "front"}" style="--card-accent:${escapeAttr(this.teamColor)};--card-flip-y:${this.cardFlipY}deg"${titleAttr("Flip card")} role="button" tabindex="0">
+    const look = this.clubLookFor(sp.player.id);
+    const teamLabel = formatPlayerCardTeamName(look.teamName) || "TEAM";
+    return `<div class="player-card player-card-select${flipped ? " is-flipped" : ""}" data-char="card-face" data-face="${flipped ? "back" : "front"}" style="--card-accent:${escapeAttr(look.teamColor)};--card-flip-y:${this.cardFlipY}deg"${titleAttr("Flip card")} role="button" tabindex="0">
       <div class="player-card-inner">
         <div class="player-card-face player-card-front">
           <div class="player-card-top">
@@ -1816,7 +1910,8 @@ export class CharacterSelect {
       <h4 class="player-card-edit-section-title">Statistics</h4>
       ${this.playerCardRatingsHtml(sp, true)}
     </section>`;
-    return `<div class="player-card-edit-panel" style="--card-accent:${escapeAttr(this.teamColor)}">${details}${stats}</div>`;
+    const look = this.clubLookFor(sp.player.id);
+    return `<div class="player-card-edit-panel" style="--card-accent:${escapeAttr(look.teamColor)}">${details}${stats}</div>`;
   }
 
   private playerSelectPitchInnerHtml(sp: SquadPlayer): string {
@@ -2004,6 +2099,186 @@ export class CharacterSelect {
     }
   }
 
+  private renderMiTeamSettings(): void {
+    if (!this.showMiTeamUi() || !this.miTeamHost) {
+      this.controlMode = "TEAM";
+      this.renderTeam();
+      return;
+    }
+    const { save, db } = this.miTeamHost;
+    applyMiTeamToDb(db, save);
+    const team = db.getTeam(MITEAM_TEAM_ID);
+    const mt = save.data.miteam;
+    const clubName = mt?.clubName?.trim() || MITEAM_DEFAULT_CLUB_NAME;
+    const primary = mt?.primaryColor ?? team.primaryColor ?? MITEAM_DEFAULT_PRIMARY;
+    const secondary = mt?.secondaryColor ?? team.secondaryColor ?? MITEAM_DEFAULT_SECONDARY;
+    this.root.innerHTML = `
+      <div class="char-panel char-panel-team miteam-settings-panel">
+        <div class="team-select-head">
+          ${this.teamTitleHtml(clubName)}
+          <div class="formation-toolbar" role="toolbar" aria-label="Formation controls">
+            <button type="button" class="formation-chip miteam-chip on" data-char="mode-miteam" aria-pressed="true"${titleAttr("MiTeam name, emblem, and colours")}>MITEAM</button>
+            ${
+              this.canSwitchFormationSide()
+                ? `<button type="button" class="formation-chip form-side-chip ${this.formationSide === "home" ? "on" : ""}" data-char="form-side" data-side="home" aria-pressed="${this.formationSide === "home" ? "true" : "false"}">HOME</button>
+            <button type="button" class="formation-chip form-side-chip ${this.formationSide === "away" ? "on" : ""}" data-char="form-side" data-side="away" aria-pressed="${this.formationSide === "away" ? "true" : "false"}">AWAY</button>`
+                : ""
+            }
+          </div>
+        </div>
+        <div class="team-select-body miteam-settings-body">
+          <div class="team-pitch team-pitch-panel miteam-options-panel" aria-label="MiTeam options">
+            <div class="pitch-overlay-card miteam-options-card">
+              <h3 class="miteam-options-title">MiTeam</h3>
+              <p class="hint">Name, emblem, and club colours for your side. Leave defaults to keep each player&rsquo;s original club card.</p>
+              <div class="miteam-options-row">
+                <div class="miteam-crest-wrap">
+                  <button type="button" class="miteam-crest-btn" data-char="miteam-crest-toggle" aria-label="Choose club emblem" aria-expanded="${this.miteamCrestPickerOpen ? "true" : "false"}">
+                    ${teamBadgeHtml(team, { className: "char-team-crest miteam-crest-preview" })}
+                  </button>
+                  ${this.miteamCrestPickerOpen ? this.miteamCrestPickerHtml() : ""}
+                </div>
+                <input data-char-miteam-name type="text" maxlength="28" value="${escapeAttr(clubName)}" aria-label="MiTeam name" placeholder="Name" />
+              </div>
+              <div class="miteam-colour-row">
+                <label class="miteam-colour-field">Primary
+                  <input type="color" data-char-miteam-primary value="${escapeAttr(primary)}" />
+                </label>
+                <label class="miteam-colour-field">Secondary
+                  <input type="color" data-char-miteam-secondary value="${escapeAttr(secondary)}" />
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        ${this.modeNavHtml("MITEAM")}
+      </div>
+    `;
+  }
+
+  private miteamCrestPickerHtml(): string {
+    if (!this.miTeamHost) return "";
+    const { save, db } = this.miTeamHost;
+    const current = save.data.miteam?.badgeAsset?.trim() || MITEAM_DEFAULT_BADGE;
+    const tiles = miteamCrestChoices(db)
+      .map((c) => {
+        const on = c.url === current ? " on" : "";
+        return `<button type="button" class="miteam-crest-choice${on}" data-char="miteam-crest-pick" data-crest="${escapeAttr(c.url)}" title="${escapeAttr(c.label)}" aria-label="${escapeAttr(c.label)}">
+          <img src="${escapeAttr(assetUrl(c.url))}" alt="" loading="lazy" onerror="this.closest('button')?.remove()" />
+        </button>`;
+      })
+      .join("");
+    return `<div class="miteam-crest-popover" role="dialog" aria-label="Club emblem">
+      <div class="miteam-crest-popover-head">
+        <span>Emblem</span>
+        <button type="button" class="miteam-crest-close" data-char="miteam-crest-close" aria-label="Close">×</button>
+      </div>
+      <label class="miteam-crest-upload player-card-action">Upload
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-char-miteam-crest-upload hidden />
+      </label>
+      <div class="miteam-crest-grid">${tiles}</div>
+    </div>`;
+  }
+
+  private syncShellFromMiTeamSave(): void {
+    if (!this.miTeamHost) return;
+    const { save, db } = this.miTeamHost;
+    applyMiTeamToDb(db, save);
+    const team = db.getTeam(MITEAM_TEAM_ID);
+    this.teamName = team.name;
+    this.teamColor = team.primaryColor;
+    this.teamSecondaryColor = team.secondaryColor;
+    this.teamRecord = team;
+    this.teamBadge = {
+      id: team.id,
+      name: team.name,
+      abbreviation: team.abbreviation,
+      badgeAsset: team.badgeAsset,
+      primaryColor: team.primaryColor,
+      secondaryColor: team.secondaryColor,
+    };
+    if (this.userMatchTeam?.id === MITEAM_TEAM_ID) this.userMatchTeam = team;
+    // Custom identity clears origin looks; default shell restores them.
+    this.playerClubLooks = buildMiTeamPlayerClubLooks(db, save.data.miteam);
+    this.syncKitMarkerColors();
+  }
+
+  private handleMiTeamSettingsClick(e: MouseEvent): boolean {
+    const t = (e.target as HTMLElement).closest<HTMLElement>("[data-char]");
+    if (!t || !this.root.contains(t) || !this.miTeamHost) return false;
+    const act = t.getAttribute("data-char");
+    if (act === "miteam-crest-toggle") {
+      e.preventDefault();
+      e.stopPropagation();
+      this.miteamCrestPickerOpen = !this.miteamCrestPickerOpen;
+      this.render();
+      return true;
+    }
+    if (act === "miteam-crest-close") {
+      e.preventDefault();
+      e.stopPropagation();
+      this.miteamCrestPickerOpen = false;
+      this.render();
+      return true;
+    }
+    if (act === "miteam-crest-pick") {
+      e.preventDefault();
+      e.stopPropagation();
+      const url = t.getAttribute("data-crest") ?? MITEAM_DEFAULT_BADGE;
+      setMiTeamBadge(this.miTeamHost.save, this.miTeamHost.db, url === MITEAM_DEFAULT_BADGE ? null : url);
+      this.miteamCrestPickerOpen = false;
+      this.syncShellFromMiTeamSave();
+      this.render();
+      return true;
+    }
+    if (this.miteamCrestPickerOpen && !(e.target as HTMLElement).closest(".miteam-crest-wrap")) {
+      this.miteamCrestPickerOpen = false;
+      this.render();
+      return true;
+    }
+    return false;
+  }
+
+  private handleMiTeamSettingsChange(e: Event): boolean {
+    if (!this.miTeamHost) return false;
+    const t = e.target as HTMLElement;
+    const { save, db } = this.miTeamHost;
+    if (t.matches("[data-char-miteam-name]")) {
+      setMiTeamClubName(save, db, (t as HTMLInputElement).value);
+      this.syncShellFromMiTeamSave();
+      return true;
+    }
+    if (t.matches("[data-char-miteam-primary]")) {
+      setMiTeamColors(save, db, { primaryColor: (t as HTMLInputElement).value });
+      this.syncShellFromMiTeamSave();
+      return true;
+    }
+    if (t.matches("[data-char-miteam-secondary]")) {
+      setMiTeamColors(save, db, { secondaryColor: (t as HTMLInputElement).value });
+      this.syncShellFromMiTeamSave();
+      return true;
+    }
+    if (t.matches("[data-char-miteam-crest-upload]")) {
+      const input = t as HTMLInputElement;
+      const file = input.files?.[0];
+      input.value = "";
+      if (!file || !file.type.startsWith("image/")) return true;
+      if (file.size > 750_000) return true;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = String(reader.result ?? "");
+        if (!dataUrl.startsWith("data:image/")) return;
+        setMiTeamBadge(save, db, dataUrl);
+        this.miteamCrestPickerOpen = false;
+        this.syncShellFromMiTeamSave();
+        this.render();
+      };
+      reader.readAsDataURL(file);
+      return true;
+    }
+    return false;
+  }
+
   private renderKit(): void {
     const kitTeam = this.userMatchTeam ?? this.teamRecord;
     if (!kitTeam) {
@@ -2124,10 +2399,11 @@ export class CharacterSelect {
                   const on = p.player.id === selectedId ? "on" : "";
                   const name = escapeHtml(p.player.name);
                   const tip = this.showOverlays ? name : "";
+                  const look = this.clubLookFor(p.player.id);
                   return `<div class="pitch-slot ${on}" data-slot="${slot.id}" data-player-id="${p.player.id}" style="left:${pos.left}%; bottom:${pos.bottom}%">
                   <button type="button" class="pitch-token ${on}" data-char="pick" data-id="${p.player.id}" data-player-id="${p.player.id}" data-from-slot="${slot.id}" aria-label="${name}"${tip ? ` title="${tip}"` : ""}>
                     ${kitMarkerHtml(p.player, p.shirtNumber, {
-                      ...kitMarkerColors(p.player.primaryPosition, this.teamColor, this.teamSecondaryColor),
+                      ...kitMarkerColors(p.player.primaryPosition, look.teamColor, look.teamSecondaryColor),
                     })}
                   </button>
                 </div>`;
@@ -2140,6 +2416,11 @@ export class CharacterSelect {
         <div class="team-select-head">
           ${this.teamTitleHtml(titleLabel)}
           <div class="formation-toolbar" role="toolbar" aria-label="Formation controls">
+            ${
+              this.showMiTeamUi()
+                ? `<button type="button" class="formation-chip miteam-chip ${this.controlMode === "MITEAM" ? "on" : ""}" data-char="mode-miteam" aria-pressed="${this.controlMode === "MITEAM" ? "true" : "false"}"${titleAttr("MiTeam name, emblem, and colours")}>MITEAM</button>`
+                : ""
+            }
             ${
               this.canSwitchFormationSide()
                 ? `<button type="button" class="formation-chip form-side-chip ${this.formationSide === "home" ? "on" : ""}" data-char="form-side" data-side="home" aria-pressed="${this.formationSide === "home" ? "true" : "false"}">HOME</button>
@@ -2180,11 +2461,14 @@ export class CharacterSelect {
         <div class="team-select-body">
           <aside class="team-roster">
             <div class="team-roster-card">
-              ${portraitHtml(selected.player, selected.shirtNumber, this.teamColor, {
-                surnameOnly: true,
-                className: "kit-marker-roster",
-                textColor: contrastingKitText(this.teamColor, this.teamSecondaryColor),
-              })}
+              ${(() => {
+                const look = this.clubLookFor(selected.player.id);
+                return `${portraitHtml(selected.player, selected.shirtNumber, look.teamColor, {
+                  surnameOnly: true,
+                  className: "kit-marker-roster",
+                  textColor: contrastingKitText(look.teamColor, look.teamSecondaryColor),
+                })}`;
+              })()}
               <h3>${selected.shirtNumber}. ${escapeHtml(kitHeadingName(selected.player))}</h3>
               <div class="char-meta">${selected.player.primaryPosition} · OVR ${selected.overall}</div>
               ${profileStatsBlock(selected.attrs, { compact: true, mode: this.profileView, size: 168 })}
@@ -2214,9 +2498,10 @@ export class CharacterSelect {
                   const active = p.player.id === selectedId ? "on" : "";
                   const name = escapeHtml(p.player.name);
                   const nameTip = this.showOverlays ? ` title="${name}"` : "";
+                  const look = this.clubLookFor(p.player.id);
                   return `<button type="button" class="bench-card ${active}" draggable="true" data-player-id="${p.player.id}" data-from-slot="" data-char="pick" data-id="${p.player.id}" aria-label="${name}"${nameTip}>
                     ${kitMarkerHtml(p.player, p.shirtNumber, {
-                      ...kitMarkerColors(p.player.primaryPosition, this.teamColor, this.teamSecondaryColor),
+                      ...kitMarkerColors(p.player.primaryPosition, look.teamColor, look.teamSecondaryColor),
                       className: "kit-marker-bench",
                     })}
                   </button>`;
@@ -2596,6 +2881,9 @@ export class CharacterSelect {
     const kitMode = this.showKitUi()
       ? `<button type="button" data-char="mode-kit" class="${mode === "KIT" ? "on" : ""}">KIT SELECT</button>`
       : "";
+    const miteamMode = this.showMiTeamUi()
+      ? `<button type="button" data-char="mode-miteam" class="${mode === "MITEAM" ? "on" : ""}">MITEAM</button>`
+      : "";
     if (this.tabletopKind) {
       const setupLabel = this.tabletopKind === "FLICK" ? "FLICKBALL" : "FOOSBALL";
       const startLabel = this.tabletopKind === "FLICK" ? "START FLICKBALL" : "START FOOSBALL";
@@ -2604,6 +2892,7 @@ export class CharacterSelect {
         <button type="button" data-char="mode-setup" class="${mode === "SETUP" ? "on" : ""}">${setupLabel}</button>
         <button type="button" data-char="mode-team" class="${mode === "TEAM" ? "on" : ""}">TEAM SELECT</button>
         ${kitMode}
+        ${miteamMode}
       </div>
       <div class="char-nav">
         <button type="button" data-char="back">BACK</button>
@@ -2617,6 +2906,7 @@ export class CharacterSelect {
         <button type="button" data-char="mode-player" class="${mode === "PLAYER" ? "on" : ""}">PLAYER SELECT</button>
         <button type="button" data-char="mode-team" class="${mode === "TEAM" ? "on" : ""}">TEAM SELECT</button>
         ${kitMode}
+        ${miteamMode}
       </div>
       <div class="char-nav">
         <button type="button" class="char-nav-step" data-char="prev" aria-label="Previous">‹</button>

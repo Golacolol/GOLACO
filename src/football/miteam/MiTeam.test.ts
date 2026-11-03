@@ -6,8 +6,13 @@ import {
   ensureMiTeamSave,
   miteamFillOrder,
   nextEmptySlot,
+  miTeamIdentityCustomized,
+  placeMiTeamPlayerOnSlot,
+  resolveMiTeamPlayerDisplay,
   restartMiTeam,
   setMiTeamBadge,
+  setMiTeamColors,
+  setMiTeamClubName,
   setMiTeamRoster,
   xiComplete,
 } from "./MiTeam";
@@ -64,6 +69,11 @@ function stubDb(): GameDatabase {
     memberships,
     lineups,
     userTeamId: "plymouth_argyle_current",
+    getTeam(teamId: string) {
+      const t = teams.get(teamId);
+      if (!t) throw new Error(`missing team ${teamId}`);
+      return t;
+    },
     getSquad(teamId: string) {
       return memberships
         .filter((m) => m.teamId === teamId)
@@ -138,5 +148,56 @@ describe("MiTeam save / shell", () => {
     const again = new SaveManager();
     expect(again.data.miteam?.roster).toHaveLength(1);
     expect(again.data.miteam?.roster[0]?.slot).toBe("GK");
+  });
+
+  it("swaps a bench outfielder onto a pitch slot and blocks non-GK onto GK", () => {
+    const roster = [
+      { playerId: "p1", slot: "GK", shirtNumber: 1 },
+      { playerId: "p2", slot: "LCM", shirtNumber: 8 },
+      { playerId: "p3", slot: "BENCH_1", shirtNumber: 12 },
+    ];
+    const pos = (id: string) => db.players.get(id)?.primaryPosition ?? null;
+
+    const swapped = placeMiTeamPlayerOnSlot(roster, "p3", "LCM", pos);
+    expect(swapped?.find((r) => r.playerId === "p3")?.slot).toBe("LCM");
+    expect(swapped?.find((r) => r.playerId === "p2")?.slot).toBe("BENCH_1");
+    expect(placeMiTeamPlayerOnSlot(roster, "p3", "GK", pos)).toBeNull();
+    expect(placeMiTeamPlayerOnSlot(roster, "p2", "GK", pos)).toBeNull();
+  });
+
+  it("uses origin club looks until MiTeam identity is customized", () => {
+    const mt = ensureMiTeamSave(save);
+    db.teams.set("origin_club", {
+      id: "origin_club",
+      name: "Origin FC",
+      abbreviation: "ORI",
+      teamType: "CURRENT_TEAM",
+      city: "Origin",
+      primaryColor: "#112233",
+      secondaryColor: "#445566",
+      badgeAsset: "/assets/crests/origin.png",
+      defaultKit: { shirt: "#112233", shorts: "#fff", socks: "#112233" },
+      awayKit: { shirt: "#445566", shorts: "#112233", socks: "#445566" },
+      goalkeeperKit: { shirt: "#C9A227", shorts: "#445566", socks: "#C9A227" },
+      defaultStadiumId: "home_park",
+      defaultFormation: "4-4-2",
+    } as import("../../data/schema").TeamRecord);
+    db.memberships.push({
+      playerId: "p2",
+      teamId: "origin_club",
+      shirtNumber: 8,
+      squadRole: "FIRST_TEAM",
+    });
+    setMiTeamRoster(save, db, [{ playerId: "p2", slot: "LCM", shirtNumber: 8, sourceTeamId: "origin_club" }]);
+    expect(miTeamIdentityCustomized(mt)).toBe(false);
+    const look = resolveMiTeamPlayerDisplay(db, mt, "p2", "origin_club");
+    expect(look.teamColor).toBe("#112233");
+    expect(look.teamName).toBe("Origin FC");
+
+    setMiTeamClubName(save, db, "Silver City");
+    expect(miTeamIdentityCustomized(save.data.miteam)).toBe(true);
+    const shellLook = resolveMiTeamPlayerDisplay(db, save.data.miteam!, "p2", "origin_club");
+    expect(shellLook.teamName).toBe("Silver City");
+    setMiTeamColors(save, db, { primaryColor: null, secondaryColor: null });
   });
 });

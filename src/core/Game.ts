@@ -40,6 +40,7 @@ import { MiTeamBuilder } from "../ui/MiTeamBuilder";
 import { KitPanelPreview } from "../ui/KitPanelPreview";
 import {
   applyMiTeamToDb,
+  buildMiTeamPlayerClubLooks,
   ensureMiTeamSave,
   randomMiTeamFixture,
   xiComplete,
@@ -435,6 +436,11 @@ export class Game {
         }
         if (char === "mode-kit") {
           this.chars.setControlMode("KIT");
+          this.chars.render();
+          this.refreshCharacterPreview();
+        }
+        if (char === "mode-miteam") {
+          this.chars.setControlMode("MITEAM");
           this.chars.render();
           this.refreshCharacterPreview();
         }
@@ -1360,6 +1366,8 @@ export class Game {
     const team = this.db.getTeam(teamId);
     const lineup = this.db.getLineup(lineupId, teamId);
     const tactics = this.save.data.teamTactics[teamId];
+    const playerClubLooks =
+      teamId === MITEAM_TEAM_ID ? buildMiTeamPlayerClubLooks(this.db, this.save.data.miteam) : null;
     return {
       teamName: team.name,
       starters: this.db.getStartingSquad(lineup),
@@ -1376,6 +1384,7 @@ export class Game {
         .map((s) => ({ slot: s.slot, dx: s.offsetX ?? 0, dz: s.offsetZ ?? 0 })),
       userTactics: tactics?.user ?? null,
       pauseSubsRemaining: pauseSubsRemaining ?? null,
+      playerClubLooks,
     };
   }
 
@@ -1473,6 +1482,11 @@ export class Game {
     this.applyInfoOverlaysSetting();
     this.charTeamId = teamId;
     const team = this.db.getTeam(teamId);
+    if (teamId === MITEAM_TEAM_ID || this.save.data.miteam) {
+      this.chars.setMiTeamHost(this.save, this.db);
+    } else {
+      this.chars.clearMiTeamHost();
+    }
     const f = this.pendingFixture;
     const lineupId = f && f.awayTeamId === teamId ? f.awayLineupId : f?.homeLineupId;
     const opponentId = f ? (f.homeTeamId === teamId ? f.awayTeamId : f.homeTeamId) : null;
@@ -1526,6 +1540,8 @@ export class Game {
           .map((s) => ({ slot: s.slot, dx: s.offsetX ?? 0, dz: s.offsetZ ?? 0 })),
         userTactics: tactics?.user ?? null,
         formationSide: userIsAwaySide ? "away" : "home",
+        playerClubLooks:
+          teamId === MITEAM_TEAM_ID ? buildMiTeamPlayerClubLooks(this.db, this.save.data.miteam) : null,
       });
     }
     // Flickball / Foosball: swap PLAYER SELECT for mode settings (still keep TEAM / KIT).
@@ -1558,7 +1574,11 @@ export class Game {
   }
 
   private refreshCharacterPreview(): void {
-    if (this.chars.controlMode === "TEAM" || this.chars.controlMode === "SETUP") {
+    if (
+      this.chars.controlMode === "TEAM" ||
+      this.chars.controlMode === "SETUP" ||
+      this.chars.controlMode === "MITEAM"
+    ) {
       if (this.preview) {
         this.scene.remove(this.preview);
         this.preview = null;
@@ -1686,7 +1706,9 @@ export class Game {
     this.teamControl =
       autoplay || this.practice === "spot" || this.chars.purpose === "spot"
         ? false
-        : this.chars.controlMode === "TEAM" || this.chars.controlMode === "KIT";
+        : this.chars.controlMode === "TEAM" ||
+          this.chars.controlMode === "KIT" ||
+          this.chars.controlMode === "MITEAM";
     this.fixtureSim = autoplay;
     this.watchSim = autoplay;
     this.chars.hide();
@@ -1755,6 +1777,7 @@ export class Game {
         showPassTargetHighlight: saved.showPassTargetHighlight,
         homeKitChoice: userSide === "home" ? userKitChoice : "auto",
         awayKitChoice: userSide === "away" ? userKitChoice : "auto",
+        miteam: this.save.data.miteam,
       },
       this.events,
     );

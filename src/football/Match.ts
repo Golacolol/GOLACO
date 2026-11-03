@@ -2,7 +2,10 @@ import * as THREE from "three";
 import type { GameDatabase, SquadPlayer } from "../core/Database";
 import type { EventBus } from "../core/EventBus";
 import { hexColor, clamp, lerp, lerpAngle, normalize2, rotate2, stat01 } from "../core/math";
-import type { FixtureRecord, KitChoice } from "../data/schema";
+import type { FixtureRecord, KitChoice, TeamKit } from "../data/schema";
+import type { MiTeamSave } from "../core/SaveManager";
+import { MITEAM_TEAM_ID } from "../core/SaveManager";
+import { resolveMiTeamPlayerKit } from "./miteam/MiTeam";
 import { celebrateAI, celebrationStaysPut, clearCelebration, concedeReaction, type CelebrationRoutine } from "./ai/CelebrationAI";
 import {
   updateGoalkeeper,
@@ -209,6 +212,8 @@ export interface MatchOptions {
   homeKitChoice?: KitChoice;
   /** Prematch Kit Select for the away club. */
   awayKitChoice?: KitChoice;
+  /** When MiTeam is unmodified, players wear origin club kits. */
+  miteam?: MiTeamSave | null;
 }
 
 export class Match {
@@ -408,6 +413,9 @@ export class Match {
   private celebrationRoutine: CelebrationRoutine = "corner";
   private spotResetT = 0;
 
+  private db: GameDatabase;
+  private miteam: MiTeamSave | null;
+
   constructor(
     scene: THREE.Scene,
     camera: MatchCamera,
@@ -417,6 +425,8 @@ export class Match {
   ) {
     this.scene = scene;
     this.camera = camera;
+    this.db = db;
+    this.miteam = options.miteam ?? null;
     this.userSide = options.userSide;
     this.autoplay = options.autoplay;
     this.invertShotY = options.invertShotY ?? false;
@@ -687,8 +697,7 @@ export class Match {
       this.sceneRoot.remove(off.mesh);
       off.mesh = null;
     }
-    const kit = result.on.isGK ? team.record.goalkeeperKit : team.kit;
-    const vis = createPlayerVisual(result.on, kit, result.on.isGK);
+    const vis = createPlayerVisual(result.on, this.kitForPlayer(team, result.on), result.on.isGK);
     result.on.mesh = vis.group;
     this.sceneRoot.add(vis.group);
     if (this.controlled === off) this.controlled = result.on;
@@ -794,16 +803,22 @@ export class Match {
     }
   }
 
+  private kitForPlayer(team: Team, player: Player): TeamKit {
+    const fallback = player.isGK ? team.record.goalkeeperKit : team.kit;
+    if (team.record.id !== MITEAM_TEAM_ID) return fallback;
+    return resolveMiTeamPlayerKit(this.db, this.miteam, player.id, player.isGK, fallback);
+  }
+
   private spawnPlayers(homeSquad: SquadPlayer[], awaySquad: SquadPlayer[]): void {
     void homeSquad;
     void awaySquad;
     for (const p of this.home.players) {
-      const vis = createPlayerVisual(p, p.isGK ? this.home.record.goalkeeperKit : this.home.kit, p.isGK);
+      const vis = createPlayerVisual(p, this.kitForPlayer(this.home, p), p.isGK);
       p.mesh = vis.group;
       this.sceneRoot.add(vis.group);
     }
     for (const p of this.away.players) {
-      const vis = createPlayerVisual(p, p.isGK ? this.away.record.goalkeeperKit : this.away.kit, p.isGK);
+      const vis = createPlayerVisual(p, this.kitForPlayer(this.away, p), p.isGK);
       p.mesh = vis.group;
       this.sceneRoot.add(vis.group);
     }

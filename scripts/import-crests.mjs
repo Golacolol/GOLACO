@@ -158,7 +158,9 @@ const FD_BY_CLUB = {
   bayern: 5,
   dortmund: 4,
   psg: 524,
-  monaco: 516,
+  // monaco: do NOT use football-data here historically — 516 is Marseille (Monaco is 548).
+  // Prefer GitHub "AS Monaco.png" for a proper crest.
+  marseille: 516,
   porto: 503,
   ajax: 678,
   // celtic / rangers: do NOT use football-data.org here — IDs 674/675 are PSV/Feyenoord.
