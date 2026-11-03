@@ -306,7 +306,7 @@ function sportsCardHtml(sp: SquadPlayer, team: PlayerCardTeamContext, state: Pla
           <span class="player-card-ovr-holo">${Math.round(sp.overall)}</span>
         </div>
         ${photoHtml(sp, team)}
-        ${profileStatsBlock(sp.attrs, { mode: state.profileView, size: state.profileSize ?? 172 })}
+        ${profileStatsBlock(sp.attrs, { mode: state.profileView, size: state.profileSize ?? 148 })}
         ${shirtHtml(sp, team)}
       </div>
       <div class="player-card-face player-card-back">

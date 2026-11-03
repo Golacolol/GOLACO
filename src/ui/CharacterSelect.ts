@@ -1747,7 +1747,7 @@ export class CharacterSelect {
   /** Flipable sports card for PLAYER SELECT — front: shirt + PNG + hex; back: full ratings. */
   private playerSportsCardHtml(sp: SquadPlayer, _opts: { variant: "select" }): string {
     const flipped = this.cardFlipped;
-    const hexSize = 172;
+    const hexSize = 148;
     const teamLabel = formatPlayerCardTeamName(this.teamName) || "TEAM";
     return `<div class="player-card player-card-select${flipped ? " is-flipped" : ""}" data-char="card-face" data-face="${flipped ? "back" : "front"}" style="--card-accent:${escapeAttr(this.teamColor)};--card-flip-y:${this.cardFlipY}deg"${titleAttr("Flip card")} role="button" tabindex="0">
       <div class="player-card-inner">

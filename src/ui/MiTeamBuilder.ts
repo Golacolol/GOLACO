@@ -248,7 +248,7 @@ export class MiTeamBuilder {
     }
     for (const host of hosts) {
       if (host.closest(".miteam-pack-under:not(.miteam-pack-revealed)")) continue;
-      const size = Number(host.getAttribute("data-size") || 158);
+      const size = Number(host.getAttribute("data-size") || 148);
       const compact = host.classList.contains("profile-stats-compact");
       host.outerHTML = profileStatsBlock(attrs, {
         compact,
@@ -924,7 +924,7 @@ export class MiTeamBuilder {
       flipped: false,
       flipY: this.cardFlipY,
       profileView: this.profileView,
-      profileSize: 158,
+      profileSize: 148,
       imagePaths: [],
     });
     // Replace default single EDIT head with PACK (left) + EDIT/CARD (right).
@@ -952,7 +952,7 @@ export class MiTeamBuilder {
       flipped: false,
       flipY: this.cardFlipY,
       profileView: this.profileView,
-      profileSize: 158,
+      profileSize: 148,
       imagePaths: [],
     });
     return card

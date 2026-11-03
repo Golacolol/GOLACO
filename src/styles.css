@@ -2169,12 +2169,12 @@ select.formation-chip.formation-select option {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  width: min(100%, 340px);
+  width: min(100%, var(--sports-card-w, 312px));
   margin: 0 auto;
 }
 .player-card-shell-edit,
 .player-card-shell.is-editing {
-  width: min(100%, 340px);
+  width: min(100%, var(--sports-card-w, 312px));
 }
 .player-card-shell-head {
   display: flex;
@@ -2202,10 +2202,10 @@ select.formation-chip.formation-select option {
   background: linear-gradient(90deg, rgba(0, 122, 61, 0.85), rgba(0, 122, 61, 0.45));
 }
 .player-card-edit-panel {
-  width: 100%;
-  max-width: 340px;
-  min-height: 460px;
-  aspect-ratio: 2 / 3.05;
+  width: min(100%, var(--sports-card-w, 312px));
+  max-width: var(--sports-card-w, 312px);
+  min-height: 0;
+  aspect-ratio: var(--sports-card-ar, 2 / 2.78);
   height: auto;
   max-height: none;
   overflow: auto;
@@ -2261,24 +2261,28 @@ select.formation-chip.formation-select option {
 .player-card {
   --card-accent: #007a3d;
   position: relative;
-  width: 100%;
-  max-width: 340px;
+  width: min(100%, var(--sports-card-w, 312px));
+  max-width: var(--sports-card-w, 312px);
   margin: 0 auto;
-  aspect-ratio: 2 / 3.05;
-  min-height: 460px;
+  /* Shared with MiTeam — aspect owns height (no min-height stretch). */
+  aspect-ratio: var(--sports-card-ar, 2 / 2.78);
+  min-height: 0;
+  height: auto;
   perspective: 1100px;
 }
 .player-card-select {
-  max-width: 340px;
-  width: 100%;
-  min-height: 460px;
-  aspect-ratio: 2 / 3.05;
+  width: min(100%, var(--sports-card-w, 312px));
+  max-width: var(--sports-card-w, 312px);
+  min-height: 0;
+  height: auto;
+  aspect-ratio: var(--sports-card-ar, 2 / 2.78);
 }
 .player-card-edit {
-  max-width: 340px;
-  width: 100%;
-  min-height: 460px;
-  aspect-ratio: 2 / 3.05;
+  width: min(100%, var(--sports-card-w, 312px));
+  max-width: var(--sports-card-w, 312px);
+  min-height: 0;
+  height: auto;
+  aspect-ratio: var(--sports-card-ar, 2 / 2.78);
 }
 .player-card-inner {
   position: relative;
@@ -2295,8 +2299,8 @@ select.formation-chip.formation-select option {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 6px;
-  padding: 10px 10px 8px;
+  gap: 3px;
+  padding: 7px 8px 5px;
   border-radius: 12px;
   border: 2px solid rgba(197, 165, 114, 0.75);
   background:
@@ -2505,26 +2509,36 @@ select.formation-chip.formation-select option {
   object-fit: contain;
   object-position: center center;
 }
-/* Front-of-card player PNGs: circular crop with a gold frame.
-   Clip the <img> itself — overflow:hidden + border-radius fails under card 3D transforms.
-   Allow shrink (max-height + flex) so shirt / OVR details are not clipped off the bottom. */
+/* Emblem slot: crest + PNG share flex space (max 48%) so the hex isn’t crowded. */
+.player-card-front .player-card-photo.has-photo,
+.player-card-front .player-card-photo.has-crest,
+.player-card-edit-portrait-preview .player-card-photo.has-crest {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  max-height: 48%;
+  margin: 0 auto;
+  align-self: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  aspect-ratio: 1 / 1;
+}
+/*
+ * PNG gold circle: flex sets the HEIGHT (shared emblem slot); aspect-ratio
+ * transfers that to WIDTH so the ring stays circular — never width:100% + max-height.
+ */
 .player-card-front .player-card-photo.has-photo {
-  width: min(68%, 176px);
-  max-width: 68%;
-  max-height: 38%;
-  margin: 2px auto 0;
+  width: auto;
+  max-width: 100%;
   border-radius: 50%;
   border: 3px solid var(--gold);
   box-shadow:
     0 0 0 1px rgba(197, 165, 114, 0.4),
-    0 0 10px rgba(197, 165, 114, 0.22),
-    inset 0 0 0 1px rgba(242, 226, 180, 0.35);
-  overflow: hidden;
+    0 0 10px rgba(197, 165, 114, 0.22);
   background: rgba(4, 14, 9, 0.55);
-  flex: 0 1 auto;
-  aspect-ratio: 1 / 1;
   isolation: isolate;
   contain: paint;
+  padding: 0;
 }
 .player-card-front .player-card-photo.has-photo .player-card-portrait {
   width: 100%;
@@ -2532,27 +2546,24 @@ select.formation-chip.formation-select option {
   max-width: none;
   max-height: none;
   object-fit: cover;
-  object-position: center 18%;
+  object-position: center 36%;
   border-radius: 50%;
   display: block;
   pointer-events: none;
-  clip-path: circle(50% at 50% 50%);
-  -webkit-clip-path: circle(50% at 50% 50%);
+  clip-path: inset(0 round 50%);
+  -webkit-clip-path: inset(0 round 50%);
 }
-/* Club emblems on the player card: no gold circle / circular crop. */
+/* Club emblems: full-width square slot, no gold ring. */
 .player-card-front .player-card-photo.has-crest,
 .player-card-edit-portrait-preview .player-card-photo.has-crest {
   width: 100%;
-  max-height: 48%;
-  margin: 0;
+  max-width: 100%;
+  height: auto;
   border-radius: 0;
   border: none;
   box-shadow: none;
   background: transparent;
-  flex: 1 1 0;
-  aspect-ratio: 1 / 1;
   padding: 4px;
-  overflow: hidden;
 }
 .player-card-front .player-card-photo.has-crest .player-card-crest.team-badge,
 .player-card-front .player-card-photo.has-crest .player-card-crest-fallback,
@@ -2617,8 +2628,12 @@ select.formation-chip.formation-select option {
   box-sizing: border-box;
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
+/* Pin kit block to the bottom of the front face so leftover space isn’t a dead band. */
+.player-card-front > .player-card-shirt {
+  margin-top: auto;
+}
 .player-card-shirt-name {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.14em;
   line-height: 1.05;
@@ -2628,7 +2643,7 @@ select.formation-chip.formation-select option {
   order: 1;
 }
 .player-card-shirt-num {
-  font-size: 42px;
+  font-size: 32px;
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: -0.03em;
@@ -2644,6 +2659,10 @@ select.formation-chip.formation-select option {
 .player-card-front .profile-stats {
   margin: 0 auto;
   flex: 0 0 auto;
+  width: 148px;
+  height: 148px;
+  max-width: 148px;
+  max-height: 148px;
 }
 .player-card-flip-nav {
   display: flex;
@@ -2921,8 +2940,8 @@ select.formation-chip.formation-select option {
   color: var(--paper);
 }
 .squad-edit-dialog.squad-edit-card .player-card-shell {
-  width: min(100%, 340px);
-  max-width: 340px;
+  width: min(100%, var(--sports-card-w, 312px));
+  max-width: var(--sports-card-w, 312px);
 }
 .squad-edit-dialog h3 {
   margin: 0 0 4px;
@@ -4729,10 +4748,14 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
 .pred-empty { margin: 12px 4px; }
 
 /* —— MiTeam pack builder —— */
+.char-select {
+  /* Shared sports-card footprint for Formation PLAYER SELECT + MiTeam. */
+  --sports-card-w: 312px;
+  --sports-card-ar: 2 / 2.78;
+}
 .miteam-builder {
-  /* Player card display size — never stretch the under-card to the foil. */
-  --miteam-card-w: 312px;
-  --miteam-card-ar: 2 / 2.78;
+  --miteam-card-w: var(--sports-card-w, 312px);
+  --miteam-card-ar: var(--sports-card-ar, 2 / 2.78);
   /* Foil only a hair larger so serrations sit on the real card edge. */
   --miteam-pack-w: 320px;
   --miteam-pack-ar: 2 / 2.86;
@@ -5484,24 +5507,26 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
 }
 .miteam-reveal .player-card-front .player-card-photo.has-photo,
 .miteam-pack-under .player-card-front .player-card-photo.has-photo {
-  width: min(66%, 158px);
-  height: auto;
-  max-width: 66%;
-  max-height: 36%;
-  flex: 1 1 auto;
+  width: auto;
+  max-width: 100%;
+  max-height: 48%;
+  flex: 1 1 0;
+  min-width: 0;
   min-height: 0;
-  margin: 2px auto 0;
+  margin: 0 auto;
   aspect-ratio: 1 / 1;
+  align-self: center;
 }
 .miteam-reveal .player-card-front .player-card-photo.has-crest,
 .miteam-pack-under .player-card-front .player-card-photo.has-crest {
-  width: min(66%, 158px);
+  width: 100%;
+  max-width: 100%;
   height: auto;
-  max-width: 66%;
-  max-height: 36%;
-  margin: 2px auto 0;
-  flex: 1 1 auto;
+  max-height: 48%;
+  flex: 1 1 0;
+  min-width: 0;
   min-height: 0;
+  margin: 0 auto;
   aspect-ratio: 1 / 1;
   padding: 2px;
 }
@@ -5517,10 +5542,10 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
 .miteam-reveal .player-card-front .profile-stats,
 .miteam-pack-under .player-card-front .profile-stats {
   flex: 0 0 auto;
-  width: 158px !important;
-  height: 158px !important;
-  max-width: 158px;
-  max-height: 158px;
+  width: 148px !important;
+  height: 148px !important;
+  max-width: 148px;
+  max-height: 148px;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -5535,15 +5560,15 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
 .miteam-reveal .player-card-front .profile-full-svg,
 .miteam-pack-under .player-card-front .profile-hex-svg,
 .miteam-pack-under .player-card-front .profile-full-svg {
-  width: 158px !important;
-  height: 158px !important;
-  max-height: 158px;
+  width: 148px !important;
+  height: 148px !important;
+  max-height: 148px;
 }
 .miteam-reveal .player-card-shirt,
 .miteam-pack-under .player-card-shirt {
   flex: 0 0 auto;
   margin-top: auto;
-  padding: 5px 7px 3px;
+  padding: 4px 6px 2px;
 }
 .miteam-reveal .player-card-shirt-name,
 .miteam-pack-under .player-card-shirt-name {
