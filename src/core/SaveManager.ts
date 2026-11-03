@@ -20,7 +20,7 @@ export interface SavedSettings {
   formationDebug: boolean;
   masterVolume: number;
   invertShotY: boolean;
-  gameplayMode: "REAL" | "ARCADE" | "TABLE" | "FLICK";
+  gameplayMode: "REAL" | "ARCADE" | "TABLE" | "FLICK" | "MITEAM";
   /** TABLE foosball defaults. */
   tableLayoutId: "FRENCH_CLASSIC" | "TOURNAMENT_MODERN" | "OPEN_CUSTOM";
   tableOpponent: "AI" | "HUMAN";
@@ -92,7 +92,29 @@ export interface SaveData {
   predictions: PredictionsState;
   /** Per-team formation / play-style / USER custom tactics. */
   teamTactics: Record<string, TeamTacticsSave>;
+  /** One MiTeam pack-built club per browser (null = none). */
+  miteam: MiTeamSave | null;
 }
+
+export type MiTeamRosterSlot = {
+  playerId: string;
+  slot: string;
+  shirtNumber: number;
+  /** Origin club the player was packed from (for card / counter colours). */
+  sourceTeamId?: string | null;
+};
+
+export type MiTeamSave = {
+  teamId: string;
+  clubName: string;
+  /** Crest URL (pack path or data URL). Null/omit uses the GOLACO logo. */
+  badgeAsset: string | null;
+  /** Optional MiTeam shell kit colours (null = default silver/navy). */
+  primaryColor: string | null;
+  secondaryColor: string | null;
+  roster: MiTeamRosterSlot[];
+  nextFixtureId: string | null;
+};
 
 const KEY = "argyle-football-save-v05";
 
@@ -202,6 +224,7 @@ export class SaveManager {
         settings.gameplayMode !== "TABLE" &&
         settings.gameplayMode !== "FLICK"
       ) {
+        // Drop legacy MITEAM chip mode — MiTeam is a main-menu entry now.
         settings.gameplayMode = "REAL";
       }
       if (settings.flickOpponent !== "AI" && settings.flickOpponent !== "HUMAN") settings.flickOpponent = "AI";
@@ -249,6 +272,7 @@ export class SaveManager {
           parsed.teamTactics && typeof parsed.teamTactics === "object"
             ? (parsed.teamTactics as Record<string, TeamTacticsSave>)
             : {},
+        miteam: normalizeMiTeamSave(parsed.miteam),
       };
     } catch {
       return this.blank();
@@ -276,8 +300,62 @@ export class SaveManager {
       playedListedFixture: false,
       predictions: blankPredictions(),
       teamTactics: {},
+      miteam: null,
     };
   }
+}
+
+export const MITEAM_TEAM_ID = "miteam_user";
+export const MITEAM_DEFAULT_CLUB_NAME = "MiTeam";
+export const MITEAM_DEFAULT_BADGE = "/golaco-logo.png";
+export const MITEAM_DEFAULT_PRIMARY = "#A8B0BC";
+export const MITEAM_DEFAULT_SECONDARY = "#1B2430";
+export const MITEAM_ERA = "2025/26";
+export const MITEAM_LINEUP_ID = "miteam_user_lineup";
+export const MITEAM_FORMATION = "4-4-2";
+export const MITEAM_BENCH_SLOTS = 7;
+
+function normalizeHexColor(value: unknown, fallback: string | null = null): string | null {
+  if (typeof value !== "string") return fallback;
+  const v = value.trim();
+  return /^#[0-9a-fA-F]{6}$/.test(v) ? v : fallback;
+}
+
+function normalizeMiTeamSave(raw: unknown): MiTeamSave | null {
+  if (!raw || typeof raw !== "object") return null;
+  const o = raw as Partial<MiTeamSave>;
+  if (typeof o.teamId !== "string" || !o.teamId) return null;
+  const clubName =
+    typeof o.clubName === "string" && o.clubName.trim() ? o.clubName.trim() : MITEAM_DEFAULT_CLUB_NAME;
+  const badgeAsset =
+    typeof o.badgeAsset === "string" && o.badgeAsset.trim() ? o.badgeAsset.trim() : null;
+  const roster = Array.isArray(o.roster)
+    ? o.roster
+        .filter(
+          (r): r is MiTeamRosterSlot =>
+            !!r &&
+            typeof r === "object" &&
+            typeof (r as MiTeamRosterSlot).playerId === "string" &&
+            typeof (r as MiTeamRosterSlot).slot === "string" &&
+            Number.isFinite(Number((r as MiTeamRosterSlot).shirtNumber)),
+        )
+        .map((r) => ({
+          playerId: r.playerId,
+          slot: r.slot,
+          shirtNumber: Math.max(1, Math.min(99, Math.round(Number(r.shirtNumber)))),
+          sourceTeamId:
+            typeof r.sourceTeamId === "string" && r.sourceTeamId.trim() ? r.sourceTeamId.trim() : null,
+        }))
+    : [];
+  return {
+    teamId: o.teamId,
+    clubName,
+    badgeAsset,
+    primaryColor: normalizeHexColor(o.primaryColor, null),
+    secondaryColor: normalizeHexColor(o.secondaryColor, null),
+    roster,
+    nextFixtureId: typeof o.nextFixtureId === "string" ? o.nextFixtureId : null,
+  };
 }
 
 function clamp01(n: number): number {

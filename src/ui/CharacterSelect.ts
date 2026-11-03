@@ -609,6 +609,14 @@ export class CharacterSelect {
   };
   /** Fired whenever Formation tabletop settings change (persist into Options). */
   onTabletopSettingsChange: (() => void) | null = null;
+  /**
+   * Quick Match: Formation-like dual board with an AWAY opposition dropdown.
+   * Game rebuilds the away draft when `onOppositionChange` fires.
+   */
+  quickMatch = false;
+  oppositionOptions: { id: string; label: string }[] = [];
+  oppositionTeamId = "";
+  onOppositionChange: ((teamId: string) => void) | null = null;
   /** Prematch only — AUTO follows clash rules; HOME/AWAY force the strip. */
   kitChoice: KitChoice = "auto";
   /** Opponent home kit for clash preview on the Kit Select row. */
@@ -808,6 +816,9 @@ export class CharacterSelect {
     this.userIsAwaySide = !!options?.userIsAwaySide;
     this.kitChoice = options?.kitChoice ?? "auto";
     this.purpose = options?.purpose ?? "match";
+    this.quickMatch = false;
+    this.oppositionOptions = [];
+    this.oppositionTeamId = "";
     this.editingPlayerId = null;
     this.cardEditing = false;
     this.editDirty = false;
@@ -851,6 +862,9 @@ export class CharacterSelect {
       kitChoice?: KitChoice;
       /** Team whose kit choice / clash rules apply (user club). */
       userMatchTeam?: TeamRecord | null;
+      quickMatch?: boolean;
+      oppositionOptions?: { id: string; label: string }[];
+      oppositionTeamId?: string;
     },
   ): void {
     this.editingPlayerId = null;
@@ -861,6 +875,9 @@ export class CharacterSelect {
     this.opponentHomeKit = options?.opponentHomeKit ?? null;
     this.userIsAwaySide = !!options?.userIsAwaySide;
     this.kitChoice = options?.kitChoice ?? "auto";
+    this.quickMatch = !!options?.quickMatch;
+    this.oppositionOptions = options?.oppositionOptions ? [...options.oppositionOptions] : [];
+    this.oppositionTeamId = options?.oppositionTeamId ?? sides.away.team?.id ?? "";
     const home = this.buildSideDraft(sides.home);
     const away = this.buildSideDraft(sides.away);
     this.sideDrafts = { home, away };
@@ -885,6 +902,16 @@ export class CharacterSelect {
       this.pauseBaseline = null;
       this.dirtyApply = false;
     }
+  }
+
+  /** Replace the AWAY draft after Quick Match opposition change (keeps HOME + active side). */
+  replaceAwaySide(config: FormationSideConfig, oppositionTeamId: string): void {
+    this.flushActiveDraft();
+    const away = this.buildSideDraft(config);
+    this.sideDrafts.away = away;
+    this.oppositionTeamId = oppositionTeamId;
+    if (this.formationSide === "away") this.applySideDraft(away);
+    else if (this.sideDrafts.home) this.applySideDraft(this.sideDrafts.home);
   }
 
   canSwitchFormationSide(): boolean {
@@ -1917,6 +1944,11 @@ export class CharacterSelect {
       }
       return;
     }
+    if (el instanceof HTMLSelectElement && el.matches("[data-char='quick-opp']")) {
+      const id = el.value;
+      if (id && id !== this.oppositionTeamId) this.onOppositionChange?.(id);
+      return;
+    }
     const key = el.getAttribute("data-tt");
     if (!key) return;
     if (this.tabletopKind === "FLICK") {
@@ -2032,10 +2064,23 @@ export class CharacterSelect {
       (this.controlMode === "PLAYER" || (this.controlMode === "SETUP" && !!this.tabletopKind));
     const spotHint =
       this.purpose === "spot"
-        ? `<p class="hint spot-pick-hint">Select the taker on the pitch or squad list, then confirm with the highlighted button.</p>`
+        ? `<p class="hint spot-pick-hint">Pick the taker on the pitch or squad list, then SELECT to place the kick.</p>`
         : "";
-    const titleLabel =
-      this.purpose === "spot" ? `Spot-kick Practice · ${this.teamName}` : this.teamName;
+    const titleLabel = this.teamName;
+    const oppositionPicker =
+      this.quickMatch && this.oppositionOptions.length
+        ? `<label class="formation-select-wrap quick-opp-wrap">
+              <span class="visually-hidden">Opposition</span>
+              <select class="formation-chip formation-select quick-opp-select on" data-char="quick-opp" aria-label="Opposition">
+                ${this.oppositionOptions
+                  .map(
+                    (o) =>
+                      `<option value="${escapeAttr(o.id)}" ${o.id === this.oppositionTeamId ? "selected" : ""}>${escapeHtml(o.label)}</option>`,
+                  )
+                  .join("")}
+              </select>
+            </label>`
+        : "";
     const pitchWell = overlayMode
       ? `<div class="team-pitch team-pitch-panel" aria-label="${
           this.controlMode === "SETUP" ? "Match settings" : "Player select"
@@ -2097,6 +2142,7 @@ export class CharacterSelect {
             <button type="button" class="formation-chip form-side-chip ${this.formationSide === "away" ? "on" : ""}" data-char="form-side" data-side="away" aria-pressed="${this.formationSide === "away" ? "true" : "false"}">AWAY</button>`
                 : ""
             }
+            ${this.quickMatch && this.formationSide === "away" ? oppositionPicker : ""}
             ${
               overlayMode
                 ? ""
@@ -2532,11 +2578,12 @@ export class CharacterSelect {
     if (this.purpose === "spot") {
       const name = kitSurname(this.current().player.displayName || this.current().player.name);
       return `
-      <div class="char-modes spot-player-modes">
-        <button type="button" data-char="mode-player" class="on" aria-pressed="true">PLAYER SELECT</button>
+      <div class="char-modes">
+        <button type="button" data-char="mode-team" class="on" aria-pressed="true">TEAM SELECT</button>
       </div>
-      <div class="char-nav char-nav-spot">
+      <div class="char-nav">
         <button type="button" class="char-nav-step" data-char="prev" aria-label="Previous">‹</button>
+        <button type="button" data-char="back">BACK</button>
         <button type="button" data-char="start" class="on primary spot-select-btn">SELECT ${escapeHtml(name).toUpperCase()}</button>
         <button type="button" class="char-nav-step" data-char="next" aria-label="Next">›</button>
       </div>

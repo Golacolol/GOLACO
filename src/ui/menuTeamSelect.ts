@@ -1,6 +1,8 @@
 import type { TeamRecord } from "../data/schema";
+import { MITEAM_TEAM_ID } from "../core/SaveManager";
 
 export type MenuTeamGroup =
+  | "USER"
   | "PREMIER_LEAGUE"
   | "CHAMPIONSHIP"
   | "LEAGUE_ONE"
@@ -25,6 +27,7 @@ export interface MenuTeamOption {
 }
 
 const GROUP_ORDER: MenuTeamGroup[] = [
+  "USER",
   "PREMIER_LEAGUE",
   "CHAMPIONSHIP",
   "LEAGUE_ONE",
@@ -36,6 +39,7 @@ const GROUP_ORDER: MenuTeamGroup[] = [
 export const MENU_TEAM_GROUPS: MenuTeamGroup[] = [...GROUP_ORDER];
 
 export const MENU_TEAM_GROUP_LABEL: Record<MenuTeamGroup, string> = {
+  USER: "User",
   PREMIER_LEAGUE: "Premier League",
   CHAMPIONSHIP: "Championship",
   LEAGUE_ONE: "League One",
@@ -133,13 +137,19 @@ function isClassicTeam(team: TeamRecord): boolean {
   );
 }
 
+function isUserTeam(team: TeamRecord): boolean {
+  return team.id === MITEAM_TEAM_ID || (team.teamType === "CUSTOM_TEAM" && team.custom === true);
+}
+
 function isSelectableClub(team: TeamRecord): boolean {
+  if (isUserTeam(team)) return true;
   if (team.teamType === "CURRENT_TEAM") return true;
   if (isClassicTeam(team)) return true;
   return false;
 }
 
 function groupFor(team: TeamRecord): MenuTeamGroup {
+  if (isUserTeam(team)) return "USER";
   if (
     team.teamType === "CURRENT_TEAM" &&
     (team.league === "PREMIER_LEAGUE" ||
@@ -164,13 +174,16 @@ export function buildMenuTeamOptions(teams: TeamRecord[]): MenuTeamOption[] {
     const group = groupFor(team);
     const classic = group === "CLASSIC" ? classicClubIdentity(team) : null;
     const base = classic?.label ?? clubBaseName(team.name);
-    const eraRaw = group === "CLASSIC" ? eraFromTeam(team) : "";
+    const eraRaw = group === "CLASSIC" || group === "USER" ? eraFromTeam(team) : "";
     options.push({
       id: team.id,
       label: base,
       group,
       clubKey: classic ? classic.key : team.id,
-      eraLabel: group === "CLASSIC" ? formatEraRoll(eraRaw) || formatEraRoll(team.name) || "—" : "",
+      eraLabel:
+        group === "CLASSIC" || group === "USER"
+          ? formatEraRoll(eraRaw) || formatEraRoll(team.name) || (group === "USER" ? "25-26" : "—")
+          : "",
       eraSort: eraRaw || team.name,
     });
   }

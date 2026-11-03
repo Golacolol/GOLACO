@@ -65,6 +65,7 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector('[data-mode="ARCADE"]')?.textContent).toBe("SOCCER");
     expect(menu.root.querySelector('[data-mode="TABLE"]')?.textContent).toBe("FOOSBALL");
     expect(menu.root.querySelector('[data-mode="FLICK"]')?.textContent).toBe("FLICKBALL");
+    expect(menu.root.querySelector('[data-mode="MITEAM"]')).toBeNull();
   });
 
   it("shows KIT dial after Team Select and Gameplay / Lighting section labels", () => {
@@ -370,6 +371,9 @@ describe("MainMenu LEAGUE mode button", () => {
     expect(menu.root.querySelector('[data-id="league-fixtures"]')?.textContent).toContain("League Fixtures");
     expect(menu.root.querySelector('[data-id="predictions"]')?.textContent).toContain("Predictions");
     const ids = [...menu.root.querySelectorAll(".menu-item")].map((el) => el.getAttribute("data-id"));
+    expect(ids.indexOf("miteam")).toBeGreaterThan(ids.indexOf("league-fixtures")!);
+    expect(ids.indexOf("quick")).toBeGreaterThan(ids.indexOf("miteam")!);
+    expect(ids.indexOf("spot")).toBeGreaterThan(ids.indexOf("quick")!);
     expect(ids.indexOf("predictions")).toBeGreaterThan(ids.indexOf("spot")!);
     expect(ids.indexOf("predictions")).toBeLessThan(ids.indexOf("database")!);
 

@@ -127,6 +127,8 @@ export type PlayerCardRenderState = {
   /** Cumulative rotateY for side-aware flips (0 = front; odd×180 = back). */
   flipY?: number;
   profileView: ProfileStatsMode;
+  /** Hex / radar size on the sports card front (default 172). */
+  profileSize?: number;
   imagePaths: string[];
 };
 
@@ -304,7 +306,7 @@ function sportsCardHtml(sp: SquadPlayer, team: PlayerCardTeamContext, state: Pla
           <span class="player-card-ovr-holo">${Math.round(sp.overall)}</span>
         </div>
         ${photoHtml(sp, team)}
-        ${profileStatsBlock(sp.attrs, { mode: state.profileView, size: 172 })}
+        ${profileStatsBlock(sp.attrs, { mode: state.profileView, size: state.profileSize ?? 172 })}
         ${shirtHtml(sp, team)}
       </div>
       <div class="player-card-face player-card-back">

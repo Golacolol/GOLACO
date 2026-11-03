@@ -216,7 +216,7 @@ export class SettingsMenu {
               <option value="FLICK" ${settings.gameplayMode === "FLICK" ? "selected" : ""}>FLICK</option>
             </select>
           </label>
-          <p class="hint">Also on the main menu. TABLE = foosball, FLICK = Flickball. Play Next opens Formation — settings live where PLAYER SELECT normally is (and below as defaults).</p>
+          <p class="hint">Also on the main menu. TABLE = foosball, FLICK = Flickball. MiTeam lives under League Fixtures on the main menu. Play Next opens Formation — settings live where PLAYER SELECT normally is (and below as defaults).</p>
           <label>TABLE layout
             <select id="table-layout">
               <option value="FRENCH_CLASSIC" ${settings.tableLayoutId === "FRENCH_CLASSIC" ? "selected" : ""}>French classic</option>

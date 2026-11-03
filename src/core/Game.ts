@@ -36,13 +36,25 @@ import {
   type FormationSideConfig,
   type SquadPlayerEdit,
 } from "../ui/CharacterSelect";
+import { MiTeamBuilder } from "../ui/MiTeamBuilder";
 import { KitPanelPreview } from "../ui/KitPanelPreview";
+import {
+  applyMiTeamToDb,
+  ensureMiTeamSave,
+  randomMiTeamFixture,
+  xiComplete,
+} from "../football/miteam/MiTeam";
+import { MITEAM_TEAM_ID } from "./SaveManager";
 import { PauseMenu } from "../ui/PauseMenu";
 import { SettingsMenu } from "../ui/Settings";
 import { TeamEditor } from "../ui/TeamEditor";
 import { PlayerDatabaseEditor } from "../ui/PlayerDatabaseEditor";
-import { MatchSetup } from "../ui/MatchSetup";
 import { MatchCard, shouldFadeMatchCard } from "../ui/MatchCard";
+import {
+  buildMenuTeamOptions,
+  oppositionRollOptions,
+  oppositionRollLabel,
+} from "../ui/menuTeamSelect";
 import { MatchSimulationLabMenu } from "../ui/MatchSimulationLabMenu";
 import { TableMatch, normalizeTableConfig, type TableMatchConfig } from "../football/table";
 import { FlickMatch, normalizeFlickConfig, type FlickMatchConfig } from "../football/flick";
@@ -87,12 +99,12 @@ export class Game {
   private ui: HTMLElement;
   private menu!: MainMenu;
   private chars!: CharacterSelect;
+  private miteam!: MiTeamBuilder;
   private pause!: PauseMenu;
   private pauseFormationOpen = false;
   private settings!: SettingsMenu;
   private teams!: TeamEditor;
   private players!: PlayerDatabaseEditor;
-  private setup!: MatchSetup;
   private simLab!: MatchSimulationLabMenu;
   private matchCard!: MatchCard;
   private hud: MatchHUD | null = null;
@@ -112,6 +124,8 @@ export class Game {
   /** Menu opposition dial override — null means use the listed/career fixture opponent. */
   private menuOppositionId: string | null = null;
   private leagueFixtureId: string | null = null;
+  /** Club to restore when leaving the MiTeam builder without starting a match. */
+  private clubBeforeMiTeam: string | null = null;
   private attractHold = 0;
   private simBannerPlayT = 0;
   private simBannerLabel = "SIMULATOR · ANY CONTROL TO TAKE OVER · ESC PAUSE";
@@ -161,6 +175,9 @@ export class Game {
     this.chars = new CharacterSelect(this.ui);
     this.chars.onSquadPlayerSave = (edit) => this.persistSquadPlayerEdit(edit);
     this.chars.onTabletopSettingsChange = () => this.persistTabletopSettingsFromFormation();
+    this.chars.onOppositionChange = (teamId) => this.onQuickOppositionChange(teamId);
+    this.miteam = new MiTeamBuilder(this.ui);
+    this.miteam.onAction = (act) => this.handleMiTeamAction(act);
     this.pause = new PauseMenu(this.ui);
     this.settings = new SettingsMenu(this.ui);
     this.settings.onSectionChange = (section) => {
@@ -169,7 +186,6 @@ export class Game {
     this.teams = new TeamEditor(this.ui);
     this.players = new PlayerDatabaseEditor(this.ui);
     this.players.onPlayerSave = (edit) => this.persistSquadPlayerEdit(edit);
-    this.setup = new MatchSetup(this.ui);
     this.simLab = new MatchSimulationLabMenu(this.ui);
     this.matchCard = new MatchCard(this.ui);
     this.debug = new DebugOverlay(this.ui);
@@ -224,6 +240,7 @@ export class Game {
     this.events.on("FULL_TIME", (e) => {
       this.audio.whistle();
       this.recordLeagueResult(e.home, e.away);
+      this.queueMiTeamNextFixture();
     });
     this.events.on("HALF_TIME", () => this.audio.whistle());
     this.events.on("KICKOFF", () => {
@@ -473,9 +490,6 @@ export class Game {
         }
         if (char === "simulate") this.simulatePendingFixture();
       }
-      if (this.appState === AppState.MATCH_SETUP && btn.getAttribute("data-setup") === "go") {
-        this.confirmMatchSetup();
-      }
       if (act === "back") {
         if (this.match) {
           this.settings.hide();
@@ -609,12 +623,11 @@ export class Game {
     this.pauseFormationOpen = false;
     this.chars.setContext("select");
     this.chars.hide();
-    this.setup.hide();
+    this.miteam.hide();
     this.simLab.hide();
     this.pause.hide();
     this.scenes.mode = GameMode.FOOTBALL;
     this.appState = AppState.MAIN_MENU;
-    this.scenes.mode = GameMode.FOOTBALL;
     this.buildMenuWorld();
     this.db.userTeamId = this.defaultClubId();
     applyTitleFont(this.save.data.settings.titleFont);
@@ -666,6 +679,7 @@ export class Game {
     if (this.appState !== AppState.MAIN_MENU) return;
     if (!this.db.teams.has(teamId)) return;
     this.menuOppositionId = null;
+    if (teamId !== MITEAM_TEAM_ID) this.clearQueuedMiTeamFixture();
     this.save.data.settings.defaultTeamId = teamId;
     this.db.userTeamId = teamId;
     this.save.save();
@@ -759,9 +773,12 @@ export class Game {
     }
     // FOOSBALL / FLICKBALL are gameplay modes like REAL / ARCADE — selecting them
     // only stores the choice; Play Next / Simulator / Quick Match launch the engine.
+    // LEAGUE is career-calendar mode for the dialed English club (not MiTeam).
     const wasLeague = this.save.data.settings.leagueProgression;
     if (mode === "LEAGUE") {
       this.menuOppositionId = null;
+      this.clearQueuedMiTeamFixture();
+      this.ensureCareerClubSelected();
       this.save.data.settings.leagueProgression = true;
       this.save.data.settings.gameplayMode = "REAL";
       this.restoreCareerFixtures();
@@ -776,6 +793,32 @@ export class Game {
     this.applyMenuEnvironment();
     this.paintMainMenu();
     this.resetMenuIdleTimer();
+  }
+
+  /** LEAGUE / Play Next need an English-calendar club — not the MiTeam shell. */
+  private ensureCareerClubSelected(): void {
+    const id = this.defaultClubId();
+    if (id !== MITEAM_TEAM_ID && this.db.teams.has(id) && this.db.getTeam(id).teamType === "CURRENT_TEAM") {
+      return;
+    }
+    const restore =
+      (this.clubBeforeMiTeam &&
+        this.clubBeforeMiTeam !== MITEAM_TEAM_ID &&
+        this.db.teams.has(this.clubBeforeMiTeam) &&
+        this.db.getTeam(this.clubBeforeMiTeam).teamType === "CURRENT_TEAM" &&
+        this.clubBeforeMiTeam) ||
+      [...this.db.teams.values()].find((t) => t.teamType === "CURRENT_TEAM" && t.league)?.id ||
+      DEFAULT_TEAM_ID;
+    this.save.data.settings.defaultTeamId = restore;
+    this.db.userTeamId = restore;
+    this.clubBeforeMiTeam = null;
+  }
+
+  private clearQueuedMiTeamFixture(): void {
+    const mt = this.save.data.miteam;
+    if (!mt?.nextFixtureId) return;
+    mt.nextFixtureId = null;
+    this.save.save();
   }
 
   private flickConfigFromSave(): FlickMatchConfig {
@@ -974,7 +1017,6 @@ export class Game {
     this.simLab.hide();
     this.teams.hide();
     this.players.hide();
-    this.setup.hide();
   }
 
   private buildMenuWorld(): void {
@@ -1010,12 +1052,13 @@ export class Game {
   private menuAction(id: string): void {
     const f = this.listedFixture();
     // Lock dials before any leave-menu action so a late spin cannot rewrite the club mid-launch.
-    if (id === "sim" || id === "next" || id === "quick" || id === "spot") {
+    if (id === "sim" || id === "next" || id === "quick" || id === "spot" || id === "miteam") {
       this.menu.lockTeamSelect();
     }
     if (id === "sim") {
       this.practice = "none";
       this.leagueFixtureId = null;
+      if (this.tryLaunchQueuedMiTeamFixture()) return;
       this.startSimulator();
       return;
     }
@@ -1029,17 +1072,25 @@ export class Game {
       this.openCharacterSelect(side === "away" ? fixture.awayTeamId : fixture.homeTeamId);
       return;
     }
+    if (id === "miteam") {
+      this.practice = "none";
+      this.leagueFixtureId = null;
+      this.openMiTeamBuilder();
+      return;
+    }
     if (id === "quick") {
       this.practice = "none";
       this.leagueFixtureId = null;
       if (this.launchTableOrFlick({ ...this.listedFixture() })) return;
-      this.openMatchSetup("quick");
+      this.openQuickMatch();
+      return;
     }
     if (id === "spot") {
       this.pendingFixture = { ...f, durationSeconds: this.save.data.settings.matchDuration };
       this.practice = "spot";
       this.leagueFixtureId = null;
       this.openCharacterSelect(this.defaultClubId());
+      return;
     }
     if (id === "league-fixtures") {
       this.menu.openLeagueFixtures(leagueForTeam(this.db.getTeam(this.defaultClubId())));
@@ -1224,32 +1275,33 @@ export class Game {
     this.hud.setBindings(this.save.data.settings.keyBindings);
   }
 
-  private openMatchSetup(kind: "next" | "quick"): void {
-    this.menu.hide();
-    this.appState = AppState.MATCH_SETUP;
-    const f = this.listedFixture();
-    this.pendingFixture = { ...f };
-    const saved = this.save.data.settings;
-    this.setup.render(this.db, {
-      homeTeamId: f.homeTeamId,
-      awayTeamId: f.awayTeamId,
-      venueId: f.venueId,
-      gameplayMode: saved.gameplayMode === "ARCADE" ? "ARCADE" : "REAL",
-      timeOfDay: saved.timeOfDay,
-      weather: clampWeatherForTime(
-        saved.timeOfDay,
-        kind === "quick" ? saved.weather : (f.weather ?? "MILD"),
-      ),
-      durationSeconds: clampMatchDuration(saved.matchDuration),
-    });
+  private openQuickMatch(): void {
+    const homeId = this.defaultClubId();
+    const listed = this.listedFixture();
+    let awayId =
+      this.menuOppositionId && this.menuOppositionId !== homeId
+        ? this.menuOppositionId
+        : listed.homeTeamId === homeId
+          ? listed.awayTeamId
+          : listed.homeTeamId;
+    if (!awayId || awayId === homeId || !this.db.teams.has(awayId)) {
+      awayId =
+        [...this.db.teams.keys()].find((id) => id !== homeId && this.db.getSquad(id).length >= 11) ?? homeId;
+    }
+    this.pendingFixture = this.db.friendlyVs(homeId, awayId);
+    this.leagueFixtureId = null;
+    this.openCharacterSelect(homeId, { quickMatch: true });
   }
 
-  private confirmMatchSetup(): void {
-    const values = this.setup.read();
-    // Fixture-specific overrides only — do not rewrite Options → Match Settings defaults.
-    this.pendingFixture = this.setup.toFixture(this.pendingFixture ?? this.listedFixture(), values, this.db);
-    this.setup.hide();
-    this.openCharacterSelect(this.userSideFor(this.pendingFixture) === "away" ? values.awayTeamId : values.homeTeamId);
+  private onQuickOppositionChange(awayTeamId: string): void {
+    if (!this.chars.quickMatch || !this.db.teams.has(awayTeamId)) return;
+    const homeId = this.defaultClubId();
+    if (awayTeamId === homeId) return;
+    this.menuOppositionId = awayTeamId;
+    this.pendingFixture = this.db.friendlyVs(homeId, awayTeamId);
+    this.chars.replaceAwaySide(this.formationSideConfig(awayTeamId, this.pendingFixture.awayLineupId), awayTeamId);
+    this.chars.render();
+    this.refreshCharacterPreview();
   }
 
   private applyUrlParams(): void {
@@ -1327,8 +1379,97 @@ export class Game {
     };
   }
 
-  private openCharacterSelect(teamId: string): void {
+  private openMiTeamBuilder(): void {
     this.menu.hide();
+    this.chars.hide();
+    this.practice = "none";
+    this.leagueFixtureId = null;
+    // MiTeam is separate from LEAGUE career — leave calendar mode while packing.
+    if (this.save.data.settings.leagueProgression && this.hasUserLeagueProgress()) {
+      this.snapshotCareerFixtures();
+    }
+    this.save.data.settings.leagueProgression = false;
+    const current = this.defaultClubId();
+    if (current !== MITEAM_TEAM_ID) this.clubBeforeMiTeam = current;
+    ensureMiTeamSave(this.save);
+    applyMiTeamToDb(this.db, this.save);
+    this.save.data.settings.defaultTeamId = MITEAM_TEAM_ID;
+    this.db.userTeamId = MITEAM_TEAM_ID;
+    this.save.save();
+    this.miteam.open(this.db, this.save);
+    this.appState = AppState.CHARACTER_SELECT;
+  }
+
+  private restoreClubAfterMiTeam(): void {
+    const restore =
+      (this.clubBeforeMiTeam && this.db.teams.has(this.clubBeforeMiTeam) && this.clubBeforeMiTeam) ||
+      DEFAULT_TEAM_ID;
+    this.clubBeforeMiTeam = null;
+    if (restore === MITEAM_TEAM_ID) return;
+    this.save.data.settings.defaultTeamId = restore;
+    this.db.userTeamId = restore;
+    this.save.save();
+  }
+
+  private handleMiTeamAction(act: "back" | "start" | "deleted"): void {
+    if (act === "back" || act === "deleted") {
+      this.miteam.hide();
+      if (act === "deleted") this.clearQueuedMiTeamFixture();
+      this.restoreClubAfterMiTeam();
+      this.goMenu();
+      return;
+    }
+    const mt = this.save.data.miteam;
+    if (!mt || !xiComplete(mt.roster)) return;
+    applyMiTeamToDb(this.db, this.save);
+    this.save.data.settings.defaultTeamId = MITEAM_TEAM_ID;
+    this.db.userTeamId = MITEAM_TEAM_ID;
+    this.save.save();
+    const fixture = randomMiTeamFixture(this.db);
+    this.pendingFixture = fixture;
+    this.leagueFixtureId = null;
+    this.miteam.hide();
+    const side = this.userSideFor(fixture);
+    this.openCharacterSelect(side === "away" ? fixture.awayTeamId : fixture.homeTeamId);
+  }
+
+  private queueMiTeamNextFixture(): void {
+    const mt = this.save.data.miteam;
+    if (!mt || !this.match) return;
+    // Only queue while the User club is still selected (not during LEAGUE career).
+    if (this.defaultClubId() !== MITEAM_TEAM_ID) return;
+    if (this.save.data.settings.leagueProgression) return;
+    const homeId = this.match.home.record.id;
+    const awayId = this.match.away.record.id;
+    if (homeId !== MITEAM_TEAM_ID && awayId !== MITEAM_TEAM_ID) return;
+    const next = randomMiTeamFixture(this.db);
+    mt.nextFixtureId = `${next.homeTeamId}|${next.awayTeamId}`;
+    this.save.save();
+  }
+
+  private tryLaunchQueuedMiTeamFixture(): boolean {
+    // Never steal Simulator / idle while LEAGUE career is active or another club is dialed.
+    if (this.save.data.settings.leagueProgression) return false;
+    if (this.defaultClubId() !== MITEAM_TEAM_ID) return false;
+    const mt = this.save.data.miteam;
+    if (!mt?.nextFixtureId) return false;
+    const parts = mt.nextFixtureId.split("|");
+    if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
+    const [homeId, awayId] = parts;
+    if (!this.db.teams.has(homeId) || !this.db.teams.has(awayId)) return false;
+    mt.nextFixtureId = null;
+    this.save.save();
+    const fixture = this.db.friendlyVs(homeId, awayId);
+    this.pendingFixture = fixture;
+    this.leagueFixtureId = null;
+    const side = this.userSideFor(fixture);
+    this.openCharacterSelect(side === "away" ? fixture.awayTeamId : fixture.homeTeamId);
+    return true;
+  }
+
+  private openCharacterSelect(teamId: string, options?: { quickMatch?: boolean }): void {
+    this.menu.hide();
+    this.miteam.hide();
     this.applyInfoOverlaysSetting();
     this.charTeamId = teamId;
     const team = this.db.getTeam(teamId);
@@ -1338,9 +1479,16 @@ export class Game {
     const opponent = opponentId ? this.db.getTeam(opponentId) : null;
     const userIsAwaySide = !!f && f.awayTeamId === teamId;
     const purpose = this.practice === "spot" ? "spot" : "match";
+    const quickMatch = !!options?.quickMatch && purpose === "match";
     this.chars.setContext("select");
     if (f && purpose === "match") {
       const active: FormationSide = userIsAwaySide ? "away" : "home";
+      const oppOpts = quickMatch
+        ? oppositionRollOptions(buildMenuTeamOptions([...this.db.teams.values()]), teamId).map((o) => ({
+            id: o.id,
+            label: oppositionRollLabel(o),
+          }))
+        : [];
       this.chars.setDualFormationSides(
         {
           home: this.formationSideConfig(f.homeTeamId, f.homeLineupId),
@@ -1353,6 +1501,9 @@ export class Game {
           userIsAwaySide,
           kitChoice: this.save.data.settings.menuKitChoice === "away" ? "away" : "home",
           userMatchTeam: team,
+          quickMatch,
+          oppositionOptions: oppOpts,
+          oppositionTeamId: f.awayTeamId,
         },
       );
     } else {
@@ -1580,7 +1731,10 @@ export class Game {
         userSide,
         autoplay,
         invertShotY: saved.invertShotY,
-        gameplayMode: saved.gameplayMode === "TABLE" || saved.gameplayMode === "FLICK" ? "REAL" : saved.gameplayMode,
+        gameplayMode:
+          saved.gameplayMode === "TABLE" || saved.gameplayMode === "FLICK" || saved.gameplayMode === "MITEAM"
+            ? "REAL"
+            : saved.gameplayMode,
         timeOfDay: saved.timeOfDay,
         weather: saved.weather,
         graphicsPreset: saved.graphicsPreset,
@@ -1801,7 +1955,6 @@ export class Game {
       return true;
     }
     if (
-      this.appState === AppState.MATCH_SETUP ||
       this.appState === AppState.CHARACTER_SELECT ||
       this.appState === AppState.TEAM_EDITOR ||
       this.appState === AppState.PLAYER_DATABASE ||
@@ -1994,25 +2147,22 @@ export class Game {
       }
     }
 
-    if (this.appState === AppState.MATCH_SETUP) {
-      // Don't accrue idle toward auto-sim while configuring a fixture.
-      this.input.lastInputAt = performance.now();
-      if (intent.pause) this.goMenu();
-      if (intent.pass || intent.skip) this.confirmMatchSetup();
-    }
-
     if (this.appState === AppState.CHARACTER_SELECT) {
       // Formation / Play Next Fixture: freeze idle so Back can't instantly auto-sim.
       this.input.lastInputAt = performance.now();
-      this.handleMenuNav(intent.moveX + intent.moveZ, () => {
-        this.chars.move(intent.moveX + intent.moveZ > 0 ? 1 : -1);
-        this.chars.render();
-        this.refreshCharacterPreview();
-      });
-      if (intent.pass || intent.skip) this.beginPreMatch();
-      if (intent.pause) this.goMenu();
-      if (this.chars.controlMode === "KIT") this.kitPreview.tick(dt);
-      else if (this.preview) this.preview.rotation.y += dt * 0.6;
+      if (this.miteam.root.classList.contains("open")) {
+        if (intent.pause) this.goMenu();
+      } else {
+        this.handleMenuNav(intent.moveX + intent.moveZ, () => {
+          this.chars.move(intent.moveX + intent.moveZ > 0 ? 1 : -1);
+          this.chars.render();
+          this.refreshCharacterPreview();
+        });
+        if (intent.pass || intent.skip) this.beginPreMatch();
+        if (intent.pause) this.goMenu();
+        if (this.chars.controlMode === "KIT") this.kitPreview.tick(dt);
+        else if (this.preview) this.preview.rotation.y += dt * 0.6;
+      }
     }
 
     if (this.appState === AppState.PRE_MATCH && this.match) {
@@ -2200,7 +2350,10 @@ export class Game {
         fixture,
         userSide: "home",
         autoplay: true,
-        gameplayMode: saved.gameplayMode === "TABLE" || saved.gameplayMode === "FLICK" ? "REAL" : saved.gameplayMode,
+        gameplayMode:
+          saved.gameplayMode === "TABLE" || saved.gameplayMode === "FLICK" || saved.gameplayMode === "MITEAM"
+            ? "REAL"
+            : saved.gameplayMode,
         timeOfDay: saved.timeOfDay ?? fixture.timeOfDay,
         weather: saved.weather ?? fixture.weather,
         graphicsPreset: saved.graphicsPreset,

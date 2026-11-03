@@ -11,6 +11,7 @@ import type {
 import { applyOverride, deriveOverall, resolveAttributes } from "../football/players/PlayerStats";
 import type { SaveManager } from "./SaveManager";
 import { DEFAULT_TEAM_ID } from "../football/constants";
+import { applyMiTeamToDb } from "../football/miteam/MiTeam";
 import {
   ARGYLE_101_ABBREVIATION,
   ARGYLE_101_ERA,
@@ -274,6 +275,7 @@ export class GameDatabase {
     this.scrubStaleArgyleFansTactics(save);
     this.applyTeamTactics(save.data.teamTactics ?? {});
     this.migrateArgyleFansStartingXi();
+    applyMiTeamToDb(this, save);
   }
 
   /** Overlay persisted formation / play-style / USER tactics onto authored lineups. */

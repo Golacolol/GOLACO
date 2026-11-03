@@ -476,7 +476,7 @@ describe("character select", () => {
     expect(view.root.querySelector(".profile-detail-bars")).toBeNull();
   });
 
-  it("spot practice keeps the formation panel with a highlighted Select Player button", () => {
+  it("spot practice keeps the formation panel with a highlighted Select button", () => {
     const host = document.createElement("div");
     const view = new CharacterSelect(host);
     view.setSquad("Plymouth Argyle", squad(), "#007A3D", {
@@ -488,13 +488,13 @@ describe("character select", () => {
     expect(view.purpose).toBe("spot");
     expect(view.controlMode).toBe("TEAM");
     expect(view.root.querySelector(".team-pitch")).toBeTruthy();
-    expect(view.root.querySelector('[data-char="mode-player"]')?.classList.contains("on")).toBe(true);
-    expect(view.root.querySelector('[data-char="mode-team"]')).toBeNull();
+    expect(view.root.querySelector('[data-char="mode-team"]')?.classList.contains("on")).toBe(true);
+    expect(view.root.querySelector('[data-char="mode-player"]')).toBeNull();
     expect(view.root.querySelector('[data-char="simulate"]')).toBeNull();
     const start = view.root.querySelector(".spot-select-btn") as HTMLButtonElement | null;
     expect(start?.classList.contains("on")).toBe(true);
     expect(start?.textContent).toMatch(/^SELECT /);
-    expect(view.root.textContent).toContain("Select the taker");
+    expect(view.root.textContent).toContain("Pick the taker");
     view.setControlMode("PLAYER");
     expect(view.controlMode).toBe("TEAM");
     const target = view.xi.find((x) => x.player.player.id === "p2") ?? view.xi[view.xi.length - 1];
@@ -503,6 +503,54 @@ describe("character select", () => {
     expect(view.root.querySelector(".pitch-token.on")?.getAttribute("data-id")).toBe(target.player.player.id);
     const surname = kitSurnameFromName(target.player.player.displayName || target.player.player.name);
     expect(view.root.querySelector(".spot-select-btn")?.textContent).toContain(surname);
+  });
+
+  it("Quick Match shows an AWAY opposition dropdown", () => {
+    const host = document.createElement("div");
+    const view = new CharacterSelect(host);
+    const home = squad();
+    const away = [
+      makePlayer("a1", "A. Way", "GK", 1),
+      makePlayer("a2", "B. Way", "CM", 8),
+      makePlayer("a3", "C. Way", "ST", 9),
+    ];
+    view.setDualFormationSides(
+      {
+        home: {
+          teamName: "Home FC",
+          starters: home,
+          teamColor: "#007A3D",
+          formation: "4-2-3-1",
+          starterSlots: ["GK", "CAM", "ST"],
+          team: { id: "home_fc", name: "Home FC", abbreviation: "HOM", primaryColor: "#007A3D", secondaryColor: "#fff" },
+        },
+        away: {
+          teamName: "Away FC",
+          starters: away,
+          teamColor: "#c00",
+          formation: "4-2-3-1",
+          starterSlots: ["GK", "CAM", "ST"],
+          team: { id: "away_fc", name: "Away FC", abbreviation: "AWY", primaryColor: "#c00", secondaryColor: "#fff" },
+        },
+      },
+      "away",
+      {
+        quickMatch: true,
+        oppositionOptions: [
+          { id: "away_fc", label: "Away FC" },
+          { id: "other_fc", label: "Other FC" },
+        ],
+        oppositionTeamId: "away_fc",
+      },
+    );
+    view.render();
+    const sel = view.root.querySelector<HTMLSelectElement>("[data-char='quick-opp']");
+    expect(sel).toBeTruthy();
+    expect(sel?.value).toBe("away_fc");
+    expect([...sel!.options].map((o) => o.value)).toEqual(["away_fc", "other_fc"]);
+    view.setFormationSide("home");
+    view.render();
+    expect(view.root.querySelector("[data-char='quick-opp']")).toBeNull();
   });
 
   it("keeps goalkeeper tokens on the pitch-floor stop so kit text stays visible", () => {
