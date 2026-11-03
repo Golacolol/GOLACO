@@ -19,8 +19,8 @@ import {
 } from "../../football/simulation/MatchSimulationLab";
 
 describe("Classic Teams V4 expansion", () => {
-  it("defines exactly 110 classic teams", () => {
-    expect(CLASSIC_TEAM_DEFINITIONS).toHaveLength(110);
+  it("defines exactly 112 classic teams", () => {
+    expect(CLASSIC_TEAM_DEFINITIONS).toHaveLength(112);
   });
 
   it("keeps the original 11 display names and adds the V2 set", () => {
@@ -42,6 +42,8 @@ describe("Classic Teams V4 expansion", () => {
     expect(names).toContain("Plymouth Argyle — 1995/96");
     expect(names).toContain("Plymouth Argyle — 2003/04");
     expect(names).toContain("Plymouth Argyle — 2016/17");
+    expect(names).toContain("England — 1966");
+    expect(names).toContain("England — 1994");
     expect(names).toContain("England — 1996");
     expect(names).toContain("Argentina — 1986");
   });
@@ -184,6 +186,8 @@ describe("Classic Teams V4 expansion", () => {
       "Cameroon — 1990",
       "Croatia — 1998",
       "Denmark — 1992",
+      "England — 1966",
+      "England — 1994",
       "England — 1996",
       "England — 2002",
       "France — 2000",
@@ -297,7 +301,7 @@ describe("Match Simulation Lab pools", () => {
     const save = new SaveManager();
     const db = await GameDatabase.load(save);
     const classicPool = eligibleTeamPool(db, { includeCurrentTeams: false, includeClassicTeams: true });
-    expect(classicPool.length).toBe(110);
+    expect(classicPool.length).toBe(112);
     expect(classicPool.every((t) => isClassicTeamId(t.id))).toBe(true);
     expect(resolveSimulationMode({
       matchCount: 1,

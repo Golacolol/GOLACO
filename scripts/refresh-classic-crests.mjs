@@ -14,7 +14,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** Nation search query → classic team ids (year-specific + short alias). */
 const NATIONS = {
-  England: ["classic_england_1996", "classic_england_2002", "classic_england"],
+  England: [
+    "classic_england_1966",
+    "classic_england_1994",
+    "classic_england_1996",
+    "classic_england_2002",
+    "classic_england",
+  ],
   France: ["classic_france_2000", "classic_france_1998", "classic_france"],
   Spain: ["classic_spain_2010", "classic_spain_2008", "classic_spain"],
   Brazil: ["classic_brazil_1994", "classic_brazil_2002", "classic_brazil_1982", "classic_brazil"],
@@ -44,9 +50,18 @@ const ERA_LOGOS = [
     url: "https://www.footylogos.com/dls/logo/juventus/2004-2017.png",
     ids: ["classic_juventus_2016_17"],
   },
+  // Diavoletto is 1979–86 only — Sacchi/Capello classics used the 1986–94 oval.
   {
-    url: "https://www.footylogos.com/dls/logo/ac-milan/1979-1986-diavoletto.png",
+    url: "https://www.footylogos.com/downloads/logo/ac-milan-logo-1986-1994-footylogos.png",
     ids: ["classic_milan_1988_89", "classic_milan_1993_94"],
+  },
+  {
+    url: "https://www.footylogos.com/dls/logo/ac-milan.png",
+    ids: ["classic_milan_2002_03", "classic_milan_2004_05", "classic_milan", "milan", "milan_current"],
+  },
+  {
+    url: "https://www.footylogos.com/dls/logo/tottenham-hotspur/1995-1997-shield.png",
+    ids: ["classic_tottenham_1990_91", "classic_tottenham_1994_95", "classic_tottenham"],
   },
   {
     url: "https://www.footylogos.com/dls/logo/inter-milan/two-stars.png",
@@ -97,7 +112,11 @@ const NATION_PNG = {
     url: "https://r2.thesportsdb.com/images/media/team/badge/xtxtts1455465601.png",
   },
   Uruguay: { ids: ["classic_uruguay_2011", "classic_uruguay"], url: "https://media.api-sports.io/football/teams/7.png" },
-  Cameroon: { ids: ["classic_cameroon_1990", "classic_cameroon"], url: "https://media.api-sports.io/football/teams/31.png" },
+  // api-sports /teams/31.png is Morocco — use SportsDB FECAFOOT badge.
+  Cameroon: {
+    ids: ["classic_cameroon_1990", "classic_cameroon"],
+    url: "https://r2.thesportsdb.com/images/media/team/badge/txqspw1455463989.png",
+  },
 };
 
 /** SportsDB club search fallbacks when FootyLogos path 404s. */
