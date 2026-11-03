@@ -5442,9 +5442,9 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
 }
 .miteam-confetti-bit {
   position: absolute;
-  width: 7px;
-  height: 10px;
-  border-radius: 1px;
+  width: 11px;
+  height: 15px;
+  border-radius: 1.5px;
   transform: translate(-50%, -50%);
   animation: miteam-confetti-fly 0.95s ease-out forwards;
 }

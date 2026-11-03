@@ -512,17 +512,20 @@ export class MiTeamBuilder {
       .then(() => waitForElementImages(under))
       .then(() => {
         if (this.phase !== "opening" || this.candidate !== candidate) return;
-        // Confetti as the wrapper dissolves — layered above the foil (not after it's gone).
+        // Confetti shortly after the wrapper starts dissolving — above the foil.
         const confettiHost =
           (layered instanceof HTMLElement ? layered : null) ??
           foilBtn.closest<HTMLElement>(".miteam-pack-layered");
-        if (confettiHost) burstConfetti(confettiHost, tier);
         playFoilOpen(foilBtn, () => {
           if (this.phase !== "opening" || this.candidate !== candidate) return;
           this.phase = "revealed";
           // Keep the preloaded under-card — do not remount a differently sized card.
           this.promotePackRevealInPlace();
         });
+        window.setTimeout(() => {
+          if (this.phase !== "opening" || this.candidate !== candidate || !confettiHost) return;
+          burstConfetti(confettiHost, tier);
+        }, 90);
       });
   }
 
@@ -661,10 +664,6 @@ export class MiTeamBuilder {
     slotLabel: string,
   ): string {
     if (selectedSp) {
-      const pullHint =
-        this.packing && this.phase === "revealed"
-          ? `<div class="char-meta miteam-pull-hint">Pack pull · ${escapeHtml(slotLabel)} — KEEP or DISCARD</div>`
-          : "";
       return `${portraitHtml(selectedSp.player, selectedSp.shirtNumber, selectedCols.primary, {
         surnameOnly: true,
         className: "kit-marker-roster",
@@ -672,7 +671,6 @@ export class MiTeamBuilder {
       })}
       <h3>${selectedSp.shirtNumber}. ${escapeHtml(kitSurname(selectedSp.player.displayName || selectedSp.player.name))}</h3>
       <div class="char-meta">${selectedSp.player.primaryPosition} · OVR ${Math.round(selectedSp.overall)}</div>
-      ${pullHint}
       ${profileStatsBlock(selectedSp.attrs, { compact: true, mode: this.profileView, size: 168 })}`;
     }
     // Empty squad / sealed pack — show MiTeam crest + name, not the hidden pull.
