@@ -15,6 +15,7 @@ import {
   deleteMiTeam,
   ensureMiTeamSave,
   findMiTeamOriginTeam,
+  miTeamIdentityCustomized,
   miteamBenchSlotIds,
   miteamFillOrder,
   miteamXiSlots,
@@ -113,7 +114,6 @@ export class MiTeamBuilder {
   private targetSlot: string | null = null;
   private cardFlipY = 0;
   private controlMode: MiTeamControlMode = "PLAYER";
-  private crestPickerOpen = false;
   private selectedPlayerId: string | null = null;
   private cardEditing = false;
   private packing = false;
@@ -155,7 +155,6 @@ export class MiTeamBuilder {
     applyMiTeamToDb(db, save);
     this.filter = { kind: "all" };
     this.controlMode = "PLAYER";
-    this.crestPickerOpen = false;
     this.cardEditing = false;
     this.selectedPlayerId = null;
     this.resetPack();
@@ -481,33 +480,24 @@ export class MiTeamBuilder {
         applyPlayerCardFlip(face, this.cardFlipY);
         return;
       }
-      if (this.crestPickerOpen && !(e.target as HTMLElement).closest(".miteam-crest-wrap")) {
-        this.crestPickerOpen = false;
-        this.render();
-      }
       return;
     }
     const act = t.getAttribute("data-miteam");
-    if (act === "crest-toggle") {
-      this.crestPickerOpen = !this.crestPickerOpen;
-      this.render();
-      return;
-    }
     if (act === "crest-pick") {
       const url = t.getAttribute("data-crest") ?? MITEAM_DEFAULT_BADGE;
-      setMiTeamBadge(this.save, this.db, url);
-      this.crestPickerOpen = false;
+      setMiTeamBadge(this.save, this.db, url === MITEAM_DEFAULT_BADGE ? null : url);
       this.render();
       return;
     }
-    if (act === "crest-close") {
-      this.crestPickerOpen = false;
+    if (act === "reset-identity") {
+      setMiTeamClubName(this.save, this.db, MITEAM_DEFAULT_CLUB_NAME);
+      setMiTeamColors(this.save, this.db, { primaryColor: null, secondaryColor: null });
+      setMiTeamBadge(this.save, this.db, null);
       this.render();
       return;
     }
     if (act === "mode-player") {
       this.controlMode = "PLAYER";
-      this.crestPickerOpen = false;
       if (!this.packing && !this.selectedPlayerId && this.roster()[0]) {
         this.selectedPlayerId = this.roster()[0]!.playerId;
       }
@@ -517,7 +507,6 @@ export class MiTeamBuilder {
     if (act === "mode-team") {
       this.controlMode = "TEAM";
       this.packing = false;
-      this.crestPickerOpen = false;
       this.cardEditing = false;
       this.render();
       return;
@@ -599,7 +588,11 @@ export class MiTeamBuilder {
     }
     if (t.matches("[data-miteam-name]")) {
       setMiTeamClubName(this.save, this.db, (t as HTMLInputElement).value);
-      this.render();
+      const preview = this.root.querySelector(".miteam-settings-preview-name");
+      const eyebrow = this.root.querySelector(".char-team-title .eyebrow");
+      const label = formatPlayerCardTeamName(this.clubName());
+      if (preview) preview.textContent = label;
+      if (eyebrow) eyebrow.textContent = label;
       return;
     }
     if (t.matches("[data-miteam-primary]")) {
@@ -623,7 +616,6 @@ export class MiTeamBuilder {
         const dataUrl = String(reader.result ?? "");
         if (!dataUrl.startsWith("data:image/")) return;
         setMiTeamBadge(this.save, this.db, dataUrl);
-        this.crestPickerOpen = false;
         this.render();
       };
       reader.readAsDataURL(file);
@@ -995,19 +987,6 @@ export class MiTeamBuilder {
   }
 
   private headerHtml(team: TeamRecord): string {
-    if (this.controlMode === "OPTIONS") {
-      return `<div class="char-team-title miteam-title-row">
-        <div class="miteam-crest-wrap">
-          <button type="button" class="miteam-crest-btn" data-miteam="crest-toggle" aria-label="Choose club emblem" aria-expanded="${this.crestPickerOpen ? "true" : "false"}" title="Club emblem">
-            ${teamBadgeHtml(team, { className: "char-team-crest miteam-crest-preview" })}
-          </button>
-          ${this.crestPickerOpen ? this.crestPickerHtml() : ""}
-        </div>
-        <div class="miteam-name-row">
-          <input id="miteam-club-name" data-miteam-name type="text" maxlength="28" value="${escapeAttr(this.clubName())}" aria-label="MiTeam name" placeholder="Name" />
-        </div>
-      </div>`;
-    }
     return `<div class="char-team-title">
       ${teamBadgeHtml(team, { className: "char-team-crest" })}
       <div class="eyebrow">${escapeHtml(formatPlayerCardTeamName(team.name))}</div>
@@ -1015,30 +994,74 @@ export class MiTeamBuilder {
   }
 
   private optionsPanelHtml(team: TeamRecord): string {
-    const primary = this.save.data.miteam?.primaryColor ?? team.primaryColor ?? MITEAM_DEFAULT_PRIMARY;
-    const secondary =
-      this.save.data.miteam?.secondaryColor ?? team.secondaryColor ?? MITEAM_DEFAULT_SECONDARY;
+    const mt = this.save.data.miteam;
+    const clubName = this.clubName();
+    const primary = mt?.primaryColor?.trim() || team.primaryColor || MITEAM_DEFAULT_PRIMARY;
+    const secondary = mt?.secondaryColor?.trim() || team.secondaryColor || MITEAM_DEFAULT_SECONDARY;
+    const customized = miTeamIdentityCustomized(mt);
+    const currentCrest = mt?.badgeAsset?.trim() || MITEAM_DEFAULT_BADGE;
+    const crestTiles = miteamCrestChoices(this.db)
+      .map((c) => {
+        const on = c.url === currentCrest ? " on" : "";
+        return `<button type="button" class="miteam-crest-choice${on}" data-miteam="crest-pick" data-crest="${escapeAttr(c.url)}" title="${escapeAttr(c.label)}" aria-label="${escapeAttr(c.label)}">
+          <img src="${escapeAttr(assetUrl(c.url))}" alt="" loading="lazy" onerror="this.closest('button')?.remove()" />
+        </button>`;
+      })
+      .join("");
     return `<div class="team-pitch team-pitch-panel miteam-options-panel" aria-label="MiTeam options">
-      <div class="pitch-overlay-card miteam-options-card">
-        <h3 class="miteam-options-title">MiTeam</h3>
-        <p class="hint">Name, emblem, and club colours for your side. Until you change these, cards and kits keep each player&rsquo;s original club look.</p>
-        <div class="miteam-options-row">
-          <div class="miteam-crest-wrap">
-            <button type="button" class="miteam-crest-btn" data-miteam="crest-toggle" aria-label="Choose club emblem" aria-expanded="${this.crestPickerOpen ? "true" : "false"}">
-              ${teamBadgeHtml(team, { className: "char-team-crest miteam-crest-preview" })}
-            </button>
-            ${this.crestPickerOpen ? this.crestPickerHtml() : ""}
+      <div class="miteam-settings-body">
+        <div class="miteam-settings-main">
+          <section class="miteam-settings-section">
+            <div class="miteam-settings-section-head">
+              <h3 class="miteam-settings-title">Club emblem</h3>
+              <label class="miteam-crest-upload player-card-action">Upload
+                <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-miteam-crest-upload hidden />
+              </label>
+            </div>
+            <p class="hint miteam-settings-hint">Scoreboards and the club header use this crest. Keep the GOLACO mark so packed players still show their origin clubs on cards.</p>
+            <div class="miteam-settings-crest-grid">${crestTiles}</div>
+          </section>
+        </div>
+        <aside class="miteam-settings-side">
+          <div class="miteam-settings-preview">
+            ${teamBadgeHtml(team, { className: "char-team-crest miteam-settings-preview-crest", size: 72 })}
+            <div class="miteam-settings-preview-meta">
+              <div class="miteam-settings-preview-name">${escapeHtml(formatPlayerCardTeamName(clubName))}</div>
+              <div class="miteam-settings-preview-status">${
+                customized ? "Custom club identity" : "Origin club cards active"
+              }</div>
+            </div>
+            <div class="miteam-settings-preview-swatches" aria-hidden="true">
+              <i style="background:${escapeAttr(primary)}"></i>
+              <i style="background:${escapeAttr(secondary)}"></i>
+            </div>
           </div>
-          <input data-miteam-name type="text" maxlength="28" value="${escapeAttr(this.clubName())}" aria-label="MiTeam name" placeholder="Name" />
-        </div>
-        <div class="miteam-colour-row">
-          <label class="miteam-colour-field">Primary
-            <input type="color" data-miteam-primary value="${escapeAttr(primary)}" />
-          </label>
-          <label class="miteam-colour-field">Secondary
-            <input type="color" data-miteam-secondary value="${escapeAttr(secondary)}" />
-          </label>
-        </div>
+          <section class="miteam-settings-section">
+            <h3 class="miteam-settings-title">Club name</h3>
+            <input class="miteam-settings-name" data-miteam-name type="text" maxlength="28" value="${escapeAttr(clubName)}" aria-label="MiTeam name" placeholder="MiTeam" />
+          </section>
+          <section class="miteam-settings-section">
+            <h3 class="miteam-settings-title">Club colours</h3>
+            <p class="hint miteam-settings-hint">Applies to kits and cards once set. Leave default to keep each player&rsquo;s origin colours.</p>
+            <div class="miteam-colour-row miteam-settings-colours">
+              <label class="miteam-colour-field">Primary
+                <input type="color" data-miteam-primary value="${escapeAttr(primary)}" />
+              </label>
+              <label class="miteam-colour-field">Secondary
+                <input type="color" data-miteam-secondary value="${escapeAttr(secondary)}" />
+              </label>
+            </div>
+          </section>
+          <section class="miteam-settings-section miteam-settings-actions">
+            <h3 class="miteam-settings-title">Club identity</h3>
+            <p class="hint miteam-settings-hint">Reset clears name, crest, and colours so origin looks return on cards.</p>
+            <div class="miteam-settings-action-row">
+              <button type="button" class="player-card-action miteam-settings-reset" data-miteam="reset-identity" title="Restore default name, clear crest and colours">
+                Reset identity
+              </button>
+            </div>
+          </section>
+        </aside>
       </div>
     </div>`;
   }
@@ -1131,30 +1154,6 @@ export class MiTeamBuilder {
         ${this.packRevealCardHtml(candidate)}
         ${this.keepDiscardRowHtml()}
       </div>
-    </div>`;
-  }
-
-  private crestPickerHtml(): string {
-    const current = this.save.data.miteam?.badgeAsset?.trim() || MITEAM_DEFAULT_BADGE;
-    const choices = miteamCrestChoices(this.db);
-    const tiles = choices
-      .map((c) => {
-        const on = c.url === current ? " on" : "";
-        const src = escapeAttr(assetUrl(c.url));
-        return `<button type="button" class="miteam-crest-choice${on}" data-miteam="crest-pick" data-crest="${escapeAttr(c.url)}" title="${escapeAttr(c.label)}" aria-label="${escapeAttr(c.label)}">
-          <img src="${src}" alt="" loading="lazy" onerror="this.closest('button')?.remove()" />
-        </button>`;
-      })
-      .join("");
-    return `<div class="miteam-crest-popover" role="dialog" aria-label="Club emblem">
-      <div class="miteam-crest-popover-head">
-        <span>Emblem</span>
-        <button type="button" class="miteam-crest-close" data-miteam="crest-close" aria-label="Close">×</button>
-      </div>
-      <label class="miteam-crest-upload player-card-action">Upload
-        <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" data-miteam-crest-upload hidden />
-      </label>
-      <div class="miteam-crest-grid">${tiles}</div>
     </div>`;
   }
 
