@@ -4730,12 +4730,12 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
 
 /* —— MiTeam pack builder —— */
 .miteam-builder {
-  /* Foil stays larger so the sealed pack covers the card underneath. */
-  --miteam-pack-w: 328px;
-  --miteam-pack-ar: 2 / 3.28;
-  /* Opened card: compact face so emblem/hex/shirt fill without a dead bottom band. */
+  /* Player card display size — never stretch the under-card to the foil. */
   --miteam-card-w: 312px;
   --miteam-card-ar: 2 / 2.78;
+  /* Foil only a hair larger so serrations sit on the real card edge. */
+  --miteam-pack-w: 320px;
+  --miteam-pack-ar: 2 / 2.86;
 }
 .miteam-builder .miteam-panel { --miteam-silver: #c5ccd6; }
 .miteam-title-row {
@@ -4883,15 +4883,19 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   padding: 12px 8px;
   box-sizing: border-box;
 }
-/* Sealed pack: reveal card loads underneath the foil, same footprint.
-   Size layers to content — width:100% here collapses % foil sizes in the grid. */
+/* Sealed pack: card preloads under the foil at final size, hidden until unwrap
+   so serrations never show a peek. Bottom padding reserves KEEP/DISCARD space
+   so adding those buttons does not shove the centred card upward. */
 .miteam-pack-layered {
+  position: relative;
   display: grid;
   place-items: center;
   justify-content: center;
   align-content: center;
   gap: 0;
-  padding: 8px 4px;
+  padding: 8px 4px 56px;
+  box-sizing: border-box;
+  overflow: visible;
 }
 .miteam-pack-under,
 .miteam-pack-foil-layer {
@@ -4908,12 +4912,11 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   z-index: 1;
   pointer-events: none;
   min-height: 0;
-  /* Card footprint (smaller than foil) — centred under the pack so foil covers it. */
-  width: var(--miteam-card-w, 312px);
   max-width: 100%;
-  aspect-ratio: var(--miteam-card-ar, 2 / 2.78);
   overflow: hidden;
-  /* Hidden while sealed so serrated tears don't show the real card top/bottom. */
+  width: var(--miteam-card-w, 312px);
+  aspect-ratio: var(--miteam-card-ar, 2 / 2.78);
+  /* Hidden while sealed — teeth must not preview the pull. */
   opacity: 0;
   visibility: hidden;
 }
@@ -4921,11 +4924,6 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
 .miteam-pack-layered.is-revealed .miteam-pack-under {
   opacity: 1;
   visibility: visible;
-}
-/* Hide the decorative large peek so open only unveils the real preloaded card. */
-.miteam-pack-layered.is-opening .miteam-foil-card-peek {
-  opacity: 0;
-  visibility: hidden;
 }
 .miteam-pack-under .player-card-shell {
   width: 100%;
@@ -4941,27 +4939,22 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   min-height: 0 !important;
   aspect-ratio: auto;
 }
-/* After open: unlock the card; KEEP/DISCARD sit as a flex sibling below (not clipped). */
-.miteam-pack-layered.is-revealed {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+.miteam-pack-under.miteam-pack-revealed {
+  position: relative;
+  pointer-events: auto;
+  /* Let KEEP/DISCARD hang just under the card without shifting layout. */
   overflow: visible;
 }
-.miteam-pack-under.miteam-pack-revealed {
-  pointer-events: auto;
-  flex: 0 0 auto;
-  overflow: hidden;
-}
-.miteam-pack-layered.is-revealed > .miteam-keep-row {
-  position: static;
-  flex: 0 0 auto;
-  width: var(--miteam-card-w, 312px);
-  max-width: 100%;
-  margin: 0;
+/* Anchored to the card box — not the panel floor. */
+.miteam-pack-under.miteam-pack-revealed > .miteam-keep-row {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  width: 100%;
+  margin: 10px 0 0;
   z-index: 2;
+  transform: none;
 }
 .miteam-pack-foil-layer {
   position: relative;
@@ -4985,58 +4978,31 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   position: relative;
   display: block;
   /* Definite width — percentage widths shrink to nothing inside the layered grid. */
-  width: var(--miteam-pack-w, 328px);
+  width: var(--miteam-pack-w, 320px);
   max-width: 100%;
-  aspect-ratio: var(--miteam-pack-ar, 2 / 3.28);
+  aspect-ratio: var(--miteam-pack-ar, 2 / 2.86);
   flex: 0 0 auto;
   margin: 0 auto;
   filter: drop-shadow(0 16px 28px rgba(0, 0, 0, 0.5));
   transition: transform 0.22s ease;
   transform-style: preserve-3d;
 }
-/* Dark tray under the foil — card sits recessed in here, not flush with the tear. */
-.miteam-foil-well {
+/* Well / peek stay transparent — serrations must show the real under-card, not a tray indent. */
+.miteam-foil-well,
+.miteam-foil-card-peek {
   position: absolute;
   inset: 1.1% 2.6%;
   z-index: 0;
   pointer-events: none;
   border-radius: 5px;
-  background:
-    linear-gradient(
-      160deg,
-      #3a4250 0%,
-      #1c222c 42%,
-      #10141a 100%
-    );
-  box-shadow:
-    inset 0 4px 7px rgba(0, 0, 0, 0.55),
-    inset 0 -3px 5px rgba(0, 0, 0, 0.4),
-    inset 2px 0 4px rgba(0, 0, 0, 0.28),
-    inset -2px 0 4px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  background: transparent;
+  box-shadow: none;
+  opacity: 0;
+  visibility: hidden;
 }
-.miteam-foil-shell-gold .miteam-foil-well {
-  background:
-    linear-gradient(
-      160deg,
-      #6a5218 0%,
-      #3a2a0c 45%,
-      #1a1206 100%
-    );
-}
-/* Card finished inside the pack — inset from the serrated foil edge. */
 .miteam-foil-card-peek {
-  position: absolute;
   inset: 3.4% 5.4%;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: 4px;
   overflow: hidden;
-  box-shadow:
-    0 0 0 1px rgba(197, 165, 114, 0.4),
-    0 1px 0 rgba(255, 255, 255, 0.18),
-    0 3px 6px rgba(0, 0, 0, 0.42),
-    inset 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 .miteam-foil-card-face {
   position: absolute;
@@ -5070,6 +5036,9 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   --foil-lo: #6e7888;
   --foil-ink: #1a222e;
   --foil-glow: rgba(210, 220, 235, 0.55);
+  /* Zigzag depth (match MITEAM_FOIL_TOOTH_PCT). Indent sits a hair inside it. */
+  --foil-tooth: 2.8%;
+  --foil-indent: 1.15%;
   position: absolute;
   inset: 0;
   width: 100%;
@@ -5120,60 +5089,52 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   pointer-events: none;
 }
 /*
- * Slight 3D at the sealed tear: raised foil lip, then a soft drop into the
- * recessed well / card — sealed pack depth, not an opened flap.
+ * Raised lip / soft recess — inset only slightly (--foil-indent) so they hug the
+ * zigzag without sitting on the tooth tips or drifting too far down the pack.
  */
 .miteam-foil-lip {
   position: absolute;
   left: 0;
   right: 0;
-  height: 7%;
+  height: 3.6%;
   pointer-events: none;
   z-index: 4;
 }
 .miteam-foil-lip-top {
-  top: 0;
+  top: var(--foil-indent, 1.15%);
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.42) 0%,
-    rgba(255, 255, 255, 0.14) 16%,
-    rgba(0, 0, 0, 0.08) 28%,
-    rgba(0, 0, 0, 0.48) 48%,
-    rgba(0, 0, 0, 0.18) 72%,
+    rgba(255, 255, 255, 0.34) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(0, 0, 0, 0.14) 72%,
     transparent 100%
   );
 }
 .miteam-foil-lip-bottom {
-  bottom: 0;
+  bottom: var(--foil-indent, 1.15%);
   background: linear-gradient(
     0deg,
-    rgba(255, 255, 255, 0.28) 0%,
-    rgba(255, 255, 255, 0.08) 14%,
-    rgba(0, 0, 0, 0.1) 26%,
-    rgba(0, 0, 0, 0.5) 48%,
-    rgba(0, 0, 0, 0.2) 74%,
+    rgba(255, 255, 255, 0.24) 0%,
+    rgba(255, 255, 255, 0.06) 36%,
+    rgba(0, 0, 0, 0.16) 72%,
     transparent 100%
   );
 }
 .miteam-foil-gold .miteam-foil-lip-top {
   background: linear-gradient(
     180deg,
-    rgba(255, 245, 200, 0.55) 0%,
-    rgba(255, 230, 150, 0.18) 16%,
-    rgba(60, 35, 0, 0.12) 30%,
-    rgba(40, 24, 0, 0.5) 50%,
-    rgba(40, 24, 0, 0.16) 74%,
+    rgba(255, 245, 200, 0.48) 0%,
+    rgba(255, 230, 150, 0.14) 38%,
+    rgba(40, 24, 0, 0.2) 72%,
     transparent 100%
   );
 }
 .miteam-foil-gold .miteam-foil-lip-bottom {
   background: linear-gradient(
     0deg,
-    rgba(255, 245, 200, 0.4) 0%,
-    rgba(255, 230, 150, 0.12) 14%,
-    rgba(60, 35, 0, 0.14) 28%,
-    rgba(40, 24, 0, 0.52) 50%,
-    rgba(40, 24, 0, 0.18) 74%,
+    rgba(255, 245, 200, 0.36) 0%,
+    rgba(255, 230, 150, 0.1) 36%,
+    rgba(40, 24, 0, 0.22) 72%,
     transparent 100%
   );
 }
@@ -5181,23 +5142,23 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   position: absolute;
   left: 0;
   right: 0;
-  height: 3.2%;
+  height: 1.8%;
   pointer-events: none;
   z-index: 5;
 }
 .miteam-foil-tear-top {
-  top: 0;
+  top: var(--foil-indent, 1.15%);
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.22) 0%,
+    rgba(0, 0, 0, 0.14) 0%,
     transparent 100%
   );
 }
 .miteam-foil-tear-bottom {
-  bottom: 0;
+  bottom: var(--foil-indent, 1.15%);
   background: linear-gradient(
     0deg,
-    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0.16) 0%,
     transparent 100%
   );
 }
@@ -5617,8 +5578,8 @@ table .portrait { width: 36px; height: 36px; margin: 0; }
   width: var(--miteam-card-w, 312px);
   max-width: 100%;
 }
-.miteam-pack-layered.is-revealed > .miteam-keep-row .player-card-action,
-.miteam-pack-layered.is-revealed > .miteam-keep-row select {
+.miteam-pack-under.miteam-pack-revealed > .miteam-keep-row .player-card-action,
+.miteam-pack-under.miteam-pack-revealed > .miteam-keep-row select {
   pointer-events: auto;
 }
 .miteam-keep-row select {

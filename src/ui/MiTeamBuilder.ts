@@ -194,7 +194,7 @@ export class MiTeamBuilder {
       return;
     }
     this.candidate = pickRandomForSlot(this.db, {
-      slot: this.targetSlot.startsWith("BENCH_") ? "CM" : this.targetSlot,
+      slot: this.targetSlot,
       filter: this.filter,
       excludePlayerIds: this.excludeIds(),
     });
@@ -337,7 +337,8 @@ export class MiTeamBuilder {
         this.root.contains(face) &&
         !this.cardEditing &&
         this.controlMode === "PLAYER" &&
-        !(face.closest(".miteam-pack-under"))
+        // Allow flip once unwrapped; only block the still-sealed under-card.
+        !face.closest(".miteam-pack-under:not(.miteam-pack-revealed)")
       ) {
         e.preventDefault();
         e.stopPropagation();
@@ -536,12 +537,32 @@ export class MiTeamBuilder {
     layered.classList.add("is-revealed");
     under.removeAttribute("aria-hidden");
     under.classList.add("miteam-pack-revealed");
-    // Sibling of the card (not inside the clipped aspect box) so the row stays visible.
-    under.querySelector(".miteam-keep-row")?.remove();
-    if (!layered.querySelector(":scope > .miteam-keep-row")) {
-      layered.insertAdjacentHTML("beforeend", this.keepDiscardRowHtml());
+    // Directly under the card box (absolute top:100%) so it stays flush without a layout pop.
+    layered.querySelector(":scope > .miteam-keep-row")?.remove();
+    if (!under.querySelector(":scope > .miteam-keep-row")) {
+      under.insertAdjacentHTML("beforeend", this.keepDiscardRowHtml());
     }
+    // Pack stays mounted — only now mirror the pull into Player Details.
+    this.refreshRosterDetailsCard();
     burstConfetti(under, tier);
+  }
+
+  /** Left-rail details for the current selection / revealed pull (does not remount the pack). */
+  private refreshRosterDetailsCard(): void {
+    const host = this.root.querySelector(".team-roster-card");
+    if (!host) return;
+    const team = this.team();
+    const selectedSp = this.selectedSquadPlayer();
+    const roster = this.roster();
+    const selectedRow = selectedSp ? roster.find((r) => r.playerId === selectedSp.player.id) : null;
+    const selectedCols = selectedSp
+      ? this.coloursForPlayer(selectedSp.player.id, selectedRow?.sourceTeamId)
+      : { primary: team.primaryColor, secondary: team.secondaryColor };
+    const slotLabel = this.targetSlot?.startsWith("BENCH_")
+      ? `BENCH ${this.targetSlot.replace("BENCH_", "")}`
+      : this.targetSlot ?? "FULL";
+    host.innerHTML = this.rosterDetailsHtml(team, selectedSp, selectedCols, slotLabel);
+    requestAnimationFrame(() => fitKitSurnameElements(host));
   }
 
   private discard(): void {
@@ -552,6 +573,7 @@ export class MiTeamBuilder {
       if (!this.candidate || this.candidate.player.id !== prevId) break;
     }
     this.cardFlipY = 0;
+    this.profileView = "hex";
     this.phase = "foil";
     this.packing = true;
     this.render();
@@ -570,6 +592,7 @@ export class MiTeamBuilder {
     });
     this.selectedPlayerId = this.candidate.player.id;
     setMiTeamRoster(this.save, this.db, roster);
+    this.profileView = "hex";
     this.resetPack();
     this.packing = !!this.targetSlot;
     if (!this.targetSlot) this.controlMode = "TEAM";
@@ -582,7 +605,7 @@ export class MiTeamBuilder {
     for (const slot of miteamFillOrder()) {
       if (roster.some((r) => r.slot === slot)) continue;
       const pick = pickRandomForSlot(this.db, {
-        slot: slot.startsWith("BENCH_") ? "CM" : slot,
+        slot,
         filter: this.filter,
         excludePlayerIds: exclude,
       });
@@ -606,14 +629,24 @@ export class MiTeamBuilder {
 
   /**
    * Player shown in the left details card.
-   * Sealed / opening packs never leak the candidate — only squad members (or the
-   * revealed pull once the wrapper is open).
+   * Sealed / opening packs never leak the candidate — show the last kept player
+   * instead (or the crest only when the roster is still empty). Once unwrapped,
+   * the current pull is shown until KEEP / DISCARD.
    */
   private selectedSquadPlayer(): SquadPlayer | null {
-    if (this.packing && this.phase === "revealed" && this.candidate) return this.candidate;
-    const id = this.selectedPlayerId ?? this.roster()[0]?.playerId ?? null;
+    if (this.packing && this.phase === "revealed" && this.candidate) {
+      return this.candidate;
+    }
+    const roster = this.roster();
+    // Prefer the last kept selection; fall back to the most recently added squad row.
+    const id =
+      (this.selectedPlayerId && roster.some((r) => r.playerId === this.selectedPlayerId)
+        ? this.selectedPlayerId
+        : null) ??
+      roster[roster.length - 1]?.playerId ??
+      null;
     if (!id) return null;
-    const row = this.roster().find((r) => r.playerId === id);
+    const row = roster.find((r) => r.playerId === id);
     if (!row) return null;
     return this.squadFor(row.playerId, row.shirtNumber);
   }
@@ -625,6 +658,10 @@ export class MiTeamBuilder {
     slotLabel: string,
   ): string {
     if (selectedSp) {
+      const pullHint =
+        this.packing && this.phase === "revealed"
+          ? `<div class="char-meta miteam-pull-hint">Pack pull · ${escapeHtml(slotLabel)} — KEEP or DISCARD</div>`
+          : "";
       return `${portraitHtml(selectedSp.player, selectedSp.shirtNumber, selectedCols.primary, {
         surnameOnly: true,
         className: "kit-marker-roster",
@@ -632,6 +669,7 @@ export class MiTeamBuilder {
       })}
       <h3>${selectedSp.shirtNumber}. ${escapeHtml(kitSurname(selectedSp.player.displayName || selectedSp.player.name))}</h3>
       <div class="char-meta">${selectedSp.player.primaryPosition} · OVR ${Math.round(selectedSp.overall)}</div>
+      ${pullHint}
       ${profileStatsBlock(selectedSp.attrs, { compact: true, mode: this.profileView, size: 168 })}`;
     }
     // Empty squad / sealed pack — show MiTeam crest + name, not the hidden pull.
@@ -951,8 +989,8 @@ export class MiTeamBuilder {
     return `<div class="pitch-overlay-card miteam-pack-stage miteam-pack-layered is-revealed">
       <div class="miteam-pack-under miteam-pack-revealed">
         ${this.packRevealCardHtml(candidate)}
+        ${this.keepDiscardRowHtml()}
       </div>
-      ${this.keepDiscardRowHtml()}
     </div>`;
   }
 

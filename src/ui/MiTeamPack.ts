@@ -60,10 +60,13 @@ export function packTierForOverall(overall: number): PackTier {
  * sides read as foil wrapping around the pack. Notches are deep enough to reveal
  * the card peek layer sitting behind the foil.
  */
+/** Tear tooth depth as % of pack height — keep in sync with --foil-tooth in CSS. */
+export const MITEAM_FOIL_TOOTH_PCT = 2.8;
+
 export function miteamFoilSerrationClip(): string {
   const step = 2.5;
-  // Shallow teeth — enough to catch the recessed well / card lip, not an opened pack.
-  const depth = 2.8;
+  // Shallow teeth on the shorter pack; lip/tear CSS starts just inside this depth.
+  const depth = MITEAM_FOIL_TOOTH_PCT;
   const pts: string[] = [];
   const push = (x: number, y: number) => pts.push(`${x.toFixed(1)}% ${y.toFixed(1)}%`);
   // Serrated tear strip across the top (L→R), always ending at x=100.
